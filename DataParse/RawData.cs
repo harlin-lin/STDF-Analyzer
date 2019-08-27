@@ -80,9 +80,13 @@ namespace DataParse {
                     return rt;
                 }
             }
-
-            public List<float?> GetItem(bool[] filter) {
-                int len = filter.Length;
+            /// <summary>
+            /// get the item data with filter
+            /// </summary>
+            /// <param name="filter">a bool list which false means mask, true will be return</param>
+            /// <returns></returns>
+            public List<float?> GetItem(List<bool> filter) {
+                int len = filter.Count;
                 if (len > this._size)
                     throw new ArgumentOutOfRangeException("count", "count larger than the size");
                 else {
@@ -91,6 +95,25 @@ namespace DataParse {
                     for(int i=0; i<len; i++) {
                         if (filter[i])
                             rt.Add(_itemData[i >> DefaultFixedDataBits].itemDataBlock[i & (DefaultFixedDataBlockLength - 1)]);
+                    }
+
+                    return rt;
+                }
+            }
+            /// <summary>
+            /// get the item data with filter
+            /// </summary>
+            /// <param name="filter">index list of the target data</param>
+            /// <returns></returns>
+            public List<float?> GetItem(List<int> filter) {
+                int len = filter.Count;
+                if (len > this._size)
+                    throw new ArgumentOutOfRangeException("count", "count larger than the size");
+                else {
+                    List<float?> rt = new List<float?>(len);
+
+                    for (int i = 0; i < len; i++) {
+                        rt.Add(_itemData[filter[i] >> DefaultFixedDataBits].itemDataBlock[filter[i] & (DefaultFixedDataBlockLength - 1)]);
                     }
 
                     return rt;
