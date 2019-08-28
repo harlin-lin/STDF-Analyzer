@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace DataParse {
     public class RawData {
         const int DefaultItemsCapacity = 300;
+        const int DefaultFixedDataBlockLength = 4096;  //means 2^12
+        const int DefaultFixedDataBits = 12;  //means 2^12
 
         private class ItemData
         {
-            const int DefaultFixedDataBlockLength = 4096;  //means 2^12
-            const int DefaultFixedDataBits = 12;  //means 2^12
 
 
             class ItemDataBlock {
@@ -23,28 +23,25 @@ namespace DataParse {
             }
 
             private List<ItemDataBlock> _itemData;
-            private int _size;
+            private int _capacity;
 
             public ItemData() {
                 _itemData = new List<ItemDataBlock>();
                 this._itemData.Add(new ItemDataBlock());
-                _size = DefaultFixedDataBlockLength;
+                _capacity = DefaultFixedDataBlockLength;
             }
 
             public float? this[int index] {
+                //deleted all of the parameter check codes
                 get {
-                    if (index < 0 || index >= this._size)
-                        throw new ArgumentOutOfRangeException("index", "索引超出范围");
                     return this._itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)];
                 }
                 set {
-                    if (index < 0)
-                        throw new ArgumentOutOfRangeException("index", "索引超出范围");
-                    else if (index >= this._size) {
+                    if (index >= this._capacity) {
                         do {
                             this._itemData.Add(new ItemDataBlock());
-                            _size += DefaultFixedDataBlockLength;
-                        } while (index >= this._size);
+                            _capacity += DefaultFixedDataBlockLength;
+                        } while (index >= this._capacity);
                     }
                     this._itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)] = value;
                 }
@@ -54,109 +51,281 @@ namespace DataParse {
             public void Set(int index, float? value) {
                 if (index < 0)
                     throw new ArgumentOutOfRangeException("index", "索引超出范围");
-                else if (index >= this._size) {
+                else if (index >= this._capacity) {
                     do {
                         this._itemData.Add(new ItemDataBlock());
-                        _size += DefaultFixedDataBlockLength;
-                    } while (index >= this._size);
+                        _capacity += DefaultFixedDataBlockLength;
+                    } while (index >= this._capacity);
                 }
                 this._itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)] = value;
             }
 
-            public float?[] GetItem(int count) {
-                if (count > this._size)
-                    throw new ArgumentOutOfRangeException("count", "count larger than the size");
-                else if (count <= DefaultFixedDataBlockLength)
-                    return this._itemData[0].itemDataBlock.Take(count).ToArray();
+            [Obsolete]
+            public List<float?> GetItem(int count) {
+                if (count <= DefaultFixedDataBlockLength)
+                    return this._itemData[0].itemDataBlock.Take(count).ToList();
                 else {
-                    float?[] rt = new float?[count];
+                    List<float?> rt = new List<float?>(count);
                     int i = 0;
-                    while ((count -= DefaultFixedDataBlockLength) >= 0) {
-                        this._itemData[i].itemDataBlock.CopyTo(rt, i * DefaultFixedDataBlockLength);
+                    while ((count -= DefaultFixedDataBlockLength) >= 0 && i < _itemData.Count) {
+                        rt.AddRange(_itemData[i].itemDataBlock);
                         i++;
                     }
-                    this._itemData[i].itemDataBlock.Take(count).ToArray().CopyTo(rt, (count & (DefaultFixedDataBlockLength - 1)));
+                    if(i < _itemData.Count)
+                        rt.AddRange(_itemData[i].itemDataBlock.Take(count));
 
                     return rt;
                 }
             }
+
             /// <summary>
-            /// get the item data with filter
+            /// 
             /// </summary>
-            /// <param name="filter">a bool list which false means mask, true will be return</param>
+            /// <param name="indexFrom"></param>
+            /// <param name="count"></param>
+            /// <param name="filter"></param>
             /// <returns></returns>
-            public List<float?> GetItem(List<bool> filter) {
-                int len = filter.Count;
-                if (len > this._size)
-                    throw new ArgumentOutOfRangeException("count", "count larger than the size");
-                else {
-                    List<float?> rt = new List<float?>(len);
+            public List<float?> GetItem(int indexFrom, int count, List<bool> filter) {
+                List<float?> rt = new List<float?>(count);
 
-                    for(int i=0; i<len; i++) {
-                        if (filter[i])
-                            rt.Add(_itemData[i >> DefaultFixedDataBits].itemDataBlock[i & (DefaultFixedDataBlockLength - 1)]);
-                    }
+                int index = indexFrom;
+                for (int i=0; i< count; i++) {
+                    index += i;
+                    if (index > _capacity)  break;
 
-                    return rt;
+                    if (filter[i])
+                        rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
+
+                return rt;
             }
-            /// <summary>
-            /// get the item data with filter
-            /// </summary>
-            /// <param name="filter">index list of the target data</param>
-            /// <returns></returns>
-            public List<float?> GetItem(List<int> filter) {
-                int len = filter.Count;
-                if (len > this._size)
-                    throw new ArgumentOutOfRangeException("count", "count larger than the size");
-                else {
-                    List<float?> rt = new List<float?>(len);
 
-                    for (int i = 0; i < len; i++) {
-                        rt.Add(_itemData[filter[i] >> DefaultFixedDataBits].itemDataBlock[filter[i] & (DefaultFixedDataBlockLength - 1)]);
-                    }
+            public List<float?> GetItem(int indexFrom, int count) {
+                List<float?> rt = new List<float?>(count);
 
-                    return rt;
+                int index = indexFrom;
+                for (int i = 0; i < count; i++) {
+                    index += i;
+                    if (index > _capacity) break;
+
+                    rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
+
+                return rt;
             }
 
         }
 
         private  List<ItemData> _data; 
         public int ChipCount { get; private set; }
-
+        public List<bool> ChipFilter { get; private set; }
+        //public List<bool> ItemFilter { get; private set; }
 
         public RawData() {
-            _data = new List<ItemData>();
+            _data = new List<ItemData>(DefaultItemsCapacity);
             ChipCount = 0;
+            ChipFilter = new List<bool>(DefaultFixedDataBlockLength);
+            //ItemFilter = new List<bool>(DefaultItemsCapacity);
         }
 
-        public float?[] GetItemData(int itemIndex) {
-            return _data[itemIndex].GetItem(ChipCount);
-        }
-        
-        
-
-
-        public RawData AddItem() {
+        /// <summary>
+        /// AddItem
+        /// </summary>
+        /// <returns>index of the added item</returns>
+        public int AddItem() {
             _data.Add(new ItemData());
-            return this;
+            //ItemFilter.Add(true);
+            return _data.Count-1;
         }
-
+    
         public int ItemsCount {
             get {
                 return _data.Count;
             }
         }
-    
-        public RawData AddChip(){
+
+
+        public List<float?> GetItemData(int itemIndex) {
+            return _data[itemIndex].GetItem(0, ChipCount);
+        }
+
+        public List<float?> GetItemData(int itemIndex, int chipIndexFrom, int count) {
+            return _data[itemIndex].GetItem(chipIndexFrom, count);
+        }
+
+        public List<float?> GetItemData(int itemIndex, List<bool> filter) {
+            return _data[itemIndex].GetItem(0, ChipCount, filter);
+        }
+
+        public List<float?> GetItemData(int itemIndex, int chipIndexFrom, int count, List<bool> filter) {
+            return _data[itemIndex].GetItem(chipIndexFrom, count, filter);
+        }
+
+
+        /// <summary>
+        /// AddChip
+        /// </summary>
+        /// <returns>index of the added chip</returns>
+        public int AddChip(){
             ChipCount++;
-            return this;
+            ChipFilter.Add(true);
+            return ChipCount-1;
         }
 
         public void Set(int itemIndex, int chipIndex, float? value) {
+            //check index valid
+
             _data[itemIndex][chipIndex]=value;
         }
 
+        #region  FilterMethod
+        public void SetChipFilter(List<bool> filter) {
+            if (filter.Count != ChipCount)
+                throw new ArgumentException("list count not match the chip count", "filter");
+            else
+                ChipFilter = filter;
+        }
+
+        public void SetChipFilter(int index, bool filter) {
+            if (index > (ChipCount - 1))
+                throw new ArgumentOutOfRangeException("index", "index out of chip range");
+            else
+                ChipFilter[index] = filter;
+        }
+
+        public void MaskChips(int index) {
+            if (index > (ChipCount - 1))
+                throw new ArgumentOutOfRangeException("index", "index out of chip range");
+            else
+                ChipFilter[index] = false;
+        }
+
+        public void MaskChips(List<int> indexes) {
+            foreach(int i in indexes) {
+                if (i > (ChipCount - 1))
+                    throw new ArgumentOutOfRangeException("index", "index out of chip range");
+                else
+                    ChipFilter[i] = false;
+            }
+        }
+
+        public void MaskChips(int indexFrom, int indexTo) {
+            if (indexTo > (ChipCount - 1))
+                throw new ArgumentOutOfRangeException("indexTo", "index out of chip range");
+            else {
+                for(int i=indexFrom; i<=indexTo; i++)
+                    ChipFilter[i] = false;
+            }
+        }
+
+        public void EnableChips(int index) {
+            if (index > (ChipCount - 1))
+                throw new ArgumentOutOfRangeException("index", "index out of chip range");
+            else
+                ChipFilter[index] = true;
+        }
+
+        public void EnableChips(List<int> indexes) {
+            foreach (int i in indexes) {
+                if (i > (ChipCount - 1))
+                    throw new ArgumentOutOfRangeException("index", "index out of chip range");
+                else
+                    ChipFilter[i] = true;
+            }
+        }
+
+        public void EnableChips(int indexFrom, int indexTo) {
+            if (indexTo > (ChipCount - 1))
+                throw new ArgumentOutOfRangeException("indexTo", "index out of chip range");
+            else {
+                for (int i = indexFrom; i <= indexTo; i++)
+                    ChipFilter[i] = true;
+            }
+        }
+
+        public void ClearChipFilter() {
+            for (int i = 0; i < ChipFilter.Count; i++)
+                ChipFilter[i] = true;
+        }
+
+
+
+        //public void SetItemFilter(List<bool> filter) {
+        //    if (filter.Count != _data.Count)
+        //        throw new ArgumentException("list count not match the item count", "filter");
+        //    else
+        //        ItemFilter = filter;
+        //}
+
+        //public void SetItemFilter(int index, bool filter) {
+        //    if (index > (_data.Count - 1))
+        //        throw new ArgumentOutOfRangeException("index", "index out of item range");
+        //    else
+        //        ItemFilter[index] = filter;
+        //}
+
+        //public void MaskItems(int index) {
+        //    if (index > (_data.Count - 1))
+        //        throw new ArgumentOutOfRangeException("index", "index out of item range");
+        //    else
+        //        ItemFilter[index] = false;
+        //}
+
+        //public void MaskItems(List<int> indexes) {
+        //    foreach (int i in indexes) {
+        //        if (i > (_data.Count - 1))
+        //            throw new ArgumentOutOfRangeException("index", "index out of item range");
+        //        else
+        //            ItemFilter[i] = false;
+        //    }
+        //}
+
+        //public void MaskItems(int indexFrom, int indexTo) {
+        //    if (indexTo > (_data.Count - 1))
+        //        throw new ArgumentOutOfRangeException("indexTo", "index out of item range");
+        //    else {
+        //        for (int i = indexFrom; i <= indexTo; i++)
+        //            ItemFilter[i] = false;
+        //    }
+        //}
+
+        //public void EnableItems(int index) {
+        //    if (index > (_data.Count - 1))
+        //        throw new ArgumentOutOfRangeException("index", "index out of item range");
+        //    else
+        //        ItemFilter[index] = true;
+        //}
+
+        //public void EnableItems(List<int> indexes) {
+        //    foreach (int i in indexes) {
+        //        if (i > (_data.Count - 1))
+        //            throw new ArgumentOutOfRangeException("index", "index out of item range");
+        //        else
+        //            ItemFilter[i] = true;
+        //    }
+        //}
+
+        //public void EnableItems(int indexFrom, int indexTo) {
+        //    if (indexTo > (_data.Count - 1))
+        //        throw new ArgumentOutOfRangeException("indexTo", "index out of item range");
+        //    else {
+        //        for (int i = indexFrom; i <= indexTo; i++)
+        //            ItemFilter[i] = true;
+        //    }
+        //}
+
+        //public void ClearItemFilter() {
+        //    for (int i = 0; i < ItemFilter.Count; i++)
+        //        ItemFilter[i] = true;
+        //}
+
+
+        //public void ClearFilters() {
+        //    ClearChipFilter();
+        //    ClearItemFilter();
+        //}
+        #endregion
+
+
+        }
     }
-}

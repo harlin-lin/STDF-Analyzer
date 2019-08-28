@@ -75,6 +75,7 @@ namespace DataParse {
         FileBasicInfo basicInfo{ get; }
 
 
+        int ParsePercent { get; }
 
     }
 }
