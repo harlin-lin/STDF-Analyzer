@@ -4,21 +4,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataParse {
-    public class ItemInfo {
-        public string TestName { get; private set; }
+namespace DataParse
+{
+    public class ItemInfo
+    {
         public float? LoLimit { get; private set; }
         public float? HiLimit { get; private set; }
         public string Unit { get; private set; }
-        public sbyte? RstScale { get; private set; }
-        public float MeanValue { get; private set; }
-        public float MinValue { get; private set; }
-        public float MaxValue { get; private set; }
-        public double Cp { get; private set; }
-        public double Cpk { get; private set; }
-        public double? Sigma { get; private set; }
-        public int PassCount { get; private set; }
-        public int FailCount { get; private set; }
+        private float _llScale;
+        private float _hlScale;
+        private float _rstScale;
+        
+        public ItemInfo(float? ll, float? hl, string unit, sbyte? llScale, sbyte? hlScale, sbyte? rstScale) {
+            string u = unit;
+            _hlScale = (float)Math.Pow(10, (llScale ?? 0));
+            _llScale = (float)Math.Pow(10, (llScale ?? 0));
+            _rstScale = (float)Math.Pow(10, (rstScale ?? 0));
 
+            LoLimit = _llScale * ll;
+            HiLimit = _hlScale * hl;
+
+            switch (rstScale) {
+                case 15:
+                    u = "f" + u;
+                    break;
+                case 12:
+                    u = "p" + u;
+                    break;
+                case 9:
+                    u = "n" + u;
+                    break;
+                case 6:
+                    u = "u" + u;
+                    break;
+                case 3:
+                    u = "m" + u;
+                    break;
+                case -3:
+                    u = "K" + u;
+                    break;
+                case -6:
+                    u = "M" + u;
+                    break;
+                case -9:
+                    u = "G" + u;
+                    break;
+                case -12:
+                    u = "T" + u;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        public float? GetScaledRst(float? value) {
+            if (!value.HasValue)
+                return null;
+
+            return _rstScale * value;
+        }
     }
+
 }

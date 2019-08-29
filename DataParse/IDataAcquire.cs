@@ -9,17 +9,18 @@ namespace DataParse {
     interface IDataAcquire {
 
         //property get the file default infomation
-        List<byte> Sites { get; }
-        Dictionary<byte, int> SitesChipCount { get; }
-        List<ushort> SoftBins { get; }
-        Dictionary<ushort, int> SoftBinsCount { get; }
-        List<ushort> HardBins { get; }
-        Dictionary<ushort, int> HardBinsCount { get; }
-        List<TestNumber> TestNumbers { get; }
-        Dictionary<TestNumber, ItemInfo> Items { get; }
-        List<int> ChipsId { get; }
+        List<byte> GetSites();
+        Dictionary<byte, int> GetSitesChipCount();
+        List<ushort> GetSoftBins();
+        Dictionary<ushort, int> GetSoftBinsCount();
+        List<ushort> GetHardBins();
+        Dictionary<ushort, int> GetHardBinsCount();
+        List<TestID> GetTestIDs();
+        ItemInfo GetItemInfo(TestID testID);
+        List<int> GetChipsIndexes();
+        List<int> GetChipsIndexes(List<byte> sites);
         int ChipsCount { get; }
-        //List<ChipInfo> ChipsInfo { get; }
+        //List<ChipInfo> GetChipsInfo();
 
         //this info is filtered by filter
         List<byte> GetFilteredSites();
@@ -28,14 +29,9 @@ namespace DataParse {
         Dictionary<ushort, int> GetFilteredSoftBinsCount();
         List<ushort> GetFilteredHardBins();
         Dictionary<ushort, int> GetFilteredHardBinsCount();
-        List<TestNumber> GetFilteredTestNumbers();
-        List<TestNumber> GetFilteredTestNumbers(List<byte> sites);
-        Dictionary<TestNumber, ItemInfo> GetFilteredItems();
-        Dictionary<TestNumber, ItemInfo> GetFilteredItems(List<byte> sites);
-        ItemInfo GetFilteredItemInfo(TestNumber testNumber);
-        ItemInfo GetFilteredItemInfo(TestNumber testNumber, List<byte> sites);
-        List<int> GetFilteredChipsId();
-        List<int> GetFilteredChipsId(List<byte> sites);
+        List<TestID> GetFilteredTestIDs();
+        List<int> GetFilteredChipsIndexes();
+        List<int> GetFilteredChipsIndexes(List<byte> sites);
         List<ChipInfo> GetFilteredChipsInfo();
         List<ChipInfo> GetFilteredChipsInfo(List<byte> sites);
         /// <summary>
@@ -43,11 +39,11 @@ namespace DataParse {
         /// it will be null if the correspond partdon't have result there, 
         /// the filtered part won't take place in the array
         /// </summary>
-        /// <param name="testNumber"></param>
+        /// <param name="testID"></param>
         /// <returns></returns>
-        float?[] GetFilteredItemData(TestNumber testNumber);
+        List<float?> GetFilteredItemData(TestID testID);
 
-        float?[] GetFilteredItemData(TestNumber testNumber, List<byte> sites);
+        List<float?> GetFilteredItemData(TestID testID, List<byte> sites);
 
         /// <summary>
         /// Get the raw data with the applied filter
@@ -72,7 +68,7 @@ namespace DataParse {
         //basic file information
         string FilePath { get; }
         string FileName { get; }
-        FileBasicInfo basicInfo{ get; }
+        FileBasicInfo BasicInfo{ get; }
 
 
         int ParsePercent { get; }

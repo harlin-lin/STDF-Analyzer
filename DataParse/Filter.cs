@@ -19,7 +19,7 @@ namespace DataParse {
         public List<byte> maskSites { get; set; }
         public List<ushort> maskSoftBins { get; set; }
         public List<ushort> maskHardBins { get; set; }
-        public List<TestNumber> maskTestNumbers { get; set; }
+        public List<TestID> maskTestIDs { get; set; }
         public List<int> maskChips { get; set; }
         public List<CordType> maskCords { get; set; }
         public bool ifmaskRtChips { get; set; }
@@ -32,7 +32,7 @@ namespace DataParse {
             maskSites = new List<byte>();
             maskSoftBins = new List<ushort>();
             maskHardBins = new List<ushort>();
-            maskTestNumbers = new List<TestNumber>();
+            maskTestIDs = new List<TestID>();
             maskChips = new List<int>();
             maskCords = new List<CordType>();
             ifmaskRtChips = false;
@@ -45,7 +45,7 @@ namespace DataParse {
             maskSites.Clear();
             maskSoftBins.Clear();
             maskHardBins.Clear();
-            maskTestNumbers.Clear();
+            maskTestIDs.Clear();
             maskChips.Clear();
             maskCords.Clear();
             ifmaskRtChips = false;

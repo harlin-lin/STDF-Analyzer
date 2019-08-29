@@ -19,15 +19,13 @@ namespace Test
         }
 
         static void tryRawData() {
-            RawData rawData = new RawData();
-            Random r = new Random();
 
             Stopwatch sp = new Stopwatch();
 
             sp.Start();
 
-            rawData.AddItem();
-            rawData.Set(0, 4096, (float)r.NextDouble());
+            StdfParse dataParse = new StdfParse(@"E:\Data\CP1-CP-FPA105.1-PTD211I-63K6M956.1-FPA105-21F7-20190721151225.stdf");
+            dataParse.ExtractStdf();
 
             Console.WriteLine(sp.ElapsedMilliseconds);
             sp.Stop();

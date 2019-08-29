@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    class FileBasicInfo {
+    public class FileBasicInfo {
         public DateTime? SetupTime { get; }
         public DateTime? StartTime { get; }
         public DateTime? FinishTime { get; private set; }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    class PinMapRecord {
+    public struct PinMapRecord {
         public UInt16 PinIndex;
         public string ChanName;
         public string PhyName;

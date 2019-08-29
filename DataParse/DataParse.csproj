@@ -43,15 +43,17 @@
   <ItemGroup>
     <Compile Include="ChipInfo.cs" />
     <Compile Include="CordType.cs" />
-    <Compile Include="DataParse.cs" />
+    <Compile Include="StdfParse.cs" />
     <Compile Include="FileBasicInfo.cs" />
     <Compile Include="Filter.cs" />
     <Compile Include="IDataAcquire.cs" />
+    <Compile Include="ItemInfo.cs" />
     <Compile Include="PinGroupRecord.cs" />
     <Compile Include="PinMapRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ItemInfo.cs" />
     <Compile Include="RawData.cs" />
+    <Compile Include="TestChips.cs" />
+    <Compile Include="TestItems.cs" />
     <Compile Include="TestNumber.cs" />
   </ItemGroup>
   <ItemGroup>
