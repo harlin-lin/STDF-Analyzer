@@ -54,7 +54,7 @@
     <Compile Include="RawData.cs" />
     <Compile Include="TestChips.cs" />
     <Compile Include="TestItems.cs" />
-    <Compile Include="TestNumber.cs" />
+    <Compile Include="TestID.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StdfReader\StdfReader.csproj">

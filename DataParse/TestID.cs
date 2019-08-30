@@ -10,18 +10,16 @@ namespace DataParse {
     /// </summary>
     public struct TestID:IEquatable<TestID> {
         public uint MainNumber { get; private set; }
-        public string TestText { get; private set; }
         public uint SubNumber { get; private set; }
 
-        public TestID(uint testNumber, string testText) : this(testNumber, testText, 0) { }
+        public TestID(uint testNumber) : this(testNumber, 0) { }
 
-        public TestID(uint testNumber, string testText, uint subNumber) {
+        public TestID(uint testNumber, uint subNumber) {
             MainNumber = testNumber;
-            TestText = testText;
             SubNumber = subNumber;
         }
         public static TestID NewSubTestID(TestID testID) {
-            return new TestID(testID.MainNumber, testID.TestText, testID.SubNumber++);
+            return new TestID(testID.MainNumber, ++testID.SubNumber);
         }
 
         /// <summary>
@@ -30,12 +28,12 @@ namespace DataParse {
         /// <param name="tn"></param>
         /// <param name="testText"></param>
         /// <returns></returns>
-        public bool CompareTestNumber(uint tn, string testText) {
-            return MainNumber == tn && TestText == testText;
+        public bool CompareTestNumber(uint tn) {
+            return MainNumber == tn;
         }
 
         public override int GetHashCode() {
-            return ((int)MainNumber) ^ TestText.GetHashCode() |((int)SubNumber<<20);
+            return (MainNumber.GetHashCode() ^SubNumber.GetHashCode());
         }
 
         public bool Equals(TestID id) {
@@ -45,7 +43,7 @@ namespace DataParse {
             //如果为同一对象，必然相等
             if (ReferenceEquals(this, id)) return true;
 
-            return id.GetHashCode()==this.GetHashCode();
+            return id.MainNumber==this.MainNumber && id.SubNumber==this.SubNumber;
         }
 
         public override bool Equals(object obj) {

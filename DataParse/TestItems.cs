@@ -54,6 +54,10 @@ namespace DataParse
             return true;
         }
 
+        public void UpdateTestText(TestID testID, string newTestText) {
+            _testItems[testID].SetTestText(newTestText);
+        }
+
         public List<TestID> GetTestIDs() {
             return _testItems.Keys.ToList();
         }

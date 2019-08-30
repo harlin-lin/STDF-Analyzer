@@ -24,7 +24,7 @@ namespace Test
 
             sp.Start();
 
-            StdfParse dataParse = new StdfParse(@"E:\Data\CP1-CP-FPA105.1-PTD211I-63K6M956.1-FPA105-21F7-20190721151225.stdf");
+            StdfParse dataParse = new StdfParse(@"E:\Data\E3200-0101_S905L_FT1_T3NS03.00_AEO932N081-D001_R3_20190817_010216.stdf");
             dataParse.ExtractStdf();
 
             Console.WriteLine(sp.ElapsedMilliseconds);

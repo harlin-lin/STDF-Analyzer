@@ -8,6 +8,7 @@ namespace DataParse
 {
     public class ItemInfo
     {
+        public string TestText { get; private set; }
         public float? LoLimit { get; private set; }
         public float? HiLimit { get; private set; }
         public string Unit { get; private set; }
@@ -15,7 +16,8 @@ namespace DataParse
         private float _hlScale;
         private float _rstScale;
         
-        public ItemInfo(float? ll, float? hl, string unit, sbyte? llScale, sbyte? hlScale, sbyte? rstScale) {
+        public ItemInfo(string testText, float? ll, float? hl, string unit, sbyte? llScale, sbyte? hlScale, sbyte? rstScale) {
+            TestText = testText;
             string u = unit;
             _hlScale = (float)Math.Pow(10, (llScale ?? 0));
             _llScale = (float)Math.Pow(10, (llScale ?? 0));
@@ -56,6 +58,7 @@ namespace DataParse
                     break;
             }
 
+            Unit = u;
         }
 
         public float? GetScaledRst(float? value) {
@@ -63,6 +66,10 @@ namespace DataParse
                 return null;
 
             return _rstScale * value;
+        }
+
+        public void SetTestText(string testText){
+            TestText = testText;
         }
     }
 

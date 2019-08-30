@@ -68,16 +68,18 @@ namespace DataParse{
 
                     TestID testID;
                     //compare with the previous test name to decide the testNO
-                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ptr)r).TestNumber, ((Ptr)r).TestText)) {//it's a sub test
+                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ptr)r).TestNumber)) {//it's a sub test
                         testID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
                         if (!_testItems.ExistTestItem(testID)) {
-                            _testItems.AddTestItem(testID, _testItems.GetItemInfo(ptrLastTN[siteIdx]));
+                            ItemInfo info = _testItems.GetItemInfo(ptrLastTN[siteIdx]);
+                            info.SetTestText(((Ptr)r).TestText);
+                            _testItems.AddTestItem(testID, info);
                             _rawData.AddItem();
                         }
                     } else {
-                        testID = new TestID(((Ptr)r).TestNumber, ((Ptr)r).TestText);
+                        testID = new TestID(((Ptr)r).TestNumber);
                         if (!_testItems.ExistTestItem(testID)) {
-                            _testItems.AddTestItem(testID, new ItemInfo(((Ptr)r).LowLimit, ((Ptr)r).HighLimit, 
+                            _testItems.AddTestItem(testID, new ItemInfo(((Ptr)r).TestText, ((Ptr)r).LowLimit, ((Ptr)r).HighLimit, 
                                 ((Ptr)r).Units, ((Ptr)r).LowLimitScalingExponent, ((Ptr)r).HighLimitScalingExponent, ((Ptr)r).ResultScalingExponent));
                             _rawData.AddItem();
                         }
@@ -93,14 +95,14 @@ namespace DataParse{
 
                     TestID testID;
                     //compare with the previous test name to decide the testNO
-                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ftr)r).TestNumber, ((Ftr)r).TestText)) {//it's a sub test
+                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ftr)r).TestNumber)) {//it's a sub test
                         testID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
                     } else {
-                        testID = new TestID(((Ftr)r).TestNumber, ((Ftr)r).TestText);
+                        testID = new TestID(((Ftr)r).TestNumber);
                     }
 
                     if (!_testItems.ExistTestItem(testID)) {
-                        _testItems.AddTestItem(testID, new ItemInfo((float)0.5, (float)1.5, "", 0, 0, 0));
+                        _testItems.AddTestItem(testID, new ItemInfo(((Ftr)r).TestText, (float)0.5, (float)1.5, "", 0, 0, 0));
                         _rawData.AddItem();
                     }
 
@@ -113,31 +115,35 @@ namespace DataParse{
                     if (!catchedPirFlag[siteIdx])
                         throw new Exception("PIR Data Error");
 
-                    TestID testID= new TestID(((Mpr)r).TestNumber, ((Mpr)r).TestText);
+                    TestID testItemID;
+                    if (ptrLastTN[siteIdx].CompareTestNumber(((Mpr)r).TestNumber)) {//it's a sub test
+                        testItemID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
+                    } else {
+                        testItemID = new TestID(((Mpr)r).TestNumber);
+                    }
+
+                    TestID testID = TestID.NewSubTestID(testItemID);
 
                     for (uint i = 0; i < ((Mpr)r).Results.Count(); i++) {
                         PinMapRecord pin = new PinMapRecord();
                         if (siteIdx == 0 && ((Mpr)r).PinIndexes != null)
                             pin = listPinMaps.Find(x => x.PinIndex == ((Mpr)r).PinIndexes[i]);
-                        else
-                            throw new Exception("MPR Pin doesn't exist");
+                        //else
+                        //    throw new Exception("MPR Pin doesn't exist");
 
-                        testID = new TestID(((Mpr)r).TestNumber, ((Mpr)r).TestText +"<>" + pin.LogicalName, i);
+                        if(i > 0)
+                            testID = TestID.NewSubTestID(testID);
 
-                        if (!_testItems.ExistTestItem(testID) && i == 0) {
-                            _testItems.AddTestItem(testID, new ItemInfo(((Mpr)r).LowLimit, ((Mpr)r).HighLimit,
+                        if (!_testItems.ExistTestItem(testID)) {
+                            _testItems.AddTestItem(testID, new ItemInfo(((Mpr)r).TestText + "<>" + pin.LogicalName, ((Mpr)r).LowLimit, ((Mpr)r).HighLimit,
                                 ((Mpr)r).Units, ((Mpr)r).LowLimitScalingExponent, ((Mpr)r).HighLimitScalingExponent, ((Mpr)r).ResultScalingExponent));
-                            _rawData.AddItem();
-                        }
-                        else if(!_testItems.ExistTestItem(testID) && i > 0) {
-                            _testItems.AddTestItem(testID, _testItems.GetItemInfo(new TestID(((Mpr)r).TestNumber, ((Mpr)r).TestText + "<>" + pin.LogicalName, 0)));
                             _rawData.AddItem();
                         }
 
                         _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Mpr)r).Results[i]);
                     }
 
-                    ptrLastTN[siteIdx] = testID;
+                    ptrLastTN[siteIdx] = testItemID;
                 } else if (r.RecordType == StdfFile.MIR) {
                     BasicInfo = new FileBasicInfo((Mir)r);
                     continue;
