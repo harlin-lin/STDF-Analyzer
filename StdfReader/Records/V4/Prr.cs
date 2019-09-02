@@ -23,8 +23,8 @@ namespace StdfReader.Records.V4 {
                 if ((i -= 2) >= 0) this.HardBin = rd.ReadUInt16();
                 if ((i -= 2) >= 0) {
                     var x = rd.ReadUInt16();
-                    if (x != UInt16.MaxValue)
-                        this.SoftBin = x;
+                    //if (x != UInt16.MaxValue)
+                    this.SoftBin = x;
                 }
                 if ((i -= 2) >= 0) {
                     var x = rd.ReadInt16();
@@ -66,7 +66,7 @@ namespace StdfReader.Records.V4 {
         /// <summary>
         /// While ushort, valid bins must be 0 - 32,767
         /// </summary>
-        public ushort? SoftBin { get; set; }
+        public ushort SoftBin { get; set; }
         public short? XCoordinate { get; set; }
         public short? YCoordinate { get; set; }
         public uint? TestTime { get; set; }
