@@ -10,9 +10,12 @@ namespace DataParse
         public int TotalCount { get; private set; }
         public int RetestCount { get; private set; }
         public int FreshCount { get; private set; }
+
+        public int NullCount { get; private set; }
         public int AbortCount { get; private set; }
         public int PassCount { get; private set; }
         public int FailCount { get; private set; }
+
         private Dictionary<UInt16, int> _hardBins;
         private Dictionary<UInt16, int> _softBins;
 
@@ -28,34 +31,34 @@ namespace DataParse
             _softBins = new Dictionary<ushort, int>();
         }
 
-        public void AddPassChip(bool markRetest = false) {
-            PassCount++;
-            if (markRetest)
-                RetestCount++;
-            else
-                FreshCount++;
-
+        [Obsolete]
+        public void AddChipCount(DeviceType deviceType, ResultType resultType) {
+            switch (deviceType) {
+                case DeviceType.Fresh:
+                    FreshCount++; break;
+                case DeviceType.RT_ID:
+                case DeviceType.RT_Cord:
+                    RetestCount++;
+                    break;
+            }
+            switch (resultType) {
+                case ResultType.Pass:
+                    PassCount++;
+                    break;
+                case ResultType.Fail:
+                    FailCount++;
+                    break;
+                case ResultType.Abort:
+                    AbortCount++;
+                    break;
+                case ResultType.Null:
+                    NullCount++;
+                    break;
+            }
             TotalCount++;
         }
-        public void AddFailChip(bool markRetest = false) {
-            FailCount++;
-            if (markRetest)
-                RetestCount++;
-            else
-                FreshCount++;
 
-            TotalCount++;
-        }
-        public void AddAbortChip(bool markRetest = false) {
-            AbortCount++;
-            if (markRetest)
-                RetestCount++;
-            else
-                FreshCount++;
-
-            TotalCount++;
-        }
-
+        [Obsolete]
         public void AddBinCount(UInt16 hardBin, UInt16 softBin) {
             if (_hardBins.ContainsKey(hardBin))
                 _hardBins[hardBin]++;
@@ -70,10 +73,81 @@ namespace DataParse
 
         }
 
+        public void AddChip(ChipInfo chipInfo) {
+            switch (chipInfo.ChipType) {
+                case DeviceType.Fresh:
+                    FreshCount++; break;
+                case DeviceType.RT_ID:
+                case DeviceType.RT_Cord:
+                    RetestCount++;
+                    break;
+            }
+            switch (chipInfo.Result) {
+                case ResultType.Pass:
+                    PassCount++;
+                    break;
+                case ResultType.Fail:
+                    FailCount++;
+                    break;
+                case ResultType.Abort:
+                    AbortCount++;
+                    break;
+                case ResultType.Null:
+                    NullCount++;
+                    break;
+            }
+            TotalCount++;
+
+            if (_hardBins.ContainsKey(chipInfo.HardBin))
+                _hardBins[chipInfo.HardBin]++;
+            else
+                _hardBins.Add(chipInfo.HardBin, 1);
+
+
+            if (_softBins.ContainsKey(chipInfo.SoftBin))
+                _softBins[chipInfo.SoftBin]++;
+            else
+                _softBins.Add(chipInfo.SoftBin, 1);
+        }
+
+        public void Add(ChipSummary summary) {
+            this.TotalCount += summary.TotalCount;
+            this.FreshCount += summary.FreshCount;
+            this.RetestCount += summary.RetestCount;
+            this.NullCount += summary.NullCount;
+            this.PassCount += summary.PassCount;
+            this.FailCount += summary.FailCount;
+            this.AbortCount += summary.AbortCount;
+
+            foreach(var v in summary.GetHardBins()) {
+                if (_hardBins.ContainsKey(v.Key))
+                    _hardBins[v.Key] += v.Value;
+                else
+                    _hardBins.Add(v.Key, v.Value);
+            }
+
+            foreach (var v in summary.GetSoftBins()) {
+                if (_softBins.ContainsKey(v.Key))
+                    _softBins[v.Key] += v.Value;
+                else
+                    _softBins.Add(v.Key, v.Value);
+            }
+
+        }
+        public static ChipSummary Combine(Dictionary<byte, ChipSummary> summaryBySite) {
+            ChipSummary summary = new ChipSummary();
+
+            foreach(var v in summaryBySite) {
+                summary.Add(v.Value);
+            }
+
+            return summary;
+        }
+
     }
 
     public class TestSummary{
-
+        //TBD...
 
     }
 

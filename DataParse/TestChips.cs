@@ -10,11 +10,13 @@ namespace DataParse
         private List<ChipInfo> _testChips;
         private List<int> _chipIndexes;
         private List<bool> _ChipFilter;
+        Dictionary<byte, ChipSummary> _chipSummary;
 
         public TestChips(int capacity) {
             _testChips = new List<ChipInfo>(capacity);
             _chipIndexes = new List<int>(capacity);
             _ChipFilter = new List<bool>(capacity);
+            _chipSummary = new Dictionary<byte, ChipSummary>();
         }
 
         public void AddChip(ChipInfo chipInfo) {
@@ -80,6 +82,57 @@ namespace DataParse
             }
             return infos;
         }
+
+        private void UpdateSummary() {
+
+            for (int i = 0; i < _testChips.Count; i++) {
+                if (!_ChipFilter[i]) continue;
+                if (!_chipSummary.ContainsKey(_testChips[i].Site)) 
+                    _chipSummary.Add(_testChips[i].Site, new ChipSummary());
+
+                _chipSummary[_testChips[i].Site].AddChip(_testChips[i]);
+            }
+
+        }
+
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
+            UpdateSummary();
+            return new Dictionary<byte, ChipSummary>(_chipSummary);
+        }
+
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites) {
+            Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
+
+            UpdateSummary();
+            foreach(byte s in sites) {
+                if (_chipSummary.ContainsKey(s))
+                    summary.Add(s, _chipSummary[s]);
+                else
+                    summary.Add(s, new ChipSummary());
+            }
+
+            return summary;
+        }
+
+        public ChipSummary GetChipSummary() {
+            UpdateSummary();
+            return ChipSummary.Combine(_chipSummary);
+        }
+
+        public ChipSummary GetChipSummary(List<byte> sites) {
+            Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
+
+            UpdateSummary();
+            foreach (byte s in sites) {
+                if (_chipSummary.ContainsKey(s))
+                    summary.Add(s, _chipSummary[s]);
+                else
+                    summary.Add(s, new ChipSummary());
+            }
+
+            return ChipSummary.Combine(_chipSummary);
+        }
+
 
     }
 }

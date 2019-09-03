@@ -85,41 +85,41 @@ namespace StdfReader.Records.V4 {
 
         public bool SupersedesPartId {
             get { return (PartFlag & _SupersedesPartIdMask) != 0; }
-            set {
-                if (value) PartFlag |= _SupersedesPartIdMask;
-                else PartFlag &= (byte)~_SupersedesPartIdMask;
-            }
+            //set {
+            //    if (value) PartFlag |= _SupersedesPartIdMask;
+            //    else PartFlag &= (byte)~_SupersedesPartIdMask;
+            //}
         }
 
         public bool SupersedesCoords {
             get { return (PartFlag & _SupersedesCoordsMask) != 0; }
-            set {
-                if (value) PartFlag |= _SupersedesCoordsMask;
-                else PartFlag &= (byte)~_SupersedesCoordsMask;
-            }
+            //set {
+            //    if (value) PartFlag |= _SupersedesCoordsMask;
+            //    else PartFlag &= (byte)~_SupersedesCoordsMask;
+            //}
         }
 
         public bool AbnormalTest {
             get { return (PartFlag & _AbnormalTestMask) != 0; }
-            set {
-                if (value) PartFlag |= _AbnormalTestMask;
-                else PartFlag &= (byte)~_AbnormalTestMask;
-            }
+            //set {
+            //    if (value) PartFlag |= _AbnormalTestMask;
+            //    else PartFlag &= (byte)~_AbnormalTestMask;
+            //}
         }
 
         public bool? Failed {
             get { return (PartFlag & _FailFlagInvalidMask) != 0 ? (bool?)null : (PartFlag & _FailedMask) != 0; }
-            set {
-                if (value == null) {
-                    PartFlag &= (byte)~_FailedMask;
-                    PartFlag |= _FailFlagInvalidMask;
-                }
-                else {
-                    PartFlag &= (byte)~_FailFlagInvalidMask;
-                    if ((bool)value) PartFlag |= _FailedMask;
-                    else PartFlag &= (byte)~_FailedMask;
-                }
-            }
+            //set {
+            //    if (value == null) {
+            //        PartFlag &= (byte)~_FailedMask;
+            //        PartFlag |= _FailFlagInvalidMask;
+            //    }
+            //    else {
+            //        PartFlag &= (byte)~_FailFlagInvalidMask;
+            //        if ((bool)value) PartFlag |= _FailedMask;
+            //        else PartFlag &= (byte)~_FailedMask;
+            //    }
+            //}
         }
     }
 }

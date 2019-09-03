@@ -183,16 +183,10 @@ namespace DataParse{
                     else
                         catchedPirFlag[siteIdx] = false;
 
-                    _testChips.AddChip(new ChipInfo(((Prr)r).SiteNumber,
-                        ((Prr)r).TestTime,
-                        ((Prr)r).HardBin,
-                        ((Prr)r).SoftBin,
-                        ((Prr)r).PartId,
-                        new CordType(((Prr)r).XCoordinate, ((Prr)r).YCoordinate),
-                        ((((Prr)r).PartFlag & 0x18) == 0),
-                        (((((Prr)r).PartFlag >> 0) & 0x01) != ((((Prr)r).PartFlag >> 1) & 0x01)),
-                        InternalID[siteIdx]));
-                } else if (r.RecordType == StdfFile.MRR) {
+                    _testChips.AddChip(new ChipInfo((Prr)r, InternalID[siteIdx]));
+                }else if (r.RecordType == StdfFile.TSR) {
+                    _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), ((Tsr)r).TestLabel);
+                }else if (r.RecordType == StdfFile.MRR) {
                     BasicInfo.AddMrr((Mrr)r);
                 }
 
@@ -289,6 +283,19 @@ namespace DataParse{
 
         public DataTable GetFilteredData(List<int> chipsId, List<byte> sites) { throw new NotImplementedException(); }
 
+
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
+            return _testChips.GetChipSummaryBySite();
+        }
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites) {
+            return _testChips.GetChipSummaryBySite(sites);
+        }
+        public ChipSummary GetChipSummary() {
+            return _testChips.GetChipSummary();
+        }
+        public ChipSummary GetChipSummary(List<byte> sites) {
+            return _testChips.GetChipSummary(sites);
+        }
 
 
     }

@@ -65,6 +65,12 @@ namespace DataParse {
 
         DataTable GetFilteredData(List<int> chipsId, List<byte> sites);
 
+
+        Dictionary<byte, ChipSummary> GetChipSummaryBySite();
+        Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites);
+        ChipSummary GetChipSummary();
+        ChipSummary GetChipSummary(List<byte> sites);
+
         //basic file information
         string FilePath { get; }
         string FileName { get; }
