@@ -58,7 +58,7 @@ namespace DataParse
             _testItems[testID].SetTestText(newTestText);
         }
 
-        public List<TestID> GetTestIDs() {
+        public List<TestID> GetTestIDsDefault() {
             return _testItems.Keys.ToList();
         }
         public ItemInfo GetItemInfo(TestID testID) {
@@ -68,13 +68,22 @@ namespace DataParse
             else
                 return null;
         }
-        public List<TestID> GetFilteredTestIDs() {
+        public List<TestID> GetTestIDsFiltered() {
             List<TestID> testIDs = new List<TestID>(_testItems.Count);
             for(int i=0; i< _ItemFilter.Count; i++) {
                 if (_ItemFilter[i])
                     testIDs.Add(_testItems.ElementAt(i).Key);
             }
             return testIDs;
+        }
+
+        public void UpdateItemFilter(Filter filter) {
+            for (int i = 0; i < _testItems.Count; i++) {
+                if (filter.maskTestIDs.Contains(_testItems.Keys.ElementAt(i)))
+                    _ItemFilter[i] = false;
+                else
+                    _ItemFilter[i] = true;
+            }
         }
 
     }

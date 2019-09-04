@@ -10,13 +10,19 @@ namespace DataParse
         private List<ChipInfo> _testChips;
         private List<int> _chipIndexes;
         private List<bool> _ChipFilter;
-        Dictionary<byte, ChipSummary> _chipSummary;
+        private Dictionary<byte, ChipSummary> _chipSummaryFiltered;
+        private Dictionary<byte, ChipSummary> _chipSummaryDefault;
+        private bool NeedUpdateAfterFilterChanged;
+        private bool DefaultSummaryDone;
 
         public TestChips(int capacity) {
             _testChips = new List<ChipInfo>(capacity);
             _chipIndexes = new List<int>(capacity);
             _ChipFilter = new List<bool>(capacity);
-            _chipSummary = new Dictionary<byte, ChipSummary>();
+            _chipSummaryFiltered = new Dictionary<byte, ChipSummary>();
+            _chipSummaryDefault = new Dictionary<byte, ChipSummary>();
+            NeedUpdateAfterFilterChanged = true; //true for first time call
+            DefaultSummaryDone = false;
         }
 
         public void AddChip(ChipInfo chipInfo) {
@@ -27,7 +33,7 @@ namespace DataParse
 
         public int ChipsCount {
             get {
-                return _chipIndexes.Count;
+                return _testChips.Count;
             }
         }
 
@@ -83,30 +89,32 @@ namespace DataParse
             return infos;
         }
 
-        private void UpdateSummary() {
+        private void UpdateSummaryFiltered() {
+
+            if (!NeedUpdateAfterFilterChanged) return;
 
             for (int i = 0; i < _testChips.Count; i++) {
                 if (!_ChipFilter[i]) continue;
-                if (!_chipSummary.ContainsKey(_testChips[i].Site)) 
-                    _chipSummary.Add(_testChips[i].Site, new ChipSummary());
+                if (!_chipSummaryFiltered.ContainsKey(_testChips[i].Site)) 
+                    _chipSummaryFiltered.Add(_testChips[i].Site, new ChipSummary());
 
-                _chipSummary[_testChips[i].Site].AddChip(_testChips[i]);
+                _chipSummaryFiltered[_testChips[i].Site].AddChip(_testChips[i]);
             }
-
+            NeedUpdateAfterFilterChanged = false;
         }
 
-        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
-            UpdateSummary();
-            return new Dictionary<byte, ChipSummary>(_chipSummary);
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySiteFiltered() {
+            UpdateSummaryFiltered();
+            return new Dictionary<byte, ChipSummary>(_chipSummaryFiltered);
         }
 
-        public Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites) {
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySiteFiltered(List<byte> sites) {
             Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
 
-            UpdateSummary();
-            foreach(byte s in sites) {
-                if (_chipSummary.ContainsKey(s))
-                    summary.Add(s, _chipSummary[s]);
+            UpdateSummaryFiltered();
+            foreach (byte s in sites) {
+                if (_chipSummaryFiltered.ContainsKey(s))
+                    summary.Add(s, _chipSummaryFiltered[s]);
                 else
                     summary.Add(s, new ChipSummary());
             }
@@ -114,25 +122,131 @@ namespace DataParse
             return summary;
         }
 
-        public ChipSummary GetChipSummary() {
-            UpdateSummary();
-            return ChipSummary.Combine(_chipSummary);
+        public ChipSummary GetChipSummaryFiltered() {
+            UpdateSummaryFiltered();
+            return ChipSummary.Combine(_chipSummaryFiltered);
         }
 
-        public ChipSummary GetChipSummary(List<byte> sites) {
+        public ChipSummary GetChipSummaryFiltered(List<byte> sites) {
             Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
 
-            UpdateSummary();
+            UpdateSummaryFiltered();
             foreach (byte s in sites) {
-                if (_chipSummary.ContainsKey(s))
-                    summary.Add(s, _chipSummary[s]);
+                if (_chipSummaryFiltered.ContainsKey(s))
+                    summary.Add(s, _chipSummaryFiltered[s]);
                 else
                     summary.Add(s, new ChipSummary());
             }
 
-            return ChipSummary.Combine(_chipSummary);
+            return ChipSummary.Combine(_chipSummaryFiltered);
         }
 
+
+        private void UpdateSummaryDefault() {
+            if (DefaultSummaryDone) return;
+            for (int i = 0; i < _testChips.Count; i++) {
+                if (!_chipSummaryDefault.ContainsKey(_testChips[i].Site))
+                    _chipSummaryDefault.Add(_testChips[i].Site, new ChipSummary());
+
+                _chipSummaryDefault[_testChips[i].Site].AddChip(_testChips[i]);
+            }
+            DefaultSummaryDone = true;
+        }
+
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySiteDefault() {
+            UpdateSummaryDefault();
+            return new Dictionary<byte, ChipSummary>(_chipSummaryDefault);
+        }
+
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySiteDefault(List<byte> sites) {
+            Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
+
+            UpdateSummaryDefault();
+            foreach(byte s in sites) {
+                if (_chipSummaryDefault.ContainsKey(s))
+                    summary.Add(s, _chipSummaryDefault[s]);
+                else
+                    summary.Add(s, new ChipSummary());
+            }
+
+            return summary;
+        }
+
+        public ChipSummary GetChipSummaryDefault() {
+            UpdateSummaryDefault();
+            return ChipSummary.Combine(_chipSummaryDefault);
+        }
+
+        public ChipSummary GetChipSummaryDefault(List<byte> sites) {
+            Dictionary<byte, ChipSummary> summary = new Dictionary<byte, ChipSummary>();
+
+            UpdateSummaryDefault();
+            foreach (byte s in sites) {
+                if (_chipSummaryDefault.ContainsKey(s))
+                    summary.Add(s, _chipSummaryDefault[s]);
+                else
+                    summary.Add(s, new ChipSummary());
+            }
+
+            return ChipSummary.Combine(_chipSummaryDefault);
+        }
+
+
+        public void UpdateChipFilter(Filter filter) {
+
+            for(int i=0; i< _testChips.Count; i++) {
+                _ChipFilter[i] = true;
+
+                //site
+                if (filter.maskSites.Contains(_testChips[i].Site)) {
+                    _ChipFilter[i] = false;
+                    continue;
+                }
+
+                //softbin
+                if (filter.maskSoftBins.Contains(_testChips[i].SoftBin)) {
+                    _ChipFilter[i] = false;
+                    continue;
+                }
+
+                //hardbin
+                if (filter.maskHardBins.Contains(_testChips[i].HardBin)) {
+                    _ChipFilter[i] = false;
+                    continue;
+                }
+
+                //cords
+                if (filter.maskCords.Contains(_testChips[i].WaferCord)) {
+                    _ChipFilter[i] = false;
+                    continue;
+                }
+
+            }
+            //index
+            foreach (int i in filter.maskChips) {
+                _ChipFilter[i] = false;
+            }
+
+            //dupicate chip
+            if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectFirst) {
+                for(int i = 0; i < _testChips.Count; i++) {
+                    for(int j = i + 1; j < _testChips.Count; j++) {
+                        if(_testChips[i].PartId==_testChips[j].PartId || _testChips[i].WaferCord == _testChips[j].WaferCord) 
+                            _ChipFilter[j] = false;
+                    }
+                }
+            } 
+            else {
+                for (int i = _testChips.Count-1; i >= 0; i--) {
+                    for (int j = i - 1; j >= 0; j--) {
+                        if (_testChips[i].PartId == _testChips[j].PartId || _testChips[i].WaferCord == _testChips[j].WaferCord)
+                            _ChipFilter[j] = false;
+                    }
+                }
+            }
+
+            NeedUpdateAfterFilterChanged = true;
+        }
 
     }
 }

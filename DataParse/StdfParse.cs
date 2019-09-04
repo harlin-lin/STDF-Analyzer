@@ -28,6 +28,7 @@ namespace DataParse{
         }
 
 
+
         public StdfParse(String filePath) {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
@@ -202,14 +203,32 @@ namespace DataParse{
         }
 
         ////property get the file default infomation
-        public List<byte> GetSites() { throw new NotImplementedException(); }
-        public Dictionary<byte, int> GetSitesChipCount() { throw new NotImplementedException(); }
-        public List<ushort> GetSoftBins() { throw new NotImplementedException(); }
-        public Dictionary<ushort, int> GetSoftBinsCount() { throw new NotImplementedException(); }
-        public List<ushort> GetHardBins() { throw new NotImplementedException(); }
-        public Dictionary<ushort, int> GetHardBinsCount() { throw new NotImplementedException(); }
+        public List<byte> GetSites() {
+            return new List<byte>(_sites.Keys);
+        }
+        public Dictionary<byte, int> GetSitesChipCount() {
+            var vv = _testChips.GetChipSummaryBySiteDefault();
+            Dictionary<byte, int> rst = new Dictionary<byte, int>();
+            foreach(var v in vv) {
+                rst.Add(v.Key, v.Value.TotalCount);
+            }
+
+            return rst;
+        }
+        public List<ushort> GetSoftBins() {
+            return new List<ushort>(_testChips.GetChipSummaryDefault().GetSoftBins().Keys);
+        }
+        public Dictionary<ushort, int> GetSoftBinsCount() {
+            return new Dictionary<ushort, int>(_testChips.GetChipSummaryDefault().GetSoftBins());
+        }
+        public List<ushort> GetHardBins() {
+            return new List<ushort>(_testChips.GetChipSummaryDefault().GetHardBins().Keys);
+        }
+        public Dictionary<ushort, int> GetHardBinsCount() {
+            return new Dictionary<ushort, int>(_testChips.GetChipSummaryDefault().GetHardBins());
+        }
         public List<TestID> GetTestIDs() {
-            return _testItems.GetTestIDs();
+            return _testItems.GetTestIDsDefault();
         }
         public ItemInfo GetItemInfo(TestID testID) {
             return _testItems.GetItemInfo(testID);
@@ -227,14 +246,32 @@ namespace DataParse{
         }
 
         ////this info is filtered by filter
-        public List<byte> GetFilteredSites() { throw new NotImplementedException(); }
-        public Dictionary<byte, int> GetFilteredSitesChipCount() { throw new NotImplementedException(); }
-        public List<ushort> GetFilteredSoftBins() { throw new NotImplementedException(); }
-        public Dictionary<ushort, int> GetFilteredSoftBinsCount() { throw new NotImplementedException(); }
-        public List<ushort> GetFilteredHardBins() { throw new NotImplementedException(); }
-        public Dictionary<ushort, int> GetFilteredHardBinsCount() { throw new NotImplementedException(); }
+        public List<byte> GetFilteredSites() {
+            return new List<byte>(_testChips.GetChipSummaryBySiteFiltered().Keys);
+        }
+        public Dictionary<byte, int> GetFilteredSitesChipCount() {
+            var vv = _testChips.GetChipSummaryBySiteFiltered();
+            Dictionary<byte, int> rst = new Dictionary<byte, int>();
+            foreach (var v in vv) {
+                rst.Add(v.Key, v.Value.TotalCount);
+            }
+
+            return rst;
+        }
+        public List<ushort> GetFilteredSoftBins() {
+            return new List<ushort>(_testChips.GetChipSummaryFiltered().GetSoftBins().Keys);
+        }
+        public Dictionary<ushort, int> GetFilteredSoftBinsCount() {
+            return new Dictionary<ushort, int>(_testChips.GetChipSummaryFiltered().GetSoftBins());
+        }
+        public List<ushort> GetFilteredHardBins() {
+            return new List<ushort>(_testChips.GetChipSummaryFiltered().GetHardBins().Keys);
+        }
+        public Dictionary<ushort, int> GetFilteredHardBinsCount() {
+            return new Dictionary<ushort, int>(_testChips.GetChipSummaryFiltered().GetHardBins());
+        }
         public List<TestID> GetFilteredTestIDs() {
-            return _testItems.GetFilteredTestIDs();
+            return _testItems.GetTestIDsFiltered();
         }
         public List<int> GetFilteredChipsIndexes() {
             return _testChips.GetFilteredChipsIndexes();
@@ -256,45 +293,51 @@ namespace DataParse{
         /// <param name="testID"></param>
         /// <returns></returns>
         public List<float?> GetFilteredItemData(TestID testID) {
-            return _rawData.GetItemData(_testItems.GetIndex(testID), _testChips.GetChipFilter());
+            //return _rawData.GetItemData(_testItems.GetIndex(testID)).ToList();
         }
 
         public List<float?> GetFilteredItemData(TestID testID, List<byte> sites) {
-            return _rawData.GetItemData(_testItems.GetIndex(testID), _testChips.GetChipFilter(sites));
+            //return _rawData.GetItemData(_testItems.GetIndex(testID), _testChips.GetChipFilter(sites));
         }
 
-        ///// <summary>
-        ///// Get the raw data with the applied filter
-        ///// </summary>
-        ///// <param name="startIndex">Start index is 0</param>
-        ///// <param name="count">Will only return the actually availiable chips' data if the count greater than the actually selected chips' count</param>
-        ///// <returns></returns>
-        public DataTable GetFilteredData(int startIndex, int count) { throw new NotImplementedException(); }
+        /// <summary>
+        /// Get the raw data with the applied filter
+        /// </summary>
+        /// <param name="startIndex">Start index is 0</param>
+        /// <param name="count">Will only return the actually availiable chips' data if the count greater than the actually selected chips' count</param>
+        /// <returns></returns>
+        public float?[][] GetFilteredData(int startIndex, int count) {
+            var ids = _testItems.GetTestIDsFiltered();
+
+            float?[][] rst = new float?[ids.Count][];
+
+            for(int r=0; r< ids.Count; r++) {
+                rst[r] = _rawData.GetItemData(_testItems.GetIndex(ids[r]), startIndex, count);
+            }
+
+            return rst;
+        }
 
         public DataTable GetFilteredData(int startIndex, int count, List<byte> sites) { throw new NotImplementedException(); }
 
-        ///// <summary>
-        ///// To get selected chips' data, will return null if all of the chips are filtered or all test items are filtered
-        ///// It's not recommended to get the whole data by this method, please use [DataTable GetFilteredData(int startIndex, int count);] instead
-        ///// </summary>
-        ///// <param name="chipsId"></param>
-        ///// <returns></returns>
-        public DataTable GetFilteredData(List<int> chipsId) { throw new NotImplementedException(); }
-
-        public DataTable GetFilteredData(List<int> chipsId, List<byte> sites) { throw new NotImplementedException(); }
-
 
         public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
-            return _testChips.GetChipSummaryBySite();
+            return _testChips.GetChipSummaryBySiteFiltered();
         }
         public Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites) {
-            return _testChips.GetChipSummaryBySite(sites);
+            return _testChips.GetChipSummaryBySiteFiltered(sites);
         }
         public ChipSummary GetChipSummary() {
-            return _testChips.GetChipSummary();
+            return _testChips.GetChipSummaryFiltered();
         }
         public ChipSummary GetChipSummary(List<byte> sites) {
-            return _testChips.GetChipSummary(sites);
+            return _testChips.GetChipSummaryFiltered(sites);
+        }
+
+        public void SetFilter(Filter filter) {
+            _testChips.UpdateChipFilter(filter);
+            _testItems.UpdateItemFilter(filter);
+            _rawData.SetFilter(_testChips.GetChipFilter());
         }
 
 

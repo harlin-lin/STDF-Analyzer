@@ -55,15 +55,15 @@ namespace DataParse {
 
         DataTable GetFilteredData(int startIndex, int count, List<byte> sites);
 
-        /// <summary>
-        /// To get selected chips' data, will return null if all of the chips are filtered or all test items are filtered
-        /// It's not recommended to get the whole data by this method, please use [DataTable GetFilteredData(int startIndex, int count);] instead
-        /// </summary>
-        /// <param name="chipsId"></param>
-        /// <returns></returns>
-        DataTable GetFilteredData(List<int> chipsId);
+        ///// <summary>
+        ///// To get selected chips' data, will return null if all of the chips are filtered or all test items are filtered
+        ///// It's not recommended to get the whole data by this method, please use [DataTable GetFilteredData(int startIndex, int count);] instead
+        ///// </summary>
+        ///// <param name="chipsId"></param>
+        ///// <returns></returns>
+        //DataTable GetFilteredData(List<int> chipsId);
 
-        DataTable GetFilteredData(List<int> chipsId, List<byte> sites);
+        //DataTable GetFilteredData(List<int> chipsId, List<byte> sites);
 
 
         Dictionary<byte, ChipSummary> GetChipSummaryBySite();
@@ -75,6 +75,10 @@ namespace DataParse {
         string FilePath { get; }
         string FileName { get; }
         FileBasicInfo BasicInfo{ get; }
+
+
+        //filter
+        void SetFilter(Filter filter);
 
 
         int ParsePercent { get; }

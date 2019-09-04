@@ -9,6 +9,8 @@ namespace DataParse {
         public const int DefaultItemsCapacity = 300;
         public const int DefaultFixedDataBlockLength = 4096;  //means 2^12
         private const int DefaultFixedDataBits = 12;  //means 2^12
+        private List<bool> _ChipFilter;
+
 
         private class ItemData
         {
@@ -61,18 +63,18 @@ namespace DataParse {
             }
 
             [Obsolete]
-            public List<float?> GetItem(int count) {
+            public float?[] GetItem(int count) {
                 if (count <= DefaultFixedDataBlockLength)
-                    return this._itemData[0].itemDataBlock.Take(count).ToList();
+                    return this._itemData[0].itemDataBlock.Take(count).ToArray();
                 else {
-                    List<float?> rt = new List<float?>(count);
+                    float?[] rt = new float?[count];
                     int i = 0;
                     while ((count -= DefaultFixedDataBlockLength) >= 0 && i < _itemData.Count) {
-                        rt.AddRange(_itemData[i].itemDataBlock);
+                        _itemData[i].itemDataBlock.CopyTo(rt, i* DefaultFixedDataBlockLength);
                         i++;
                     }
                     if(i < _itemData.Count)
-                        rt.AddRange(_itemData[i].itemDataBlock.Take(count));
+                        _itemData[i].itemDataBlock.Take(count).ToArray().CopyTo(rt, i * DefaultFixedDataBlockLength);
 
                     return rt;
                 }
@@ -85,30 +87,30 @@ namespace DataParse {
             /// <param name="count"></param>
             /// <param name="filter"></param>
             /// <returns></returns>
-            public List<float?> GetItem(int indexFrom, int count, List<bool> filter) {
-                List<float?> rt = new List<float?>(count);
+            public float?[] GetItem(int indexFrom, int count, List<bool> filter) {
+                float?[] rt = new float?[count];
 
                 int index = indexFrom;
                 for (int i=0; i< count; i++) {
                     index += i;
                     if (index > _capacity)  break;
 
-                    if (filter[i]) 
-                        rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                    if (filter[index]) 
+                        rt[i] = (_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
 
                 return rt;
             }
 
-            public List<float?> GetItem(int indexFrom, int count) {
-                List<float?> rt = new List<float?>(count);
+            public float?[] GetItem(int indexFrom, int count) {
+                float?[] rt = new float?[count];
 
                 int index = indexFrom;
                 for (int i = 0; i < count; i++) {
                     index += i;
                     if (index > _capacity) break;
 
-                    rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                    rt[i]=(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
 
                 return rt;
@@ -122,6 +124,10 @@ namespace DataParse {
         public RawData() {
             _data = new List<ItemData>(DefaultItemsCapacity);
             ChipCount = 0;
+        }
+
+        public void SetFilter(List<bool> filter) {
+            _ChipFilter = filter;
         }
 
         /// <summary>
@@ -140,20 +146,20 @@ namespace DataParse {
         }
 
 
-        public List<float?> GetItemData(int itemIndex) {
+        public float?[] GetItemData(int itemIndex) {
             return _data[itemIndex].GetItem(0, ChipCount);
         }
 
-        public List<float?> GetItemData(int itemIndex, int chipIndexFrom, int count) {
+        public float?[] GetItemData(int itemIndex, int chipIndexFrom, int count) {
             return _data[itemIndex].GetItem(chipIndexFrom, count);
         }
 
-        public List<float?> GetItemData(int itemIndex, List<bool> filter) {
-            return _data[itemIndex].GetItem(0, ChipCount, filter);
+        public float?[] GetItemDataFiltered(int itemIndex) {
+            return _data[itemIndex].GetItem(0, ChipCount, _ChipFilter);
         }
 
-        public List<float?> GetItemData(int itemIndex, int chipIndexFrom, int count, List<bool> filter) {
-            return _data[itemIndex].GetItem(chipIndexFrom, count, filter);
+        public float?[] GetItemDataFiltered(int itemIndex, int chipIndexFrom, int count) {
+            return _data[itemIndex].GetItem(chipIndexFrom, count, _ChipFilter);
         }
 
 
@@ -172,154 +178,6 @@ namespace DataParse {
             _data[itemIndex][chipIndex]=value;
         }
 
-        //#region  FilterMethod
-        //public void SetChipFilter(List<bool> filter) {
-        //    if (filter.Count != ChipCount)
-        //        throw new ArgumentException("list count not match the chip count", "filter");
-        //    else
-        //        ChipFilter = filter;
-        //}
 
-        //public void SetChipFilter(int index, bool filter) {
-        //    if (index > (ChipCount - 1))
-        //        throw new ArgumentOutOfRangeException("index", "index out of chip range");
-        //    else
-        //        ChipFilter[index] = filter;
-        //}
-
-        //public void MaskChips(int index) {
-        //    if (index > (ChipCount - 1))
-        //        throw new ArgumentOutOfRangeException("index", "index out of chip range");
-        //    else
-        //        ChipFilter[index] = false;
-        //}
-
-        //public void MaskChips(List<int> indexes) {
-        //    foreach(int i in indexes) {
-        //        if (i > (ChipCount - 1))
-        //            throw new ArgumentOutOfRangeException("index", "index out of chip range");
-        //        else
-        //            ChipFilter[i] = false;
-        //    }
-        //}
-
-        //public void MaskChips(int indexFrom, int indexTo) {
-        //    if (indexTo > (ChipCount - 1))
-        //        throw new ArgumentOutOfRangeException("indexTo", "index out of chip range");
-        //    else {
-        //        for(int i=indexFrom; i<=indexTo; i++)
-        //            ChipFilter[i] = false;
-        //    }
-        //}
-
-        //public void EnableChips(int index) {
-        //    if (index > (ChipCount - 1))
-        //        throw new ArgumentOutOfRangeException("index", "index out of chip range");
-        //    else
-        //        ChipFilter[index] = true;
-        //}
-
-        //public void EnableChips(List<int> indexes) {
-        //    foreach (int i in indexes) {
-        //        if (i > (ChipCount - 1))
-        //            throw new ArgumentOutOfRangeException("index", "index out of chip range");
-        //        else
-        //            ChipFilter[i] = true;
-        //    }
-        //}
-
-        //public void EnableChips(int indexFrom, int indexTo) {
-        //    if (indexTo > (ChipCount - 1))
-        //        throw new ArgumentOutOfRangeException("indexTo", "index out of chip range");
-        //    else {
-        //        for (int i = indexFrom; i <= indexTo; i++)
-        //            ChipFilter[i] = true;
-        //    }
-        //}
-
-        //public void ClearChipFilter() {
-        //    for (int i = 0; i < ChipFilter.Count; i++)
-        //        ChipFilter[i] = true;
-        //}
-
-
-
-        ////public void SetItemFilter(List<bool> filter) {
-        ////    if (filter.Count != _data.Count)
-        ////        throw new ArgumentException("list count not match the item count", "filter");
-        ////    else
-        ////        ItemFilter = filter;
-        ////}
-
-        ////public void SetItemFilter(int index, bool filter) {
-        ////    if (index > (_data.Count - 1))
-        ////        throw new ArgumentOutOfRangeException("index", "index out of item range");
-        ////    else
-        ////        ItemFilter[index] = filter;
-        ////}
-
-        ////public void MaskItems(int index) {
-        ////    if (index > (_data.Count - 1))
-        ////        throw new ArgumentOutOfRangeException("index", "index out of item range");
-        ////    else
-        ////        ItemFilter[index] = false;
-        ////}
-
-        ////public void MaskItems(List<int> indexes) {
-        ////    foreach (int i in indexes) {
-        ////        if (i > (_data.Count - 1))
-        ////            throw new ArgumentOutOfRangeException("index", "index out of item range");
-        ////        else
-        ////            ItemFilter[i] = false;
-        ////    }
-        ////}
-
-        ////public void MaskItems(int indexFrom, int indexTo) {
-        ////    if (indexTo > (_data.Count - 1))
-        ////        throw new ArgumentOutOfRangeException("indexTo", "index out of item range");
-        ////    else {
-        ////        for (int i = indexFrom; i <= indexTo; i++)
-        ////            ItemFilter[i] = false;
-        ////    }
-        ////}
-
-        ////public void EnableItems(int index) {
-        ////    if (index > (_data.Count - 1))
-        ////        throw new ArgumentOutOfRangeException("index", "index out of item range");
-        ////    else
-        ////        ItemFilter[index] = true;
-        ////}
-
-        ////public void EnableItems(List<int> indexes) {
-        ////    foreach (int i in indexes) {
-        ////        if (i > (_data.Count - 1))
-        ////            throw new ArgumentOutOfRangeException("index", "index out of item range");
-        ////        else
-        ////            ItemFilter[i] = true;
-        ////    }
-        ////}
-
-        ////public void EnableItems(int indexFrom, int indexTo) {
-        ////    if (indexTo > (_data.Count - 1))
-        ////        throw new ArgumentOutOfRangeException("indexTo", "index out of item range");
-        ////    else {
-        ////        for (int i = indexFrom; i <= indexTo; i++)
-        ////            ItemFilter[i] = true;
-        ////    }
-        ////}
-
-        ////public void ClearItemFilter() {
-        ////    for (int i = 0; i < ItemFilter.Count; i++)
-        ////        ItemFilter[i] = true;
-        ////}
-
-
-        ////public void ClearFilters() {
-        ////    ClearChipFilter();
-        ////    ClearItemFilter();
-        ////}
-        //#endregion
-
-
-        }
     }
+}

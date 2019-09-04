@@ -5,10 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    public enum RetestSelectMode{
-        SelectFirst,
-        SelectLast
-    }
     public enum DuplicateSelectMode {
         SelectFirst,
         SelectLast
@@ -19,14 +15,12 @@ namespace DataParse {
         public List<byte> maskSites { get; set; }
         public List<ushort> maskSoftBins { get; set; }
         public List<ushort> maskHardBins { get; set; }
-        public List<TestID> maskTestIDs { get; set; }
         public List<int> maskChips { get; set; }
         public List<CordType> maskCords { get; set; }
-        public bool ifmaskRtChips { get; set; }
         public bool ifmaskDuplicateChips { get; set; }
-        public RetestSelectMode RetestSelectMode { get; set; }
         public DuplicateSelectMode DuplicateSelectMode{ get; set; }
 
+        public List<TestID> maskTestIDs { get; set; }
 
         public Filter() {
             maskSites = new List<byte>();
@@ -35,9 +29,7 @@ namespace DataParse {
             maskTestIDs = new List<TestID>();
             maskChips = new List<int>();
             maskCords = new List<CordType>();
-            ifmaskRtChips = false;
             ifmaskDuplicateChips = false;
-            RetestSelectMode = RetestSelectMode.SelectFirst;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
         }
 
@@ -48,9 +40,7 @@ namespace DataParse {
             maskTestIDs.Clear();
             maskChips.Clear();
             maskCords.Clear();
-            ifmaskRtChips = false;
             ifmaskDuplicateChips = false;
-            RetestSelectMode = RetestSelectMode.SelectFirst;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
         }
 
