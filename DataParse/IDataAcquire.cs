@@ -45,16 +45,6 @@ namespace DataParse {
 
         List<float?> GetFilteredItemData(TestID testID, List<byte> sites);
 
-        /// <summary>
-        /// Get the raw data with the applied filter
-        /// </summary>
-        /// <param name="startIndex">Start index is 0</param>
-        /// <param name="count">Will only return the actually availiable chips' data if the count greater than the actually selected chips' count</param>
-        /// <returns></returns>
-        DataTable GetFilteredData(int startIndex, int count);
-
-        DataTable GetFilteredData(int startIndex, int count, List<byte> sites);
-
         ///// <summary>
         ///// To get selected chips' data, will return null if all of the chips are filtered or all test items are filtered
         ///// It's not recommended to get the whole data by this method, please use [DataTable GetFilteredData(int startIndex, int count);] instead

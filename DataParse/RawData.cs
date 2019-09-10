@@ -9,8 +9,6 @@ namespace DataParse {
         public const int DefaultItemsCapacity = 300;
         public const int DefaultFixedDataBlockLength = 4096;  //means 2^12
         private const int DefaultFixedDataBits = 12;  //means 2^12
-        private List<bool> _ChipFilter;
-
 
         private class ItemData
         {
@@ -81,14 +79,14 @@ namespace DataParse {
             }
 
             /// <summary>
-            /// 
+            /// get item data with filter
             /// </summary>
             /// <param name="indexFrom"></param>
             /// <param name="count"></param>
             /// <param name="filter"></param>
             /// <returns></returns>
-            public float?[] GetItem(int indexFrom, int count, List<bool> filter) {
-                float?[] rt = new float?[count];
+            public List<float?> GetItem(int indexFrom, int count, List<bool> filter) {
+                List<float?> rt = new List<float?>(count);
 
                 int index = indexFrom;
                 for (int i=0; i< count; i++) {
@@ -96,21 +94,21 @@ namespace DataParse {
                     if (index > _capacity)  break;
 
                     if (filter[index]) 
-                        rt[i] = (_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                        rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
 
                 return rt;
             }
 
-            public float?[] GetItem(int indexFrom, int count) {
-                float?[] rt = new float?[count];
+            public List<float?> GetItem(int indexFrom, int count) {
+                List<float?> rt = new List<float?>(count);
 
                 int index = indexFrom;
                 for (int i = 0; i < count; i++) {
                     index += i;
                     if (index > _capacity) break;
 
-                    rt[i]=(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                    rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
                 }
 
                 return rt;
@@ -126,10 +124,6 @@ namespace DataParse {
             ChipCount = 0;
         }
 
-        public void SetFilter(List<bool> filter) {
-            _ChipFilter = filter;
-        }
-
         /// <summary>
         /// AddItem
         /// </summary>
@@ -138,28 +132,31 @@ namespace DataParse {
             _data.Add(new ItemData());
             return _data.Count-1;
         }
-    
+        
+        /// <summary>
+        /// Get Total Test Items Count
+        /// </summary>
         public int ItemsCount {
             get {
                 return _data.Count;
             }
         }
 
-
-        public float?[] GetItemData(int itemIndex) {
+        [Obsolete]
+        public List<float?> GetItemData(int itemIndex) {
             return _data[itemIndex].GetItem(0, ChipCount);
         }
-
-        public float?[] GetItemData(int itemIndex, int chipIndexFrom, int count) {
+        [Obsolete]
+        public List<float?> GetItemData(int itemIndex, int chipIndexFrom, int count) {
             return _data[itemIndex].GetItem(chipIndexFrom, count);
         }
 
-        public float?[] GetItemDataFiltered(int itemIndex) {
-            return _data[itemIndex].GetItem(0, ChipCount, _ChipFilter);
+        public List<float?> GetItemDataFiltered(int itemIndex, List<bool> filter) {
+            return _data[itemIndex].GetItem(0, ChipCount, filter);
         }
 
-        public float?[] GetItemDataFiltered(int itemIndex, int chipIndexFrom, int count) {
-            return _data[itemIndex].GetItem(chipIndexFrom, count, _ChipFilter);
+        public List<float?> GetItemDataFiltered(int itemIndex, int chipIndexFrom, int count, List<bool> filter) {
+            return _data[itemIndex].GetItem(chipIndexFrom, count, filter);
         }
 
 

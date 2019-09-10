@@ -293,29 +293,11 @@ namespace DataParse{
         /// <param name="testID"></param>
         /// <returns></returns>
         public List<float?> GetFilteredItemData(TestID testID) {
-            //return _rawData.GetItemData(_testItems.GetIndex(testID)).ToList();
+            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _testChips.GetChipFilter());
         }
 
         public List<float?> GetFilteredItemData(TestID testID, List<byte> sites) {
-            //return _rawData.GetItemData(_testItems.GetIndex(testID), _testChips.GetChipFilter(sites));
-        }
-
-        /// <summary>
-        /// Get the raw data with the applied filter
-        /// </summary>
-        /// <param name="startIndex">Start index is 0</param>
-        /// <param name="count">Will only return the actually availiable chips' data if the count greater than the actually selected chips' count</param>
-        /// <returns></returns>
-        public float?[][] GetFilteredData(int startIndex, int count) {
-            var ids = _testItems.GetTestIDsFiltered();
-
-            float?[][] rst = new float?[ids.Count][];
-
-            for(int r=0; r< ids.Count; r++) {
-                rst[r] = _rawData.GetItemData(_testItems.GetIndex(ids[r]), startIndex, count);
-            }
-
-            return rst;
+            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _testChips.GetChipFilter(sites));
         }
 
         public DataTable GetFilteredData(int startIndex, int count, List<byte> sites) { throw new NotImplementedException(); }
@@ -337,7 +319,6 @@ namespace DataParse{
         public void SetFilter(Filter filter) {
             _testChips.UpdateChipFilter(filter);
             _testItems.UpdateItemFilter(filter);
-            _rawData.SetFilter(_testChips.GetChipFilter());
         }
 
 
