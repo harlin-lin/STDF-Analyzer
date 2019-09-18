@@ -8,21 +8,70 @@ using System.Threading.Tasks;
 namespace DataParse {
     interface IDataAcquire {
 
-        //property get the file default infomation
+        #region property get the file default infomation
+        /// <summary>
+        /// Get all of the sites number in the stdf file
+        /// </summary>
+        /// <returns>return a list of site number</returns>
         List<byte> GetSites();
-        Dictionary<byte, int> GetSitesChipCount();
-        List<ushort> GetSoftBins();
-        Dictionary<ushort, int> GetSoftBinsCount();
-        List<ushort> GetHardBins();
-        Dictionary<ushort, int> GetHardBinsCount();
-        List<TestID> GetTestIDs();
-        ItemInfo GetItemInfo(TestID testID);
-        List<int> GetChipsIndexes();
-        List<int> GetChipsIndexes(List<byte> sites);
-        int ChipsCount { get; }
-        //List<ChipInfo> GetChipsInfo();
 
-        //this info is filtered by filter
+        /// <summary>
+        /// Get all of the sites and the corresponding test devices
+        /// </summary>
+        /// <returns>return a dictionary of the sites and count, key is site number, value is device count</returns>
+        Dictionary<byte, int> GetSitesChipCount();
+
+        /// <summary>
+        /// Get all of the soft bins in the stdf file
+        /// </summary>
+        /// <returns>return a list of the soft bins</returns>
+        List<ushort> GetSoftBins();
+
+        /// <summary>
+        /// Get all of the soft bins and the corresponding devices count
+        /// </summary>
+        /// <returns>return a dictionary of the bins and the count, key is bin, value is device count</returns>
+        Dictionary<ushort, int> GetSoftBinsCount();
+
+        /// <summary>
+        /// Get all of the hard bins in the stdf file
+        /// </summary>
+        /// <returns>return a list of the hard bins</returns>
+        List<ushort> GetHardBins();
+
+        /// <summary>
+        /// Get all of the hard bins and the corresponding devices count
+        /// </summary>
+        /// <returns>return a dictionary of the bins and the count, key is bin, value is device count</returns>
+        Dictionary<ushort, int> GetHardBinsCount();
+
+        /// <summary>
+        /// Get all of the test items ID(Id consist of the TN and the sub number)in the stdf file
+        /// </summary>
+        /// <returns>return a list of the test items ID</returns>
+        List<TestID> GetTestIDs();
+
+        /// <summary>
+        /// Get all of the test ids and the corresponding item info
+        /// </summary>
+        /// <returns>return a dictionary of the id and th item info</returns>
+        Dictionary<TestID, ItemInfo> GetTestIDs_Info();
+
+        /// <summary>
+        /// Get all of the chip indexes in the stdf file
+        /// </summary>
+        /// <returns>return a list of all of the indexes</returns>
+        List<int> GetChipsIndexes();
+
+        int ChipsCount { get; }
+        string FilePath { get; }
+        string FileName { get; }
+        FileBasicInfo BasicInfo { get; }
+        int ParsePercent { get; }
+        #endregion
+
+
+        #region this info is filtered by filter
         List<byte> GetFilteredSites();
         Dictionary<byte, int> GetFilteredSitesChipCount();
         List<ushort> GetFilteredSoftBins();
@@ -31,9 +80,7 @@ namespace DataParse {
         Dictionary<ushort, int> GetFilteredHardBinsCount();
         List<TestID> GetFilteredTestIDs();
         List<int> GetFilteredChipsIndexes();
-        List<int> GetFilteredChipsIndexes(List<byte> sites);
         List<ChipInfo> GetFilteredChipsInfo();
-        List<ChipInfo> GetFilteredChipsInfo(List<byte> sites);
         /// <summary>
         /// return an array of the selected item data with the filter, 
         /// it will be null if the correspond partdon't have result there, 
@@ -43,35 +90,21 @@ namespace DataParse {
         /// <returns></returns>
         List<float?> GetFilteredItemData(TestID testID);
 
-        List<float?> GetFilteredItemData(TestID testID, List<byte> sites);
+        List<float?> GetFilteredItemData(TestID testID, int startIndex, int count);
 
-        ///// <summary>
-        ///// To get selected chips' data, will return null if all of the chips are filtered or all test items are filtered
-        ///// It's not recommended to get the whole data by this method, please use [DataTable GetFilteredData(int startIndex, int count);] instead
-        ///// </summary>
-        ///// <param name="chipsId"></param>
-        ///// <returns></returns>
-        //DataTable GetFilteredData(List<int> chipsId);
+        Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite();
+        ChipSummary GetFilteredChipSummary();
 
-        //DataTable GetFilteredData(List<int> chipsId, List<byte> sites);
+        #endregion
 
 
-        Dictionary<byte, ChipSummary> GetChipSummaryBySite();
-        Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites);
-        ChipSummary GetChipSummary();
-        ChipSummary GetChipSummary(List<byte> sites);
+        #region filter
+        void SetFilter(Filter filter, int filterId);
+        int CreateFilter();
+        int CreateFilter(Filter filter);
+        void RemoveFilter(int id);
+        #endregion
 
-        //basic file information
-        string FilePath { get; }
-        string FileName { get; }
-        FileBasicInfo BasicInfo{ get; }
-
-
-        //filter
-        void SetFilter(Filter filter);
-
-
-        int ParsePercent { get; }
 
     }
 }
