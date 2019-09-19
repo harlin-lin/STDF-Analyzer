@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace DataParse {
     interface IDataAcquire {
 
+        void ExtractStdf();
+
         #region property get the file default infomation
         /// <summary>
         /// Get all of the sites number in the stdf file
@@ -63,6 +65,19 @@ namespace DataParse {
         /// <returns>return a list of all of the indexes</returns>
         List<int> GetChipsIndexes();
 
+        /// <summary>
+        /// get the full file summary by site
+        /// </summary>
+        /// <returns>key is site</returns>
+        Dictionary<byte, ChipSummary> GetChipSummaryBySite();
+
+        /// <summary>
+        /// get the full file summary info
+        /// </summary>
+        /// <returns></returns>
+        ChipSummary GetChipSummary();
+
+
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }
@@ -72,37 +87,60 @@ namespace DataParse {
 
 
         #region this info is filtered by filter
-        List<byte> GetFilteredSites();
-        Dictionary<byte, int> GetFilteredSitesChipCount();
-        List<ushort> GetFilteredSoftBins();
-        Dictionary<ushort, int> GetFilteredSoftBinsCount();
-        List<ushort> GetFilteredHardBins();
-        Dictionary<ushort, int> GetFilteredHardBinsCount();
-        List<TestID> GetFilteredTestIDs();
-        List<int> GetFilteredChipsIndexes();
-        List<ChipInfo> GetFilteredChipsInfo();
-        /// <summary>
-        /// return an array of the selected item data with the filter, 
-        /// it will be null if the correspond partdon't have result there, 
-        /// the filtered part won't take place in the array
-        /// </summary>
-        /// <param name="testID"></param>
-        /// <returns></returns>
-        List<float?> GetFilteredItemData(TestID testID);
+        List<byte> GetFilteredSites(int filterId);
+        Dictionary<byte, int> GetFilteredSitesChipCount(int filterId);
+        List<ushort> GetFilteredSoftBins(int filterId);
+        Dictionary<ushort, int> GetFilteredSoftBinsCount(int filterId);
+        List<ushort> GetFilteredHardBins(int filterId);
+        Dictionary<ushort, int> GetFilteredHardBinsCount(int filterId);
+        List<TestID> GetFilteredTestIDs(int filterId);
+        Dictionary<TestID, ItemInfo> GetFilteredTestIDs_Info(int filterId);
+        List<int> GetFilteredChipsIndexes(int filterId);
+        List<ChipInfo> GetFilteredChipsInfo(int filterId);
+        List<float?> GetFilteredItemData(TestID testID, int filterId);
+        List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
 
-        List<float?> GetFilteredItemData(TestID testID, int startIndex, int count);
+        Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite(int filterId);
+        ChipSummary GetFilteredChipSummary(int filterId);
 
-        Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite();
-        ChipSummary GetFilteredChipSummary();
-
+        Dictionary<TestID, ItemStatistic> GetFilteredStatistic(int filterId);
         #endregion
 
 
         #region filter
-        void SetFilter(Filter filter, int filterId);
-        int CreateFilter();
-        int CreateFilter(Filter filter);
-        void RemoveFilter(int id);
+        /// <summary>
+        /// set the corresponding filter
+        /// </summary>
+        /// <param name="filterId">filter ID</param>
+        /// <param name="filter">filter setup</param>
+        void SetFilter(int filterId, FilterSetup filter);
+
+        /// <summary>
+        /// creat a new filter
+        /// </summary>
+        /// <param name="comment">comment of the filter</param>
+        /// <returns>the created filter's ID</returns>
+        int CreateFilter(string comment);
+
+        /// <summary>
+        /// create a new filter with the setup
+        /// </summary>
+        /// <param name="filter">filter setup</param>
+        /// <param name="comment">comment of the filter</param>
+        /// <returns>the created filter's id</returns>
+        int CreateFilter(FilterSetup filter, string comment);
+
+        /// <summary>
+        /// get all of the created filters, include the default created 1 for basic file and n for n sites
+        /// </summary>
+        /// <returns>filters' id and the corresponding comment</returns>
+        Dictionary<int, string> GetAllFilter();
+
+        /// <summary>
+        /// remove the corresponding filter
+        /// </summary>
+        /// <param name="filterId">the filter's id which need to be removed</param>
+        void RemoveFilter(int filterId);
         #endregion
 
 

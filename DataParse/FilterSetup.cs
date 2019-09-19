@@ -10,8 +10,10 @@ namespace DataParse {
         SelectLast
     }
 
-
-    public class Filter {
+    /// <summary>
+    /// just for datahelper to define the filter content
+    /// </summary>
+    public class FilterSetup {
         public List<byte> maskSites { get; set; }
         public List<ushort> maskSoftBins { get; set; }
         public List<ushort> maskHardBins { get; set; }
@@ -22,7 +24,7 @@ namespace DataParse {
 
         public List<TestID> maskTestIDs { get; set; }
 
-        public Filter() {
+        public FilterSetup() {
             maskSites = new List<byte>();
             maskSoftBins = new List<ushort>();
             maskHardBins = new List<ushort>();

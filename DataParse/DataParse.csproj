@@ -43,9 +43,10 @@
   <ItemGroup>
     <Compile Include="ChipInfo.cs" />
     <Compile Include="CordType.cs" />
+    <Compile Include="ItemStatistic.cs" />
     <Compile Include="StdfParse.cs" />
     <Compile Include="FileBasicInfo.cs" />
-    <Compile Include="Filter.cs" />
+    <Compile Include="FilterSetup.cs" />
     <Compile Include="IDataAcquire.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="PinGroupRecord.cs" />

@@ -10,22 +10,16 @@ namespace DataParse
     {
         private Dictionary<TestID, ItemInfo> _testItems;
         private Dictionary<TestID, int> _itemIndexes;
-        private List<bool> _ItemFilter;
-
-        //public float MeanValue { get; private set; }
-        //public float MinValue { get; private set; }
-        //public float MaxValue { get; private set; }
-        //public double Cp { get; private set; }
-        //public double Cpk { get; private set; }
-        //public double? Sigma { get; private set; }
-        //public int PassCount { get; private set; }
-        //public int FailCount { get; private set; }
-
 
         public TestItems(int capacity) {
             _testItems = new Dictionary<TestID, ItemInfo>(capacity);
             _itemIndexes = new Dictionary<TestID, int>(capacity);
-            _ItemFilter = new List<bool>(capacity);
+        }
+
+        public int ItemsCount {
+            get {
+                return _itemIndexes.Count;
+            }
         }
 
         public bool ExistTestItem(TestID testID) {
@@ -49,7 +43,7 @@ namespace DataParse
             //else {
             _testItems.Add(testID, itemInfo);
             _itemIndexes.Add(testID, _testItems.Count - 1);
-            _ItemFilter.Add(true);
+            //_ItemFilter.Add(true);
             //}
             return true;
         }
@@ -68,21 +62,32 @@ namespace DataParse
             else
                 return null;
         }
-        public List<TestID> GetTestIDsFiltered() {
+        public Dictionary<TestID, ItemInfo> GetTestIDs_Info() {
+            return _testItems;
+        }
+        public Dictionary<TestID, ItemInfo> GetTestIDs_InfoFiltered(bool[] itemsFilter) {
+            Dictionary<TestID, ItemInfo> rst = new Dictionary<TestID, ItemInfo>(_testItems.Count);
+            for(int i=0; i < _testItems.Count; i++) {
+                if (!itemsFilter[i])
+                    rst.Add(_testItems.ElementAt(i).Key, _testItems.ElementAt(i).Value);
+            }
+
+            return rst;
+        }
+
+        public List<TestID> GetTestIDsFiltered(bool[] itemsFilter) {
             List<TestID> testIDs = new List<TestID>(_testItems.Count);
-            for(int i=0; i< _ItemFilter.Count; i++) {
-                if (_ItemFilter[i])
+            for (int i = 0; i < _testItems.Count; i++) {
+                if (!itemsFilter[i])
                     testIDs.Add(_testItems.ElementAt(i).Key);
             }
             return testIDs;
         }
 
-        public void UpdateItemFilter(Filter filter) {
+        public void UpdateItemFilter(FilterSetup filter, ref bool[] itemsFilter) {
             for (int i = 0; i < _testItems.Count; i++) {
                 if (filter.maskTestIDs.Contains(_testItems.Keys.ElementAt(i)))
-                    _ItemFilter[i] = false;
-                else
-                    _ItemFilter[i] = true;
+                    itemsFilter[i] = true;
             }
         }
 

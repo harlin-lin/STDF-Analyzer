@@ -11,6 +11,24 @@ using StdfReader.Records.V4;
 namespace DataParse{
 
     public class StdfParse: IDataAcquire{
+        private class FilterData {
+            public string Comment;
+            public bool[] ChipFilter;
+            public bool[] ItemFilter;
+            public Dictionary<byte, ChipSummary> SitesSummary;
+            public ChipSummary Summary;
+            public Dictionary<TestID, ItemStatistic> StatisticList;
+
+            public FilterData(int chipsCount, int itemsCount, string comment) {
+                Comment = comment;
+                ChipFilter = new bool[chipsCount];
+                ItemFilter = new bool[itemsCount];
+                SitesSummary = new Dictionary<byte, ChipSummary>();
+                Summary = null;
+                StatisticList = new Dictionary<TestID, ItemStatistic>();
+            }
+        }
+
         private StdfFile _stdfFile;
         private RawData _rawData;
         private TestChips _testChips;
@@ -27,7 +45,10 @@ namespace DataParse{
             private set { }
         }
 
+        private Dictionary<int, FilterData> _filterList;
 
+        private Dictionary<byte, ChipSummary> _defaultSitesSummary;
+        private ChipSummary _defaultSummary;
 
         public StdfParse(String filePath) {
             FilePath = filePath;
@@ -42,6 +63,10 @@ namespace DataParse{
 
             BasicInfo = null;
             ParsePercent = 0;
+
+            _filterList = new Dictionary<int, FilterData>();
+            _defaultSitesSummary = new Dictionary<byte, ChipSummary>();
+            _defaultSummary = null;
             //...
         }
 
@@ -123,7 +148,7 @@ namespace DataParse{
                         testItemID = new TestID(((Mpr)r).TestNumber);
                     }
 
-                    TestID testID = TestID.NewSubTestID(testItemID);
+                    TestID testID = testItemID;
 
                     for (uint i = 0; i < ((Mpr)r).Results.Count(); i++) {
                         PinMapRecord pin = new PinMapRecord();
@@ -186,6 +211,8 @@ namespace DataParse{
 
                     _testChips.AddChip(new ChipInfo((Prr)r, InternalID[siteIdx]));
                 }else if (r.RecordType == StdfFile.TSR) {
+
+
                     _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), ((Tsr)r).TestLabel);
                 }else if (r.RecordType == StdfFile.MRR) {
                     BasicInfo.AddMrr((Mrr)r);
@@ -194,12 +221,15 @@ namespace DataParse{
             }
             ParseDone = true;
 
+            _testChips.UpdateSummary(ref _defaultSitesSummary);
+            _defaultSummary = ChipSummary.Combine(_defaultSitesSummary);
+
             _stdfFile = null;
             rs = null;
 
             GC.Collect();
 
-
+            CreateDefaultFilters();
         }
 
         ////property get the file default infomation
@@ -207,83 +237,85 @@ namespace DataParse{
             return new List<byte>(_sites.Keys);
         }
         public Dictionary<byte, int> GetSitesChipCount() {
-            var vv = _testChips.GetChipSummaryBySiteDefault();
             Dictionary<byte, int> rst = new Dictionary<byte, int>();
-            foreach(var v in vv) {
+            foreach(var v in _defaultSitesSummary) {
                 rst.Add(v.Key, v.Value.TotalCount);
             }
 
             return rst;
         }
         public List<ushort> GetSoftBins() {
-            return new List<ushort>(_testChips.GetChipSummaryDefault().GetSoftBins().Keys);
+            return new List<ushort>(_defaultSummary.GetSoftBins().Keys);
         }
         public Dictionary<ushort, int> GetSoftBinsCount() {
-            return new Dictionary<ushort, int>(_testChips.GetChipSummaryDefault().GetSoftBins());
+            return new Dictionary<ushort, int>(_defaultSummary.GetSoftBins());
         }
         public List<ushort> GetHardBins() {
-            return new List<ushort>(_testChips.GetChipSummaryDefault().GetHardBins().Keys);
+            return new List<ushort>(_defaultSummary.GetHardBins().Keys);
         }
         public Dictionary<ushort, int> GetHardBinsCount() {
-            return new Dictionary<ushort, int>(_testChips.GetChipSummaryDefault().GetHardBins());
+            return new Dictionary<ushort, int>(_defaultSummary.GetHardBins());
         }
         public List<TestID> GetTestIDs() {
             return _testItems.GetTestIDsDefault();
         }
-        public ItemInfo GetItemInfo(TestID testID) {
-            return _testItems.GetItemInfo(testID);
+        public Dictionary<TestID, ItemInfo> GetTestIDs_Info() {
+            return _testItems.GetTestIDs_Info();
         }
         public List<int> GetChipsIndexes() {
             return _testChips.GetChipsIndexes();
-        }
-        public List<int> GetChipsIndexes(List<byte> sites) {
-            return _testChips.GetChipsIndexes(sites);
         }
         public int ChipsCount {
             get {
                 return _testChips.ChipsCount;
             }
         }
-
-        ////this info is filtered by filter
-        public List<byte> GetFilteredSites() {
-            return new List<byte>(_testChips.GetChipSummaryBySiteFiltered().Keys);
+        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
+            return _defaultSitesSummary;
         }
-        public Dictionary<byte, int> GetFilteredSitesChipCount() {
-            var vv = _testChips.GetChipSummaryBySiteFiltered();
+        public ChipSummary GetChipSummary() {
+            return _defaultSummary;
+        }
+
+
+
+
+        //////this info is filtered by filter
+        public List<byte> GetFilteredSites(int filterId) {
+            return new List<byte>(_filterList[filterId].SitesSummary.Keys);
+        }
+        public Dictionary<byte, int> GetFilteredSitesChipCount(int filterId) {
             Dictionary<byte, int> rst = new Dictionary<byte, int>();
-            foreach (var v in vv) {
+            foreach (var v in _filterList[filterId].SitesSummary) {
                 rst.Add(v.Key, v.Value.TotalCount);
             }
 
             return rst;
         }
-        public List<ushort> GetFilteredSoftBins() {
-            return new List<ushort>(_testChips.GetChipSummaryFiltered().GetSoftBins().Keys);
+        public List<ushort> GetFilteredSoftBins(int filterId) {
+            return new List<ushort>(_filterList[filterId].Summary.GetSoftBins().Keys);
         }
-        public Dictionary<ushort, int> GetFilteredSoftBinsCount() {
-            return new Dictionary<ushort, int>(_testChips.GetChipSummaryFiltered().GetSoftBins());
+        public Dictionary<ushort, int> GetFilteredSoftBinsCount(int filterId) {
+            return new Dictionary<ushort, int>(_filterList[filterId].Summary.GetSoftBins());
         }
-        public List<ushort> GetFilteredHardBins() {
-            return new List<ushort>(_testChips.GetChipSummaryFiltered().GetHardBins().Keys);
+        public List<ushort> GetFilteredHardBins(int filterId) {
+            return new List<ushort>(_filterList[filterId].Summary.GetHardBins().Keys);
         }
-        public Dictionary<ushort, int> GetFilteredHardBinsCount() {
-            return new Dictionary<ushort, int>(_testChips.GetChipSummaryFiltered().GetHardBins());
+        public Dictionary<ushort, int> GetFilteredHardBinsCount(int filterId) {
+            return new Dictionary<ushort, int>(_filterList[filterId].Summary.GetHardBins());
         }
-        public List<TestID> GetFilteredTestIDs() {
-            return _testItems.GetTestIDsFiltered();
+        public List<TestID> GetFilteredTestIDs(int filterId) {
+            return _testItems.GetTestIDsFiltered(_filterList[filterId].ItemFilter);
         }
-        public List<int> GetFilteredChipsIndexes() {
-            return _testChips.GetFilteredChipsIndexes();
+        public Dictionary<TestID, ItemInfo> GetFilteredTestIDs_Info(int filterId) {
+            return _testItems.GetTestIDs_InfoFiltered(_filterList[filterId].ItemFilter);
         }
-        public List<int> GetFilteredChipsIndexes(List<byte> sites) {
-            return _testChips.GetFilteredChipsIndexes(sites);
+
+        public List<int> GetFilteredChipsIndexes(int filterId) {
+            return _testChips.GetFilteredChipsIndexes(_filterList[filterId].ChipFilter);
         }
-        public List<ChipInfo> GetFilteredChipsInfo() {
-            return _testChips.GetFilteredChipsInfo();
-        }
-        public List<ChipInfo> GetFilteredChipsInfo(List<byte> sites) {
-            return _testChips.GetFilteredChipsInfo(sites);
+        public List<ChipInfo> GetFilteredChipsInfo(int filterId) {
+            return _testChips.GetFilteredChipsInfo(_filterList[filterId].ChipFilter);
         }
         /// <summary>
         /// return an array of the selected item data with the filter, 
@@ -292,35 +324,89 @@ namespace DataParse{
         /// </summary>
         /// <param name="testID"></param>
         /// <returns></returns>
-        public List<float?> GetFilteredItemData(TestID testID) {
-            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _testChips.GetChipFilter());
+        public List<float?> GetFilteredItemData(TestID testID, int filterId) {
+            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _filterList[filterId].ChipFilter);
         }
 
-        public List<float?> GetFilteredItemData(TestID testID, List<byte> sites) {
-            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _testChips.GetChipFilter(sites));
+        public List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId) {
+            return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
         }
 
-        public DataTable GetFilteredData(int startIndex, int count, List<byte> sites) { throw new NotImplementedException(); }
-
-
-        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
-            return _testChips.GetChipSummaryBySiteFiltered();
+        public Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite(int filterId) {
+            return _filterList[filterId].SitesSummary;
         }
-        public Dictionary<byte, ChipSummary> GetChipSummaryBySite(List<byte> sites) {
-            return _testChips.GetChipSummaryBySiteFiltered(sites);
-        }
-        public ChipSummary GetChipSummary() {
-            return _testChips.GetChipSummaryFiltered();
-        }
-        public ChipSummary GetChipSummary(List<byte> sites) {
-            return _testChips.GetChipSummaryFiltered(sites);
+        public ChipSummary GetFilteredChipSummary(int filterId) {
+            return _filterList[filterId].Summary;
         }
 
-        public void SetFilter(Filter filter) {
-            _testChips.UpdateChipFilter(filter);
-            _testItems.UpdateItemFilter(filter);
+        public Dictionary<TestID, ItemStatistic> GetFilteredStatistic(int filterId) {
+            return _filterList[filterId].StatisticList;
         }
 
 
+
+        public void SetFilter(int filterId, FilterSetup filter) {
+            _testChips.UpdateChipFilter(filter, ref _filterList[filterId].ChipFilter);
+            _testItems.UpdateItemFilter(filter, ref _filterList[filterId].ChipFilter);
+
+            _testChips.UpdateSummaryFiltered(_filterList[filterId].ChipFilter, ref _filterList[filterId].SitesSummary);
+            _filterList[filterId].Summary = ChipSummary.Combine(_filterList[filterId].SitesSummary);
+
+            foreach (var t in GetFilteredTestIDs_Info(filterId)) {
+                _filterList[filterId].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, filterId), t.Value.LoLimit, t.Value.HiLimit));
+            }
+
+        }
+
+        public int CreateFilter(string comment) {
+             int key = System.DateTime.UtcNow.Ticks.GetHashCode();
+            _filterList.Add(key, new FilterData(_testChips.ChipsCount, _testItems.ItemsCount, comment));
+
+            return key;
+        }
+        public int CreateFilter(FilterSetup filter, string comment) {
+            int key = CreateFilter(comment);
+
+            _testChips.UpdateChipFilter(filter, ref _filterList[key].ChipFilter);
+            _testItems.UpdateItemFilter(filter, ref _filterList[key].ChipFilter);
+
+            _testChips.UpdateSummaryFiltered(_filterList[key].ChipFilter, ref _filterList[key].SitesSummary);
+            _filterList[key].Summary = ChipSummary.Combine(_filterList[key].SitesSummary);
+            foreach (var t in GetFilteredTestIDs_Info(key)) {
+                _filterList[key].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, key), t.Value.LoLimit, t.Value.HiLimit));
+            }
+
+            return key;
+        }
+
+        public Dictionary<int, string> GetAllFilter() {
+            var rst = (from r in _filterList
+                       select new KeyValuePair<int, string>(r.Key, r.Value.Comment)).ToDictionary(k => k.Key, k => k.Value);
+
+            return rst;
+        }
+        public void RemoveFilter(int filterId) {
+            _filterList.Remove(filterId);
+        }
+
+        private void CreateDefaultFilters() {
+            int dKey = CreateFilter("Full File");
+            _testChips.UpdateSummaryFiltered(_filterList[dKey].ChipFilter, ref _filterList[dKey].SitesSummary);
+            _filterList[dKey].Summary = ChipSummary.Combine(_filterList[dKey].SitesSummary);
+            foreach(var t in GetFilteredTestIDs_Info(dKey)) {
+                _filterList[dKey].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, dKey), t.Value.LoLimit, t.Value.HiLimit));
+            }
+
+            foreach (var v in _sites) {
+                int key = CreateFilter("Site:" + v.Key);
+                _testChips.UpdateChipFilter(v.Key, ref _filterList[key].ChipFilter);
+                _testChips.UpdateSummaryFiltered(_filterList[key].ChipFilter, ref _filterList[key].SitesSummary);
+                _filterList[key].Summary = ChipSummary.Combine(_filterList[key].SitesSummary);
+                foreach (var t in GetFilteredTestIDs_Info(key)) {
+                    _filterList[key].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, key), t.Value.LoLimit, t.Value.HiLimit));
+                }
+
+            }
+        }
     }
 }
