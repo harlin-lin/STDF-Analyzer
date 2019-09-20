@@ -30,6 +30,20 @@ namespace Test
             sp.Stop();
             sp.Reset();
 
+            sp.Start();
+
+            var filters = dataParse.GetAllFilter();
+
+            Console.WriteLine(filters.ElementAt(0));
+            FilterSetup filterSetup = new FilterSetup();
+            filterSetup.ifmaskDuplicateChips = true;
+            dataParse.SetFilter(filters.ElementAt(0).Key, filterSetup);
+
+            Console.WriteLine(sp.ElapsedMilliseconds); 
+            sp.Stop();
+            sp.Reset();
+
+
             //Console.WriteLine(rawData.GetItemData(0).Length);
 
 

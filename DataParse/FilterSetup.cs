@@ -21,6 +21,10 @@ namespace DataParse {
         public List<CordType> maskCords { get; set; }
         public bool ifmaskDuplicateChips { get; set; }
         public DuplicateSelectMode DuplicateSelectMode{ get; set; }
+        /// <summary>
+        /// true is Part ID, defult
+        /// </summary>
+        public bool DuplicateJudgeByIdOrCord { get; set; }
 
         public List<TestID> maskTestIDs { get; set; }
 
@@ -33,6 +37,7 @@ namespace DataParse {
             maskCords = new List<CordType>();
             ifmaskDuplicateChips = false;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            DuplicateJudgeByIdOrCord = true;
         }
 
         public void ClearAllFilter() {
@@ -44,6 +49,7 @@ namespace DataParse {
             maskCords.Clear();
             ifmaskDuplicateChips = false;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            DuplicateJudgeByIdOrCord = true;
         }
 
     }

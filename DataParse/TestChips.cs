@@ -56,7 +56,7 @@ namespace DataParse
         public void UpdateSummaryFiltered(bool[] chipsFilter, ref Dictionary<byte, ChipSummary> summary) {
 
             for (int i = 0; i < _testChips.Count; i++) {
-                if (!chipsFilter[i]) continue;
+                if (chipsFilter[i]) continue;
                 if (!summary.ContainsKey(_testChips[i].Site))
                     summary.Add(_testChips[i].Site, new ChipSummary());
 
@@ -111,15 +111,25 @@ namespace DataParse
             if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectFirst) {
                 for (int i = 0; i < _testChips.Count; i++) {
                     for (int j = i + 1; j < _testChips.Count; j++) {
-                        if (_testChips[i].PartId == _testChips[j].PartId || _testChips[i].WaferCord == _testChips[j].WaferCord)
-                            chipsFilter[j] = true;
+                        if (filter.DuplicateJudgeByIdOrCord) {
+                            if (_testChips[i].PartId == _testChips[j].PartId)
+                                chipsFilter[j] = true;
+                        } else {
+                            if (_testChips[i].WaferCord == _testChips[j].WaferCord)
+                                chipsFilter[j] = true;
+                        }
                     }
                 }
             } else {
                 for (int i = _testChips.Count - 1; i >= 0; i--) {
                     for (int j = i - 1; j >= 0; j--) {
-                        if (_testChips[i].PartId == _testChips[j].PartId || _testChips[i].WaferCord == _testChips[j].WaferCord)
-                            chipsFilter[j] = true;
+                        if (filter.DuplicateJudgeByIdOrCord) {
+                            if (_testChips[i].PartId == _testChips[j].PartId)
+                                chipsFilter[j] = true;
+                        } else {
+                            if (_testChips[i].WaferCord == _testChips[j].WaferCord)
+                                chipsFilter[j] = true;
+                        }
                     }
                 }
             }
@@ -130,7 +140,7 @@ namespace DataParse
 
             for (int i = 0; i < _testChips.Count; i++) {
                 //site
-                if (_testChips[i].Site == site) {
+                if (_testChips[i].Site != site) {
                     chipsFilter[i] = true;
                     continue;
                 }

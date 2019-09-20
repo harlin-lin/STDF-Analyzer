@@ -115,12 +115,12 @@ namespace DataParse {
         /// <param name="filter">filter setup</param>
         void SetFilter(int filterId, FilterSetup filter);
 
-        /// <summary>
-        /// creat a new filter
-        /// </summary>
-        /// <param name="comment">comment of the filter</param>
-        /// <returns>the created filter's ID</returns>
-        int CreateFilter(string comment);
+        ///// <summary>
+        ///// creat a new filter
+        ///// </summary>
+        ///// <param name="comment">comment of the filter</param>
+        ///// <returns>the created filter's ID</returns>
+        //int CreateFilter(string comment);
 
         /// <summary>
         /// create a new filter with the setup

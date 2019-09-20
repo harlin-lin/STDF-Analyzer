@@ -47,7 +47,7 @@ namespace DataParse {
                 this.Result = ResultType.Abort;
             else {
                 if (prr.Failed.HasValue)
-                    this.Result = (bool)prr.Failed ? ResultType.Pass : ResultType.Fail;
+                    this.Result = (bool)prr.Failed ? ResultType.Fail : ResultType.Pass;
                 else
                     this.Result = ResultType.Null;
             }

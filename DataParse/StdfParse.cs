@@ -67,8 +67,12 @@ namespace DataParse{
             _filterList = new Dictionary<int, FilterData>();
             _defaultSitesSummary = new Dictionary<byte, ChipSummary>();
             _defaultSummary = null;
-            //...
         }
+
+        public override int GetHashCode() {
+            return FilePath.GetHashCode();
+        }
+
 
         public void ExtractStdf() {
             //private data
@@ -110,7 +114,7 @@ namespace DataParse{
                             _rawData.AddItem();
                         }
                     }
-                    _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Ptr)r).Result);
+                    _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], _testItems.GetItemInfo(testID).GetScaledRst(((Ptr)r).Result));
 
                     ptrLastTN[siteIdx] = testID;                    
                 } else if (r.RecordType == StdfFile.FTR) {
@@ -166,7 +170,7 @@ namespace DataParse{
                             _rawData.AddItem();
                         }
 
-                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Mpr)r).Results[i]);
+                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], _testItems.GetItemInfo(testID).GetScaledRst(((Mpr)r).Results[i]));
                     }
 
                     ptrLastTN[siteIdx] = testItemID;
@@ -347,18 +351,21 @@ namespace DataParse{
 
         public void SetFilter(int filterId, FilterSetup filter) {
             _testChips.UpdateChipFilter(filter, ref _filterList[filterId].ChipFilter);
-            _testItems.UpdateItemFilter(filter, ref _filterList[filterId].ChipFilter);
+            _testItems.UpdateItemFilter(filter, ref _filterList[filterId].ItemFilter);
 
             _testChips.UpdateSummaryFiltered(_filterList[filterId].ChipFilter, ref _filterList[filterId].SitesSummary);
             _filterList[filterId].Summary = ChipSummary.Combine(_filterList[filterId].SitesSummary);
 
             foreach (var t in GetFilteredTestIDs_Info(filterId)) {
-                _filterList[filterId].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, filterId), t.Value.LoLimit, t.Value.HiLimit));
+                //if(_filterList[filterId].StatisticList.ContainsKey(t.Key))
+                    _filterList[filterId].StatisticList[t.Key] = new ItemStatistic(GetFilteredItemData(t.Key, filterId), t.Value.LoLimit, t.Value.HiLimit);
+                //else
+                //    _filterList[filterId].StatisticList.Add(t.Key, new ItemStatistic(GetFilteredItemData(t.Key, filterId), t.Value.LoLimit, t.Value.HiLimit));
             }
 
         }
 
-        public int CreateFilter(string comment) {
+        private int CreateFilter(string comment) {
              int key = System.DateTime.UtcNow.Ticks.GetHashCode();
             _filterList.Add(key, new FilterData(_testChips.ChipsCount, _testItems.ItemsCount, comment));
 
