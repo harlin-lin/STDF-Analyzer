@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    interface IDataAcquire {
+    public interface IDataAcquire {
 
         void ExtractStdf();
 
@@ -81,6 +81,7 @@ namespace DataParse {
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }
+        bool ParseDone { get; }
         FileBasicInfo BasicInfo { get; }
         int ParsePercent { get; }
         #endregion

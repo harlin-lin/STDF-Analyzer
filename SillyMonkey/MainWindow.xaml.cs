@@ -15,36 +15,48 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DataAnalyser;
 
 namespace SillyMonkey {
-    public class OpenFiles{
-        public string File { get; set; }
-        public List<string> Sites { get; set; }
-
-        public OpenFiles(string file) {
-            File = file;
-            Sites = new List<string>();
-            Enumerable.Range(1, 10).ToList().ForEach(x => Sites.Add("Site:" + x));
-        }
-
-    }
-
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : Window {
 
+        private Analyser _stdFiles;
+
         public MainWindow() {
             InitializeComponent();
             Setup();
-            //SetupDatatable();
         }
 
         void Setup(){
-            var data = new ObservableCollection<OpenFiles>();
-            Enumerable.Range(0, 9).ToList().ForEach(x => data.Add(new OpenFiles(x.ToString())));
+            _stdFiles = new Analyser();
 
-            tvFiles.DataContext =data;
+            tvFiles.DataContext = _stdFiles.FileInfos;
+        }
+
+        private void evDragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.All;
+            else
+                e.Effects = DragDropEffects.None;
+        }
+
+        private async void evDrop(object sender, DragEventArgs e) {
+            var paths = ((System.Array)e.Data.GetData(DataFormats.FileDrop));
+            foreach (string path in paths) {
+                var ext = System.IO.Path.GetExtension(path).ToLower();
+                if (ext == ".stdf" || ext == ".std") {
+                    //addfile
+                    _stdFiles.AddFile(path);
+                } else {
+                    //log message not supported
+                }
+            }
+
+            //extract the files
+            await Task.Run(new Action(() =>_stdFiles.ExtractFiles())) ;
 
         }
     }

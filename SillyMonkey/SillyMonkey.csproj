@@ -94,5 +94,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataAnalyser\DataAnalyser.csproj">
+      <Project>{dcf73a3a-a9a9-4e81-8a97-bbbd7c3900f9}</Project>
+      <Name>DataAnalyser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataParse\DataParse.csproj">
+      <Project>{1d4e8891-2c00-4c85-a6b0-0ec68ec8f775}</Project>
+      <Name>DataParse</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

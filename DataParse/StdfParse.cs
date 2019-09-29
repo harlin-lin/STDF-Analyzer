@@ -9,6 +9,7 @@ using System.IO;
 using StdfReader.Records.V4;
 
 namespace DataParse{
+    public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
     public class StdfParse: IDataAcquire{
         private class FilterData {
@@ -43,6 +44,11 @@ namespace DataParse{
         public int ParsePercent {
             get { throw new NotImplementedException(); }
             private set { }
+        }
+        public event ExtractDoneEventHandler ExtractDone;
+        private void OnExtractDone(IDataAcquire data) {
+            var handler = ExtractDone;
+            handler?.Invoke(data);
         }
 
         private Dictionary<int, FilterData> _filterList;
@@ -227,6 +233,7 @@ namespace DataParse{
 
             _testChips.UpdateSummary(ref _defaultSitesSummary);
             _defaultSummary = ChipSummary.Combine(_defaultSitesSummary);
+            OnExtractDone(this);
 
             _stdfFile = null;
             rs = null;
@@ -238,9 +245,11 @@ namespace DataParse{
 
         ////property get the file default infomation
         public List<byte> GetSites() {
+            if (!ParseDone) return null;
             return new List<byte>(_sites.Keys);
         }
         public Dictionary<byte, int> GetSitesChipCount() {
+            if (!ParseDone) return null;
             Dictionary<byte, int> rst = new Dictionary<byte, int>();
             foreach(var v in _defaultSitesSummary) {
                 rst.Add(v.Key, v.Value.TotalCount);
@@ -367,6 +376,7 @@ namespace DataParse{
 
         private int CreateFilter(string comment) {
              int key = System.DateTime.UtcNow.Ticks.GetHashCode();
+            if (_filterList.ContainsKey(key)) key++;
             _filterList.Add(key, new FilterData(_testChips.ChipsCount, _testItems.ItemsCount, comment));
 
             return key;

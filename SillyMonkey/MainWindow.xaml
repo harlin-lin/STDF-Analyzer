@@ -4,9 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SillyMonkey"
+        xmlns:analyser="clr-namespace:DataAnalyser;assembly=DataAnalyser"
+        xmlns:s="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid Margin="0,0,0,0">
+        Title="MainWindow" Height="800" Width="1200">
+
+    <Grid Margin="0,0,0,0"
+        AllowDrop="True"
+        DragDrop.Drop="evDrop"
+        DragDrop.DragEnter="evDragEnter">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
@@ -29,17 +36,18 @@
                             <RowDefinition Height="2"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
-                        <TreeView x:Name="tvFiles" ItemsSource="{Binding}">
+
+                        <TreeView x:Name="tvFiles" ItemsSource="{Binding}" >
                             <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type local:OpenFiles}" ItemsSource="{Binding Sites}">
-                                    <TextBlock Text="{Binding File}"/>
+                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites}">
+                                    <TextBlock Text="{Binding FileName}"/>
                                 </HierarchicalDataTemplate>
+
                             </TreeView.Resources>
                         </TreeView>
                     </Grid>
                 </TabItem>
-                <TabItem Name="tiServerFils" Header="N"/>
+                <TabItem Name="tiServerFiles" Header="N"/>
             </TabControl>
             <GridSplitter Grid.Column="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
             <TabControl Grid.Column="2" Name="dataTab"/>
