@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SillyMonkey"
         xmlns:analyser="clr-namespace:DataAnalyser;assembly=DataAnalyser"
-        xmlns:s="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
 
@@ -37,12 +37,19 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TreeView x:Name="tvFiles" ItemsSource="{Binding}" >
+                        <TreeView x:Name="tvFiles" ItemsSource="{Binding Path=FileInfos}" >
+                            <!--<ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type analyser:FileInfo}">
+                                    <TextBlock Text="{Binding FileName}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>-->
                             <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites}">
+                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites.Keys}">
                                     <TextBlock Text="{Binding FileName}"/>
                                 </HierarchicalDataTemplate>
-
+                                <!--<DataTemplate DataType="{x:Type s:Byte}">
+                                    <TextBlock Text="123"/>
+                                </DataTemplate>-->
                             </TreeView.Resources>
                         </TreeView>
                     </Grid>

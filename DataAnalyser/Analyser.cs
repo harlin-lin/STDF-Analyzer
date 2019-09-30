@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace DataAnalyser
 {
-    public class FileInfo {
+    public class FileInfo : INotifyPropertyChanged {
         public string FileName { get; private set; }
         public string FilePath { get; private set; }
         public bool FileStatus { get; private set; }
@@ -32,6 +32,18 @@ namespace DataAnalyser
             FileStatus = stdfParse.ParseDone;
             FileDeviceCount = stdfParse.ChipsCount;
             Sites = stdfParse.GetSitesChipCount();
+
+            OnPropertyChanged("Sites");
+            OnPropertyChanged("FileStatus");
+            OnPropertyChanged("FileDeviceCount");
+
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        //OnPropertyChanged event handler to update property value in binding
+        private void OnPropertyChanged(string info) {
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(info));
         }
 
     }
@@ -46,44 +58,7 @@ namespace DataAnalyser
         #region File Select property
 
 
-        public ObservableCollection<FileInfo> FileInfos { get; private set; }
-        //public List<string> FileNames { get {
-        //        return (from f in _files.Values
-        //                let s = f.FileName
-        //                select s).ToList();
-        //               } }
-
-        //public List<string> FilePaths {
-        //    get {
-        //        return (from f in _files.Values
-        //                let s = f.FilePath
-        //                select s).ToList();
-        //    }
-        //}
-
-        //public List<bool> FilesStatus {
-        //    get {
-        //        return (from f in _files.Values
-        //                let s = f.ParseDone
-        //                select s).ToList();
-        //    }
-        //}
-        //public List<int> FilesStatistic {
-        //    get {
-        //        return (from f in _files.Values
-        //                let s = f.ChipsCount
-        //                select s).ToList();
-        //    }
-        //}
-
-        //public List<Dictionary<byte, int>> FilesSites {
-        //    get {
-        //        return (from f in _files.Values
-        //                let s = f.GetSitesChipCount()
-        //                select s).ToList();
-        //    }
-        //}
-
+        public List<FileInfo> FileInfos { get; private set; }
 
         public int AddFile(string path) {
             int key = path.GetHashCode();
@@ -99,7 +74,7 @@ namespace DataAnalyser
         }
         public void RemoveFile(string path) {
             if (_files.Remove(path.GetHashCode())) {
-                //FileInfos.Remove(FileInfos.FindLast((x)=>x.FilePath==path));
+                FileInfos.Remove(FileInfos.FindLast((x)=>x.FilePath==path));
                 OnPropertyChanged("FileInfos");
             } else {
 
@@ -128,12 +103,12 @@ namespace DataAnalyser
 
         public Analyser() {
             _files = new Dictionary<int, StdfParse>();
-            FileInfos = new ObservableCollection<FileInfo>();
+            FileInfos = new List<FileInfo>();
         }
 
 
         private void Val_ExtractDone(IDataAcquire data) {
-            //FileInfos.FindLast((x) => x.FilePath == data.FilePath).UpdateFileInfo(data);
+            FileInfos.FindLast((x) => x.FilePath == data.FilePath).UpdateFileInfo(data);
             OnPropertyChanged("FileInfos");
         }
 

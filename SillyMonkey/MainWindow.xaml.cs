@@ -32,8 +32,9 @@ namespace SillyMonkey {
 
         void Setup(){
             _stdFiles = new Analyser();
-
-            tvFiles.DataContext = _stdFiles.FileInfos;
+            _stdFiles.AddFile(@"E:\Data\23456781.stdf");
+            _stdFiles.ExtractFiles();
+            window.DataContext = _stdFiles;
         }
 
         private void evDragEnter(object sender, DragEventArgs e) {
@@ -56,7 +57,7 @@ namespace SillyMonkey {
             }
 
             //extract the files
-            await Task.Run(new Action(() =>_stdFiles.ExtractFiles())) ;
+            await Task.Run(new Action(() => _stdFiles.ExtractFiles())) ;
 
         }
     }
