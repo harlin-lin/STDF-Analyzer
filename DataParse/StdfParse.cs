@@ -81,6 +81,7 @@ namespace DataParse{
 
 
         public void ExtractStdf() {
+            if (ParseDone) return;
             //private data
             bool[] catchedPirFlag = null;
             TestID[] ptrLastTN = null;

@@ -32,9 +32,9 @@ namespace SillyMonkey {
 
         void Setup(){
             _stdFiles = new Analyser();
-            _stdFiles.AddFile(@"E:\Data\23456781.stdf");
-            _stdFiles.ExtractFiles();
-            window.DataContext = _stdFiles;
+            //_stdFiles.AddFile(@"D:\ASRProj\STDF\Data\23456781.stdf");
+            //_stdFiles.ExtractFiles();
+            this.DataContext = _stdFiles;
         }
 
         private void evDragEnter(object sender, DragEventArgs e) {
@@ -57,8 +57,21 @@ namespace SillyMonkey {
             }
 
             //extract the files
-            await Task.Run(new Action(() => _stdFiles.ExtractFiles())) ;
+            await Task.Run(new Action(() => _stdFiles.ExtractFiles(new List<string>(paths.OfType<string>())))) ;
 
         }
+
+
+        private void evSelectedChange(object sender, RoutedPropertyChangedEventArgs<object> e) {
+            if(e.NewValue is FileInfo) {
+                var s = e.NewValue as FileInfo;
+                _stdFiles.ChangeFileSelected(s.FilePath.GetHashCode(), null);
+            } else {
+
+                var s = (KeyValuePair<byte, KeyValuePair<int, string>>)e.NewValue;
+                _stdFiles.ChangeFileSelected(s.Value.Value.GetHashCode(), s.Key);
+            }
+        }
+
     }
 }

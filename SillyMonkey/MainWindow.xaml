@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SillyMonkey"
         xmlns:analyser="clr-namespace:DataAnalyser;assembly=DataAnalyser"
-        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        xmlns:s="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
 
@@ -32,26 +32,44 @@
                 <TabItem Name="tiLocalFiles" Header="L">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="1.5*"/>
                             <RowDefinition Height="2"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TreeView x:Name="tvFiles" ItemsSource="{Binding Path=FileInfos}" >
-                            <!--<ListBox.ItemTemplate>
-                                <DataTemplate DataType="{x:Type analyser:FileInfo}">
-                                    <TextBlock Text="{Binding FileName}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>-->
+                        <TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectedItemChanged="evSelectedChange"
+                                  SelectedValuePath="FileInfo">
                             <TreeView.Resources>
-                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites.Keys}">
-                                    <TextBlock Text="{Binding FileName}"/>
+                                <DataTemplate x:Key="siteTemplate">
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="Site:{0}=>{1}">
+                                                <Binding Path="Key"/>
+                                                <Binding Path="Value.Key"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                        <TextBlock.ToolTip>
+                                            <Binding Path="Value.Value"/>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
+                                </DataTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites}" ItemTemplate="{StaticResource siteTemplate}">
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding  StringFormat="{}{0} =>{1}">
+                                                <Binding Path="FileName"/>
+                                                <Binding Path="FileDeviceCount"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                        <TextBlock.ToolTip>
+                                            <Binding Path="FilePath"/>
+                                        </TextBlock.ToolTip>
+                                    </TextBlock>
                                 </HierarchicalDataTemplate>
-                                <!--<DataTemplate DataType="{x:Type s:Byte}">
-                                    <TextBlock Text="123"/>
-                                </DataTemplate>-->
                             </TreeView.Resources>
                         </TreeView>
+                        <GridSplitter Grid.Row="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
+                        <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}"/>
                     </Grid>
                 </TabItem>
                 <TabItem Name="tiServerFiles" Header="N"/>
