@@ -14,7 +14,10 @@
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <ListView x:Name="data">
+        <ListView x:Name="lvData">
+            <ListView.ItemsSource>
+                <Binding/>
+            </ListView.ItemsSource>
             
         </ListView>
     </Grid>
