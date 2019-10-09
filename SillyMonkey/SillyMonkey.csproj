@@ -35,6 +35,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="C1.WPF.4">
+      <HintPath>C:\Program Files (x86)\ComponentOne\WPF Edition\bin\v4\C1.WPF.4.dll</HintPath>
+    </Reference>
+    <Reference Include="C1.WPF.FlexGrid.4">
+      <HintPath>C:\Program Files (x86)\ComponentOne\WPF Edition\bin\v4\C1.WPF.FlexGrid.4.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,8 +61,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="RawData.xaml.cs">
-      <DependentUpon>RawData.xaml</DependentUpon>
+    <Compile Include="Customer.cs" />
+    <Compile Include="MyCellFactory.cs" />
+    <Compile Include="View\DataGridTab.xaml.cs">
+      <DependentUpon>DataGridTab.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -70,7 +78,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="RawData.xaml">
+    <Page Include="View\DataGridTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

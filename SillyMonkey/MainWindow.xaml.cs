@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DataAnalyser;
+using SillyMonkey.View;
 
 namespace SillyMonkey {
     /// <summary>
@@ -32,9 +33,9 @@ namespace SillyMonkey {
 
         void Setup(){
             _stdFiles = new Analyser();
-            //_stdFiles.AddFile(@"D:\ASRProj\STDF\Data\23456781.stdf");
-            //_stdFiles.ExtractFiles();
             this.DataContext = _stdFiles;
+            AddDataTab("123");
+            AddDataTab("321");
         }
 
         private void evDragEnter(object sender, DragEventArgs e) {
@@ -49,7 +50,6 @@ namespace SillyMonkey {
             foreach (string path in paths) {
                 var ext = System.IO.Path.GetExtension(path).ToLower();
                 if (ext == ".stdf" || ext == ".std") {
-                    //addfile
                     _stdFiles.AddFile(path);
                 } else {
                     //log message not supported
@@ -72,6 +72,16 @@ namespace SillyMonkey {
                 _stdFiles.ChangeFileSelected(s.Value.Value.GetHashCode(), s.Key);
             }
         }
+
+        private void AddDataTab(string name) {
+            DataGridTab dataGridTab = new DataGridTab();
+
+            TabItem tabItem = new TabItem();
+            tabItem.Header = name;
+            tabItem.Content= dataGridTab;
+            dataTab.Items.Add(tabItem);
+        }
+
 
     }
 }
