@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DataParse {
+namespace DataInterface {
     public class CordType : IEquatable<CordType> {
 
         public CordType(short? x, short? y) {

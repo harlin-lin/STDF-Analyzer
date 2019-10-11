@@ -9,26 +9,24 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
 
-    <Grid Margin="0,0,0,0"
-        AllowDrop="True"
+    <Grid AllowDrop="True"
         DragDrop.Drop="evDrop"
         DragDrop.DragEnter="evDragEnter">
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
-            <MenuItem Name="menuFile" Header="File" />
-        </Menu>
+        <Frame Grid.Row="0" Source="View/MenuPage.xaml"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.3*"/>
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
-            <TabControl Grid.Column="0" TabStripPlacement="Left">
+            <Frame Grid.Column="0" Source="View/FileManagementPage.xaml"/>
+            <!--<TabControl Grid.Column="0" TabStripPlacement="Left">
                 <TabItem Name="tiLocalFiles" Header="L">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -73,23 +71,10 @@
                     </Grid>
                 </TabItem>
                 <TabItem Name="tiServerFiles" Header="N"/>
-            </TabControl>
+            </TabControl>-->
             <GridSplitter Grid.Column="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
             <TabControl Grid.Column="2" Name="dataTab"/>
         </Grid>
-        <StatusBar Grid.Row="2">
-            <StatusBarItem>
-                <Image Width="10"/>
-            </StatusBarItem>
-            <StatusBarItem>
-                <TextBlock Name="tbStatus" Text="hello" FontSize="7" HorizontalAlignment="Left" Width="100"/>
-            </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Stretch">
-                <TextBlock Name="tbFilePath" Text="path" FontSize="7" HorizontalAlignment="Stretch"/>
-            </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Right">
-                <ProgressBar Name="pbProgress" Width="200" HorizontalAlignment="Right"/>
-            </StatusBarItem>
-        </StatusBar>
+        <Frame Grid.Row="2" Source="View/BottomBarPage.xaml"/>
     </Grid>
 </Window>

@@ -61,10 +61,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Customer.cs" />
-    <Compile Include="MyCellFactory.cs" />
+    <Compile Include="Model\StdFileHelper.cs" />
+    <Compile Include="ViewModel\FileInfo.cs" />
+    <Compile Include="ViewModel\LoadedFile.cs" />
+    <Compile Include="View\BottomBarPage.xaml.cs">
+      <DependentUpon>BottomBarPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CorrelationTab.xaml.cs">
+      <DependentUpon>CorrelationTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DataGridTab.xaml.cs">
       <DependentUpon>DataGridTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\FileManagementPage.xaml.cs">
+      <DependentUpon>FileManagementPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\HistogramTab.xaml.cs">
+      <DependentUpon>HistogramTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MenuPage.xaml.cs">
+      <DependentUpon>MenuPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\TrendChartTab.xaml.cs">
+      <DependentUpon>TrendChartTab.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -78,7 +97,31 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\BottomBarPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\CorrelationTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DataGridTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FileManagementPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\HistogramTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MenuPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\TrendChartTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -110,13 +153,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataAnalyser\DataAnalyser.csproj">
-      <Project>{dcf73a3a-a9a9-4e81-8a97-bbbd7c3900f9}</Project>
-      <Name>DataAnalyser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataParse\DataParse.csproj">
-      <Project>{1d4e8891-2c00-4c85-a6b0-0ec68ec8f775}</Project>
-      <Name>DataParse</Name>
+    <ProjectReference Include="..\DataInterface\DataInterface.csproj">
+      <Project>{fd0b8b5f-dbb8-4564-86e4-67b8009230b0}</Project>
+      <Name>DataInterface</Name>
     </ProjectReference>
   </ItemGroup>
   <!-- <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" /> -->

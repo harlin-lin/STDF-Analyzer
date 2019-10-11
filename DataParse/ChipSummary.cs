@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataParse
 {
-    public class ChipSummary{
+    public class ChipSummary: IChipSummary {
         public int TotalCount { get; private set; }
         public int RetestCount { get; private set; }
         public int FreshCount { get; private set; }
@@ -73,7 +74,7 @@ namespace DataParse
 
         }
 
-        public void AddChip(ChipInfo chipInfo) {
+        public void AddChip(IChipInfo chipInfo) {
             switch (chipInfo.ChipType) {
                 case DeviceType.Fresh:
                     FreshCount++; break;
@@ -134,20 +135,16 @@ namespace DataParse
             }
 
         }
-        public static ChipSummary Combine(Dictionary<byte, ChipSummary> summaryBySite) {
+
+        public static IChipSummary Combine(Dictionary<byte, IChipSummary> summaryBySite) {
             ChipSummary summary = new ChipSummary();
 
             foreach(var v in summaryBySite) {
-                summary.Add(v.Value);
+                summary.Add((ChipSummary)v.Value);
             }
 
             return summary;
         }
-
-    }
-
-    public class TestSummary{
-        //TBD...
 
     }
 

@@ -1,4 +1,5 @@
-﻿using StdfReader.Records.V4;
+﻿using DataInterface;
+using StdfReader.Records.V4;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,19 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    public enum DeviceType{
-        Fresh,
-        RT_ID,
-        RT_Cord
-    }
 
-    public enum ResultType {
-        Pass,
-        Fail,
-        Abort,
-        Null
-    }
-    public class ChipInfo {
+    public class ChipInfo: IChipInfo {
         public byte Site { get; }
         public UInt32? TestTime { get; }
         public UInt16 HardBin { get; }

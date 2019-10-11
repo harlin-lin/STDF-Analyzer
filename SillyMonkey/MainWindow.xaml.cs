@@ -15,7 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using DataAnalyser;
 using SillyMonkey.View;
 
 namespace SillyMonkey {
@@ -24,19 +23,17 @@ namespace SillyMonkey {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private Analyser _stdFiles;
+        //private Analyser _stdFiles;
 
         public MainWindow() {
             InitializeComponent();
-            Setup();
+            //Setup();
         }
 
-        void Setup(){
-            _stdFiles = new Analyser();
-            this.DataContext = _stdFiles;
-            AddDataTab("123");
-            AddDataTab("321");
-        }
+        //void Setup(){
+        //    _stdFiles = new Analyser();
+        //    this.DataContext = _stdFiles;
+        //}
 
         private void evDragEnter(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -50,38 +47,28 @@ namespace SillyMonkey {
             foreach (string path in paths) {
                 var ext = System.IO.Path.GetExtension(path).ToLower();
                 if (ext == ".stdf" || ext == ".std") {
-                    _stdFiles.AddFile(path);
+                    //_stdFiles.AddFile(path);
                 } else {
                     //log message not supported
                 }
             }
 
             //extract the files
-            await Task.Run(new Action(() => _stdFiles.ExtractFiles(new List<string>(paths.OfType<string>())))) ;
+            //await Task.Run(new Action(() => _stdFiles.ExtractFiles(new List<string>(paths.OfType<string>())))) ;
 
         }
 
 
-        private void evSelectedChange(object sender, RoutedPropertyChangedEventArgs<object> e) {
-            if(e.NewValue is FileInfo) {
-                var s = e.NewValue as FileInfo;
-                _stdFiles.ChangeFileSelected(s.FilePath.GetHashCode(), null);
-            } else {
+        //private void evSelectedChange(object sender, RoutedPropertyChangedEventArgs<object> e) {
+        //    if(e.NewValue is FileInfo) {
+        //        var s = e.NewValue as FileInfo;
+        //        //_stdFiles.ChangeFileSelected(s.FilePath.GetHashCode(), null);
+        //    } else {
 
-                var s = (KeyValuePair<byte, KeyValuePair<int, string>>)e.NewValue;
-                _stdFiles.ChangeFileSelected(s.Value.Value.GetHashCode(), s.Key);
-            }
-        }
-
-        private void AddDataTab(string name) {
-            DataGridTab dataGridTab = new DataGridTab();
-
-            TabItem tabItem = new TabItem();
-            tabItem.Header = name;
-            tabItem.Content= dataGridTab;
-            dataTab.Items.Add(tabItem);
-        }
-
+        //        var s = (KeyValuePair<byte, KeyValuePair<int, string>>)e.NewValue;
+        //        //_stdFiles.ChangeFileSelected(s.Value.Value.GetHashCode(), s.Key);
+        //    }
+        //}
 
     }
 }

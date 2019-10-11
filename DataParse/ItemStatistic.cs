@@ -1,11 +1,12 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    public class ItemStatistic {
+    public class ItemStatistic: IItemStatistic {
         public float? MeanValue { get; private set; }
         public float? MinValue { get; private set; }
         public float? MaxValue { get; private set; }

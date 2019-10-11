@@ -5,8 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataParse {
+namespace DataInterface {
+    public delegate void ExtractDoneEventHandler(IDataAcquire data);
+
     public interface IDataAcquire {
+
+        event ExtractDoneEventHandler ExtractDone;
 
         void ExtractStdf();
 
@@ -57,7 +61,7 @@ namespace DataParse {
         /// Get all of the test ids and the corresponding item info
         /// </summary>
         /// <returns>return a dictionary of the id and th item info</returns>
-        Dictionary<TestID, ItemInfo> GetTestIDs_Info();
+        Dictionary<TestID, IItemInfo> GetTestIDs_Info();
 
         /// <summary>
         /// Get all of the chip indexes in the stdf file
@@ -69,20 +73,20 @@ namespace DataParse {
         /// get the full file summary by site
         /// </summary>
         /// <returns>key is site</returns>
-        Dictionary<byte, ChipSummary> GetChipSummaryBySite();
+        Dictionary<byte, IChipSummary> GetChipSummaryBySite();
 
         /// <summary>
         /// get the full file summary info
         /// </summary>
         /// <returns></returns>
-        ChipSummary GetChipSummary();
+        IChipSummary GetChipSummary();
 
 
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }
         bool ParseDone { get; }
-        FileBasicInfo BasicInfo { get; }
+        IFileBasicInfo BasicInfo { get; }
         int ParsePercent { get; }
         #endregion
 
@@ -95,16 +99,16 @@ namespace DataParse {
         List<ushort> GetFilteredHardBins(int filterId);
         Dictionary<ushort, int> GetFilteredHardBinsCount(int filterId);
         List<TestID> GetFilteredTestIDs(int filterId);
-        Dictionary<TestID, ItemInfo> GetFilteredTestIDs_Info(int filterId);
+        Dictionary<TestID, IItemInfo> GetFilteredTestIDs_Info(int filterId);
         List<int> GetFilteredChipsIndexes(int filterId);
-        List<ChipInfo> GetFilteredChipsInfo(int filterId);
+        List<IChipInfo> GetFilteredChipsInfo(int filterId);
         List<float?> GetFilteredItemData(TestID testID, int filterId);
         List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
 
-        Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite(int filterId);
-        ChipSummary GetFilteredChipSummary(int filterId);
+        Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId);
+        IChipSummary GetFilteredChipSummary(int filterId);
 
-        Dictionary<TestID, ItemStatistic> GetFilteredStatistic(int filterId);
+        Dictionary<TestID, IItemStatistic> GetFilteredStatistic(int filterId);
         #endregion
 
 

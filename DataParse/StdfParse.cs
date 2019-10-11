@@ -7,26 +7,26 @@ using System.Threading.Tasks;
 using StdfReader;
 using System.IO;
 using StdfReader.Records.V4;
+using DataInterface;
 
 namespace DataParse{
-    public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
-    public class StdfParse: IDataAcquire{
+    public class StdfParse : IDataAcquire {
         private class FilterData {
             public string Comment;
             public bool[] ChipFilter;
             public bool[] ItemFilter;
-            public Dictionary<byte, ChipSummary> SitesSummary;
-            public ChipSummary Summary;
-            public Dictionary<TestID, ItemStatistic> StatisticList;
+            public Dictionary<byte, IChipSummary> SitesSummary;
+            public IChipSummary Summary;
+            public Dictionary<TestID, IItemStatistic> StatisticList;
 
             public FilterData(int chipsCount, int itemsCount, string comment) {
                 Comment = comment;
                 ChipFilter = new bool[chipsCount];
                 ItemFilter = new bool[itemsCount];
-                SitesSummary = new Dictionary<byte, ChipSummary>();
+                SitesSummary = new Dictionary<byte, IChipSummary>();
                 Summary = null;
-                StatisticList = new Dictionary<TestID, ItemStatistic>();
+                StatisticList = new Dictionary<TestID, IItemStatistic>();
             }
         }
 
@@ -40,7 +40,7 @@ namespace DataParse{
         public string FileName { get; private set; }
         public bool ParseDone { get; private set; }
         //basic file information
-        public FileBasicInfo BasicInfo { get; private set; }
+        public IFileBasicInfo BasicInfo { get; private set; }
         public int ParsePercent {
             get { throw new NotImplementedException(); }
             private set { }
@@ -53,8 +53,8 @@ namespace DataParse{
 
         private Dictionary<int, FilterData> _filterList;
 
-        private Dictionary<byte, ChipSummary> _defaultSitesSummary;
-        private ChipSummary _defaultSummary;
+        private Dictionary<byte, IChipSummary> _defaultSitesSummary;
+        private IChipSummary _defaultSummary;
 
         public StdfParse(String filePath) {
             FilePath = filePath;
@@ -71,7 +71,7 @@ namespace DataParse{
             ParsePercent = 0;
 
             _filterList = new Dictionary<int, FilterData>();
-            _defaultSitesSummary = new Dictionary<byte, ChipSummary>();
+            _defaultSitesSummary = new Dictionary<byte, IChipSummary>();
             _defaultSummary = null;
         }
 
@@ -108,7 +108,7 @@ namespace DataParse{
                     if (ptrLastTN[siteIdx].CompareTestNumber(((Ptr)r).TestNumber)) {//it's a sub test
                         testID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
                         if (!_testItems.ExistTestItem(testID)) {
-                            ItemInfo info = _testItems.GetItemInfo(ptrLastTN[siteIdx]);
+                            IItemInfo info = _testItems.GetItemInfo(ptrLastTN[siteIdx]);
                             info.SetTestText(((Ptr)r).TestText);
                             _testItems.AddTestItem(testID, info);
                             _rawData.AddItem();
@@ -226,7 +226,7 @@ namespace DataParse{
 
                     _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), ((Tsr)r).TestLabel);
                 }else if (r.RecordType == StdfFile.MRR) {
-                    BasicInfo.AddMrr((Mrr)r);
+                    ((BasicInfo)BasicInfo).AddMrr((Mrr)r);
                 }
 
             }
@@ -273,7 +273,7 @@ namespace DataParse{
         public List<TestID> GetTestIDs() {
             return _testItems.GetTestIDsDefault();
         }
-        public Dictionary<TestID, ItemInfo> GetTestIDs_Info() {
+        public Dictionary<TestID, IItemInfo> GetTestIDs_Info() {
             return _testItems.GetTestIDs_Info();
         }
         public List<int> GetChipsIndexes() {
@@ -284,10 +284,10 @@ namespace DataParse{
                 return _testChips.ChipsCount;
             }
         }
-        public Dictionary<byte, ChipSummary> GetChipSummaryBySite() {
+        public Dictionary<byte, IChipSummary> GetChipSummaryBySite() {
             return _defaultSitesSummary;
         }
-        public ChipSummary GetChipSummary() {
+        public IChipSummary GetChipSummary() {
             return _defaultSummary;
         }
 
@@ -321,14 +321,14 @@ namespace DataParse{
         public List<TestID> GetFilteredTestIDs(int filterId) {
             return _testItems.GetTestIDsFiltered(_filterList[filterId].ItemFilter);
         }
-        public Dictionary<TestID, ItemInfo> GetFilteredTestIDs_Info(int filterId) {
+        public Dictionary<TestID, IItemInfo> GetFilteredTestIDs_Info(int filterId) {
             return _testItems.GetTestIDs_InfoFiltered(_filterList[filterId].ItemFilter);
         }
 
         public List<int> GetFilteredChipsIndexes(int filterId) {
             return _testChips.GetFilteredChipsIndexes(_filterList[filterId].ChipFilter);
         }
-        public List<ChipInfo> GetFilteredChipsInfo(int filterId) {
+        public List<IChipInfo> GetFilteredChipsInfo(int filterId) {
             return _testChips.GetFilteredChipsInfo(_filterList[filterId].ChipFilter);
         }
         /// <summary>
@@ -346,14 +346,14 @@ namespace DataParse{
             return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
         }
 
-        public Dictionary<byte, ChipSummary> GetFilteredChipSummaryBySite(int filterId) {
+        public Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId) {
             return _filterList[filterId].SitesSummary;
         }
-        public ChipSummary GetFilteredChipSummary(int filterId) {
+        public IChipSummary GetFilteredChipSummary(int filterId) {
             return _filterList[filterId].Summary;
         }
 
-        public Dictionary<TestID, ItemStatistic> GetFilteredStatistic(int filterId) {
+        public Dictionary<TestID, IItemStatistic> GetFilteredStatistic(int filterId) {
             return _filterList[filterId].StatisticList;
         }
 

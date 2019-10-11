@@ -1,5 +1,4 @@
-﻿using C1.WPF.FlexGrid;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,10 +15,10 @@ using System.Windows.Shapes;
 
 namespace SillyMonkey.View {
     /// <summary>
-    /// DataGridTab.xaml 的交互逻辑
+    /// BottomBarPage.xaml 的交互逻辑
     /// </summary>
-    public partial class DataGridTab : UserControl {
-        public DataGridTab() {
+    public partial class BottomBarPage : Page {
+        public BottomBarPage() {
             InitializeComponent();
         }
     }

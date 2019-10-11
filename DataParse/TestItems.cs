@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,11 @@ namespace DataParse
 {
     public class TestItems
     {
-        private Dictionary<TestID, ItemInfo> _testItems;
+        private Dictionary<TestID, IItemInfo> _testItems;
         private Dictionary<TestID, int> _itemIndexes;
 
         public TestItems(int capacity) {
-            _testItems = new Dictionary<TestID, ItemInfo>(capacity);
+            _testItems = new Dictionary<TestID, IItemInfo>(capacity);
             _itemIndexes = new Dictionary<TestID, int>(capacity);
         }
 
@@ -37,7 +38,7 @@ namespace DataParse
                 throw new Exception("Do Check the testID if exist first!");
         }
 
-        public bool AddTestItem(TestID testID, ItemInfo itemInfo) {
+        public bool AddTestItem(TestID testID, IItemInfo itemInfo) {
             //if (_testItems.ContainsKey(testID))
             //    return false;
             //else {
@@ -49,24 +50,24 @@ namespace DataParse
         }
 
         public void UpdateTestText(TestID testID, string newTestText) {
-            _testItems[testID].SetTestText(newTestText);
+            ((ItemInfo)_testItems[testID]).SetTestText(newTestText);
         }
 
         public List<TestID> GetTestIDsDefault() {
             return _testItems.Keys.ToList();
         }
-        public ItemInfo GetItemInfo(TestID testID) {
-            ItemInfo info;
+        public IItemInfo GetItemInfo(TestID testID) {
+            IItemInfo info;
             if (_testItems.TryGetValue(testID, out info))
                 return info;
             else
                 return null;
         }
-        public Dictionary<TestID, ItemInfo> GetTestIDs_Info() {
+        public Dictionary<TestID, IItemInfo> GetTestIDs_Info() {
             return _testItems;
         }
-        public Dictionary<TestID, ItemInfo> GetTestIDs_InfoFiltered(bool[] itemsFilter) {
-            Dictionary<TestID, ItemInfo> rst = new Dictionary<TestID, ItemInfo>(_testItems.Count);
+        public Dictionary<TestID, IItemInfo> GetTestIDs_InfoFiltered(bool[] itemsFilter) {
+            Dictionary<TestID, IItemInfo> rst = new Dictionary<TestID, IItemInfo>(_testItems.Count);
             for(int i=0; i < _testItems.Count; i++) {
                 if (!itemsFilter[i])
                     rst.Add(_testItems.ElementAt(i).Key, _testItems.ElementAt(i).Value);

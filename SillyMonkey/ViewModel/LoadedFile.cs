@@ -1,68 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataParse;
-using System.Collections.ObjectModel;
-using System.Windows.Threading;
 
-namespace DataAnalyser
-{
-    public class FileInfo : INotifyPropertyChanged {
-        public string FileName { get; private set; }
-        public string FilePath { get; private set; }
-        public bool FileStatus { get; private set; }
-        public int FileDeviceCount { get; private set; }
-        public Dictionary<byte, KeyValuePair<int, string>> Sites { get; private set; }
-
-        public FileInfo(IDataAcquire stdfParse) {
-            FileName = stdfParse.FileName;
-            FilePath = stdfParse.FilePath;
-            FileStatus = stdfParse.ParseDone;
-            FileDeviceCount = stdfParse.ChipsCount;
-            //Sites = new List<byte>();
-            //SitesCount = new List<int>();
-            Sites = new Dictionary<byte, KeyValuePair<int, string>>();
-        }
-
-        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
-
-        public void UpdateFileInfo(IDataAcquire stdfParse) {
-            FileName = stdfParse.FileName;
-            FilePath = stdfParse.FilePath;
-            FileStatus = stdfParse.ParseDone;
-            FileDeviceCount = stdfParse.ChipsCount;
-            _dispatcher.Invoke(new Action(() => {
-                //Sites = stdfParse.GetSites();
-                //SitesCount=stdfParse.GetSitesChipCount().Values.ToList();
-                Sites = (from f in stdfParse.GetSitesChipCount()
-                         let x = new KeyValuePair<byte, KeyValuePair<int, string>>(f.Key, new KeyValuePair<int, string>(f.Value, FilePath))
-                         select x).ToDictionary(x=>x.Key, x=>x.Value);
-            }));
-
-            OnPropertyChanged("FileStatus");
-            OnPropertyChanged("FileDeviceCount");
-            OnPropertyChanged("Sites");
-            //OnPropertyChanged("SitesCount");
-
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        //OnPropertyChanged event handler to update property value in binding
-        private void OnPropertyChanged(string info) {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(info));
-        }
-
-    }
-
-
-    public class Analyser: INotifyPropertyChanged {
+namespace SillyMonkey.ViewModel {
+    public class LoadedFile : INotifyPropertyChanged {
         #region private
-        private Dictionary<int, StdfParse> _files;
+        private Dictionary<int, IDataAcquire> _files;
 
         #endregion
 
@@ -77,7 +25,7 @@ namespace DataAnalyser
             var val = new StdfParse(path);
             FileInfos.Add(new FileInfo(val));
             val.ExtractDone += Val_ExtractDone;
-            if(!_files.ContainsKey(key))
+            if (!_files.ContainsKey(key))
                 _files.Add(key, val);
             else {
 
@@ -98,10 +46,10 @@ namespace DataAnalyser
         }
 
         public void ExtractFiles(List<string> paths) {
-            var ll=(from f in _files
-             where paths.Contains(f.Value.FilePath)
-             let x = f.Value
-             select x).ToList();
+            var ll = (from f in _files
+                        where paths.Contains(f.Value.FilePath)
+                        let x = f.Value
+                        select x).ToList();
             Parallel.ForEach(ll, (x) => {
                 x.ExtractStdf();
             });
@@ -110,8 +58,8 @@ namespace DataAnalyser
         public void ChangeFileSelected(int fileHash, byte? site) {
             StringBuilder sb = new StringBuilder();
 
-            ChipSummary summary;
-            FileBasicInfo info = _files[fileHash].BasicInfo;
+            IChipSummary summary;
+            IFileBasicInfo info = _files[fileHash].BasicInfo;
 
             if (site.HasValue) {
                 summary = _files[fileHash].GetChipSummaryBySite()[site.Value];
@@ -124,7 +72,7 @@ namespace DataAnalyser
             sb.AppendLine("");
             sb.AppendLine("General Info");
             sb.AppendLine($"Total Count:{summary.TotalCount}");
-            sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount*100/summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f2")}%");
             sb.AppendLine($"Total Count:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f2")}%");
             sb.AppendLine($"Total Count:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f2")}%");
             sb.AppendLine($"Total Count:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f2")}%");
@@ -160,8 +108,8 @@ namespace DataAnalyser
 
 
 
-        public Analyser() {
-            _files = new Dictionary<int, StdfParse>();
+        public LoadedFile() {
+            _files = new Dictionary<int, IDataAcquire>();
             FileInfos = new ObservableCollection<FileInfo>();
             SelectedSummary = "";
         }
@@ -172,6 +120,8 @@ namespace DataAnalyser
                 if (FileInfos[i].FilePath == data.FilePath)
                     FileInfos[i].UpdateFileInfo(data);
         }
+
+        
 
     }
 }

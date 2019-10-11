@@ -1,4 +1,5 @@
-﻿using StdfReader.Records.V4;
+﻿using DataInterface;
+using StdfReader.Records.V4;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
-    public class FileBasicInfo {
+    public class FileBasicInfo: IFileBasicInfo {
         public DateTime? SetupTime { get; }
         public DateTime? StartTime { get; }
         public DateTime? FinishTime { get; private set; }

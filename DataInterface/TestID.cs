@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataParse {
+namespace DataInterface {
     /// <summary>
     /// In a pair of PIR=>PRR, if the TN and TestText are same as the previous one with same site, think it as a sub test, assign a new subNumber
     /// </summary>

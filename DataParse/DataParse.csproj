@@ -42,27 +42,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChipInfo.cs" />
-    <Compile Include="CordType.cs" />
     <Compile Include="ItemStatistic.cs" />
     <Compile Include="StdfParse.cs" />
     <Compile Include="FileBasicInfo.cs" />
-    <Compile Include="FilterSetup.cs" />
-    <Compile Include="IDataAcquire.cs" />
     <Compile Include="ItemInfo.cs" />
     <Compile Include="PinGroupRecord.cs" />
     <Compile Include="PinMapRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawData.cs" />
-    <Compile Include="Summary.cs" />
+    <Compile Include="ChipSummary.cs" />
     <Compile Include="TestChips.cs" />
     <Compile Include="TestItems.cs" />
-    <Compile Include="TestID.cs" />
+    <Compile Include="TestSummary.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataInterface\DataInterface.csproj">
+      <Project>{fd0b8b5f-dbb8-4564-86e4-67b8009230b0}</Project>
+      <Name>DataInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StdfReader\StdfReader.csproj">
       <Project>{2a700e65-844e-490f-bbc5-cf450821e021}</Project>
       <Name>StdfReader</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

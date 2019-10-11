@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataParse
 {
-    public class ItemInfo
-    {
+    public class ItemInfo: IItemInfo {
         public string TestText { get; private set; }
         public float? LoLimit { get; private set; }
         public float? HiLimit { get; private set; }

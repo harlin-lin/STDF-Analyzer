@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataInterface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 namespace DataParse
 {
     public class TestChips{
-        private List<ChipInfo> _testChips;
+        private List<IChipInfo> _testChips;
         private List<int> _chipIndexes;
 
         public TestChips(int capacity) {
-            _testChips = new List<ChipInfo>(capacity);
+            _testChips = new List<IChipInfo>(capacity);
             _chipIndexes = new List<int>(capacity);
         }
 
@@ -45,32 +46,32 @@ namespace DataParse
             }
             return indexes;
         }
-        public List<ChipInfo> GetFilteredChipsInfo(bool[] chipsFilter) {
-            List<ChipInfo> infos = new List<ChipInfo>(_testChips.Count);
+        public List<IChipInfo> GetFilteredChipsInfo(bool[] chipsFilter) {
+            List<IChipInfo> infos = new List<IChipInfo>(_testChips.Count);
             for (int i = 0; i < _testChips.Count; i++) {
                 if (!chipsFilter[i])
                     infos.Add(_testChips[i]);
             }
             return infos;
         }
-        public void UpdateSummaryFiltered(bool[] chipsFilter, ref Dictionary<byte, ChipSummary> summary) {
+        public void UpdateSummaryFiltered(bool[] chipsFilter, ref Dictionary<byte, IChipSummary> summary) {
 
             for (int i = 0; i < _testChips.Count; i++) {
                 if (chipsFilter[i]) continue;
                 if (!summary.ContainsKey(_testChips[i].Site))
                     summary.Add(_testChips[i].Site, new ChipSummary());
 
-                summary[_testChips[i].Site].AddChip(_testChips[i]);
+                ((ChipSummary)summary[_testChips[i].Site]).AddChip(_testChips[i]);
             }
         }
 
-        public void UpdateSummary(ref Dictionary<byte, ChipSummary> summary) {
+        public void UpdateSummary(ref Dictionary<byte, IChipSummary> summary) {
 
             for (int i = 0; i < _testChips.Count; i++) {
                 if (!summary.ContainsKey(_testChips[i].Site))
                     summary.Add(_testChips[i].Site, new ChipSummary());
 
-                summary[_testChips[i].Site].AddChip(_testChips[i]);
+                ((ChipSummary)summary[_testChips[i].Site]).AddChip(_testChips[i]);
             }
         }
 
