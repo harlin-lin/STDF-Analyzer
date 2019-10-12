@@ -1,4 +1,5 @@
 ﻿using DataInterface;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
-    public class FileInfo : INotifyPropertyChanged {
+    public class FileInfo : ViewModelBase {
         public string FileName { get; private set; }
         public string FilePath { get; private set; }
         public bool FileStatus { get; private set; }
@@ -40,18 +41,10 @@ namespace SillyMonkey.ViewModel {
                          select x).ToDictionary(x => x.Key, x => x.Value);
             }));
 
-            OnPropertyChanged("FileStatus");
-            OnPropertyChanged("FileDeviceCount");
-            OnPropertyChanged("Sites");
-            //OnPropertyChanged("SitesCount");
-
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        //OnPropertyChanged event handler to update property value in binding
-        private void OnPropertyChanged(string info) {
-            var handler = PropertyChanged;
-            handler?.Invoke(this, new PropertyChangedEventArgs(info));
+            RaisePropertyChanged("FileStatus");
+            RaisePropertyChanged("FileDeviceCount");
+            RaisePropertyChanged("Sites");
+            //RaisePropertyChanged("SitesCount");
         }
 
     }

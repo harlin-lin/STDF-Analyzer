@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SillyMonkey.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,17 @@ namespace SillyMonkey.View {
         public FileManagementPage() {
             InitializeComponent();
         }
+
+        private void evSelectedChange(object sender, RoutedPropertyChangedEventArgs<object> e) {
+            if (e.NewValue is FileInfo) {
+                var s = e.NewValue as FileInfo;
+                //_stdFiles.ChangeFileSelected(s.FilePath.GetHashCode(), null);
+            } else {
+
+                var s = (KeyValuePair<byte, KeyValuePair<int, string>>)e.NewValue;
+                //_stdFiles.ChangeFileSelected(s.Value.Value.GetHashCode(), s.Key);
+            }
+        }
+
     }
 }

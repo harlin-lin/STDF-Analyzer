@@ -226,7 +226,7 @@ namespace DataParse{
 
                     _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), ((Tsr)r).TestLabel);
                 }else if (r.RecordType == StdfFile.MRR) {
-                    ((BasicInfo)BasicInfo).AddMrr((Mrr)r);
+                    ((FileBasicInfo)BasicInfo).AddMrr((Mrr)r);
                 }
 
             }

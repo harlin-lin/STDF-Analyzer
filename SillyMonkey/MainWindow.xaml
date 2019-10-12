@@ -3,15 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:SillyMonkey"
-        xmlns:analyser="clr-namespace:DataAnalyser;assembly=DataAnalyser"
-        xmlns:s="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+        xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1200">
-
-    <Grid AllowDrop="True"
-        DragDrop.Drop="evDrop"
-        DragDrop.DragEnter="evDragEnter">
+    <Window.DataContext>
+        <Binding Path="Main" Source="{StaticResource Locator}"/>
+    </Window.DataContext>
+    <!--<Window.Resources>
+        <vm:MainViewModel x:Key="main"/>
+    </Window.Resources>-->
+    <Grid AllowDrop="True">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="DragEnter">
+                <cmd:EventToCommand Command="{Binding }"/>
+            </i:EventTrigger>
+            
+        </i:Interaction.Triggers>
+        
+        <!--DragDrop.Drop="evDrop"
+        DragDrop.DragEnter="evDragEnter">-->
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -25,7 +37,7 @@
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
-            <Frame Grid.Column="0" Source="View/FileManagementPage.xaml"/>
+            <Frame Grid.Column="0" Source="View/FileManagementPage.xaml" Name="FileManagement"/>
             <!--<TabControl Grid.Column="0" TabStripPlacement="Left">
                 <TabItem Name="tiLocalFiles" Header="L">
                     <Grid>

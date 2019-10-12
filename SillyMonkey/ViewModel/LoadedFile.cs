@@ -1,4 +1,5 @@
 ﻿using DataInterface;
+using FileHelper;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,8 +11,8 @@ using System.Threading.Tasks;
 namespace SillyMonkey.ViewModel {
     public class LoadedFile : INotifyPropertyChanged {
         #region private
-        private Dictionary<int, IDataAcquire> _files;
-
+        //private Dictionary<int, IDataAcquire> _files;
+        private StdFileHelper _fileHelper;
         #endregion
 
         #region File Select property
@@ -20,71 +21,55 @@ namespace SillyMonkey.ViewModel {
         public ObservableCollection<FileInfo> FileInfos { get; private set; }
         public string SelectedSummary { get; private set; }
 
-        public int AddFile(string path) {
-            int key = path.GetHashCode();
-            var val = new StdfParse(path);
-            FileInfos.Add(new FileInfo(val));
+        public void AddFile(string path) {
+            var val = _fileHelper.AddFile(path);
             val.ExtractDone += Val_ExtractDone;
-            if (!_files.ContainsKey(key))
-                _files.Add(key, val);
-            else {
-
-            }
-
-            //OnPropertyChanged("FileInfos");
-            return key;
+            FileInfos.Add(new FileInfo(val));
         }
         public void RemoveFile(string path) {
-            if (_files.Remove(path.GetHashCode())) {
+            if (_fileHelper.RemoveFile(path)) {
                 for (int i = 0; i < FileInfos.Count; i++)
                     if (FileInfos[i].FilePath == path)
                         FileInfos.RemoveAt(i);
-                //OnPropertyChanged("FileInfos");
             } else {
-
+                ///////////////////////////
             }
         }
 
         public void ExtractFiles(List<string> paths) {
-            var ll = (from f in _files
-                        where paths.Contains(f.Value.FilePath)
-                        let x = f.Value
-                        select x).ToList();
-            Parallel.ForEach(ll, (x) => {
-                x.ExtractStdf();
-            });
+            _fileHelper.ExtractFiles(paths);
         }
 
-        public void ChangeFileSelected(int fileHash, byte? site) {
-            StringBuilder sb = new StringBuilder();
+        //public void ChangeFileSelected(int fileHash, byte? site) {
+        //    StringBuilder sb = new StringBuilder();
 
-            IChipSummary summary;
-            IFileBasicInfo info = _files[fileHash].BasicInfo;
+        //    IChipSummary summary;
+        //    IFileBasicInfo info = _files[fileHash].BasicInfo;
 
-            if (site.HasValue) {
-                summary = _files[fileHash].GetChipSummaryBySite()[site.Value];
-            } else {
-                summary = _files[fileHash].GetChipSummary();
-            }
+        //    if (site.HasValue) {
+        //        summary = _files[fileHash].GetChipSummaryBySite()[site.Value];
+        //    } else {
+        //        summary = _files[fileHash].GetChipSummary();
+        //    }
 
-            if (site.HasValue)
-                sb.AppendLine($"Site:{site}");
-            sb.AppendLine("");
-            sb.AppendLine("General Info");
-            sb.AppendLine($"Total Count:{summary.TotalCount}");
-            sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine("");
-            sb.AppendLine("Re-Test Info");
-            sb.AppendLine($"Total Count:{summary.FreshCount}");
-            sb.AppendLine($"Total Count:{summary.RetestCount}");
+        //    if (site.HasValue)
+        //        sb.AppendLine($"Site:{site}");
+        //    sb.AppendLine("");
+        //    sb.AppendLine("General Info");
+        //    sb.AppendLine($"Total Count:{summary.TotalCount}");
+        //    sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f2")}%");
+        //    sb.AppendLine($"Total Count:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f2")}%");
+        //    sb.AppendLine($"Total Count:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f2")}%");
+        //    sb.AppendLine($"Total Count:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f2")}%");
+        //    sb.AppendLine("");
+        //    sb.AppendLine("Re-Test Info");
+        //    sb.AppendLine($"Total Count:{summary.FreshCount}");
+        //    sb.AppendLine($"Total Count:{summary.RetestCount}");
 
-            SelectedSummary = sb.ToString();
+        //    SelectedSummary = sb.ToString();
 
-            OnPropertyChanged("SelectedSummary");
-        }
+        //    OnPropertyChanged("SelectedSummary");
+        //}
 
 
         #endregion
@@ -109,7 +94,7 @@ namespace SillyMonkey.ViewModel {
 
 
         public LoadedFile() {
-            _files = new Dictionary<int, IDataAcquire>();
+            _fileHelper = new StdFileHelper();
             FileInfos = new ObservableCollection<FileInfo>();
             SelectedSummary = "";
         }

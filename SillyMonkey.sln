@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StdfReader", "StdfReader\St
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataInterface", "DataInterface\DataInterface.csproj", "{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHelper", "FileHelper\FileHelper.csproj", "{897BC392-7E1C-4C48-9C94-61127F1F5287}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{897BC392-7E1C-4C48-9C94-61127F1F5287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{897BC392-7E1C-4C48-9C94-61127F1F5287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{897BC392-7E1C-4C48-9C94-61127F1F5287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{897BC392-7E1C-4C48-9C94-61127F1F5287}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
