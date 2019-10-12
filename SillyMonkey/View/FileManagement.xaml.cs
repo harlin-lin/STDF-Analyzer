@@ -16,10 +16,10 @@ using System.Windows.Shapes;
 
 namespace SillyMonkey.View {
     /// <summary>
-    /// FileManagementPage.xaml 的交互逻辑
+    /// FileManagement.xaml 的交互逻辑
     /// </summary>
-    public partial class FileManagementPage : Page {
-        public FileManagementPage() {
+    public partial class FileManagement : UserControl {
+        public FileManagement() {
             InitializeComponent();
         }
 

@@ -89,8 +89,8 @@
     <Compile Include="View\DataGridTab.xaml.cs">
       <DependentUpon>DataGridTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\FileManagementPage.xaml.cs">
-      <DependentUpon>FileManagementPage.xaml</DependentUpon>
+    <Compile Include="View\FileManagement.xaml.cs">
+      <DependentUpon>FileManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\HistogramTab.xaml.cs">
       <DependentUpon>HistogramTab.xaml</DependentUpon>
@@ -125,7 +125,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\FileManagementPage.xaml">
+    <Page Include="View\FileManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

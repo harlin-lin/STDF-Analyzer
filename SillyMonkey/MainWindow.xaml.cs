@@ -34,22 +34,5 @@ namespace SillyMonkey {
             else
                 e.Effects = DragDropEffects.None;
         }
-
-        private async void evDrop(object sender, DragEventArgs e) {
-            var paths = ((System.Array)e.Data.GetData(DataFormats.FileDrop));
-            foreach (string path in paths) {
-                var ext = System.IO.Path.GetExtension(path).ToLower();
-                if (ext == ".stdf" || ext == ".std") {
-                    //_stdFiles.AddFile(path);
-                } else {
-                    //log message not supported
-                }
-            }
-
-            //extract the files
-            //await Task.Run(new Action(() => _stdFiles.ExtractFiles(new List<string>(paths.OfType<string>()))));
-
-        }
-
     }
 }

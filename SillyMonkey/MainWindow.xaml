@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:v="clr-namespace:SillyMonkey.View"
         xmlns:local="clr-namespace:SillyMonkey"
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
@@ -11,20 +12,13 @@
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}"/>
     </Window.DataContext>
-    <!--<Window.Resources>
-        <vm:MainViewModel x:Key="main"/>
-    </Window.Resources>-->
-    <Grid AllowDrop="True">
+    <Grid AllowDrop="True" DragDrop.DragEnter="evDragEnter">
         <i:Interaction.Triggers>
-            <i:EventTrigger EventName="DragEnter">
-                <cmd:EventToCommand Command="{Binding }"/>
+            <i:EventTrigger EventName="Drop">
+                <cmd:EventToCommand Command="{Binding Path=DropCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
             </i:EventTrigger>
-            
         </i:Interaction.Triggers>
         
-        <!--DragDrop.Drop="evDrop"
-        DragDrop.DragEnter="evDragEnter">-->
-
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
             <RowDefinition/>
@@ -37,53 +31,7 @@
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
-            <Frame Grid.Column="0" Source="View/FileManagementPage.xaml" Name="FileManagement"/>
-            <!--<TabControl Grid.Column="0" TabStripPlacement="Left">
-                <TabItem Name="tiLocalFiles" Header="L">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1.5*"/>
-                            <RowDefinition Height="2"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectedItemChanged="evSelectedChange"
-                                  SelectedValuePath="FileInfo">
-                            <TreeView.Resources>
-                                <DataTemplate x:Key="siteTemplate">
-                                    <TextBlock>
-                                        <TextBlock.Text>
-                                            <MultiBinding StringFormat="Site:{0}=>{1}">
-                                                <Binding Path="Key"/>
-                                                <Binding Path="Value.Key"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                        <TextBlock.ToolTip>
-                                            <Binding Path="Value.Value"/>
-                                        </TextBlock.ToolTip>
-                                    </TextBlock>
-                                </DataTemplate>
-                                <HierarchicalDataTemplate DataType="{x:Type analyser:FileInfo}" ItemsSource="{Binding Sites}" ItemTemplate="{StaticResource siteTemplate}">
-                                    <TextBlock>
-                                        <TextBlock.Text>
-                                            <MultiBinding  StringFormat="{}{0} =>{1}">
-                                                <Binding Path="FileName"/>
-                                                <Binding Path="FileDeviceCount"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                        <TextBlock.ToolTip>
-                                            <Binding Path="FilePath"/>
-                                        </TextBlock.ToolTip>
-                                    </TextBlock>
-                                </HierarchicalDataTemplate>
-                            </TreeView.Resources>
-                        </TreeView>
-                        <GridSplitter Grid.Row="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
-                        <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}"/>
-                    </Grid>
-                </TabItem>
-                <TabItem Name="tiServerFiles" Header="N"/>
-            </TabControl>-->
+            <v:FileManagement Grid.Column="0" DataContext="{Binding Path=FileInfos}"/>
             <GridSplitter Grid.Column="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
             <TabControl Grid.Column="2" Name="dataTab"/>
         </Grid>
