@@ -28,9 +28,7 @@ namespace SillyMonkey.ViewModel
 
         public RelayCommand<DragEventArgs> DropCommand { get; private set; }
 
-        public ObservableCollection<FileInfo> FileInfos { get; private set; }
-
-
+        public FileManagementModel Files { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -52,36 +50,21 @@ namespace SillyMonkey.ViewModel
 
 
             _fileHelper = new StdFileHelper();
-            FileInfos = new ObservableCollection<FileInfo>();
+            Files = new FileManagementModel(_fileHelper);
         }
 
 
 
         private void AddFile(string path) {
             var val = _fileHelper.AddFile(path);
-            val.ExtractDone += Val_ExtractDone;
-            FileInfos.Add(new FileInfo(val));
         }
         private void RemoveFile(string path) {
-            if (_fileHelper.RemoveFile(path)) {
-                for (int i = 0; i < FileInfos.Count; i++)
-                    if (FileInfos[i].FilePath == path)
-                        FileInfos.RemoveAt(i);
-            } else {
-                ///////////////////////////
-            }
+            _fileHelper.RemoveFile(path);
         }
 
         private void ExtractFiles(List<string> paths) {
             _fileHelper.ExtractFiles(paths);
         }
-
-        private void Val_ExtractDone(IDataAcquire data) {
-            for (int i = 0; i < FileInfos.Count; i++)
-                if (FileInfos[i].FilePath == data.FilePath)
-                    FileInfos[i].UpdateFileInfo(data);
-        }
-
 
     }
 }

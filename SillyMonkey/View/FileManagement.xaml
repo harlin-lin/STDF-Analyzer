@@ -5,6 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:SillyMonkey.ViewModel"
              xmlns:local="clr-namespace:SillyMonkey.View"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
+             xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <TabControl TabStripPlacement="Left">
@@ -15,7 +18,16 @@
                     <RowDefinition Height="2"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding}" SelectedItemChanged="evSelectedChange" SelectedValuePath="FileInfo">
+                <TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectedValuePath="FileInfo">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectedItemChanged">
+                            <cmd:EventToCommand Command="{Binding Path=SelectedItemChangedCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <cmd:EventToCommand Command="{Binding Path=DoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    
                     <TreeView.Resources>
                             <DataTemplate x:Key="siteTemplate">
                                 <TextBlock>

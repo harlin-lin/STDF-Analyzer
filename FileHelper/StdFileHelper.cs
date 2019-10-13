@@ -7,9 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FileHelper {
+    public enum FileChangeType{
+        AddFile,
+        RemoveFile
+    }
+    public delegate void UpdateFileInfoHandler(IDataAcquire fileInfo);
+    public delegate void AddFileHandler(IDataAcquire fileInfo);
+    public delegate void RemoveFileHandler(string path);
+
+
     public class StdFileHelper {
         private Dictionary<int, IDataAcquire> _files;
 
+        public event UpdateFileInfoHandler UpdateFileInfo;
+        public event AddFileHandler AddFileEvent;
+        public event RemoveFileHandler RemoveFileEvent;
 
         public StdFileHelper() {
             _files = new Dictionary<int, IDataAcquire>();
@@ -18,15 +30,28 @@ namespace FileHelper {
         public IDataAcquire AddFile(string path) {
             int key = path.GetHashCode();
             IDataAcquire val = new StdfParse(path);
-            if (!_files.ContainsKey(key))
+            if (!_files.ContainsKey(key)) { 
                 _files.Add(key, val);
-            else {
+                val.ExtractDone += stdFile_ExtractDone;
 
+                AddFileEvent?.Invoke(val);
+                return val;
+            }else {
+                return null;
             }
-            return val;
         }
+
+        private void stdFile_ExtractDone(IDataAcquire data) {
+            UpdateFileInfo?.Invoke(data);
+        }
+
         public bool RemoveFile(string path) {
-            return _files.Remove(path.GetHashCode());
+            if (_files.Remove(path.GetHashCode())) {
+                RemoveFileEvent?.Invoke(path);
+                return true;
+            } else {
+                return false;
+            }
         }
 
         public void ExtractFiles(List<string> paths) {
@@ -38,5 +63,36 @@ namespace FileHelper {
                 x.ExtractStdf();
             });
         }
+
+        public string GetBriefSummary(int fileHash, byte? site) {
+            StringBuilder sb = new StringBuilder();
+
+            IChipSummary summary;
+            IFileBasicInfo info = _files[fileHash].BasicInfo;
+
+            if (site.HasValue) {
+                summary = _files[fileHash].GetChipSummaryBySite()[site.Value];
+            } else {
+                summary = _files[fileHash].GetChipSummary();
+            }
+
+            if (site.HasValue)
+                sb.AppendLine($"Site:{site}");
+            sb.AppendLine("");
+            sb.AppendLine("General Info");
+            sb.AppendLine($"Total Count:{summary.TotalCount}");
+            sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine($"Total Count:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine($"Total Count:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine($"Total Count:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine("");
+            sb.AppendLine("Re-Test Info");
+            sb.AppendLine($"Total Count:{summary.FreshCount}");
+            sb.AppendLine($"Total Count:{summary.RetestCount}");
+
+
+            return sb.ToString();
+        }
+
     }
 }

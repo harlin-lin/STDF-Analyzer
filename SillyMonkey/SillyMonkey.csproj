@@ -76,8 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModel\FileInfo.cs" />
-    <Compile Include="ViewModel\LoadedFile.cs" />
+    <Compile Include="ViewModel\FileManagementModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\BottomBarPage.xaml.cs">

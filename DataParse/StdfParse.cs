@@ -48,7 +48,7 @@ namespace DataParse{
         public event ExtractDoneEventHandler ExtractDone;
         private void OnExtractDone(IDataAcquire data) {
             var handler = ExtractDone;
-            handler?.Invoke(data);
+            handler?.Invoke(data);/////////////////////////////////////////////////////////////////////////////////////////////////
         }
 
         private Dictionary<int, FilterData> _filterList;

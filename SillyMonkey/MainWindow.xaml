@@ -31,7 +31,7 @@
                 <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
-            <v:FileManagement Grid.Column="0" DataContext="{Binding Path=FileInfos}"/>
+            <v:FileManagement Grid.Column="0" DataContext="{Binding Path=Files}"/>
             <GridSplitter Grid.Column="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
             <TabControl Grid.Column="2" Name="dataTab"/>
         </Grid>
