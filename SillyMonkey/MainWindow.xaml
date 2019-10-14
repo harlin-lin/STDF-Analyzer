@@ -33,7 +33,7 @@
            </Grid.ColumnDefinitions>
             <v:FileManagement Grid.Column="0" DataContext="{Binding Path=Files}"/>
             <GridSplitter Grid.Column="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
-            <TabControl Grid.Column="2" Name="dataTab"/>
+            <TabControl Grid.Column="2" Name="dataTab" ItemsSource="{Binding DataTabItems}"/>
         </Grid>
         <Frame Grid.Row="2" Source="View/BottomBarPage.xaml"/>
     </Grid>

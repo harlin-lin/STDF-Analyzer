@@ -27,6 +27,16 @@ namespace FileHelper {
             _files = new Dictionary<int, IDataAcquire>();
         }
 
+        public IDataAcquire GetFile(int fileHash) {
+            if (_files.ContainsKey(fileHash))
+                return _files[fileHash];
+            else
+                return null;
+        }
+        public IDataAcquire GetFile(string path){
+            return GetFile(path.GetHashCode());
+        }
+
         public IDataAcquire AddFile(string path) {
             int key = path.GetHashCode();
             IDataAcquire val = new StdfParse(path);
@@ -94,5 +104,18 @@ namespace FileHelper {
             return sb.ToString();
         }
 
+        public int? CreateFilterDataHandler(int fileHash, byte? site) {
+            if (!_files.ContainsKey(fileHash)) return null;
+
+            var id = _files[fileHash].CreateFilterCopy(_files[fileHash].GetFilterID(site));
+
+            return id;
+        }
+
+        public FilterSetup GetFilterSetup(int fileHash, int filterId) {
+            if (!_files.ContainsKey(fileHash)) return null;
+
+            return _files[fileHash].GetFilterSetup(filterId);
+        }
     }
 }

@@ -7,12 +7,14 @@
              xmlns:local="clr-namespace:SillyMonkey.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="0.3*"/>
-        </Grid.ColumnDefinitions>
-        <c1:C1FlexGrid x:Name="grid" />
-    </Grid>
+    <TabItem>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2"/>
+                <ColumnDefinition Width="0.3*"/>
+            </Grid.ColumnDefinitions>
+            <c1:C1FlexGrid x:Name="grid" />
+        </Grid>    
+    </TabItem>
 </UserControl>

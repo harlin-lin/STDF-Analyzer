@@ -1,4 +1,5 @@
-﻿using DataInterface;
+﻿using C1.WPF;
+using DataInterface;
 using FileHelper;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -13,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
+    public delegate void OpenDetailHandler(int fileHash, byte? site);
     public class FileInfo : ViewModelBase {
         public string FileName { get; private set; }
         public string FilePath { get; private set; }
@@ -58,24 +60,35 @@ namespace SillyMonkey.ViewModel {
 
         public string SelectedSummary { get; private set; }
 
-        public RelayCommand<RoutedPropertyChangedEventArgs<object>> SelectedItemChangedCommand { get; private set; }
+        public RelayCommand<SelectionChangedEventArgs> SelectedItemChangedCommand { get; private set; }
         public RelayCommand<System.Windows.Input.MouseEventArgs> DoubleClickCommand { get; private set; }
+        public event OpenDetailHandler OpenDetailEvent;
+
 
         public FileManagementModel(StdFileHelper stdFileHelper) {
-            SelectedItemChangedCommand = new RelayCommand<RoutedPropertyChangedEventArgs<object>>((e) => {
-                if (e.NewValue is FileInfo) {
-                    var s = e.NewValue as FileInfo;
+            SelectedItemChangedCommand = new RelayCommand<SelectionChangedEventArgs>((e) => {
+                var v = (C1TreeViewItem)(e.AddedItems[0]);
+                if (v.HasItems) {
+                    var s = v.DataContext as FileInfo;
                     SelectedSummary = _fileHelper.GetBriefSummary(s.FilePath.GetHashCode(), null);
                 } else {
-
-                    var s = (KeyValuePair<byte, KeyValuePair<int, string>>)e.NewValue;
+                    var s = (KeyValuePair<byte, KeyValuePair<int, string>>)v.DataContext;
                     SelectedSummary = _fileHelper.GetBriefSummary(s.Value.Value.GetHashCode(), s.Key);
                 }
                 RaisePropertyChanged("SelectedSummary");
             });
 
             DoubleClickCommand = new RelayCommand<System.Windows.Input.MouseEventArgs>((e) => {
-                ;
+                var v=((C1TreeView)e.Source).GetNode(e.GetPosition(null));
+                if (v == null) return;
+                if (v.HasItems) {
+                    var s = v.DataContext as FileInfo;
+                    OpenDetailEvent?.Invoke(s.FilePath.GetHashCode(), null);
+                    SelectedSummary = _fileHelper.GetBriefSummary(s.FilePath.GetHashCode(), null);
+                } else {
+                    var s = (KeyValuePair<byte, KeyValuePair<int, string>>)v.DataContext;
+                    OpenDetailEvent?.Invoke(s.Value.Value.GetHashCode(), s.Key);
+                }
             });
 
             _fileHelper = stdFileHelper;

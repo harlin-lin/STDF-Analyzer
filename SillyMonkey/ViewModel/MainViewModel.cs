@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using SillyMonkey.View;
 
 namespace SillyMonkey.ViewModel
 {
@@ -30,6 +32,8 @@ namespace SillyMonkey.ViewModel
 
         public FileManagementModel Files { get; private set; }
 
+        public ObservableCollection<TabItem> DataTabItems { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -48,12 +52,24 @@ namespace SillyMonkey.ViewModel
                 await Task.Run(new Action(() => ExtractFiles(new List<string>(paths.OfType<string>()))));
             });
 
+            DataTabItems = new ObservableCollection<TabItem>();
 
             _fileHelper = new StdFileHelper();
             Files = new FileManagementModel(_fileHelper);
+            Files.OpenDetailEvent += Files_OpenDetailEvent;
         }
 
+        private void Files_OpenDetailEvent(int fileHash, byte? site) {
+            var id =_fileHelper.CreateFilterDataHandler(fileHash, site);
+            if (!id.HasValue) return;
 
+            DataGridTabModel dataGridTabModel = new DataGridTabModel(_fileHelper, fileHash, id.Value);
+
+            TabItem tabItem = new TabItem();
+            tabItem.DataContext = dataGridTabModel;
+
+            DataTabItems.Add(tabItem);
+        }
 
         private void AddFile(string path) {
             var val = _fileHelper.AddFile(path);

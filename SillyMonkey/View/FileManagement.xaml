@@ -13,14 +13,29 @@
     <TabControl TabStripPlacement="Left">
         <TabItem Name="tiLocalFiles" Header="L">
             <Grid>
+                <Grid.Resources>
+                    <DataTemplate x:Key="siteTemplate">
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="Site:{0}=>{1}">
+                                    <Binding Path="Key"/>
+                                    <Binding Path="Value.Key"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                            <TextBlock.ToolTip>
+                                <Binding Path="Value.Value"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </DataTemplate>
+                </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.5*"/>
                     <RowDefinition Height="2"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectedValuePath="FileInfo">
+                <c1:C1TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectionMode="Single">
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:EventTrigger EventName="SelectionChanging">
                             <cmd:EventToCommand Command="{Binding Path=SelectedItemChangedCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
                         <i:EventTrigger EventName="MouseDoubleClick">
@@ -28,20 +43,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     
-                    <TreeView.Resources>
-                            <DataTemplate x:Key="siteTemplate">
-                                <TextBlock>
-                                    <TextBlock.Text>
-                                        <MultiBinding StringFormat="Site:{0}=>{1}">
-                                            <Binding Path="Key"/>
-                                            <Binding Path="Value.Key"/>
-                                        </MultiBinding>
-                                    </TextBlock.Text>
-                                    <TextBlock.ToolTip>
-                                        <Binding Path="Value.Value"/>
-                                    </TextBlock.ToolTip>
-                                </TextBlock>
-                            </DataTemplate>
+                    <c1:C1TreeView.ItemTemplate>
                             <HierarchicalDataTemplate DataType="{x:Type vm:FileInfo}" ItemsSource="{Binding Sites}" ItemTemplate="{StaticResource siteTemplate}">
                                 <TextBlock>
                                     <TextBlock.Text>
@@ -55,8 +57,8 @@
                                     </TextBlock.ToolTip>
                                 </TextBlock>
                             </HierarchicalDataTemplate>
-                        </TreeView.Resources>
-                    </TreeView>
+                        </c1:C1TreeView.ItemTemplate>
+                    </c1:C1TreeView>
                 <GridSplitter Grid.Row="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
                 <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}"/>
             </Grid>

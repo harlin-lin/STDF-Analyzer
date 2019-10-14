@@ -118,28 +118,31 @@ namespace DataInterface {
         /// </summary>
         /// <param name="filterId">filter ID</param>
         /// <param name="filter">filter setup</param>
-        void SetFilter(int filterId, FilterSetup filter);
-
-        ///// <summary>
-        ///// creat a new filter
-        ///// </summary>
-        ///// <param name="comment">comment of the filter</param>
-        ///// <returns>the created filter's ID</returns>
-        //int CreateFilter(string comment);
+        void UpdateFilter(int filterId, FilterSetup newFilter);
 
         /// <summary>
         /// create a new filter with the setup
         /// </summary>
         /// <param name="filter">filter setup</param>
-        /// <param name="comment">comment of the filter</param>
         /// <returns>the created filter's id</returns>
-        int CreateFilter(FilterSetup filter, string comment);
+        int CreateFilter(FilterSetup filter);
+
+        int CreateFilterCopy(int filterId);
 
         /// <summary>
         /// get all of the created filters, include the default created 1 for basic file and n for n sites
         /// </summary>
         /// <returns>filters' id and the corresponding comment</returns>
-        Dictionary<int, string> GetAllFilter();
+        Dictionary<int, FilterSetup> GetAllFilter();
+
+        /// <summary>
+        /// get corresponding site's filter
+        /// </summary>
+        /// <param name="site">if is null means get the full sites one</param>
+        /// <returns></returns>
+        int GetFilterID(byte? site);
+
+        FilterSetup GetFilterSetup(int filterId);
 
         /// <summary>
         /// remove the corresponding filter
