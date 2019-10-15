@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataParse
 {
+    [Serializable]
     public class ChipSummary: IChipSummary {
         public int TotalCount { get; private set; }
         public int RetestCount { get; private set; }

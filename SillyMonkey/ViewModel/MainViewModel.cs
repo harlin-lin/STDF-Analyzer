@@ -69,6 +69,7 @@ namespace SillyMonkey.ViewModel
             tabItem.DataContext = dataGridTabModel;
 
             DataTabItems.Add(tabItem);
+
         }
 
         private void AddFile(string path) {

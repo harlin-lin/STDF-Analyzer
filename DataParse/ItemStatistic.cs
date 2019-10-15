@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataParse {
+    [Serializable]
     public class ItemStatistic: IItemStatistic {
         public float? MeanValue { get; private set; }
         public float? MinValue { get; private set; }

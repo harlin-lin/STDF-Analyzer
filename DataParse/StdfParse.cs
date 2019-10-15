@@ -9,10 +9,12 @@ using System.IO;
 using StdfReader.Records.V4;
 using DataInterface;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace DataParse{
 
     public class StdfParse : IDataAcquire {
+        [Serializable]
         private class FilterData {
             public FilterSetup Filter { get; private set; }
             public bool[] ChipFilter;
@@ -31,16 +33,14 @@ namespace DataParse{
             }
 
 
-            public static T DeepCopyByReflect<T>(T obj) {
-                //如果是字符串或值类型则直接返回
-                if (obj is string || obj.GetType().IsValueType) return obj;
+            public static T DeepCopy<T>(T obj) {
+                using (var ms = new MemoryStream()) {
+                    var formatter = new BinaryFormatter();
+                    formatter.Serialize(ms, obj);
+                    ms.Position = 0;
 
-                object retval = Activator.CreateInstance(obj.GetType());
-                FieldInfo[] fields = obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-                foreach (FieldInfo field in fields) {
-                    try { field.SetValue(retval, DeepCopyByReflect(field.GetValue(obj))); } catch { }
+                    return (T)formatter.Deserialize(ms);
                 }
-                return (T)retval;
             }
 
         }
@@ -426,7 +426,7 @@ namespace DataParse{
             while(_filterList.ContainsKey(key)) key++;
 
             if (_filterList.ContainsKey(filterId))
-                _filterList.Add(key, FilterData.DeepCopyByReflect<FilterData>(_filterList[filterId]));
+                _filterList.Add(key, FilterData.DeepCopy<FilterData>(_filterList[filterId]));
             else
                 throw new Exception("no filter");
             return key;

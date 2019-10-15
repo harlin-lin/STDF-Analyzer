@@ -14,6 +14,7 @@ namespace DataInterface {
     /// <summary>
     /// just for datahelper to define the filter content
     /// </summary>
+    [Serializable]
     public class FilterSetup {
         public List<byte> maskSites { get; set; }
         public List<ushort> maskSoftBins { get; set; }

@@ -9,6 +9,7 @@ namespace DataInterface {
     /// <summary>
     /// In a pair of PIR=>PRR, if the TN and TestText are same as the previous one with same site, think it as a sub test, assign a new subNumber
     /// </summary>
+    [Serializable]
     public struct TestID:IEquatable<TestID> {
         public uint MainNumber { get; private set; }
         public uint SubNumber { get; private set; }

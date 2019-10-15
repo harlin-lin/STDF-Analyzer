@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace DataInterface {
+    [Serializable]
     public class CordType : IEquatable<CordType> {
 
         public CordType(short? x, short? y) {
