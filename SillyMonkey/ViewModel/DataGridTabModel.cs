@@ -25,6 +25,7 @@ namespace SillyMonkey.ViewModel {
             TestName = new List<string>();
             TestName.AddRange(Enumerable.Range(0, 9).Select((x)=> $"{x}{x}"));
         }
+
     }
     public class DataGridTabModel : ViewModelBase {
         private StdFileHelper _fileHelper;
