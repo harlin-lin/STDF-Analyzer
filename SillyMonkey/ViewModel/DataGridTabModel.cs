@@ -14,6 +14,18 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
+    public class ShowData {
+        public List<int> Testnumber { get; set; }
+        public List<string> TestName { get; set; }
+
+        public ShowData() {
+            Testnumber = new List<int>();
+            Testnumber.AddRange(Enumerable.Range(0, 10).ToList());
+
+            TestName = new List<string>();
+            TestName.AddRange(Enumerable.Range(0, 9).Select((x)=> $"{x}{x}"));
+        }
+    }
     public class DataGridTabModel : ViewModelBase {
         private StdFileHelper _fileHelper;
         private int _fileHash;
@@ -22,6 +34,8 @@ namespace SillyMonkey.ViewModel {
 
         public string TabTitle {get; private set;}
         public string FilePath { get; private set; }
+
+        public List<ShowData> GridData { get; private set; }
 
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
@@ -35,6 +49,12 @@ namespace SillyMonkey.ViewModel {
             else
                 TabTitle = _dataAcquire.FileName;
             FilePath = _dataAcquire.FilePath;
+
+            GridData = new List<ShowData>();
+            GridData.Add(new ShowData());
+            GridData.Add(new ShowData());
+            GridData.Add(new ShowData());
+
 
             RaisePropertyChanged("TabTitle");
             RaisePropertyChanged("FilePath");

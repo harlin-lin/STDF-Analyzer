@@ -34,6 +34,8 @@ namespace SillyMonkey.ViewModel
 
         public ObservableCollection<TabItem> DataTabItems { get; private set; }
 
+        //public DataGridTabModel dataGridTabModels { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -57,6 +59,7 @@ namespace SillyMonkey.ViewModel
             _fileHelper = new StdFileHelper();
             Files = new FileManagementModel(_fileHelper);
             Files.OpenDetailEvent += Files_OpenDetailEvent;
+
         }
 
         private void Files_OpenDetailEvent(int fileHash, byte? site) {
@@ -66,10 +69,12 @@ namespace SillyMonkey.ViewModel
             DataGridTabModel dataGridTabModel = new DataGridTabModel(_fileHelper, fileHash, id.Value);
 
             TabItem tabItem = new TabItem();
+            tabItem.Content = new DataGridTab();
             tabItem.DataContext = dataGridTabModel;
-
+            tabItem.Header = dataGridTabModel.TabTitle;
+            tabItem.ToolTip = dataGridTabModel.FilePath;
             DataTabItems.Add(tabItem);
-
+            tabItem.IsSelected = true;
         }
 
         private void AddFile(string path) {
