@@ -56,8 +56,16 @@ namespace DataParse {
                 FailCount = data.Count - PassCount;
             } else {
                 foreach(var v in listUnNullItems) {
-                    if ((ll.HasValue || v >= ll) && (hl.HasValue || v <= hl))
-                        PassCount++;
+                    if (ll.HasValue && !hl.HasValue){
+                        if(v>=ll)
+                            PassCount++;
+                    }else if(!ll.HasValue && hl.HasValue) {
+                        if (v <= hl)
+                            PassCount++;
+                    } else {
+                        if (v >= ll && v<=hl)
+                            PassCount++;
+                    }
                 }
                 FailCount = data.Count - PassCount;
             }

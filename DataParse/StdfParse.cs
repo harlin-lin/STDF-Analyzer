@@ -147,20 +147,18 @@ namespace DataParse{
 
                     TestID testID;
                     //compare with the previous test name to decide the testNO
-                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ftr)r).TestNumber)) {//it's a sub test
-                        testID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
-                    } else {
+                    if (!ptrLastTN[siteIdx].CompareTestNumber(((Ftr)r).TestNumber)) {//it's a unused test, ftr do not set sub test
                         testID = new TestID(((Ftr)r).TestNumber);
+
+                        if (!_testItems.ExistTestItem(testID)) {
+                            _testItems.AddTestItem(testID, new ItemInfo(((Ftr)r).TestText, (float)0.5, (float)1.5, "", 0, 0, 0));
+                            _rawData.AddItem();
+                        }
+
+                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Ftr)r).Results);
+
+                        ptrLastTN[siteIdx] = testID;
                     }
-
-                    if (!_testItems.ExistTestItem(testID)) {
-                        _testItems.AddTestItem(testID, new ItemInfo(((Ftr)r).TestText, (float)0.5, (float)1.5, "", 0, 0, 0));
-                        _rawData.AddItem();
-                    }
-
-                    _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Ftr)r).Results);
-
-                    ptrLastTN[siteIdx] = testID;
                 } else if (r.RecordType == StdfFile.MPR) {
                     if (!_sites.TryGetValue(((Mpr)r).SiteNumber, out siteIdx)) throw new Exception("No Site");
 
@@ -238,8 +236,10 @@ namespace DataParse{
                     _testChips.AddChip(new ChipInfo((Prr)r, InternalID[siteIdx]));
                 }else if (r.RecordType == StdfFile.TSR) {
 
+                    var v= ((Tsr)r).TestLabel;
 
-                    _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), ((Tsr)r).TestLabel);
+                    if ( v!= null && v != "")
+                        _testItems.UpdateTestText(new TestID(((Tsr)r).TestNumber), v);
                 }else if (r.RecordType == StdfFile.MRR) {
                     ((FileBasicInfo)BasicInfo).AddMrr((Mrr)r);
                 }

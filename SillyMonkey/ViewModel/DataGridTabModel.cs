@@ -43,7 +43,7 @@ namespace SillyMonkey.ViewModel {
             Mean = itemStatistic.MeanValue;
             CPK = itemStatistic.Cpk;
             Sigma = itemStatistic.Sigma;
-
+            PassCount = itemStatistic.PassCount;
         }
 
         public void UpdateData(List<float?> data) {
