@@ -20,6 +20,11 @@ namespace DataInterface {
             MainNumber = testNumber;
             SubNumber = subNumber;
         }
+
+        public string GetGeneralTestNumber() {
+            return $"{MainNumber}.{SubNumber}";
+        }
+
         public static TestID NewSubTestID(TestID testID) {
             return new TestID(testID.MainNumber, ++testID.SubNumber);
         }

@@ -15,15 +15,39 @@ using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
     public class ShowData {
-        public List<int> Testnumber { get; set; }
-        public List<string> TestName { get; set; }
+        public string Testnumber { get; set; }
+        public string TestText { get; set; }
+        public float? LoLimit { get; set; }
+        public float? HiLimit { get; set; }
+        public string Unit { get; set; }
 
-        public ShowData() {
-            Testnumber = new List<int>();
-            Testnumber.AddRange(Enumerable.Range(0, 10).ToList());
+        public float? Min { get; set; }
+        public float? Max { get; set; }
+        public float? Mean { get; set; }
+        public double? CPK { get; set; }
+        public double? Sigma { get; set; }
+        public int PassCount { get; set; }
 
-            TestName = new List<string>();
-            TestName.AddRange(Enumerable.Range(0, 9).Select((x)=> $"{x}{x}"));
+        public List<float?> Devices { get; set; }
+
+
+        public ShowData(string TN, IItemInfo itemInfo, IItemStatistic itemStatistic, List<float?> data) {
+            Testnumber = TN;
+            TestText = itemInfo.TestText;
+            LoLimit = itemInfo.LoLimit;
+            HiLimit = itemInfo.HiLimit;
+            Unit = itemInfo.Unit;
+
+            Min = itemStatistic.MinValue;
+            Max = itemStatistic.MaxValue;
+            Mean = itemStatistic.MeanValue;
+            CPK = itemStatistic.Cpk;
+            Sigma = itemStatistic.Sigma;
+
+        }
+
+        public void UpdateData(List<float?> data) {
+
         }
 
     }
@@ -52,10 +76,11 @@ namespace SillyMonkey.ViewModel {
             FilePath = _dataAcquire.FilePath;
 
             GridData = new List<ShowData>();
-            GridData.Add(new ShowData());
-            GridData.Add(new ShowData());
-            GridData.Add(new ShowData());
-
+            var stastic = _dataAcquire.GetFilteredStatistic(_filterId);
+            foreach(var v in _dataAcquire.GetFilteredTestIDs_Info(_filterId)) {
+                GridData.Add(new ShowData(v.Key.GetGeneralTestNumber(),
+                                            v.Value, stastic[v.Key], _dataAcquire.GetFilteredItemData(v.Key, 0, 100, _filterId)));
+            }
 
             RaisePropertyChanged("TabTitle");
             RaisePropertyChanged("FilePath");
