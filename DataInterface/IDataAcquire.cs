@@ -103,7 +103,9 @@ namespace DataInterface {
         List<int> GetFilteredChipsIndexes(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int filterId);
         List<float?> GetFilteredItemData(TestID testID, int filterId);
-        List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
+        //List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
+        DataTable GetFilteredItemData(TestID testID, int startIndex, int count, int filterId, bool enableRowHeader);
+
 
         Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId);
         IChipSummary GetFilteredChipSummary(int filterId);

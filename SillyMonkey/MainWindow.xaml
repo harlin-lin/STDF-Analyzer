@@ -27,8 +27,8 @@
         <Frame Grid.Row="0" Source="View/MenuPage.xaml"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.3*"/>
-                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="0.2*"/>
+                <ColumnDefinition Width="3" />
                 <ColumnDefinition Width="*"/>
            </Grid.ColumnDefinitions>
             <v:FileManagement Grid.Column="0" DataContext="{Binding Path=Files}"/>

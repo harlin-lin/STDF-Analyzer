@@ -361,6 +361,40 @@ namespace DataParse{
             return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
         }
 
+        public DataTable GetFilteredItemData(TestID testID, int startIndex, int count, int filterId, bool enableRowHeader) {
+            DataTable table = new DataTable();
+
+            if (enableRowHeader) {
+                table.Columns.Add("TestNumber");
+                table.Columns.Add("TestText");
+                table.Columns.Add("LoLimit");
+                table.Columns.Add("HiLimit");
+                table.Columns.Add("Unit");
+                table.Columns.Add("Min");
+                table.Columns.Add("Max");
+                table.Columns.Add("Mean");
+                table.Columns.Add("Sigma");
+                table.Columns.Add("CPK");
+                table.Columns.Add("PassCount");
+            } else {
+                table.Columns.AddRange(Enumerable.Range(startIndex, count).Select((x, DataColumn) => new DataColumn(x.ToString())).ToArray());
+            }
+
+
+            foreach (var id in GetFilteredTestIDs(filterId)) {
+                if (enableRowHeader) {
+                    //table.Rows.Add()
+                } else {
+
+                }
+            }
+
+            return table;
+        }
+
+
+
+
         public Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId) {
             return _filterList[filterId].SitesSummary;
         }
