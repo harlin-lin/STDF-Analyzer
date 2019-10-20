@@ -6,6 +6,8 @@ using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
-    public class ShowData {
+    public class ShowData: DynamicObject {
         public string Testnumber { get; set; }
         public string TestText { get; set; }
         public float? LoLimit { get; set; }
@@ -27,8 +29,6 @@ namespace SillyMonkey.ViewModel {
         public double? CPK { get; set; }
         public double? Sigma { get; set; }
         public int PassCount { get; set; }
-
-        public List<float?> Devices { get; set; }
 
 
         public ShowData(string TN, IItemInfo itemInfo, IItemStatistic itemStatistic, List<float?> data) {
@@ -44,12 +44,35 @@ namespace SillyMonkey.ViewModel {
             CPK = itemStatistic.Cpk;
             Sigma = itemStatistic.Sigma;
             PassCount = itemStatistic.PassCount;
+
+            for (int i = 1; i <= data.Count; i++)
+                _properties.Add(i.ToString(),data[i-1]);
         }
 
-        public void UpdateData(List<float?> data) {
+        private Dictionary<string, object> _properties = new Dictionary<string, object>();
 
+        public override IEnumerable<string> GetDynamicMemberNames() {
+            return _properties.Keys;
         }
 
+        public override bool TryGetMember(GetMemberBinder binder, out object result) {
+            if (_properties.ContainsKey(binder.Name)) {
+                result = _properties[binder.Name];
+                return true;
+            } else {
+                result = null;
+                return false;
+            }
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value) {
+            if (_properties.ContainsKey(binder.Name)) {
+                _properties[binder.Name] = value;
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
     public class DataGridTabModel : ViewModelBase {
         private StdFileHelper _fileHelper;
@@ -60,7 +83,7 @@ namespace SillyMonkey.ViewModel {
         public string TabTitle {get; private set;}
         public string FilePath { get; private set; }
 
-        public List<ShowData> GridData { get; private set; }
+        public List<dynamic> GridData { get; private set; }
 
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
@@ -75,11 +98,13 @@ namespace SillyMonkey.ViewModel {
                 TabTitle = _dataAcquire.FileName;
             FilePath = _dataAcquire.FilePath;
 
-            GridData = new List<ShowData>();
-            var stastic = _dataAcquire.GetFilteredStatistic(_filterId);
-            foreach(var v in _dataAcquire.GetFilteredTestIDs_Info(_filterId)) {
-                GridData.Add(new ShowData(v.Key.GetGeneralTestNumber(),
-                                            v.Value, stastic[v.Key], _dataAcquire.GetFilteredItemData(v.Key, 0, 100, _filterId)));
+            GridData = new List<dynamic>();
+            var idInfos = _dataAcquire.GetFilteredTestIDs_Info(_filterId);
+            var idStatistic = _dataAcquire.GetFilteredStatistic(_filterId);
+            foreach(var ii in idInfos) {
+                List<float?> rst = _dataAcquire.GetFilteredItemData(ii.Key, 0, 100, _filterId);
+                ShowData sd = new ShowData(ii.Key.GetGeneralTestNumber(), ii.Value, idStatistic[ii.Key], rst);
+                GridData.Add(sd);
             }
 
             RaisePropertyChanged("TabTitle");

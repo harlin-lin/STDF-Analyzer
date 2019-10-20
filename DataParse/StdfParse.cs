@@ -10,6 +10,7 @@ using StdfReader.Records.V4;
 using DataInterface;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections;
 
 namespace DataParse{
 
@@ -361,7 +362,7 @@ namespace DataParse{
             return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
         }
 
-        public DataTable GetFilteredItemData(TestID testID, int startIndex, int count, int filterId, bool enableRowHeader) {
+        public DataTable GetFilteredItemData(int startIndex, int count, int filterId, bool enableRowHeader) {
             DataTable table = new DataTable();
 
             if (enableRowHeader) {
@@ -376,18 +377,34 @@ namespace DataParse{
                 table.Columns.Add("Sigma");
                 table.Columns.Add("CPK");
                 table.Columns.Add("PassCount");
-            } else {
-                table.Columns.AddRange(Enumerable.Range(startIndex, count).Select((x, DataColumn) => new DataColumn(x.ToString())).ToArray());
-            }
+            } 
+            table.Columns.AddRange(Enumerable.Range(startIndex, count).Select((x, DataColumn) => new DataColumn(x.ToString())).ToArray());
+            
 
 
-            foreach (var id in GetFilteredTestIDs(filterId)) {
+            foreach (var idInfo in GetFilteredTestIDs_Info(filterId)) {
+                List<object> list = new List<object>(120);
+                var statistic = GetFilteredStatistic(filterId);
                 if (enableRowHeader) {
-                    //table.Rows.Add()
-                } else {
-
+                    list.Add(idInfo.Key.GetGeneralTestNumber());
+                    list.Add(idInfo.Value.TestText);
+                    list.Add(idInfo.Value.LoLimit);
+                    list.Add(idInfo.Value.HiLimit);
+                    list.Add(idInfo.Value.Unit);
+                    list.Add(statistic[idInfo.Key].MinValue);
+                    list.Add(statistic[idInfo.Key].MaxValue);
+                    list.Add(statistic[idInfo.Key].MeanValue);
+                    list.Add(statistic[idInfo.Key].Sigma);
+                    list.Add(statistic[idInfo.Key].Cpk);
+                    list.Add(statistic[idInfo.Key].PassCount);
                 }
+                foreach(var v in _rawData.GetItemDataFiltered(_testItems.GetIndex(idInfo.Key), startIndex, count, _filterList[filterId].ChipFilter)) {
+                    list.Add(v);
+                }                
+                table.Rows.Add(list);
             }
+
+            
 
             return table;
         }

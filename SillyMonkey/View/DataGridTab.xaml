@@ -14,7 +14,10 @@
             <ColumnDefinition Width="2"/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
-        <c1:C1FlexGrid x:Name="grid" Grid.Column="0" ItemsSource="{Binding GridData}"/>
+        <c1:C1FlexGrid x:Name="grid" Grid.Column="0" ItemsSource="{Binding GridData}">
+            
+        </c1:C1FlexGrid>
+        <!--<DataGrid x:Name="grid" Grid.Column="0" ItemsSource="{Binding GridData}"/>-->
         <GridSplitter Grid.Column="1"/>
         <TextBlock Text="{Binding FilePath}" Grid.Column="2"/>
     </Grid>    
