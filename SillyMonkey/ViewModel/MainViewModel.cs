@@ -69,7 +69,9 @@ namespace SillyMonkey.ViewModel
             DataGridTabModel dataGridTabModel = new DataGridTabModel(_fileHelper, fileHash, id.Value);
 
             TabItem tabItem = new TabItem();
-            tabItem.Content = new DataGridTab();
+            var grid = new DataGridTab();
+            grid.ItemsSource = dataGridTabModel;
+            tabItem.Content = grid;
             tabItem.DataContext = dataGridTabModel;
             tabItem.Header = dataGridTabModel.TabTitle;
             tabItem.ToolTip = dataGridTabModel.FilePath;
