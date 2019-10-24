@@ -401,10 +401,9 @@ namespace DataParse{
                 foreach(var v in _rawData.GetItemDataFiltered(_testItems.GetIndex(idInfo.Key), startIndex, count, _filterList[filterId].ChipFilter)) {
                     list.Add(v);
                 }                
-                table.Rows.Add(list);
+                table.Rows.Add(list.ToArray());
             }
 
-            
 
             return table;
         }

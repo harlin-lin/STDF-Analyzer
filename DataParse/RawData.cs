@@ -89,12 +89,15 @@ namespace DataParse {
                 List<float?> rt = new List<float?>(count);
 
                 int index = indexFrom;
-                for (int i=0; i< count; i++) {
+                int c = 0;
+                for (int i=0; i< (filter.Length- indexFrom); i++) {
                     index = indexFrom + i;
-                    if (index >= filter.Length)  break;
+                    if (c >= count)  break;
 
-                    if (!filter[index]) 
+                    if (!filter[index]) {
                         rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                        c++;
+                    }
                 }
 
                 return rt;

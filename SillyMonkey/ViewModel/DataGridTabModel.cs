@@ -17,14 +17,31 @@ using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
     public class DataGridTabModel : ViewModelBase {
+        const int MinPerPageCount = 30;
+        const int DefaultPerPageCount = 100;
+
         private StdFileHelper _fileHelper;
         private int _fileHash;
         private int _filterId { get; set; }
         private IDataAcquire _dataAcquire;
+        private int _countPerPage;
 
         public string TabTitle {get; private set;}
         public string FilePath { get; private set; }
 
+        public DataTable Data { get; private set; }
+        public int CountPerPage {
+            get { return _countPerPage; }
+            set {
+                if (value > MinPerPageCount)
+                    _countPerPage = value;
+                else
+                    _countPerPage = MinPerPageCount;
+            }
+        }
+        public int TotalCount { get; private set; }
+
+        DataGridTabModel() { }
 
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
@@ -39,9 +56,14 @@ namespace SillyMonkey.ViewModel {
                 TabTitle = _dataAcquire.FileName;
             FilePath = _dataAcquire.FilePath;
 
+            CountPerPage = DefaultPerPageCount;
+            TotalCount = _dataAcquire.GetFilteredChipSummary(_filterId).TotalCount;
 
-            RaisePropertyChanged("TabTitle");
-            RaisePropertyChanged("FilePath");
+
+            if (TotalCount > CountPerPage)
+                Data = _dataAcquire.GetFilteredItemData(0, CountPerPage, _filterId, true);
+            else
+                Data = _dataAcquire.GetFilteredItemData(0, TotalCount, _filterId, true);
         }
     }
 }

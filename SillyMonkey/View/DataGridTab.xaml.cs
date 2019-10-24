@@ -3,6 +3,7 @@ using SillyMonkey.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,71 +26,62 @@ namespace SillyMonkey.View {
             InitializeComponent();
         }
 
-        //public DataGridTabModel ItemsSource {
-        //    get { return (DataGridTabModel)GetValue(ItemsSourceProperty); }
-        //    set { SetValue(ItemsSourceProperty, value); }
+        //public DataGridTabModel DataSource {
+        //    get => (DataGridTabModel)GetValue(DataSourceProperty);
+        //    set => SetValue(DataSourceProperty, value);
         //}
 
-        //public static readonly DependencyProperty ItemsSourceProperty =
-        //    DependencyProperty.Register("ItemsSource", typeof(DataGridTabModel), typeof(DataGridTab), new PropertyMetadata(new PropertyChangedCallback(OnItemsSourcePropertyChanged)));
+        //public static readonly DependencyProperty DataSourceProperty =
+        //    DependencyProperty.Register("DataSource", typeof(DataGridTabModel), typeof(DataGridTab), new PropertyMetadata(null, (s, e) => {
+        //        if (s is DataGridTab uc) {
+        //            if (e.OldValue is INotifyPropertyChanged oldV) {
+        //                oldV.PropertyChanged -= uc.DataSource_Changed;
+        //            }
 
-        //private static void OnItemsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
-        //    var control = sender as DataGridTab;
-        //    if (control != null)
-        //        control.OnItemsSourceChanged((DataGridTabModel)e.OldValue, (DataGridTabModel)e.NewValue);
-        //}
+        //            if (e.NewValue is INotifyPropertyChanged newV) {
+        //                newV.PropertyChanged += uc.DataSource_Changed;
+        //            }
+        //        }
+        //    }));
 
-
-
-        //private void OnItemsSourceChanged(DataGridTabModel oldValue, DataGridTabModel newValue) {
-        //    // Remove handler for oldValue.CollectionChanged
-        //    var oldValueINotifyCollectionChanged = oldValue as INotifyCollectionChanged;
-
-        //    if (null != oldValueINotifyCollectionChanged) {
-        //        oldValueINotifyCollectionChanged.CollectionChanged -= new NotifyCollectionChangedEventHandler(newValueINotifyCollectionChanged_CollectionChanged);
+        //private void DataSource_Changed(object sender, PropertyChangedEventArgs e) {
+        //    // Logic Here
+        //    if (e.PropertyName == "Data") {
+        //        for (int i = 0; i < DataSource.Data.Columns.Count; i++) {
+        //            grid.Columns.Add(new Column());
+        //            grid.Columns[i].Header = DataSource.Data.Columns[i].ColumnName;
+        //        }
+        //        for (int r = 0; r < DataSource.Data.Rows.Count; r++) {
+        //            for (int c = 0; c < DataSource.Data.Columns.Count; c++) {
+        //                grid[r, c] = DataSource.Data.Rows[r][c];
+        //            }
+        //        }
         //    }
-        //    // Add handler for newValue.CollectionChanged (if possible)
-        //    var newValueINotifyCollectionChanged = newValue as INotifyCollectionChanged;
-        //    if (null != newValueINotifyCollectionChanged) {
-        //        newValueINotifyCollectionChanged.CollectionChanged += new NotifyCollectionChangedEventHandler(newValueINotifyCollectionChanged_CollectionChanged);
+        //}
+
+        //// Do Not Forget To Remove Event On UserControl Unloaded
+        //private void DataGridTab_Unloaded(object sender, RoutedEventArgs e) {
+        //    if (DataSource is INotifyPropertyChanged incc) {
+        //        incc.PropertyChanged -= DataSource_Changed;
+        //    }
+        //}
+
+        //private void DataGridTab_Loaded(object sender, RoutedEventArgs e) {
+        //    if (DataSource != null) {
+        //        this.DataContext = DataSource;
+        //        for (int i = 0; i < DataSource.Data.Columns.Count; i++) {
+        //            grid.Columns.Add(new Column());
+        //            grid.Columns[i].Header = DataSource.Data.Columns[i].ColumnName;
+        //        }
+        //        for (int r = 0; r < DataSource.Data.Rows.Count; r++) {
+        //            grid.Rows.Add(new Row());
+        //            for (int c = 0; c < DataSource.Data.Columns.Count; c++) {
+        //                var v = DataSource.Data.Rows[r][c];
+        //                grid[r, c] = v;
+        //            }
+        //        }
         //    }
 
         //}
-
-        //void newValueINotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-        //    //Do your stuff here.
-        //}
-
-
-        public DataGridTabModel ItemsSource {
-            get => (DataGridTabModel)GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
-        }
-
-        public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register("ItemsSource", typeof(DataGridTabModel), typeof(DataGridTab), new PropertyMetadata(null, (s, e) => {
-                if (s is DataGridTab uc) {
-                    if (e.OldValue is INotifyCollectionChanged oldValueINotifyCollectionChanged) {
-                        oldValueINotifyCollectionChanged.CollectionChanged -= uc.ItemsSource_CollectionChanged;
-                    }
-
-                    if (e.NewValue is INotifyCollectionChanged newValueINotifyCollectionChanged) {
-                        newValueINotifyCollectionChanged.CollectionChanged += uc.ItemsSource_CollectionChanged;
-                    }
-                }
-            }));
-
-        private void ItemsSource_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            // Logic Here
-        }
-
-        // Do Not Forget To Remove Event On UserControl Unloaded
-        private void DataGridTab_Unloaded(object sender, RoutedEventArgs e) {
-            if (ItemsSource is INotifyCollectionChanged incc) {
-                incc.CollectionChanged -= ItemsSource_CollectionChanged;
-            }
-        }
-
-
     }
 }

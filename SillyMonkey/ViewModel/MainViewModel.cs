@@ -70,7 +70,7 @@ namespace SillyMonkey.ViewModel
 
             TabItem tabItem = new TabItem();
             var grid = new DataGridTab();
-            grid.ItemsSource = dataGridTabModel;
+            //grid.DataSource = dataGridTabModel;
             tabItem.Content = grid;
             tabItem.DataContext = dataGridTabModel;
             tabItem.Header = dataGridTabModel.TabTitle;
