@@ -41,8 +41,6 @@ namespace SillyMonkey.ViewModel {
         }
         public int TotalCount { get; private set; }
 
-        DataGridTabModel() { }
-
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
             _fileHash = fileHash;

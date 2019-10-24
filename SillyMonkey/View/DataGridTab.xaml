@@ -18,15 +18,13 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Button x:Name="Start" />
-                <Button x:Name="Previous" />
-                <Button x:Name="Next" />
-                <Button x:Name="End" />
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button x:Name="Start" Width="18" Height="18" />
+                
             </StackPanel>
             <c1:C1FlexGrid x:Name="grid" Grid.Row="1"  ItemsSource="{Binding Data}"/>
         </Grid>
         <GridSplitter Grid.Column="1"/>
         <TextBlock Text="{Binding FilePath}" Grid.Column="2"/>
-    </Grid>    
+    </Grid>
 </UserControl>
