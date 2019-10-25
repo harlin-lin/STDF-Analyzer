@@ -34,8 +34,6 @@ namespace SillyMonkey.ViewModel
 
         public ObservableCollection<TabItem> DataTabItems { get; private set; }
 
-        //public DataGridTabModel dataGridTabModels { get; private set; }
-
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>

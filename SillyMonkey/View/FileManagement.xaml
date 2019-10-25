@@ -27,13 +27,47 @@
                             </TextBlock.ToolTip>
                         </TextBlock>
                     </DataTemplate>
+                    <DataTemplate x:Key="openedItemsTemplate">
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <Binding/>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+
                 </Grid.Resources>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.7*"/>
                     <RowDefinition Height="3"/>
+                    <RowDefinition Height="1.7*"/>
+                    <RowDefinition Height="3"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <c1:C1TreeView x:Name="tvFiles" Grid.Row="0" ItemsSource="{Binding Path=FileInfos}" SelectionMode="Single">
+                <c1:C1TreeView x:Name="tvOpenedItems" Grid.Row="0" ItemsSource="{Binding Path=OpenedItems}" SelectionMode="Multiple">
+                    <!--<i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanging">
+                            <cmd:EventToCommand Command="{Binding Path=SelectedItemChangedCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <cmd:EventToCommand Command="{Binding Path=DoubleClickCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>-->
+
+                    <c1:C1TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:OpenedItemsInfo}" ItemsSource="{Binding Items}" ItemTemplate="{StaticResource openedItemsTemplate}">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <Binding Path="ItemName"/>
+                                </TextBlock.Text>
+                                <TextBlock.ToolTip>
+                                    <Binding Path="ItemPath"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                        </HierarchicalDataTemplate>
+                    </c1:C1TreeView.ItemTemplate>
+                </c1:C1TreeView>
+                <GridSplitter Grid.Row="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
+                <c1:C1TreeView x:Name="tvFiles" Grid.Row="2" ItemsSource="{Binding Path=FileInfos}" SelectionMode="Single">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanging">
                             <cmd:EventToCommand Command="{Binding Path=SelectedItemChangedCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
@@ -59,8 +93,8 @@
                             </HierarchicalDataTemplate>
                         </c1:C1TreeView.ItemTemplate>
                     </c1:C1TreeView>
-                <GridSplitter Grid.Row="1" BorderBrush="Black" HorizontalAlignment="Stretch"/>
-                <TextBox Grid.Row="2" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}"/>
+                <GridSplitter Grid.Row="3" BorderBrush="Black" HorizontalAlignment="Stretch"/>
+                <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}"/>
             </Grid>
         </TabItem>
         <TabItem Name="tiServerFiles" Header="N"/>

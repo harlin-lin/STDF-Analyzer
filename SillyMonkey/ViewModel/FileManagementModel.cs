@@ -48,15 +48,35 @@ namespace SillyMonkey.ViewModel {
             RaisePropertyChanged("FileDeviceCount");
             RaisePropertyChanged("Sites");
         }
-
-
     }
+    public class OpenedItemsInfo : ViewModelBase {
+        public string ItemName { get; private set; }
+        public string ItemPath { get; private set; }
+        public int FileHash { get; private set; }
 
+        public ObservableCollection<string> Items { get; private set; }
+
+
+        public OpenedItemsInfo(IDataAcquire stdfParse) {
+            FileHash = stdfParse.FilePath.GetHashCode();
+            ItemName = stdfParse.FileName;
+            ItemPath = stdfParse.FilePath;
+            Items = new ObservableCollection<string>();
+        }
+
+        public void AddSubItem(string itemName) {
+
+            Items.Add(itemName);
+
+            //RaisePropertyChanged("Items");
+        }
+    }
     public class FileManagementModel : ViewModelBase {
 
         private StdFileHelper _fileHelper;
 
         public ObservableCollection<FileInfo> FileInfos { get; private set; }
+        public ObservableCollection<OpenedItemsInfo> OpenedItems { get; private set; }
 
         public string SelectedSummary { get; private set; }
 
@@ -83,16 +103,19 @@ namespace SillyMonkey.ViewModel {
                 if (v == null) return;
                 if (v.HasItems) {
                     var s = v.DataContext as FileInfo;
+                    AddOpenedItem(s.FilePath.GetHashCode(), s.FileName);
                     OpenDetailEvent?.Invoke(s.FilePath.GetHashCode(), null);
                     SelectedSummary = _fileHelper.GetBriefSummary(s.FilePath.GetHashCode(), null);
                 } else {
                     var s = (KeyValuePair<byte, KeyValuePair<int, string>>)v.DataContext;
+                    AddOpenedItem(s.Value.Value.GetHashCode(), $"{s.Key}: Detail");
                     OpenDetailEvent?.Invoke(s.Value.Value.GetHashCode(), s.Key);
                 }
             });
 
             _fileHelper = stdFileHelper;
             FileInfos = new ObservableCollection<FileInfo>();
+            OpenedItems = new ObservableCollection<OpenedItemsInfo>();
             _fileHelper.UpdateFileInfo += UpdateFileInfo;
             _fileHelper.AddFileEvent += AddFileEvent;
             _fileHelper.RemoveFileEvent += RemoveFileEvent;
@@ -115,5 +138,21 @@ namespace SillyMonkey.ViewModel {
                 if (FileInfos[i].FilePath == data.FilePath)
                     FileInfos[i].UpdateFileInfo(data);
         }
+
+        private void AddOpenedItem(int fileHash, string itemName) {
+            bool found = false;
+            for (int i = 0; i < OpenedItems.Count; i++) {
+                if (OpenedItems[i].FileHash == fileHash) {
+                    OpenedItems[i].AddSubItem(itemName);
+                    found = true;
+                }
+            }
+            if (!found) {
+                OpenedItemsInfo o = new OpenedItemsInfo(_fileHelper.GetFile(fileHash));
+                o.AddSubItem(itemName);
+                OpenedItems.Add(o);
+            }
+        }
+
     }
 }
