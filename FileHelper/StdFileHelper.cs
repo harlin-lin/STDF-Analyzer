@@ -90,15 +90,15 @@ namespace FileHelper {
                 sb.AppendLine($"Site:{site}");
             sb.AppendLine("");
             sb.AppendLine("General Info");
-            sb.AppendLine($"Total Count:{summary.TotalCount}");
-            sb.AppendLine($"Pass Count:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f2")}%");
-            sb.AppendLine($"Total Count:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f2")}%");
+            sb.AppendLine($"Total QTY:{summary.TotalCount}");
+            sb.AppendLine($"Pass QTY:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Fail QTY:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Abort QTY:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Null QTY:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f4")}%");
             sb.AppendLine("");
             sb.AppendLine("Re-Test Info");
-            sb.AppendLine($"Total Count:{summary.FreshCount}");
-            sb.AppendLine($"Total Count:{summary.RetestCount}");
+            sb.AppendLine($"Fresh QTY:{summary.FreshCount}");
+            sb.AppendLine($"Retest QTY:{summary.RetestCount}");
 
 
             return sb.ToString();

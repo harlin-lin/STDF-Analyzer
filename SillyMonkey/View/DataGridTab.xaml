@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c1="http://schemas.componentone.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:cmd="http://www.galasoft.ch/mvvmlight"
              xmlns:local="clr-namespace:SillyMonkey.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -19,8 +21,55 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button x:Name="Start" Width="18" Height="18" />
-                
+                <Button Width="18" Height="18" Margin="0,0,20,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey;component/Resources/icons/angle-double-left.png"/>
+                    </Button.Background>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cmd:EventToCommand Command="{Binding Path=JumpStartPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,20,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey;component/Resources/icons/angle-left.png"/>
+                    </Button.Background>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cmd:EventToCommand Command="{Binding Path=JumpLastPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding  StringFormat="Total Pages:{0} Current:{1}">
+                            <Binding Path="TotalPages"/>
+                            <Binding Path="CurrentPageIndex"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Button Width="18" Height="18" Margin="0,0,20,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey;component/Resources/icons/angle-right.png"/>
+                    </Button.Background>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cmd:EventToCommand Command="{Binding Path=JumpNextPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,20,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey;component/Resources/icons/angle-double-right.png"/>
+                    </Button.Background>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cmd:EventToCommand Command="{Binding Path=JumpEndPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+
             </StackPanel>
             <c1:C1FlexGrid x:Name="grid" Grid.Row="1"  ItemsSource="{Binding Data}"/>
         </Grid>
