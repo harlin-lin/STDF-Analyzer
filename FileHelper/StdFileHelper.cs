@@ -91,10 +91,10 @@ namespace FileHelper {
             sb.AppendLine("");
             sb.AppendLine("General Info");
             sb.AppendLine($"Total QTY:{summary.TotalCount}");
-            sb.AppendLine($"Pass QTY:{summary.PassCount}\t\t{(summary.PassCount * 100 / summary.TotalCount).ToString("f4")}%");
-            sb.AppendLine($"Fail QTY:{summary.FailCount}\t\t{(summary.FailCount * 100 / summary.TotalCount).ToString("f4")}%");
-            sb.AppendLine($"Abort QTY:{summary.AbortCount}\t\t{(summary.AbortCount * 100 / summary.TotalCount).ToString("f4")}%");
-            sb.AppendLine($"Null QTY:{summary.NullCount}\t\t{(summary.NullCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Pass QTY:{summary.PassCount}\t\t{((double)summary.PassCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Fail QTY:{summary.FailCount}\t\t{((double)summary.FailCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Abort QTY:{summary.AbortCount}\t\t{((double)summary.AbortCount * 100 / summary.TotalCount).ToString("f4")}%");
+            sb.AppendLine($"Null QTY:{summary.NullCount}\t\t{((double)summary.NullCount * 100 / summary.TotalCount).ToString("f4")}%");
             sb.AppendLine("");
             sb.AppendLine("Re-Test Info");
             sb.AppendLine($"Fresh QTY:{summary.FreshCount}");
