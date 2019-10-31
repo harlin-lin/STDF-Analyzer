@@ -10,6 +10,10 @@ namespace DataInterface {
         SelectFirst,
         SelectLast
     }
+    public enum DuplicateJudgeMode {
+        ID,
+        Cord
+    }
 
     /// <summary>
     /// just for datahelper to define the filter content
@@ -28,7 +32,7 @@ namespace DataInterface {
         /// <summary>
         /// true is Part ID, defult
         /// </summary>
-        public bool DuplicateJudgeByIdOrCord { get; set; }
+        public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
 
         public List<TestID> maskTestIDs { get; set; }
 
@@ -41,24 +45,10 @@ namespace DataInterface {
             maskCords = new List<CordType>();
             ifmaskDuplicateChips = false;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
-            DuplicateJudgeByIdOrCord = true;
+            DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             Comment = comment;
         }
-
-        //public FilterSetup(FilterSetup f, string comment) {
-        //    maskSites = new List<byte>(f.maskSites);
-        //    maskSoftBins = new List<ushort>(f.maskSoftBins);
-        //    maskHardBins = new List<ushort>(f.maskHardBins);
-        //    maskTestIDs = new List<TestID>(f.maskTestIDs);
-        //    maskChips = new List<int>(f.maskChips);
-        //    maskCords = new List<CordType>(f.maskCords);
-        //    ifmaskDuplicateChips = f.ifmaskDuplicateChips;
-        //    DuplicateSelectMode = f.DuplicateSelectMode;
-        //    DuplicateJudgeByIdOrCord = f.DuplicateJudgeByIdOrCord; 
-
-        //    Comment = comment;
-        //}
 
         public FilterSetup(List<byte> sites, byte enSite, string comment) {
             maskSites = new List<byte>();
@@ -74,7 +64,7 @@ namespace DataInterface {
             maskCords = new List<CordType>();
             ifmaskDuplicateChips = false;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
-            DuplicateJudgeByIdOrCord = true;
+            DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             Comment = comment;
         }
@@ -97,7 +87,7 @@ namespace DataInterface {
             maskCords.Clear();
             ifmaskDuplicateChips = false;
             DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
-            DuplicateJudgeByIdOrCord = true;
+            DuplicateJudgeMode = DuplicateJudgeMode.ID;
         }
 
     }

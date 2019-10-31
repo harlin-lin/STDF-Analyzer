@@ -13,9 +13,9 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.15*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" Background="AliceBlue">
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition />
@@ -41,9 +41,10 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <TextBlock>
+                <TextBlock FontSize="8" Margin="0,0,20,0" HorizontalAlignment="Center" VerticalAlignment="Center" >
                     <TextBlock.Text>
-                        <MultiBinding  StringFormat="Total Pages:{0} Current:{1}">
+                        <MultiBinding  StringFormat="QTY:{0} Total Pages:{1} Current:{2}">
+                            <Binding Path="TotalCount"/>
                             <Binding Path="TotalPages"/>
                             <Binding Path="CurrentPageIndex"/>
                         </MultiBinding>
@@ -71,9 +72,140 @@
                 </Button>
 
             </StackPanel>
-            <c1:C1FlexGrid x:Name="grid" Grid.Row="1"  ItemsSource="{Binding Data}"/>
+            <c1:C1FlexGrid x:Name="grid" Grid.Row="1"  ItemsSource="{Binding Data}" 
+                           FrozenColumns="5"
+                           FrozenRows="7"
+                           FontSize="8"
+                           MinColumnWidth="20"
+                           IsReadOnly="True" 
+                           ItemsSourceChanged="Grid_ItemsSourceChanged"
+                           AllowSorting="False"
+                           AllowAddNew="False"/>
         </Grid>
         <GridSplitter Grid.Column="1"/>
-        <TextBlock Text="{Binding FilePath}" Grid.Column="2"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.8*"/>
+                <RowDefinition Height="0.4*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Enabled Sites" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="lbAllSites" Grid.Column="0" ItemsSource="{Binding AllSites}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=AddSite, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                    <ListBox x:Name="lbEnabledSites" Grid.Column="1" ItemsSource="{Binding EnabledSites}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=RemoveSite, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Enabled HBins" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="lbAllHBins" Grid.Column="0" ItemsSource="{Binding AllHBins}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=AddHBin, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                    <ListBox x:Name="lbEnabledHBins" Grid.Column="1" ItemsSource="{Binding EnabledHBins}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=RemoveHBin, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Enabled SBins" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ListBox x:Name="lbAllSBins" Grid.Column="0" ItemsSource="{Binding AllSBins}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=AddSBin, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                    <ListBox x:Name="lbEnabledSBins" Grid.Column="1" ItemsSource="{Binding EnabledSBins}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <cmd:EventToCommand Command="{Binding Path=RemoveSBin, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </Grid>
+            </Grid>            
+            <StackPanel Grid.Row="3">
+                <Label Content="Mask Chips" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                <TextBox Text="{Binding MaskChips, Mode=TwoWay}" FontSize="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="4">
+                <Label Content="Mask Cords" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                <TextBox Text="{Binding MaskCords, Mode=TwoWay}" FontSize="10"/>
+            </StackPanel>
+            <StackPanel Grid.Row="5">
+                <CheckBox Content="maskDuplicate" FontSize="10" IsChecked="{Binding ifmaskDuplicateChips, Mode=TwoWay}"/>
+                <ComboBox Name="judgeMode" FontSize="10" ItemsSource="{Binding JudgeMode}" SelectedIndex="0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <cmd:EventToCommand Command="{Binding Path=JudgeModeChanged, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <ComboBox Name="maskMode" FontSize="10" ItemsSource="{Binding DuplicateMode}" SelectedIndex="0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <cmd:EventToCommand Command="{Binding Path=DuplicateSelectModeChanged, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+            <Button Grid.Row="6" Content="ApplyFilter" FontSize="10">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <cmd:EventToCommand Command="{Binding Path=ApplyFilter, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+        </Grid>
     </Grid>
 </UserControl>

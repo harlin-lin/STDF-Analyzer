@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
@@ -23,8 +24,11 @@ namespace SillyMonkey.ViewModel {
         private StdFileHelper _fileHelper;
         private int _fileHash;
         private int _filterId { get; set; }
+        private FilterSetup _filter;
         private IDataAcquire _dataAcquire;
         private int _countPerPage;
+        private DuplicateSelectMode _duplicateSelectMode;
+        private DuplicateJudgeMode _judgeMode;
 
         public string TabTitle {get; private set;}
         public string FilePath { get; private set; }
@@ -43,10 +47,36 @@ namespace SillyMonkey.ViewModel {
         public int TotalPages { get; private set; }
         public int CurrentPageIndex { get; private set; }
 
+
+        public ObservableCollection<byte> AllSites { get; private set; }
+        public ObservableCollection<ushort> AllHBins { get; private set; }
+        public ObservableCollection<ushort> AllSBins { get; private set; }
+        public ObservableCollection<byte> EnabledSites { get; private set; }
+        public ObservableCollection<ushort> EnabledHBins { get; private set; }
+        public ObservableCollection<ushort> EnabledSBins { get; private set; }
+        public string MaskChips { get; set; }
+        public string MaskCords { get; set; }
+        public bool ifmaskDuplicateChips { get; set; }
+        public List<string> JudgeMode { get; set; }
+        public List<string> DuplicateMode { get; set; }
+
+
+
         public RelayCommand JumpStartPage { get; private set; }
         public RelayCommand JumpLastPage { get; private set; }
         public RelayCommand JumpNextPage { get; private set; }
         public RelayCommand JumpEndPage { get; private set; }
+
+        public RelayCommand<SelectionChangedEventArgs> DuplicateSelectModeChanged { get; private set; }
+        public RelayCommand<SelectionChangedEventArgs> JudgeModeChanged { get; private set; }
+        public RelayCommand ApplyFilter { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> RemoveSite { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> AddSite { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> RemoveHBin { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> AddHBin { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> RemoveSBin { get; private set; }
+        public RelayCommand<MouseButtonEventArgs> AddSBin { get; private set; }
+
 
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
@@ -54,6 +84,9 @@ namespace SillyMonkey.ViewModel {
             _filterId = filterId;
 
             _dataAcquire =stdFileHelper.GetFile(fileHash);
+            _filter = _dataAcquire.GetFilterSetup(_filterId);
+            _duplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            _judgeMode = DuplicateJudgeMode.ID;
 
             if (_dataAcquire.FileName.Length > 15) 
                 TabTitle = _dataAcquire.FileName.Substring(0, 15) + "...";
@@ -67,10 +100,67 @@ namespace SillyMonkey.ViewModel {
             CurrentPageIndex = 1;
             UpdateDataToStartPage();
 
+
+            AllSites = new ObservableCollection<byte>(_dataAcquire.GetSites());
+            AllHBins = new ObservableCollection<ushort>(_dataAcquire.GetHardBins());
+            AllSBins = new ObservableCollection<ushort>(_dataAcquire.GetSoftBins());
+            EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.maskSites));
+            EnabledHBins = new ObservableCollection<ushort>(AllHBins.Except(_filter.maskHardBins));
+            EnabledSBins = new ObservableCollection<ushort>(AllSBins.Except(_filter.maskSoftBins));
+            ifmaskDuplicateChips = _filter.ifmaskDuplicateChips;
+            DuplicateMode = new List<string>();
+            DuplicateMode.Add(DuplicateSelectMode.SelectFirst.ToString());
+            DuplicateMode.Add(DuplicateSelectMode.SelectLast.ToString());
+            JudgeMode = new List<string>();
+            JudgeMode.Add(DuplicateJudgeMode.ID.ToString());
+            JudgeMode.Add(DuplicateJudgeMode.Cord.ToString());
+
             JumpStartPage = new RelayCommand(() => { UpdateDataToStartPage(); });
             JumpLastPage = new RelayCommand(() => { UpdateDataToLastPage(); });
             JumpNextPage = new RelayCommand(() => { UpdateDataToNextPage(); });
             JumpEndPage = new RelayCommand(() => { UpdateDataToEndPage(); });
+
+            RemoveSite = new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if(v.Items.Count>1 && v.SelectedIndex >= 0)
+                    EnabledSites.RemoveAt(v.SelectedIndex);
+            });
+            AddSite = new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if (v.SelectedIndex >= 0 && !EnabledSites.Contains((byte)v.SelectedItem))
+                    EnabledSites.Add((byte)v.SelectedItem);
+            });
+            RemoveHBin= new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if (v.Items.Count > 1 && v.SelectedIndex >= 0)
+                    EnabledHBins.RemoveAt(v.SelectedIndex);
+            });
+            AddHBin = new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if (v.SelectedIndex >= 0 && !EnabledHBins.Contains((ushort)v.SelectedItem))
+                    EnabledHBins.Add((ushort)v.SelectedItem);
+            });
+            RemoveSBin = new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if (v.Items.Count > 1 && v.SelectedIndex >= 0)
+                    EnabledSBins.RemoveAt(v.SelectedIndex);
+            });
+            AddSBin = new RelayCommand<MouseButtonEventArgs>((e) => {
+                var v = ((ListBox)(e.Source));
+                if (v.SelectedIndex >= 0 && !EnabledSBins.Contains((ushort)v.SelectedItem))
+                    EnabledSBins.Add((ushort)v.SelectedItem);
+            });
+
+            DuplicateSelectModeChanged = new RelayCommand<SelectionChangedEventArgs>((e)=> {
+                var v=((ComboBox)e.Source).SelectedItem;
+                _duplicateSelectMode = (DuplicateSelectMode)Enum.Parse(typeof(DuplicateSelectMode), v.ToString());
+            });
+            JudgeModeChanged = new RelayCommand<SelectionChangedEventArgs>((e) => {
+                var v = ((ComboBox)e.Source).SelectedItem;
+                _judgeMode = (DuplicateJudgeMode)Enum.Parse(typeof(DuplicateJudgeMode), v.ToString());
+            });
+
+            ApplyFilter = new RelayCommand(() => { UpdateFilter(); });
         }
 
         private void UpdateDataToStartPage() {
@@ -79,7 +169,7 @@ namespace SillyMonkey.ViewModel {
                 Data = _dataAcquire.GetFilteredItemData(0, CountPerPage, _filterId, true);
             else
                 Data = _dataAcquire.GetFilteredItemData(0, TotalCount, _filterId, true);
-
+            
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
         }
@@ -111,5 +201,27 @@ namespace SillyMonkey.ViewModel {
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
         }
+        private void UpdateFilter() {
+            _filter.DuplicateSelectMode = _duplicateSelectMode;
+            _filter.DuplicateJudgeMode = _judgeMode;
+            _filter.ifmaskDuplicateChips = ifmaskDuplicateChips;
+            _filter.maskSites = AllSites.Except(EnabledSites).ToList();
+            _filter.maskHardBins = AllHBins.Except(EnabledHBins).ToList();
+            _filter.maskSoftBins = AllSBins.Except(EnabledSBins).ToList();
+            //_filter.maskChips
+            //_filter.maskCords
+            _dataAcquire.UpdateFilter(_filterId, _filter);
+
+            CountPerPage = DefaultPerPageCount;
+            TotalCount = _dataAcquire.GetFilteredChipSummary(_filterId).TotalCount;
+            TotalPages = TotalCount / CountPerPage + 1;
+            CurrentPageIndex = 1;
+            RaisePropertyChanged("TotalPages");
+            RaisePropertyChanged("TotalCount");
+
+            UpdateDataToStartPage();
+        }
+
+
     }
 }

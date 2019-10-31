@@ -377,9 +377,91 @@ namespace DataParse{
                 table.Columns.Add("Sigma");
                 table.Columns.Add("CPK");
                 table.Columns.Add("PassCount");
-            } 
-            table.Columns.AddRange(Enumerable.Range(startIndex, count).Select((x, DataColumn) => new DataColumn(x.ToString())).ToArray());
-            
+            }
+            var chips = GetFilteredChipsInfo(filterId);
+            if (count > chips.Count)
+                count = chips.Count;
+
+            table.Columns.AddRange(Enumerable.Range(startIndex, count).Select((x, DataColumn) => new DataColumn( x.ToString())).ToArray());
+
+            //add chip info
+            //new DataColumn($"{chips[x].PartId}<br><i>{chips[x].WaferCord}</i>{chips[x].HardBin}/n{chips[x].SoftBin}/n{chips[x].Result}/n{chips[x].Site}/n{chips[x].TestTime}ms")
+            List<object> li = new List<object>(120);
+            if (enableRowHeader) {
+                li.Add("PartId");
+                for (int i=0; i<10; i++)
+                    li.Add(null);
+            }
+            for(int i=startIndex; i< startIndex + count; i++) {
+                li.Add(chips[i].PartId);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("WaferCord");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].WaferCord);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("HardBin");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].HardBin);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("SoftBin");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].SoftBin);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("Result");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].Result);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("Site");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].Site);
+            }
+            table.Rows.Add(li.ToArray());
+
+            li.Clear();
+            if (enableRowHeader) {
+                li.Add("TestTime");
+                for (int i = 0; i < 10; i++)
+                    li.Add(null);
+            }
+            for (int i = startIndex; i < startIndex + count; i++) {
+                li.Add(chips[i].TestTime);
+            }
+            table.Rows.Add(li.ToArray());
 
 
             foreach (var idInfo in GetFilteredTestIDs_Info(filterId)) {

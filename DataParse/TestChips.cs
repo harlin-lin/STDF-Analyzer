@@ -55,6 +55,7 @@ namespace DataParse
             return infos;
         }
         public void UpdateSummaryFiltered(bool[] chipsFilter, ref Dictionary<byte, IChipSummary> summary) {
+            summary.Clear();
 
             for (int i = 0; i < _testChips.Count; i++) {
                 if (chipsFilter[i]) continue;
@@ -77,7 +78,11 @@ namespace DataParse
 
         public void UpdateChipFilter(FilterSetup filter, ref bool[] chipsFilter) {
 
+
             for (int i = 0; i < _testChips.Count; i++) {
+                //init
+                chipsFilter[i] = false;
+
                 //site
                 if (filter.maskSites.Contains(_testChips[i].Site)) {
                     chipsFilter[i] = true;
@@ -108,28 +113,30 @@ namespace DataParse
                 chipsFilter[i] = true;
             }
 
-            //dupicate chip
-            if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectFirst) {
-                for (int i = 0; i < _testChips.Count; i++) {
-                    for (int j = i + 1; j < _testChips.Count; j++) {
-                        if (filter.DuplicateJudgeByIdOrCord) {
-                            if (_testChips[i].PartId == _testChips[j].PartId)
-                                chipsFilter[j] = true;
-                        } else {
-                            if (_testChips[i].WaferCord == _testChips[j].WaferCord)
-                                chipsFilter[j] = true;
+            if (filter.ifmaskDuplicateChips) {
+                //dupicate chip
+                if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectFirst) {
+                    for (int i = 0; i < _testChips.Count; i++) {
+                        for (int j = i + 1; j < _testChips.Count; j++) {
+                            if (filter.DuplicateJudgeMode== DuplicateJudgeMode.ID) {
+                                if (_testChips[i].PartId == _testChips[j].PartId)
+                                    chipsFilter[j] = true;
+                            } else {
+                                if (_testChips[i].WaferCord == _testChips[j].WaferCord)
+                                    chipsFilter[j] = true;
+                            }
                         }
                     }
-                }
-            } else {
-                for (int i = _testChips.Count - 1; i >= 0; i--) {
-                    for (int j = i - 1; j >= 0; j--) {
-                        if (filter.DuplicateJudgeByIdOrCord) {
-                            if (_testChips[i].PartId == _testChips[j].PartId)
-                                chipsFilter[j] = true;
-                        } else {
-                            if (_testChips[i].WaferCord == _testChips[j].WaferCord)
-                                chipsFilter[j] = true;
+                } else {
+                    for (int i = _testChips.Count - 1; i >= 0; i--) {
+                        for (int j = i - 1; j >= 0; j--) {
+                            if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {
+                                if (_testChips[i].PartId == _testChips[j].PartId)
+                                    chipsFilter[j] = true;
+                            } else {
+                                if (_testChips[i].WaferCord == _testChips[j].WaferCord)
+                                    chipsFilter[j] = true;
+                            }
                         }
                     }
                 }
@@ -138,8 +145,10 @@ namespace DataParse
         }
 
         public void UpdateChipFilter(byte site, ref bool[] chipsFilter) {
-
             for (int i = 0; i < _testChips.Count; i++) {
+                //init
+                chipsFilter[i] = false;
+
                 //site
                 if (_testChips[i].Site != site) {
                     chipsFilter[i] = true;
