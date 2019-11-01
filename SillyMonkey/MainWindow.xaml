@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:SillyMonkey"
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1200">
+        Title="SillyMonkey" Height="700" Width="1200" Icon="Resources/icons/AppIcon.ico">
     <Window.DataContext>
         <Binding Path="Main" Source="{StaticResource Locator}"/>
     </Window.DataContext>
