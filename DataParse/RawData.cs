@@ -34,7 +34,13 @@ namespace DataParse {
             public float? this[int index] {
                 //deleted all of the parameter check codes
                 get {
-                    return this._itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)];
+                    var bi = index >> DefaultFixedDataBits;
+                    var di = index & (DefaultFixedDataBlockLength - 1);
+                    if (bi < _itemData.Count)
+                        return _itemData[bi].itemDataBlock[di];
+                    else
+                        return null;
+                    //return this._itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)];
                 }
                 set {
                     if (index >= this._capacity) {
@@ -95,7 +101,12 @@ namespace DataParse {
                     if (c >= count)  break;
 
                     if (!filter[index]) {
-                        rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                        var bi = index >> DefaultFixedDataBits;
+                        var di = index & (DefaultFixedDataBlockLength - 1);
+                        if (bi < _itemData.Count)
+                            rt.Add(_itemData[bi].itemDataBlock[di]);
+                        else
+                            rt.Add(null);
                         c++;
                     }
                 }
@@ -111,7 +122,12 @@ namespace DataParse {
                     index = indexFrom + i;
                     if (index > _capacity) break;
 
-                    rt.Add(_itemData[index >> DefaultFixedDataBits].itemDataBlock[index & (DefaultFixedDataBlockLength - 1)]);
+                    var bi = index >> DefaultFixedDataBits;
+                    var di = index & (DefaultFixedDataBlockLength - 1);
+                    if (bi < _itemData.Count)
+                        rt.Add(_itemData[bi].itemDataBlock[di]);
+                    else
+                        rt.Add(null);
                 }
 
                 return rt;

@@ -215,7 +215,7 @@ namespace StdfReader {
                         int read = _Stream.Read(contents, contents.Length);
                         if (read < contents.Length) {
                             //rewind to the beginning of the record (read bytes + the header)
-                            _Stream.Rewind(_Stream.Offset - position);
+                            _Stream.Rewind((int)(_Stream.Offset - position));
                             yield return new CorruptDataRecord() {
                                 Offset = position,
                                 CorruptData = _Stream.DumpRemainingData(),

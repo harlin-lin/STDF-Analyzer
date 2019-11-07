@@ -11,10 +11,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace SillyMonkey.ViewModel {
-    public delegate void OpenDetailHandler(int fileHash, byte? site);
+    public delegate void OpenDetailHandler(int fileHash, byte? site, int tag);
+    public delegate void RemoveHandler(int tag);
     public class FileInfo : ViewModelBase {
         public string FileName { get; private set; }
         public string FilePath { get; private set; }
@@ -53,21 +55,21 @@ namespace SillyMonkey.ViewModel {
         public string ItemName { get; private set; }
         public string ItemPath { get; private set; }
         public int FileHash { get; private set; }
+        public int Tag { get; private set; }
 
-        public ObservableCollection<string> Items { get; private set; }
+        public ObservableCollection<KeyValuePair<int, string>> Items { get; private set; }
 
-
-        public OpenedItemsInfo(IDataAcquire stdfParse) {
+        public OpenedItemsInfo(IDataAcquire stdfParse, int tag) {
             FileHash = stdfParse.FilePath.GetHashCode();
             ItemName = stdfParse.FileName;
             ItemPath = stdfParse.FilePath;
-            Items = new ObservableCollection<string>();
+            Items = new ObservableCollection<KeyValuePair<int, string>>();
+            Tag = tag;
         }
 
-        public void AddSubItem(string itemName) {
+        public void AddSubItem(string itemName, int tag) {
 
-            Items.Add(itemName);
-
+            Items.Add(new KeyValuePair<int, string>(tag, itemName));
             //RaisePropertyChanged("Items");
         }
     }
@@ -82,14 +84,17 @@ namespace SillyMonkey.ViewModel {
 
         public RelayCommand<SelectionChangedEventArgs> SelectedItemChangedCommand { get; private set; }
         public RelayCommand<System.Windows.Input.MouseEventArgs> DoubleClickCommand { get; private set; }
+        public RelayCommand<RoutedEventArgs> CloseCommand { get; private set; }
+        
         public event OpenDetailHandler OpenDetailEvent;
-
+        public event RemoveHandler RemoveTabEvent;
 
         public FileManagementModel(StdFileHelper stdFileHelper) {
             SelectedItemChangedCommand = new RelayCommand<SelectionChangedEventArgs>((e) => {
                 var v = (C1TreeViewItem)(e.AddedItems[0]);
-                if (v.HasItems) {
+                if(v.DataContext.GetType().Name == "FileInfo") {
                     var s = v.DataContext as FileInfo;
+                    if (!s.FileStatus) return;
                     SelectedSummary = _fileHelper.GetBriefSummary(s.FilePath.GetHashCode(), null);
                 } else {
                     var s = (KeyValuePair<byte, KeyValuePair<int, string>>)v.DataContext;
@@ -101,16 +106,28 @@ namespace SillyMonkey.ViewModel {
             DoubleClickCommand = new RelayCommand<System.Windows.Input.MouseEventArgs>((e) => {
                 var v=((C1TreeView)e.Source).GetNode(e.GetPosition(null));
                 if (v == null) return;
-                if (v.HasItems) {
+                if (v.DataContext.GetType().Name == "FileInfo") {
                     var s = v.DataContext as FileInfo;
-                    AddOpenedItem(s.FilePath.GetHashCode(), s.FileName);
-                    OpenDetailEvent?.Invoke(s.FilePath.GetHashCode(), null);
-                    SelectedSummary = _fileHelper.GetBriefSummary(s.FilePath.GetHashCode(), null);
+                    if (!s.FileStatus) return;
+                    int hash = s.FilePath.GetHashCode();
+                    int tag = hash ^ System.DateTime.UtcNow.Ticks.GetHashCode();
+                    AddOpenedItem(hash, s.FileName, tag);
+                    OpenDetailEvent?.Invoke(hash, null, tag);
                 } else {
                     var s = (KeyValuePair<byte, KeyValuePair<int, string>>)v.DataContext;
-                    AddOpenedItem(s.Value.Value.GetHashCode(), $"{s.Key}: Detail");
-                    OpenDetailEvent?.Invoke(s.Value.Value.GetHashCode(), s.Key);
+
+                    int hash = s.Value.Value.GetHashCode();
+                    int tag = hash ^ System.DateTime.UtcNow.Ticks.GetHashCode();
+
+                    AddOpenedItem(hash, $"{s.Key}: Detail", tag);
+                    OpenDetailEvent?.Invoke(s.Value.Value.GetHashCode(), s.Key, tag);
                 }
+            });
+
+            CloseCommand = new RelayCommand<RoutedEventArgs>((e) => {
+                bool b = ((Button)e.Source).DataContext.GetType().Name == "OpenedItemsInfo";
+
+                RemoveOpenedItem((int)((Button)e.Source).Tag, b);
             });
 
             _fileHelper = stdFileHelper;
@@ -139,18 +156,51 @@ namespace SillyMonkey.ViewModel {
                     FileInfos[i].UpdateFileInfo(data);
         }
 
-        private void AddOpenedItem(int fileHash, string itemName) {
+        private void AddOpenedItem(int fileHash, string itemName, int tag) {
             bool found = false;
             for (int i = 0; i < OpenedItems.Count; i++) {
                 if (OpenedItems[i].FileHash == fileHash) {
-                    OpenedItems[i].AddSubItem(itemName);
+                    OpenedItems[i].AddSubItem(itemName, tag);
                     found = true;
                 }
             }
             if (!found) {
-                OpenedItemsInfo o = new OpenedItemsInfo(_fileHelper.GetFile(fileHash));
-                o.AddSubItem(itemName);
+                OpenedItemsInfo o = new OpenedItemsInfo(_fileHelper.GetFile(fileHash), tag);
+                o.AddSubItem(itemName, tag);
                 OpenedItems.Add(o);
+            }
+        }
+
+        private void RemoveOpenedItem(int tag, bool ifParent) {
+            bool search = false;
+
+            if (ifParent) {
+                foreach (var v in OpenedItems) {
+                    if (v.Tag == tag) {
+                        foreach (var t in v.Items) {
+                            RemoveTabEvent?.Invoke(t.Key);
+                            search = true;
+                        }                        
+                        OpenedItems.Remove(v);
+                        break;
+                    }
+                }
+            } else {
+                foreach (var v in OpenedItems) {
+                    foreach (var t in v.Items) {
+                        if (t.Key == tag) {
+                            RemoveTabEvent?.Invoke(t.Key);
+                            v.Items.Remove(t);
+                            search = true;
+                            break;
+                        }
+                    }
+                    if (v.Items.Count == 0) {
+                        OpenedItems.Remove(v);
+                        break;
+                    }
+                    if (search) break;
+                }
             }
         }
 

@@ -57,10 +57,19 @@ namespace SillyMonkey.ViewModel
             _fileHelper = new StdFileHelper();
             Files = new FileManagementModel(_fileHelper);
             Files.OpenDetailEvent += Files_OpenDetailEvent;
-
+            Files.RemoveTabEvent += Files_RemoveTabEvent;
         }
 
-        private void Files_OpenDetailEvent(int fileHash, byte? site) {
+        private void Files_RemoveTabEvent(int tag) {
+            foreach(var t in DataTabItems) {
+                if ((int)t.Tag == tag) {
+                    DataTabItems.Remove(t);
+                    break;
+                }
+            }
+        }
+
+        private void Files_OpenDetailEvent(int fileHash, byte? site, int tag) {
             var id =_fileHelper.CreateFilterDataHandler(fileHash, site);
             if (!id.HasValue) return;
 
@@ -72,6 +81,7 @@ namespace SillyMonkey.ViewModel
             tabItem.DataContext = dataGridTabModel;
             tabItem.Header = dataGridTabModel.TabTitle;
             tabItem.ToolTip = dataGridTabModel.FilePath;
+            tabItem.Tag = tag;
             DataTabItems.Add(tabItem);
             tabItem.IsSelected = true;
         }

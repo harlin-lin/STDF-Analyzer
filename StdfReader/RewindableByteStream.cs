@@ -23,7 +23,7 @@ namespace StdfReader {
         /// <summary>
         /// Tracks our current offset in the stream
         /// </summary>
-        int _Offset = 0;
+        long _Offset = 0;
         /// <summary>
         /// buffer used for reading a record header
         /// </summary>
@@ -183,7 +183,7 @@ namespace StdfReader {
         /// <summary>
         /// The current offset
         /// </summary>
-        public int Offset {
+        public long Offset {
             get {
                 return _Offset;
             }
