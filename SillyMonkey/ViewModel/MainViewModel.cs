@@ -58,6 +58,7 @@ namespace SillyMonkey.ViewModel
             Files = new FileManagementModel(_fileHelper);
             Files.OpenDetailEvent += Files_OpenDetailEvent;
             Files.RemoveTabEvent += Files_RemoveTabEvent;
+            Files.RemoveFileEvent += RemoveFile;
         }
 
         private void Files_RemoveTabEvent(int tag) {

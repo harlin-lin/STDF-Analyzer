@@ -16,7 +16,7 @@
             <Grid>
                 <Grid.Resources>
                     <DataTemplate x:Key="siteTemplate">
-                        <TextBlock>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="Site:{0}=>{1}">
                                     <Binding Path="Key"/>
@@ -102,8 +102,20 @@
                     </i:Interaction.Triggers>
                     
                     <c1:C1TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate DataType="{x:Type vm:FileInfo}" ItemsSource="{Binding Sites}" ItemTemplate="{StaticResource siteTemplate}">
-                                <TextBlock>
+                        <HierarchicalDataTemplate DataType="{x:Type vm:FileInfo}" ItemsSource="{Binding Sites}" ItemTemplate="{StaticResource siteTemplate}">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="X"  HorizontalAlignment="Left" Margin="0,1,0,0" 
+                                      VerticalAlignment="Center" Width="12" 
+                                      Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+                                      Padding="0" ToolTip="Close" FontWeight="Bold" FontSize="8"
+                                            Tag="{Binding Tag}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <cmd:EventToCommand Command="{Binding ElementName=FileControl, Path=DataContext.FileCloseCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <TextBlock.Text>
                                         <MultiBinding  StringFormat="{}{0} =>{1}">
                                             <Binding Path="FileName"/>
@@ -114,7 +126,8 @@
                                         <Binding Path="FilePath"/>
                                     </TextBlock.ToolTip>
                                 </TextBlock>
-                            </HierarchicalDataTemplate>
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
                         </c1:C1TreeView.ItemTemplate>
                     </c1:C1TreeView>
                 <GridSplitter Grid.Row="3" BorderBrush="Black" HorizontalAlignment="Stretch"/>

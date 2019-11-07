@@ -17,6 +17,8 @@ using System.Windows.Threading;
 namespace SillyMonkey.ViewModel {
     public delegate void OpenDetailHandler(int fileHash, byte? site, int tag);
     public delegate void RemoveHandler(int tag);
+    public delegate void RemoveFileHandler(string filePath);
+
     public class FileInfo : ViewModelBase {
         public string FileName { get; private set; }
         public string FilePath { get; private set; }
@@ -85,9 +87,11 @@ namespace SillyMonkey.ViewModel {
         public RelayCommand<SelectionChangedEventArgs> SelectedItemChangedCommand { get; private set; }
         public RelayCommand<System.Windows.Input.MouseEventArgs> DoubleClickCommand { get; private set; }
         public RelayCommand<RoutedEventArgs> CloseCommand { get; private set; }
-        
+        public RelayCommand<RoutedEventArgs> FileCloseCommand { get; private set; }
+
         public event OpenDetailHandler OpenDetailEvent;
         public event RemoveHandler RemoveTabEvent;
+        public event RemoveFileHandler RemoveFileEvent;
 
         public FileManagementModel(StdFileHelper stdFileHelper) {
             SelectedItemChangedCommand = new RelayCommand<SelectionChangedEventArgs>((e) => {
@@ -126,8 +130,11 @@ namespace SillyMonkey.ViewModel {
 
             CloseCommand = new RelayCommand<RoutedEventArgs>((e) => {
                 bool b = ((Button)e.Source).DataContext.GetType().Name == "OpenedItemsInfo";
-
                 RemoveOpenedItem((int)((Button)e.Source).Tag, b);
+            });
+            FileCloseCommand = new RelayCommand<RoutedEventArgs>((e) => {
+                //bool b = ((Button)e.Source).DataContext.GetType().Name == "OpenedItemsInfo";
+                RemoveFileEvent?.Invoke((((FileInfo)((Button)e.Source).DataContext)).FilePath);
             });
 
             _fileHelper = stdFileHelper;
@@ -135,12 +142,12 @@ namespace SillyMonkey.ViewModel {
             OpenedItems = new ObservableCollection<OpenedItemsInfo>();
             _fileHelper.UpdateFileInfo += UpdateFileInfo;
             _fileHelper.AddFileEvent += AddFileEvent;
-            _fileHelper.RemoveFileEvent += RemoveFileEvent;
+            _fileHelper.RemoveFileEvent += RemoveFile;
 
             SelectedSummary = "";
         }
 
-        private void RemoveFileEvent(string path) {
+        private void RemoveFile(string path) {
             for (int i = 0; i < FileInfos.Count; i++)
                 if (FileInfos[i].FilePath == path)
                     FileInfos.RemoveAt(i);
