@@ -77,7 +77,15 @@ namespace DataParse
         }
 
         public void UpdateChipFilter(FilterSetup filter, ref bool[] chipsFilter) {
-
+            if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.AllDuplicate) {
+                for (int i = 0; i < _testChips.Count; i++) {
+                    chipsFilter[i] = true;
+                }
+            } else {
+                for (int i = 0; i < _testChips.Count; i++) {
+                    chipsFilter[i] = false;
+                }
+            }
 
             for (int i = 0; i < _testChips.Count; i++) {
                 //init
@@ -97,8 +105,6 @@ namespace DataParse
                         }
                     }
 
-                } else {
-                    chipsFilter[i] = false;
                 }
 
                 if (!filter.ifMaskOrEnableIds) {
