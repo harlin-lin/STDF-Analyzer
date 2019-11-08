@@ -28,10 +28,11 @@ namespace SillyMonkey.View {
 
         private void Grid_ItemsSourceChanged(object sender, EventArgs e) {
             //grid.AutoSizeFixedColumns(0, grid.Columns.Count - 1, 10);
-            foreach (var v in grid.Columns) {
-                v.Width = new GridLength(40);
+            for(int i=0; i< grid.Columns.Count; i++) {
+                grid.Columns[i].Width = new GridLength(43);
+                if(i==1 )
+                    grid.Columns[i].Width = new GridLength(80);
             }
-            grid.Columns[1].Width = new GridLength(80);
         }
     }
 }

@@ -594,5 +594,27 @@ namespace DataParse{
                 CreateFilter(f);
             }
         }
+
+        public void CleanUp() {
+            _stdfFile=null;
+            _rawData=null;
+            _testChips = null;
+            _testItems = null;
+            _sites = null;
+
+            FilePath = null;
+            FileName = null;
+
+            //basic file information
+            BasicInfo = null;
+            ExtractDone = null;
+
+            _filterList = null;
+
+            _defaultSitesSummary = null;
+            _defaultSummary = null;
+
+            GC.Collect();
+        }
     }
 }

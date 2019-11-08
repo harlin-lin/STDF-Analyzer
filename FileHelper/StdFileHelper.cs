@@ -55,13 +55,12 @@ namespace FileHelper {
             UpdateFileInfo?.Invoke(data);
         }
 
-        public bool RemoveFile(string path) {
-            if (_files.Remove(path.GetHashCode())) {
-                RemoveFileEvent?.Invoke(path);
-                return true;
-            } else {
-                return false;
-            }
+        public void RemoveFile(string path) {
+            _files[path.GetHashCode()].CleanUp();
+            _files[path.GetHashCode()] = null;
+            _files.Remove(path.GetHashCode());
+            RemoveFileEvent?.Invoke(path);
+            GC.Collect();
         }
 
         public void ExtractFiles(List<string> paths) {

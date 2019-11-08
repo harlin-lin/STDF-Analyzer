@@ -81,7 +81,51 @@ namespace DataParse
 
             for (int i = 0; i < _testChips.Count; i++) {
                 //init
-                chipsFilter[i] = false;
+                
+                if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.AllDuplicate) {
+                    for (int j = i + 1; j < _testChips.Count; j++) {
+                        if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {
+                            if (_testChips[i].PartId == _testChips[j].PartId) {
+                                chipsFilter[i] = false;
+                                chipsFilter[j] = false;
+                            }
+                        } else {
+                            if (_testChips[i].WaferCord == _testChips[j].WaferCord) {
+                                chipsFilter[i] = false;
+                                chipsFilter[j] = false;
+                            }
+                        }
+                    }
+
+                } else {
+                    chipsFilter[i] = false;
+                }
+
+                if (!filter.ifMaskOrEnableIds) {
+                    if (filter.maskChips.Contains(_testChips[i].PartId)) {
+                        chipsFilter[i] = true;
+                        continue;
+                    }
+                } else {
+                    if (!filter.maskChips.Contains(_testChips[i].PartId)) {
+                        chipsFilter[i] = true;
+                        continue;
+                    } 
+                }
+
+                if (!filter.ifMaskOrEnableCords) {
+                    //cords
+                    if (filter.maskCords.Contains(_testChips[i].WaferCord)) {
+                        chipsFilter[i] = true;
+                        continue;
+                    }
+                } else {
+                    if (!filter.maskCords.Contains(_testChips[i].WaferCord)) {
+                        chipsFilter[i] = true;
+                        continue;
+                    }
+
+                }
 
                 //site
                 if (filter.maskSites.Contains(_testChips[i].Site)) {
@@ -100,17 +144,6 @@ namespace DataParse
                     chipsFilter[i] = true;
                     continue;
                 }
-
-                //cords
-                if (filter.maskCords.Contains(_testChips[i].WaferCord)) {
-                    chipsFilter[i] = true;
-                    continue;
-                }
-
-            }
-            //index
-            foreach (int i in filter.maskChips) {
-                chipsFilter[i] = true;
             }
 
             if (filter.ifmaskDuplicateChips) {
@@ -127,7 +160,7 @@ namespace DataParse
                             }
                         }
                     }
-                } else {
+                } else if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectLast) {
                     for (int i = _testChips.Count - 1; i >= 0; i--) {
                         for (int j = i - 1; j >= 0; j--) {
                             if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {
@@ -139,8 +172,24 @@ namespace DataParse
                             }
                         }
                     }
+                } else {
+                    for (int i = 0; i < _testChips.Count; i++) {
+                        for (int j = i + 1; j < _testChips.Count; j++) {
+                            if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {
+                                if (_testChips[i].PartId == _testChips[j].PartId) {
+                                    chipsFilter[j] = true;
+                                    chipsFilter[i] = true;
+                                }
+                            } else {
+                                if (_testChips[i].WaferCord == _testChips[j].WaferCord) {
+                                    chipsFilter[j] = true;
+                                    chipsFilter[i] = true;
+                                }
+                            }
+                        }
+                    }
                 }
-            }
+            } 
 
         }
 

@@ -153,6 +153,6 @@ namespace DataInterface {
         void RemoveFilter(int filterId);
         #endregion
 
-
+        void CleanUp();
     }
 }

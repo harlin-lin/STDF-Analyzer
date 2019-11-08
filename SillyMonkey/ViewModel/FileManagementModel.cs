@@ -133,8 +133,25 @@ namespace SillyMonkey.ViewModel {
                 RemoveOpenedItem((int)((Button)e.Source).Tag, b);
             });
             FileCloseCommand = new RelayCommand<RoutedEventArgs>((e) => {
-                //bool b = ((Button)e.Source).DataContext.GetType().Name == "OpenedItemsInfo";
-                RemoveFileEvent?.Invoke((((FileInfo)((Button)e.Source).DataContext)).FilePath);
+                var path = (((FileInfo)((Button)e.Source).DataContext)).FilePath;
+
+                foreach (var v in OpenedItems) {
+                    if (v.ItemPath == path) {
+                        foreach (var t in v.Items) {
+                            RemoveTabEvent?.Invoke(t.Key);
+                        }
+                        OpenedItems.Remove(v);
+                        break;
+                    }
+                }
+
+                RemoveFileEvent?.Invoke(path);
+
+                for (int i = 0; i < FileInfos.Count; i++)
+                    if (FileInfos[i].FilePath == path)
+                        FileInfos.RemoveAt(i);
+
+                GC.Collect();
             });
 
             _fileHelper = stdFileHelper;
@@ -142,16 +159,16 @@ namespace SillyMonkey.ViewModel {
             OpenedItems = new ObservableCollection<OpenedItemsInfo>();
             _fileHelper.UpdateFileInfo += UpdateFileInfo;
             _fileHelper.AddFileEvent += AddFileEvent;
-            _fileHelper.RemoveFileEvent += RemoveFile;
+            //_fileHelper.RemoveFileEvent += RemoveFile;
 
             SelectedSummary = "";
         }
 
-        private void RemoveFile(string path) {
-            for (int i = 0; i < FileInfos.Count; i++)
-                if (FileInfos[i].FilePath == path)
-                    FileInfos.RemoveAt(i);
-        }
+        //private void RemoveFile(string path) {
+        //    for (int i = 0; i < FileInfos.Count; i++)
+        //        if (FileInfos[i].FilePath == path)
+        //            FileInfos.RemoveAt(i);
+        //}
 
         private void AddFileEvent(IDataAcquire fileInfo) {
             FileInfos.Add(new FileInfo(fileInfo));

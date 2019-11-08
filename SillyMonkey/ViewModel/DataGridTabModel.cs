@@ -54,9 +54,11 @@ namespace SillyMonkey.ViewModel {
         public ObservableCollection<byte> EnabledSites { get; private set; }
         public ObservableCollection<ushort> EnabledHBins { get; private set; }
         public ObservableCollection<ushort> EnabledSBins { get; private set; }
-        public string MaskChips { get; set; }
-        public string MaskCords { get; set; }
+        public string MaskEnableChips { get; set; }
+        public string MaskEnableCords { get; set; }
         public bool ifmaskDuplicateChips { get; set; }
+        public bool MaskOrEnableIds { get; set; }
+        public bool MaskOrEnableCords { get; set; }
         public List<string> JudgeMode { get; set; }
         public List<string> DuplicateMode { get; set; }
 
@@ -111,9 +113,12 @@ namespace SillyMonkey.ViewModel {
             DuplicateMode = new List<string>();
             DuplicateMode.Add(DuplicateSelectMode.SelectFirst.ToString());
             DuplicateMode.Add(DuplicateSelectMode.SelectLast.ToString());
+            DuplicateMode.Add(DuplicateSelectMode.AllDuplicate.ToString());
             JudgeMode = new List<string>();
             JudgeMode.Add(DuplicateJudgeMode.ID.ToString());
             JudgeMode.Add(DuplicateJudgeMode.Cord.ToString());
+            MaskEnableCords = "";
+            MaskEnableChips = "";
 
             JumpStartPage = new RelayCommand(() => { UpdateDataToStartPage(); });
             JumpLastPage = new RelayCommand(() => { UpdateDataToLastPage(); });
@@ -205,11 +210,14 @@ namespace SillyMonkey.ViewModel {
             _filter.DuplicateSelectMode = _duplicateSelectMode;
             _filter.DuplicateJudgeMode = _judgeMode;
             _filter.ifmaskDuplicateChips = ifmaskDuplicateChips;
+            _filter.ifMaskOrEnableIds = MaskOrEnableIds;
+            _filter.ifMaskOrEnableCords = MaskOrEnableCords;
+
             _filter.maskSites = AllSites.Except(EnabledSites).ToList();
             _filter.maskHardBins = AllHBins.Except(EnabledHBins).ToList();
             _filter.maskSoftBins = AllSBins.Except(EnabledSBins).ToList();
-            //_filter.maskChips
-            //_filter.maskCords
+            _filter.maskChips = ParseMaskEnableIds();
+            _filter.maskCords = ParseMaskEnableCords();
             _dataAcquire.UpdateFilter(_filterId, _filter);
 
             CountPerPage = DefaultPerPageCount;
@@ -222,6 +230,64 @@ namespace SillyMonkey.ViewModel {
             UpdateDataToStartPage();
         }
 
+        private List<string> ParseMaskEnableIds() {
+            List<string> rst = new List<string>();
+            var ss = MaskEnableChips.Split(';');
+            foreach(string s in ss) {
+                try { rst.Add(s); } catch { continue; }
+            }
+            return rst;
+        }
+        private List<CordType> ParseMaskEnableCords() {
+            List<CordType> rst = new List<CordType>();
+            var ss = MaskEnableCords.Split(';');
+            foreach (string s in ss) {
+                var xy = s.Split(',');
+                if (xy.Length != 2) continue;
+                try {
+                    short x = short.Parse(xy[0]);
+                    short y = short.Parse(xy[1]);
+                    rst.Add(new CordType(x, y));
+                } catch { continue; }
+            }
 
+            return rst;
+        }
+
+        public override void Cleanup() {
+            base.Cleanup();
+
+            JumpStartPage=null;
+            JumpLastPage=null;
+            JumpNextPage=null;
+            JumpEndPage=null;
+
+            DuplicateSelectModeChanged=null;
+            JudgeModeChanged=null;
+            ApplyFilter=null;
+            RemoveSite=null;
+            AddSite=null;
+            RemoveHBin=null;
+            AddHBin=null;
+            RemoveSBin=null;
+            AddSBin=null;
+
+            _fileHelper=null;
+            _filter = null;
+            _dataAcquire = null;
+
+            Data = null;
+
+            AllSites=null;
+            AllHBins=null;
+            AllSBins=null;
+            EnabledSites=null;
+            EnabledHBins=null;
+            EnabledSBins=null;
+            JudgeMode = null;
+            DuplicateMode = null;
+
+            GC.Collect();
+        }
     }
 }

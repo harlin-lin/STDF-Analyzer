@@ -64,10 +64,12 @@ namespace SillyMonkey.ViewModel
         private void Files_RemoveTabEvent(int tag) {
             foreach(var t in DataTabItems) {
                 if ((int)t.Tag == tag) {
-                    DataTabItems.Remove(t);
+                    ((DataGridTabModel)t.DataContext).Cleanup();
+                    DataTabItems.Remove(t);                    
                     break;
                 }
             }
+            GC.Collect();
         }
 
         private void Files_OpenDetailEvent(int fileHash, byte? site, int tag) {
@@ -92,6 +94,7 @@ namespace SillyMonkey.ViewModel
         }
         private void RemoveFile(string path) {
             _fileHelper.RemoveFile(path);
+            GC.Collect();
         }
 
         private void ExtractFiles(List<string> paths) {

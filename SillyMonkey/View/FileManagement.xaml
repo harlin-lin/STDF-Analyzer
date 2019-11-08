@@ -16,7 +16,7 @@
             <Grid>
                 <Grid.Resources>
                     <DataTemplate x:Key="siteTemplate">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                             <TextBlock.Text>
                                 <MultiBinding StringFormat="Site:{0}=>{1}">
                                     <Binding Path="Key"/>
@@ -41,7 +41,7 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Button>
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                                 <TextBlock.Text>
                                     <Binding Path="Value"/>
                                 </TextBlock.Text>
@@ -78,7 +78,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Button>
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <TextBlock.Text>
                                         <Binding Path="ItemName"/>
                                     </TextBlock.Text>
@@ -115,7 +115,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Button>
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">
                                     <TextBlock.Text>
                                         <MultiBinding  StringFormat="{}{0} =>{1}">
                                             <Binding Path="FileName"/>
