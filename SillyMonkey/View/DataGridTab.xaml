@@ -70,6 +70,16 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
+                <Button Width="18" Height="18" Margin="0,0,0,0">
+                    <!--<Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey;component/Resources/icons/angle-double-left.png"/>
+                    </Button.Background>-->
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cmd:EventToCommand Command="{Binding Path=ExportToExcel, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
 
             </StackPanel>
             <c1:C1FlexGrid x:Name="grid" Grid.Row="1"  ItemsSource="{Binding Data}" 
@@ -80,7 +90,20 @@
                            IsReadOnly="True" 
                            ItemsSourceChanged="Grid_ItemsSourceChanged"
                            AllowSorting="False"
-                           AllowAddNew="False"/>
+                           AllowAddNew="False">
+                <c1:C1FlexGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="ShowInHistogram">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <cmd:EventToCommand Command="{Binding CreateHistogram, Mode=OneWay}" PassEventArgsToCommand="True"/>
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </MenuItem>
+                    </ContextMenu>
+                </c1:C1FlexGrid.ContextMenu>
+                
+            </c1:C1FlexGrid>
         </Grid>
         <GridSplitter Grid.Column="1"/>
         <Grid Grid.Column="2">
@@ -183,7 +206,13 @@
                     </TextBox.ToolTip>
                     <TextBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Clear"/>
+                            <MenuItem Header="Clear">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <cmd:EventToCommand Command="{Binding ClearIDs, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </MenuItem>
                         </ContextMenu>
                     </TextBox.ContextMenu>
                 </TextBox>
@@ -197,7 +226,13 @@
                     </TextBox.ToolTip>
                     <TextBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Clear"/>
+                            <MenuItem Header="Clear">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <cmd:EventToCommand Command="{Binding ClearCords, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </MenuItem>
                         </ContextMenu>
                     </TextBox.ContextMenu>
                 </TextBox>

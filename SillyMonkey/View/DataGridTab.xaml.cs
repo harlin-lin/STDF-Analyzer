@@ -34,5 +34,6 @@ namespace SillyMonkey.View {
                     grid.Columns[i].Width = new GridLength(80);
             }
         }
+
     }
 }

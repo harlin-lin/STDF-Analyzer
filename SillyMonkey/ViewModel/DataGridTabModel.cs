@@ -3,6 +3,7 @@ using DataInterface;
 using FileHelper;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -68,6 +69,9 @@ namespace SillyMonkey.ViewModel {
         public RelayCommand JumpLastPage { get; private set; }
         public RelayCommand JumpNextPage { get; private set; }
         public RelayCommand JumpEndPage { get; private set; }
+        public RelayCommand ClearIDs { get; private set; }
+        public RelayCommand ClearCords { get; private set; }
+        public RelayCommand ExportToExcel { get; private set; }
 
         public RelayCommand<SelectionChangedEventArgs> DuplicateSelectModeChanged { get; private set; }
         public RelayCommand<SelectionChangedEventArgs> JudgeModeChanged { get; private set; }
@@ -78,7 +82,7 @@ namespace SillyMonkey.ViewModel {
         public RelayCommand<MouseButtonEventArgs> AddHBin { get; private set; }
         public RelayCommand<MouseButtonEventArgs> RemoveSBin { get; private set; }
         public RelayCommand<MouseButtonEventArgs> AddSBin { get; private set; }
-
+        public RelayCommand<RoutedEventArgs> CreateHistogram { get; private set; }
 
         public DataGridTabModel(StdFileHelper stdFileHelper, int fileHash, int filterId) {
             _fileHelper = stdFileHelper;
@@ -124,6 +128,9 @@ namespace SillyMonkey.ViewModel {
             JumpLastPage = new RelayCommand(() => { UpdateDataToLastPage(); });
             JumpNextPage = new RelayCommand(() => { UpdateDataToNextPage(); });
             JumpEndPage = new RelayCommand(() => { UpdateDataToEndPage(); });
+            ClearIDs = new RelayCommand(() => { MaskEnableChips = ""; RaisePropertyChanged("MaskEnableChips"); });
+            ClearCords = new RelayCommand(() => { MaskEnableCords = ""; RaisePropertyChanged("MaskEnableCords"); });
+            ExportToExcel = new RelayCommand(()=> { ExportToExcelAction(); });
 
             RemoveSite = new RelayCommand<MouseButtonEventArgs>((e) => {
                 var v = ((ListBox)(e.Source));
@@ -166,6 +173,10 @@ namespace SillyMonkey.ViewModel {
             });
 
             ApplyFilter = new RelayCommand(() => { UpdateFilter(); });
+
+            CreateHistogram = new RelayCommand<RoutedEventArgs>((e)=> {
+                ;
+            });
         }
 
         private void UpdateDataToStartPage() {
@@ -252,6 +263,20 @@ namespace SillyMonkey.ViewModel {
             }
 
             return rst;
+        }
+
+        private void ExportToExcelAction() {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            sfd.Filter = "ExcelFile|*.xlsx";
+            
+            if (sfd.ShowDialog() == true) {
+
+
+
+                MessageBox.Show("Done");
+            } 
         }
 
         public override void Cleanup() {

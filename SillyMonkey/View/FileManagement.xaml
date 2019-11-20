@@ -58,11 +58,11 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <c1:C1TreeView x:Name="tvOpenedItems" Grid.Row="0" ItemsSource="{Binding Path=OpenedItems}" SelectionMode="Single">
-                    <!--<i:Interaction.Triggers>
+                    <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanging">
                             <cmd:EventToCommand Command="{Binding Path=ChangeDisplayCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
+                    </i:Interaction.Triggers>
 
                     <c1:C1TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type vm:OpenedItemsInfo}" ItemsSource="{Binding Items}" ItemTemplate="{StaticResource openedItemsTemplate}">
@@ -134,7 +134,13 @@
                 <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}">
                     <TextBox.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy"/>
+                            <MenuItem Header="Copy">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click">
+                                        <cmd:EventToCommand Command="{Binding CopySummary, Mode=OneWay}" PassEventArgsToCommand="False"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </MenuItem>
                         </ContextMenu>
                     </TextBox.ContextMenu>
                 </TextBox>

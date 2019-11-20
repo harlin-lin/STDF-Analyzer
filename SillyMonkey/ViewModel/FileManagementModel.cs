@@ -18,6 +18,7 @@ namespace SillyMonkey.ViewModel {
     public delegate void OpenDetailHandler(int fileHash, byte? site, int tag);
     public delegate void RemoveHandler(int tag);
     public delegate void RemoveFileHandler(string filePath);
+    public delegate void ChangeViewTabHandler(int hash);
 
     public class FileInfo : ViewModelBase {
         public string FileName { get; private set; }
@@ -85,13 +86,16 @@ namespace SillyMonkey.ViewModel {
         public string SelectedSummary { get; private set; }
 
         public RelayCommand<SelectionChangedEventArgs> SelectedItemChangedCommand { get; private set; }
+        public RelayCommand<SelectionChangedEventArgs> ChangeDisplayCommand { get; private set; }
         public RelayCommand<System.Windows.Input.MouseEventArgs> DoubleClickCommand { get; private set; }
         public RelayCommand<RoutedEventArgs> CloseCommand { get; private set; }
         public RelayCommand<RoutedEventArgs> FileCloseCommand { get; private set; }
+        public RelayCommand CopySummary { get; private set; }
 
         public event OpenDetailHandler OpenDetailEvent;
         public event RemoveHandler RemoveTabEvent;
         public event RemoveFileHandler RemoveFileEvent;
+        public event ChangeViewTabHandler ChangeViewTabEvent;
 
         public FileManagementModel(StdFileHelper stdFileHelper) {
             SelectedItemChangedCommand = new RelayCommand<SelectionChangedEventArgs>((e) => {
@@ -105,6 +109,16 @@ namespace SillyMonkey.ViewModel {
                     SelectedSummary = _fileHelper.GetBriefSummary(s.Value.Value.GetHashCode(), s.Key);
                 }
                 RaisePropertyChanged("SelectedSummary");
+            });
+
+            ChangeDisplayCommand = new RelayCommand<SelectionChangedEventArgs>((e) => {
+                var v = (C1TreeViewItem)(e.AddedItems[0]);
+                if (v.DataContext.GetType().Name == "OpenedItemsInfo") {
+                    var s = v.DataContext as OpenedItemsInfo;
+                } else {
+                    var s = (KeyValuePair<int, string>)v.DataContext;
+                    ChangeViewTabEvent?.Invoke(s.Key);
+                }
             });
 
             DoubleClickCommand = new RelayCommand<System.Windows.Input.MouseEventArgs>((e) => {
@@ -152,6 +166,10 @@ namespace SillyMonkey.ViewModel {
                         FileInfos.RemoveAt(i);
 
                 GC.Collect();
+            });
+
+            CopySummary = new RelayCommand(()=> {
+                Clipboard.SetDataObject(SelectedSummary);
             });
 
             _fileHelper = stdFileHelper;

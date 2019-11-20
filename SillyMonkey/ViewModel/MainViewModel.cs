@@ -59,6 +59,16 @@ namespace SillyMonkey.ViewModel
             Files.OpenDetailEvent += Files_OpenDetailEvent;
             Files.RemoveTabEvent += Files_RemoveTabEvent;
             Files.RemoveFileEvent += RemoveFile;
+            Files.ChangeViewTabEvent += Files_ChangeViewTabEvent;
+        }
+
+        private void Files_ChangeViewTabEvent(int tag) {
+            foreach (var t in DataTabItems) {
+                if ((int)t.Tag == tag) {
+                    t.IsSelected = true;
+                    break;
+                }
+            }
         }
 
         private void Files_RemoveTabEvent(int tag) {
