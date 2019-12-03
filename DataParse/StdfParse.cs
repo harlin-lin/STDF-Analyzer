@@ -121,7 +121,7 @@ namespace DataParse{
 
                     TestID testID;
                     //compare with the previous test name to decide the testNO
-                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ptr)r).TestNumber)) {//it's a sub test
+                    if (ptrLastTN[siteIdx].CompareTestNumber(((Ptr)r).TestNumber) && _testItems.ItemsCount>0) {//it's a sub test
                         testID = TestID.NewSubTestID(ptrLastTN[siteIdx]);
                         if (!_testItems.ExistTestItem(testID)) {
                             IItemInfo info = _testItems.GetItemInfo(ptrLastTN[siteIdx]);

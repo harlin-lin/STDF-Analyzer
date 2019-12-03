@@ -100,6 +100,22 @@ namespace FileHelper {
             sb.AppendLine($"Retest QTY:{summary.RetestCount}");
 
 
+            //var filterId = _files[fileHash].GetAllFilter().Keys.ToList()[0];
+            //var waferId = _files[fileHash].GetFilteredItemData(new TestID(20108), filterId);
+            //var x = _files[fileHash].GetFilteredItemData(new TestID(20109), filterId);
+            //var y = _files[fileHash].GetFilteredItemData(new TestID(20110), filterId);
+
+            //StringBuilder sbb = new StringBuilder();
+
+            //for(int i=0; i<waferId.Count;i++) {
+            //    if(waferId[i].HasValue && waferId[i].Value == 11.0) {
+            //        sbb.AppendLine($"{x[i]}\t\t{y[i]}");
+            //    }
+            //}
+
+            //System.IO.File.WriteAllText(@"E:\Data\550x\mapraw.txt", sbb.ToString());
+
+
             return sb.ToString();
         }
 
