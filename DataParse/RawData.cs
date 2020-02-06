@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataParse {
     public class RawData {
-        public const int DefaultItemsCapacity = 300;
+        public const int DefaultItemsCapacity = 1000;
         public const int DefaultFixedDataBlockLength = 4096;  //means 2^12
         private const int DefaultFixedDataBits = 12;  //means 2^12
 
@@ -114,6 +114,7 @@ namespace DataParse {
                 return rt;
             }
 
+            [Obsolete]
             public List<float?> GetItem(int indexFrom, int count) {
                 List<float?> rt = new List<float?>(count);
 

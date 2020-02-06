@@ -72,6 +72,9 @@ namespace DataParse{
         private Dictionary<byte, IChipSummary> _defaultSitesSummary;
         private IChipSummary _defaultSummary;
 
+        private Dictionary<ushort, Tuple<string, string>> _softBinNames;
+        private Dictionary<ushort, Tuple<string, string>> _hardBinNames;
+
         public StdfParse(String filePath) {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
@@ -89,6 +92,9 @@ namespace DataParse{
             _filterList = new Dictionary<int, FilterData>();
             _defaultSitesSummary = new Dictionary<byte, IChipSummary>();
             _defaultSummary = null;
+
+            _softBinNames = new Dictionary<ushort, Tuple<string, string>>();
+            _hardBinNames = new Dictionary<ushort, Tuple<string, string>>();
         }
 
         public override int GetHashCode() {
@@ -222,11 +228,16 @@ namespace DataParse{
 
                     InternalID[siteIdx] = _rawData.AddChip();
 
-                } else if (r.RecordType == StdfFile.BPS) {
-                    //do nothing
-                } else if (r.RecordType == StdfFile.EPS) {
-                    //do nothing
-                } else if (r.RecordType == StdfFile.PRR) {
+                } else if (r.RecordType == StdfFile.SBR) {
+                    if (!_softBinNames.ContainsKey(((Sbr)r).BinNumber)) {
+                        _softBinNames.Add(((Sbr)r).BinNumber, new Tuple<string,string>(((Sbr)r).BinName, ((Sbr)r).BinPassFail));
+                    }
+                } else if (r.RecordType == StdfFile.HBR) {
+                    if (!_hardBinNames.ContainsKey(((Hbr)r).BinNumber)) {
+                        _hardBinNames.Add(((Hbr)r).BinNumber, new Tuple<string, string>(((Hbr)r).BinName, ((Hbr)r).BinPassFail));
+                    }
+                }
+                else if (r.RecordType == StdfFile.PRR) {
                     if (!_sites.TryGetValue(((Prr)r).SiteNumber, out siteIdx)) throw new Exception("No Site");
 
                     if (!catchedPirFlag[siteIdx])
@@ -307,7 +318,12 @@ namespace DataParse{
             return _defaultSummary;
         }
 
-
+        public Dictionary<ushort, Tuple<string, string>> GetSBinInfo() {
+            return _softBinNames;
+        }
+        public Dictionary<ushort, Tuple<string, string>> GetHBinInfo() {
+            return _hardBinNames;
+        }
 
 
         //////this info is filtered by filter

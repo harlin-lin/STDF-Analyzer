@@ -81,6 +81,18 @@ namespace DataInterface {
         /// <returns></returns>
         IChipSummary GetChipSummary();
 
+        /// <summary>
+        /// get the soft bin names defined in the file, item1 is Pass/fail, item2 is bin name
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<ushort, Tuple<string, string>> GetSBinInfo();
+
+        /// <summary>
+        /// get the hard bin names defined in the file, item1 is Pass/fail, item2 is bin name
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<ushort, Tuple<string, string>> GetHBinInfo();
+
 
         int ChipsCount { get; }
         string FilePath { get; }

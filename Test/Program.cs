@@ -19,16 +19,16 @@ namespace Test
 
         static void tryRawData() {
 
-            //Stopwatch sp = new Stopwatch();
+            Stopwatch sp = new Stopwatch();
 
-            //sp.Start();
+            sp.Start();
 
-            //StdfParse dataParse = new StdfParse(@"E:\Data\E3200-0101_S905L_FT1_T3NS03.00_AEO932N081-D001_R3_20190817_010216.stdf");
-            //dataParse.ExtractStdf();
+            StdfParse dataParse = new StdfParse(@"C:\Users\Harlin\Documents\Projects\STDF\Data\aaa.stdf");
+            dataParse.ExtractStdf();
 
-            //Console.WriteLine(sp.ElapsedMilliseconds);
-            //sp.Stop();
-            //sp.Reset();
+            Console.WriteLine(sp.ElapsedMilliseconds);
+            sp.Stop();
+            sp.Reset();
 
             //sp.Start();
 
@@ -39,7 +39,7 @@ namespace Test
             //filterSetup.ifmaskDuplicateChips = true;
             //dataParse.SetFilter(filters.ElementAt(0).Key, filterSetup);
 
-            //Console.WriteLine(sp.ElapsedMilliseconds); 
+            //Console.WriteLine(sp.ElapsedMilliseconds);
             //sp.Stop();
             //sp.Reset();
 
