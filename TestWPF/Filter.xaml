@@ -1,0 +1,185 @@
+﻿<Window x:Class="TestWPF.Filter"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestWPF"
+        mc:Ignorable="d"
+        Title="Filter" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <TabControl>
+            <TabItem Header="Items">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Enabled Items" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="lbAllItems" FontSize="8" Grid.Column="0" 
+                                 ItemsSource="{Binding AllItems}" 
+                                 MouseDoubleClick="LbAllItems_MouseDoubleClick"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Button Content=">>" Margin="0,0,0,10" Click="AddAllItems"/>
+                            <Button Content=">" Margin="0,0,0,10" Click="AddItems"/>
+                            <Button Content="&lt;" Margin="0,0,0,10" Click="RemoveItems"/>
+                            <Button Content="&lt;&lt;" Margin="0,0,0,10" Click="RemoveAllItems"/>
+                        </StackPanel>
+                        <ListBox x:Name="lbEnabledItems" FontSize="8" Grid.Column="2" 
+                                 ItemsSource="{Binding EnabledItems}"
+                                 MouseDoubleClick="LbEnabledItems_MouseDoubleClick"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Sites">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Enabled Sites" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="lbAllSites" FontSize="8" Grid.Column="0" 
+                                 ItemsSource="{Binding AllSites}"
+                                 MouseDoubleClick="LbAllSites_MouseDoubleClick"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Button Content=">>" Margin="0,0,0,10" Click="AddAllSites"/>
+                            <Button Content=">" Margin="0,0,0,10" Click="AddSites"/>
+                            <Button Content="&lt;" Margin="0,0,0,10" Click="RemoveSites"/>
+                            <Button Content="&lt;&lt;" Margin="0,0,0,10" Click="RemoveAllSites"/>
+                        </StackPanel>
+                        <ListBox x:Name="lbEnabledSites" FontSize="8" Grid.Column="2" 
+                                 ItemsSource="{Binding EnabledSites}"
+                                 MouseDoubleClick="LbEnabledSites_MouseDoubleClick"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="HBins">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Enabled HBins" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="lbAllHBins" FontSize="8" Grid.Column="0" 
+                                 ItemsSource="{Binding AllHBins}" 
+                                 MouseDoubleClick="LbAllHBins_MouseDoubleClick"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Button Content=">>" Margin="0,0,0,10" Click="AddAllHBins"/>
+                            <Button Content=">" Margin="0,0,0,10" Click="AddHBins"/>
+                            <Button Content="&lt;" Margin="0,0,0,10" Click="RemoveHBins"/>
+                            <Button Content="&lt;&lt;" Margin="0,0,0,10" Click="RemoveAllHBins"/>
+                        </StackPanel>
+                        <ListBox x:Name="lbEnabledHBins" FontSize="8" Grid.Column="2" 
+                                 ItemsSource="{Binding EnabledHBins}" 
+                                 MouseDoubleClick="LbEnabledHBins_MouseDoubleClick"/>
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="SBins">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Content="Enabled SBins" FontSize="8" HorizontalAlignment="Left" FontStyle="Italic"/>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="lbAllSBins" FontSize="8" Grid.Column="0" 
+                                 ItemsSource="{Binding AllSBins}" 
+                                 MouseDoubleClick="LbAllSBins_MouseDoubleClick"/>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <Button Content=">>" Margin="0,0,0,10" Click="AddAllSBins"/>
+                            <Button Content=">" Margin="0,0,0,10" Click="AddSBins"/>
+                            <Button Content="&lt;" Margin="0,0,0,10" Click="RemoveSBins"/>
+                            <Button Content="&lt;&lt;" Margin="0,0,0,10" Click="RemoveAllSBins"/>
+                        </StackPanel>
+                        <ListBox x:Name="lbEnabledSBins" FontSize="8" Grid.Column="2" 
+                                 ItemsSource="{Binding EnabledSBins}" 
+                                 MouseDoubleClick="LbEnabledSBins_MouseDoubleClick"/>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Parts">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="14"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="14"/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <RadioButton GroupName="ifMaskOrEn" Content="Mask Ids" FontSize="8" IsChecked="{Binding MaskOrEnableIds, Mode=TwoWay}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        <RadioButton GroupName="ifMaskOrEn" Content="Enable Ids" FontSize="8" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Edit the part ID, split the IDs with ';' e.g:1;11;999" FontSize="8"  Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBox  Grid.Row="1" Text="{Binding MaskEnableChips, Mode=TwoWay}" FontSize="8" AcceptsReturn="True">
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Clear" Click="ClearIDs"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                    <StackPanel  Grid.Row="2" Orientation="Horizontal">
+                        <RadioButton Content="Mask Cords" FontSize="8" IsChecked="{Binding MaskOrEnableCords, Mode=TwoWay}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        <RadioButton Content="Enable Cords" FontSize="8" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        <TextBlock Text="Edit the part Cords, split the Cords with ';', xis in the front, split the x,y with ',', e.g:1,1;99,32;0,33" FontSize="8"  Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBox Grid.Row="3" Text="{Binding MaskEnableCords, Mode=TwoWay}" FontSize="8" AcceptsReturn="True">
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Clear" Click="ClearCords"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                    <StackPanel Grid.Row="4">
+                        <CheckBox Content="maskDuplicate" FontSize="8" IsChecked="{Binding ifmaskDuplicateChips, Mode=TwoWay}" VerticalContentAlignment="Center"/>
+                        <ComboBox Name="judgeMode" FontSize="8" ItemsSource="{Binding JudgeMode}" SelectedIndex="0">
+                            <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <cmd:EventToCommand Command="{Binding Path=JudgeModeChanged, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        </ComboBox>
+                        <ComboBox Name="maskMode" FontSize="8" ItemsSource="{Binding DuplicateMode}" SelectedIndex="0">
+                            <!--<i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <cmd:EventToCommand Command="{Binding Path=DuplicateSelectModeChanged, Mode=OneWay}" PassEventArgsToCommand="true"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>-->
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Button Grid.Row="1" Content="ApplyFilter" FontSize="10" Height="20" Width="70"
+                Click="ApplyFilter"/>
+
+    </Grid>
+</Window>

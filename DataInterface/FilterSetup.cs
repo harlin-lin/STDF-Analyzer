@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DataInterface {
     public enum DuplicateSelectMode {
-        SelectFirst,
-        SelectLast,
-        AllDuplicate
+        First,
+        Last,
+        Both
     }
     public enum DuplicateJudgeMode {
         ID,
@@ -49,7 +49,7 @@ namespace DataInterface {
             ifmaskDuplicateChips = false;
             ifMaskOrEnableIds = false;
             ifMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             Comment = comment;
@@ -70,7 +70,7 @@ namespace DataInterface {
             ifmaskDuplicateChips = false;
             ifMaskOrEnableIds = false;
             ifMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             Comment = comment;
@@ -95,7 +95,7 @@ namespace DataInterface {
             ifmaskDuplicateChips = false;
             ifMaskOrEnableIds = false;
             ifMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.SelectFirst;
+            DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
         }
 

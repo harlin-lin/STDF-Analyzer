@@ -77,7 +77,7 @@ namespace DataParse
         }
 
         public void UpdateChipFilter(FilterSetup filter, ref bool[] chipsFilter) {
-            if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.AllDuplicate) {
+            if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.Both) {
                 for (int i = 0; i < _testChips.Count; i++) {
                     chipsFilter[i] = true;
                 }
@@ -90,7 +90,7 @@ namespace DataParse
             for (int i = 0; i < _testChips.Count; i++) {
                 //init
                 
-                if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.AllDuplicate) {
+                if (!filter.ifmaskDuplicateChips && filter.DuplicateSelectMode == DuplicateSelectMode.Both) {
                     for (int j = i + 1; j < _testChips.Count; j++) {
                         if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {
                             if (_testChips[i].PartId == _testChips[j].PartId) {
@@ -154,7 +154,7 @@ namespace DataParse
 
             if (filter.ifmaskDuplicateChips) {
                 //dupicate chip
-                if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectFirst) {
+                if (filter.DuplicateSelectMode == DuplicateSelectMode.First) {
                     for (int i = 0; i < _testChips.Count; i++) {
                         for (int j = i + 1; j < _testChips.Count; j++) {
                             if (filter.DuplicateJudgeMode== DuplicateJudgeMode.ID) {
@@ -166,7 +166,7 @@ namespace DataParse
                             }
                         }
                     }
-                } else if (filter.DuplicateSelectMode == DuplicateSelectMode.SelectLast) {
+                } else if (filter.DuplicateSelectMode == DuplicateSelectMode.Last) {
                     for (int i = _testChips.Count - 1; i >= 0; i--) {
                         for (int j = i - 1; j >= 0; j--) {
                             if (filter.DuplicateJudgeMode == DuplicateJudgeMode.ID) {

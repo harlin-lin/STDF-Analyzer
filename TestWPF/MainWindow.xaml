@@ -10,9 +10,11 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="9*"/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <RichTextBox Name="rtb" FontFamily="Courier New" IsReadOnly="True" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"
                       />
-        <Button Grid.Row="1" Click="Button_Click"/>
+        <Button Grid.Row="1" Click="Button_Click" Content="cvt"/>
+        <Button Grid.Row="2" Name="sum" Click="Button_Click_1" Content="sum" IsEnabled="False"/>
     </Grid>
 </Window>

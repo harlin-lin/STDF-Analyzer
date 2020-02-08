@@ -15,6 +15,7 @@ namespace TestWPF {
             InitializeComponent();
         }
         StdfParse dataParse;
+        Filter filter;
 
         private void generateReport() {
 
@@ -48,12 +49,22 @@ namespace TestWPF {
 
         }
 
+        private void ShowFilter() {
+            filter = new Filter(dataParse, dataParse.GetAllFilter().Keys.ToList()[0]);
+            filter.Show();
+
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e) {
-            dataParse = new StdfParse(@"C:\Users\Harlin\Documents\Projects\801\Data\GT-issue lots\FRF678.1-PTD210\CP1-CP-FRF678.1-PTD210-63KCM146.1-FRF678-10C5-20191228132342.stdf");
+            dataParse = new StdfParse(@"D:\ASRProj\STDF\Data\CP3-CP-FRB098.1-PTD211I-63KAL138.1-FRB098-01F6-20191015003425.stdf");
             dataParse.ExtractStdf();
 
-            generateReport();
+            ShowFilter();
+            sum.IsEnabled = true;
+        }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e) {
+            generateReport();
         }
     }
 }

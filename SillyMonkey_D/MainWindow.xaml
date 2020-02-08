@@ -1,0 +1,14 @@
+﻿<dx:ThemedWindow 
+    x:Class="SillyMonkey_D.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:Splash="clr-namespace:SillyMonkey_D"
+    xmlns:Views="clr-namespace:SillyMonkey_D.Views"
+    dx:DXSplashScreen.SplashScreenType="{x:Type Splash:SplashScreenView}"
+    Title="SillyMonkey" Height="300" Width="400"
+    Loaded="ThemedWindow_Loaded">
+    <Grid>
+        <Views:FileManagement/>
+    </Grid>
+</dx:ThemedWindow>
