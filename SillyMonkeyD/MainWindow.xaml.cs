@@ -17,13 +17,21 @@ namespace SillyMonkeyD {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : ThemedWindow {
+    public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
         }
 
         private void ThemedWindow_Loaded(object sender, RoutedEventArgs e) {
-            System.Threading.Thread.Sleep(500);
+            System.Threading.Thread.Sleep(200);
+        }
+
+        private void Grid_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.All;
+            else
+                e.Effects = DragDropEffects.None;
+
         }
     }
 }

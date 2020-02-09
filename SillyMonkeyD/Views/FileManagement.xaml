@@ -6,27 +6,92 @@
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
              xmlns:ViewModels="clr-namespace:SillyMonkeyD.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="FileControl">
 <UserControl.DataContext>
     <ViewModels:FileManagementViewModel/>
 </UserControl.DataContext>
-    <Grid>
-        <TabControl>
+    <Grid AllowDrop="True" DragDrop.DragEnter="Grid_DragEnter">
+        <dxmvvm:Interaction.Behaviors>
+            <dxmvvm:EventToCommand EventName="Drop" Command="{Binding Path=DropCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
+        </dxmvvm:Interaction.Behaviors>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Open File">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Path=OpenFileDiag}"/>
+                    </dxmvvm:Interaction.Behaviors>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1">
             <TabItem Name="tiLocalFiles" Header="Local">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1.7*"/>
+                        <RowDefinition Height="1*"/>
                         <RowDefinition Height="3"/>
                         <RowDefinition Height="1.7*"/>
                         <RowDefinition Height="3"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <ListBox Grid.Row="0"/>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Grid.Column="0" Name="lbFiles" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile, Mode=OneWayToSource}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="X"  HorizontalAlignment="Left" Margin="0,1,0,0" 
+                                            VerticalAlignment="Center" Width="12" 
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+                                            Padding="0" ToolTip="Close" FontWeight="Bold" FontSize="8">
+                                            <dxmvvm:Interaction.Behaviors>
+                                                <dxmvvm:EventToCommand EventName="Click" Command="{Binding ElementName=FileControl, Path=DataContext.FileCloseCommand, Mode=OneWay}" 
+                                                                       CommandParameter="{Binding}"/>
+                                            </dxmvvm:Interaction.Behaviors>
+                                        </Button>
+                                        <TextBlock Text="{Binding Path=FileName}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding OpenFileRawData}"/>
+                                <dxmvvm:EventToCommand EventName="SelectionChanged" Command="{Binding UpdateInfo}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </ListBox>
+                        <ListBox Grid.Column="1" Name="lbSites" ItemsSource="{Binding Sites}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock>
+                                            <TextBlock.Text>
+                                                <MultiBinding  StringFormat="Site:{0} =>{1}">
+                                                    <Binding Path="Key"/>
+                                                    <Binding Path="Value"/>
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding OpenSiteRawData}"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </ListBox>
+                    </Grid>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
                     <ListBox Grid.Row="2"/>
                     <GridSplitter Grid.Row="3" BorderBrush="Black" HorizontalAlignment="Stretch"/>
-                    <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=SelectedSummary, Mode=OneWay}">
-                        <TextBox.ContextMenu>
+                    <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=SelectedInfo, Mode=OneWay}">
+                        <!--<TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Copy">
                                     <dxmvvm:Interaction.Behaviors>
@@ -34,7 +99,7 @@
                                     </dxmvvm:Interaction.Behaviors>
                                 </MenuItem>
                             </ContextMenu>
-                        </TextBox.ContextMenu>
+                        </TextBox.ContextMenu>-->
                     </TextBox>
                 </Grid>
             </TabItem>

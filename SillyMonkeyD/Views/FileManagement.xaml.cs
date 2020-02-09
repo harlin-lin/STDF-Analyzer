@@ -34,5 +34,12 @@ namespace SillyMonkeyD.Views {
             filter.Show();
 
         }
+
+        private void Grid_DragEnter(object sender, DragEventArgs e) {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.All;
+            else
+                e.Effects = DragDropEffects.None;
+        }
     }
 }
