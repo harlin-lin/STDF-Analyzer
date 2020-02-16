@@ -69,7 +69,7 @@
                     </dxmvvm:Interaction.Behaviors>
                 </Button>
             </StackPanel>
-            <dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="KeepOld"
+            <dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="AddNew"
                         FontSize="8"
                         IsFilterEnabled="False" SelectionMode="None" AllowMRUFilterList="False" AllowColumnMRUFilterList="False" >
                 <dxg:GridControl.View>
