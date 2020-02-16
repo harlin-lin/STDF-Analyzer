@@ -67,7 +67,7 @@
                                 <dxmvvm:EventToCommand EventName="SelectionChanged" Command="{Binding UpdateInfo}"/>
                             </dxmvvm:Interaction.Behaviors>
                         </ListBox>
-                        <ListBox Grid.Column="1" Name="lbSites" ItemsSource="{Binding Sites}">
+                        <ListBox Grid.Column="1" Name="lbSites" ItemsSource="{Binding Sites}" SelectedItem="{Binding SelectedSite, Mode=OneWayToSource}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>
@@ -90,7 +90,7 @@
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
                     <ListBox Grid.Row="2"/>
                     <GridSplitter Grid.Row="3" BorderBrush="Black" HorizontalAlignment="Stretch"/>
-                    <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=SelectedInfo, Mode=OneWay}">
+                    <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=FileInfo, Mode=OneWay}">
                         <!--<TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Copy">

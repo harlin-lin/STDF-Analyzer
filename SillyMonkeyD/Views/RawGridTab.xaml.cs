@@ -1,5 +1,5 @@
 ﻿using DataInterface;
-using SillyMonkeyD.ViewModels;
+using DevExpress.Xpf.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +13,22 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using DevExpress.Mvvm;
+using SillyMonkeyD.ViewModels;
 
 namespace SillyMonkeyD.Views {
     /// <summary>
-    /// Interaction logic for FilterEditor.xaml
+    /// Interaction logic for GridTab.xaml
     /// </summary>
-    public partial class FilterEditor : Window {
-        public FilterEditorViewModel filter { get; }
-        public FilterEditor(IDataAcquire dataAcquire, int filterId) {
+    public partial class RawGridTab : DXTabItem {
+        RawGridTabViewModel rawgridTab;
+        public RawGridTab(IDataAcquire dataAcquire, int filterId) {
             InitializeComponent();
 
-            filter = new FilterEditorViewModel(dataAcquire, filterId);
-            DataContext = filter;
+            rawgridTab = new RawGridTabViewModel(dataAcquire, filterId);
+            DataContext = rawgridTab;
 
         }
+
     }
 }

@@ -38,7 +38,10 @@
     <Reference Include="DevExpress.Mvvm.v19.2" />
     <Reference Include="DevExpress.Data.v19.2" />
     <Reference Include="DevExpress.Printing.v19.2.Core" />
+    <Reference Include="DevExpress.Xpf.Charts.v19.2, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Core.v19.2" />
+    <Reference Include="DevExpress.Xpf.Grid.v19.2, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v19.2.Core, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Themes.Office2019Colorful.v19.2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -78,19 +81,26 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModels\DataViewModel.cs" />
     <Compile Include="ViewModels\FileManagementViewModel.cs" />
     <Compile Include="ViewModels\FilterEditorViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\RawGridTabViewModel.cs" />
+    <Compile Include="Views\Data.xaml.cs">
+      <DependentUpon>Data.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FileManagement.xaml.cs">
       <DependentUpon>FileManagement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FilterEditor.xaml.cs">
       <DependentUpon>FilterEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\MainView.xaml.cs">
-      <DependentUpon>MainView.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="Views\RawGridTab.xaml.cs">
+      <DependentUpon>RawGridTab.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\Data.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FileManagement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -99,9 +109,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\MainView.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Views\RawGridTab.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +156,15 @@
       <Project>{897bc392-7e1c-4c48-9c94-61127f1f5287}</Project>
       <Name>FileHelper</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\icons\angle-double-left.png" />
+    <Resource Include="Resources\icons\angle-double-right.png" />
+    <Resource Include="Resources\icons\angle-left.png" />
+    <Resource Include="Resources\icons\angle-right.png" />
+    <Resource Include="Resources\icons\AppIcon.ico" />
+    <Resource Include="Resources\icons\cloud-machine-fill.png" />
+    <Resource Include="Resources\icons\database.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

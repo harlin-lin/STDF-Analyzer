@@ -9,108 +9,12 @@ using System.Windows.Threading;
 using DataInterface;
 using DataParse;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Core;
 using FileHelper;
 using Microsoft.Win32;
+using SillyMonkeyD.Views;
 
 namespace SillyMonkeyD.ViewModels {
-    //public delegate void OpenDetailHandler(IDataAcquire dataAcquire, int? filterId, int tag);
-    //public delegate void RemoveHandler(int tag);
-    //public delegate void ChangeViewTabHandler(int hash);
-
-    //public class LoadedInfoBasic : ViewModelBase {
-    //    public string FileName { get { return GetProperty(() => FileName); } set { SetProperty(() => FileName, value); } }
-    //    public string FilePath { get { return GetProperty(() => FilePath); } set { SetProperty(() => FilePath, value); } }
-    //    public bool FileStatus { get { return GetProperty(() => FileStatus); } set { SetProperty(() => FileStatus, value); } }
-    //    public int FileDeviceCount { get { return GetProperty(() => FileDeviceCount); } set { SetProperty(() => FileDeviceCount, value); } }
-    //    public byte? Site { get { return GetProperty(() => Site); } set { SetProperty(() => Site, value); } }
-
-    //    public LoadedInfoBasic() {
-    //        FileName = string.Empty;
-    //        FilePath = string.Empty;
-    //        FileStatus = false;
-    //        FileDeviceCount = 0;
-    //        Site = null;
-    //    }
-    //}
-    //public class FileInfo : LoadedInfoBasic {
-    //    public ObservableCollection<SiteInfo> Sites { get; set; }
-
-    //    public FileInfo(IDataAcquire stdfParse) {
-    //        FileName = stdfParse.FileName;
-    //        FilePath = stdfParse.FilePath;
-    //        FileStatus = stdfParse.ParseDone;
-    //        FileDeviceCount = stdfParse.ChipsCount;
-    //        //Sites = new Dictionary<byte, KeyValuePair<int, string>>();
-    //        Sites = new ObservableCollection<SiteInfo>();
-    //    }
-
-    //    private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
-
-    //    public void UpdateFileInfo(IDataAcquire stdfParse) {
-    //        _dispatcher.Invoke(new Action(() => {
-    //            var g = from f in stdfParse.GetSitesChipCount()
-    //                    let x = new SiteInfo(this, f.Key, f.Value)
-    //                    select x;
-    //            foreach (var v in g)
-    //                Sites.Add(v);
-    //            FileStatus = stdfParse.ParseDone;
-    //            FileDeviceCount = stdfParse.ChipsCount;
-    //        }));
-    //    }
-    //}
-    //public class SiteInfo : LoadedInfoBasic {
-    //    public SiteInfo(FileInfo file, byte site, int count) {
-    //        FileName = file.FileName;
-    //        FilePath = file.FilePath;
-
-    //        Site = site;
-    //        FileDeviceCount = count;
-    //        FileStatus = true;
-
-    //    }
-    //}
-
-    //public class OpenedInfoBasic : ViewModelBase {
-    //    public string FileName { get { return GetProperty(() => FileName); } set { SetProperty(() => FileName, value); } }
-    //    public string FilePath { get { return GetProperty(() => FilePath); } set { SetProperty(() => FilePath, value); } }
-    //    public int FileHash { get { return GetProperty(() => FileHash); } set { SetProperty(() => FileHash, value); } }
-    //    public int Tag { get { return GetProperty(() => Tag); } set { SetProperty(() => Tag, value); } }
-
-    //    public OpenedInfoBasic() {
-    //        FileHash = 0;
-    //        FileName = string.Empty;
-    //        FilePath = string.Empty;
-    //        Tag = 0;
-    //    }
-    //}
-    //public class OpenedFile : OpenedInfoBasic {
-    //    public ObservableCollection<OpenedItem> Items { get; private set; }
-
-    //    public OpenedFile(IDataAcquire stdfParse, int tag) {
-    //        FileHash = stdfParse.FilePath.GetHashCode();
-    //        FileName = stdfParse.FileName;
-    //        FilePath = stdfParse.FilePath;
-    //        Items = new ObservableCollection<OpenedItem>();
-    //        Tag = tag;
-    //    }
-
-    //    public void AddSubItem(string itemName, int tag) {
-
-    //        Items.Add(new OpenedItem(this, itemName, tag));
-    //    }
-    //}
-    //public class OpenedItem : OpenedInfoBasic {
-    //    public string ItemName { get; set; }
-    //    public OpenedItem(OpenedFile openedFile, string itemName, int tag) {
-    //        ItemName = itemName;
-    //        FileHash = openedFile.FileHash;
-    //        FileName = openedFile.FileName;
-    //        FilePath = openedFile.FilePath;
-    //        Tag = tag;
-    //    }
-
-    //}
-
 
     public class FileManagementViewModel : ViewModelBase {
 
@@ -118,17 +22,24 @@ namespace SillyMonkeyD.ViewModels {
             Files = new ObservableCollection<IDataAcquire>();
             Sites = null;
             SelectedFile = null;
-            SelectedSite = null;
+            //SelectedSite = new KeyValuePair<byte, int>();
+
+            _tabList = new List<DXTabItem>();
 
             InitUiCtr();
         }
 
+        private FilterEditor _filterWindow;
+        private Data _dataWindow;
+        private List<DXTabItem> _tabList;
+
+
         public ObservableCollection<IDataAcquire> Files { get; private set; }
         public Dictionary<byte, int> Sites { get { return GetProperty(() => Sites); } private set { SetProperty(() => Sites, value); } }
         public IDataAcquire SelectedFile { get { return GetProperty(() => SelectedFile); } set { SetProperty(() => SelectedFile, value); } }
-        public Dictionary<byte, int> SelectedSite { get { return GetProperty(() => SelectedSite); } set { SetProperty(() => SelectedSite, value); } }
+        public KeyValuePair<byte, int> SelectedSite { get { return GetProperty(() => SelectedSite); } set { SetProperty(() => SelectedSite, value); } }
 
-        public string SelectedInfo { get { return GetProperty(() => SelectedInfo); } private set { SetProperty(() => SelectedInfo, value); } }
+        public string FileInfo { get { return GetProperty(() => FileInfo); } private set { SetProperty(() => FileInfo, value); } }
 
 
         public async void AddFile(string path) {
@@ -140,6 +51,12 @@ namespace SillyMonkeyD.ViewModels {
         private void RemoveFile(IDataAcquire data) {
             Files.Remove(data);
             GC.Collect();
+        }
+
+        private DXTabItem AddTab(IDataAcquire dataAcquire, int filterId) {
+            RawGridTab rawGridTab = new RawGridTab(dataAcquire, filterId);
+            _tabList.Add(rawGridTab);
+            return rawGridTab;
         }
 
 
@@ -193,10 +110,10 @@ namespace SillyMonkeyD.ViewModels {
             });
 
             OpenFileRawData = new DelegateCommand(() => {
-                //....
+                ShowDataWindow(AddTab(SelectedFile, SelectedFile.GetFilterID(null)));
             });
             OpenSiteRawData = new DelegateCommand(() => {
-                //....
+                ShowDataWindow(AddTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key)));
             });
 
             UpdateInfo = new DelegateCommand(() => {
@@ -204,12 +121,30 @@ namespace SillyMonkeyD.ViewModels {
                     Sites = null;
                 else if (SelectedFile.ParseDone) {
                     Sites = SelectedFile.GetSitesChipCount();
-                    SelectedInfo = StdFileHelper.GetBriefSummary(SelectedFile);
+                    FileInfo = StdFileHelper.GetBriefSummary(SelectedFile);
                 }
                 else
                     Sites = null;
             });
 
+
+        }
+        
+        private void ShowFilterWindow(IDataAcquire dataAcquire, int filterId) {
+            if(_filterWindow is null) {
+                _filterWindow = new FilterEditor(dataAcquire, filterId);
+            } else {
+                _filterWindow.filter.UpdateFilter(dataAcquire, filterId);
+            }
+            _filterWindow.Show();
+        }
+
+        private void ShowDataWindow(DXTabItem tabItem) {
+            if(_dataWindow is null) {
+                _dataWindow = new Data();
+            }
+            ((DataViewModel)_dataWindow.DataContext).AddTab(tabItem);
+            _dataWindow.Show();
         }
 
         #endregion

@@ -26,12 +26,5 @@ namespace SillyMonkeyD {
             System.Threading.Thread.Sleep(200);
         }
 
-        private void Grid_DragEnter(object sender, DragEventArgs e) {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effects = DragDropEffects.All;
-            else
-                e.Effects = DragDropEffects.None;
-
-        }
     }
 }

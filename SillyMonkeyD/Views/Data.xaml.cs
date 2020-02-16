@@ -14,10 +14,10 @@ using System.Windows.Shapes;
 
 namespace SillyMonkeyD.Views {
     /// <summary>
-    /// Interaction logic for View1.xaml
+    /// Interaction logic for Data.xaml
     /// </summary>
-    public partial class MainView : UserControl {
-        public MainView() {
+    public partial class Data : Window {
+        public Data() {
             InitializeComponent();
         }
     }
