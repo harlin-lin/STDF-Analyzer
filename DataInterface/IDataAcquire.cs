@@ -156,6 +156,13 @@ namespace DataInterface {
         /// <returns></returns>
         int GetFilterID(byte? site);
 
+        /// <summary>
+        /// find the index of the correspoding FilterId, return -1 if cannot find
+        /// </summary>
+        /// <param name="filterId"></param>
+        /// <returns></returns>
+        int GetFilterIndex(int filterId);
+
         FilterSetup GetFilterSetup(int filterId);
 
         /// <summary>

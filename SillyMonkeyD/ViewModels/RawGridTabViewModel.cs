@@ -43,10 +43,12 @@ namespace SillyMonkeyD.ViewModels {
             DataAcquire = dataAcquire;
             FilterId = filterId;
 
+            var i = dataAcquire.GetFilterIndex(filterId);
+
             if (DataAcquire.FileName.Length > 15)
-                TabTitle = DataAcquire.FileName.Substring(0, 15) + "...";
+                TabTitle = $"F{i}-" + DataAcquire.FileName.Substring(0, 15) + "...";
             else
-                TabTitle = DataAcquire.FileName;
+                TabTitle = $"F{i}-" + DataAcquire.FileName;
             FilePath = DataAcquire.FilePath;
 
             CountPerPage = DefaultPerPageCount;

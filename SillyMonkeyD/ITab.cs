@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace SillyMonkeyD {
     interface ITab {
+        string TabTitle { get; }
         int FilterId { get; }
         IDataAcquire DataAcquire { get; }
         void UpdateFilter();

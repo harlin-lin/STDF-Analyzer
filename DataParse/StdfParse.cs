@@ -601,6 +601,14 @@ namespace DataParse{
             _filterList.Remove(filterId);
         }
 
+        public int GetFilterIndex(int filterId) {
+            for(int i=0; i< _filterList.Count; i++) {
+                if (filterId == _filterList.ElementAt(i).Key)
+                    return i;
+            }
+            return -1;
+        }
+
         private void CreateDefaultFilters() {
             CreateFilter("Full File");
 
