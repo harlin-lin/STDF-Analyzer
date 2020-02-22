@@ -22,18 +22,7 @@ namespace SillyMonkeyD.Views {
         public FileManagement() {
             InitializeComponent();
         }
-        StdfParse dataParse;
-        FilterEditor filter;
 
-        private void Button_Click(object sender, RoutedEventArgs e) {
-
-            dataParse = new StdfParse(@"D:\ASRProj\STDF\Data\CP3-CP-FRB098.1-PTD211I-63KAL138.1-FRB098-01F6-20191015003425.stdf");
-            dataParse.ExtractStdf();
-
-            filter = new FilterEditor(dataParse, dataParse.GetAllFilter().Keys.ToList()[0]);
-            filter.Show();
-
-        }
 
         private void Grid_DragEnter(object sender, DragEventArgs e) {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))

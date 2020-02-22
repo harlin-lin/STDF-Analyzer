@@ -19,13 +19,12 @@ namespace SillyMonkeyD.Views {
     /// Interaction logic for FilterEditor.xaml
     /// </summary>
     public partial class FilterEditor : Window {
-        public FilterEditorViewModel filter { get; }
-        public FilterEditor(IDataAcquire dataAcquire, int filterId) {
+        public FilterEditor() {
             InitializeComponent();
-
-            filter = new FilterEditorViewModel(dataAcquire, filterId);
-            DataContext = filter;
-
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            e.Cancel = true;
+            this.Hide();
         }
     }
 }

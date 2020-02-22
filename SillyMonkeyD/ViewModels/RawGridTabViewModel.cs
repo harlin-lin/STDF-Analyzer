@@ -5,7 +5,7 @@ using DataInterface;
 using DevExpress.Mvvm;
 
 namespace SillyMonkeyD.ViewModels {
-    public class RawGridTabViewModel : ViewModelBase {
+    public class RawGridTabViewModel : ViewModelBase, ITab {
 
         public RawGridTabViewModel(IDataAcquire dataAcquire, int filterId) {
             Init(dataAcquire, filterId);
@@ -15,8 +15,8 @@ namespace SillyMonkeyD.ViewModels {
         const int MinPerPageCount = 30;
         const int DefaultPerPageCount = 100;
 
-        private int _filterId { get; set; }
-        private IDataAcquire _dataAcquire;
+        public int FilterId { get; private set; }
+        public IDataAcquire DataAcquire { get; private set; }
 
         private int _countPerPage;
 
@@ -40,17 +40,17 @@ namespace SillyMonkeyD.ViewModels {
 
 
         private void Init(IDataAcquire dataAcquire, int filterId) {
-            _dataAcquire = dataAcquire;
-            _filterId = filterId;
+            DataAcquire = dataAcquire;
+            FilterId = filterId;
 
-            if (_dataAcquire.FileName.Length > 15)
-                TabTitle = _dataAcquire.FileName.Substring(0, 15) + "...";
+            if (DataAcquire.FileName.Length > 15)
+                TabTitle = DataAcquire.FileName.Substring(0, 15) + "...";
             else
-                TabTitle = _dataAcquire.FileName;
-            FilePath = _dataAcquire.FilePath;
+                TabTitle = DataAcquire.FileName;
+            FilePath = DataAcquire.FilePath;
 
             CountPerPage = DefaultPerPageCount;
-            TotalCount = _dataAcquire.GetFilteredChipSummary(_filterId).TotalCount;
+            TotalCount = DataAcquire.GetFilteredChipSummary(FilterId).TotalCount;
             TotalPages = TotalCount / CountPerPage + 1;
             CurrentPageIndex = 1;
             UpdateDataToStartPage();
@@ -61,9 +61,9 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToStartPage() {
             CurrentPageIndex = 1;
             if (TotalPages > 1)
-                Data = _dataAcquire.GetFilteredItemData(0, CountPerPage, _filterId, true);
+                Data = DataAcquire.GetFilteredItemData(0, CountPerPage, FilterId, true);
             else
-                Data = _dataAcquire.GetFilteredItemData(0, TotalCount, _filterId, true);
+                Data = DataAcquire.GetFilteredItemData(0, TotalCount, FilterId, true);
 
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -71,7 +71,7 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToLastPage() {
             if (CurrentPageIndex > 1) {
                 CurrentPageIndex--;
-                Data = _dataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, _filterId, true);
+                Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
             }
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -81,9 +81,9 @@ namespace SillyMonkeyD.ViewModels {
                 CurrentPageIndex++;
                 int leftCnt = TotalCount - (CurrentPageIndex - 1) * CountPerPage;
                 if (leftCnt > CountPerPage)
-                    Data = _dataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, _filterId, true);
+                    Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
                 else
-                    Data = _dataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, _filterId, true);
+                    Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
             }
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -91,12 +91,22 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToEndPage() {
             CurrentPageIndex = TotalPages;
             int leftCnt = TotalCount - (CurrentPageIndex - 1) * CountPerPage;
-            Data = _dataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, _filterId, true);
+            Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
 
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
         }
 
+        public void UpdateFilter() {
+            CountPerPage = DefaultPerPageCount;
+            TotalCount = DataAcquire.GetFilteredChipSummary(FilterId).TotalCount;
+            TotalPages = TotalCount / CountPerPage + 1;
+            CurrentPageIndex = 1;
+            RaisePropertyChanged("TotalPages");
+            RaisePropertyChanged("TotalCount");
+
+            UpdateDataToStartPage();
+        }
 
         #region UI
         public ICommand JumpStartPage { get; private set; }

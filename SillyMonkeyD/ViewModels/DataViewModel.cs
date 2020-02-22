@@ -5,10 +5,14 @@ using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 
 namespace SillyMonkeyD.ViewModels {
+    public delegate void SelectedTabHandler(DXTabItem tabItem);
+
     public class DataViewModel : ViewModelBase {
 
         public ObservableCollection<DXTabItem> DataTabItems { get; private set; }
         public DXTabItem SelectedTab { get { return GetProperty(() => SelectedTab); } set { SetProperty(() => SelectedTab, value); } }
+
+        public SelectedTabHandler SelectedTabEvent;
 
         public DataViewModel() {
             DataTabItems = new ObservableCollection<DXTabItem>();
@@ -19,16 +23,24 @@ namespace SillyMonkeyD.ViewModels {
 
         public void AddTab(DXTabItem tabItem) {
             DataTabItems.Add(tabItem);
-            tabItem.Focus();
+            FocusTab(tabItem);
         }
 
+        public void RemoveTab(DXTabItem tabItem) {
+            DataTabItems.Remove(tabItem);
+        }
+
+        public void FocusTab(DXTabItem tabItem) {
+            if (tabItem is null) return;
+            tabItem.IsSelected=true;
+        }
 
         #region UI
         public ICommand TabSelectionChanged { get; private set; }
 
         private void InitUiCtr() {
             TabSelectionChanged = new DelegateCommand(() => {
-
+                SelectedTabEvent?.Invoke(SelectedTab);
             });
 
 

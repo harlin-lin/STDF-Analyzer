@@ -8,10 +8,10 @@
              xmlns:en="clr-namespace:DataInterface;assembly=DataInterface"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d"
-             Height="500" Width="800">
-<!--<Window.DataContext>
+             Height="500" Width="800" Closing="Window_Closing">
+<Window.DataContext>
     <ViewModels:FilterEditorViewModel/>
-</Window.DataContext>-->
+</Window.DataContext>
     <Window.Resources>
         <dxmvvm:BooleanNegationConverter x:Key="negbool"/>
         <ObjectDataProvider x:Key="judgeM" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">

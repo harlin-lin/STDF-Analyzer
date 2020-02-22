@@ -7,7 +7,7 @@
     xmlns:Views="clr-namespace:SillyMonkeyD.Views"
     dx:DXSplashScreen.SplashScreenType="{x:Type Splash:SplashScreenView}"
     Title="MainWindow" Height="800" Width="500"
-    Loaded="ThemedWindow_Loaded">
+    Loaded="ThemedWindow_Loaded" Closing="Window_Closing">
     <Grid>
         <Views:FileManagement/>
     </Grid>

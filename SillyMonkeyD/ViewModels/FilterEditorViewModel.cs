@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,8 @@ using DevExpress.Mvvm;
 
 
 namespace SillyMonkeyD.ViewModels {
+    public delegate void FilterUpdatedHandler(IDataAcquire dataAcquire, int filterId);
+
     public class FilterEditorViewModel : ViewModelBase {
         public FilterEditorViewModel(IDataAcquire dataAcquire, int filterId) {
             UpdateFilter(dataAcquire, filterId);
@@ -17,6 +20,29 @@ namespace SillyMonkeyD.ViewModels {
             InitUiCtr();
         }
 
+        public FilterEditorViewModel() {
+
+            AllItems = new ObservableCollection<string>();
+            EnabledItems = new ObservableCollection<string>();
+            AllSites = new ObservableCollection<byte>();
+            AllHBins = new ObservableCollection<ushort>();
+            AllSBins = new ObservableCollection<ushort>();
+            EnabledSites = new ObservableCollection<byte>();
+            EnabledHBins = new ObservableCollection<ushort>();
+            EnabledSBins = new ObservableCollection<ushort>();
+
+            ifmaskDuplicateChips = false;
+            DuplicateSelectMode = DuplicateSelectMode.First;
+            JudgeMode = DuplicateJudgeMode.ID;
+
+            MaskEnableCords = "";
+            MaskEnableChips = "";
+
+            MaskOrEnableIds = false;
+            MaskOrEnableCords = false;
+
+            InitUiCtr();
+        }
 
         private int _filterId { get; set; }
         private FilterSetup _filter;
@@ -38,7 +64,7 @@ namespace SillyMonkeyD.ViewModels {
         public DuplicateSelectMode DuplicateSelectMode { get { return GetProperty(() => DuplicateSelectMode); } set { SetProperty(() => DuplicateSelectMode, value); } }
         public DuplicateJudgeMode JudgeMode { get { return GetProperty(() => JudgeMode); } set { SetProperty(() => JudgeMode, value); } }
 
-
+        public FilterUpdatedHandler FilterUpdatedEvent;
 
         public void UpdateFilter(IDataAcquire dataAcquire, int filterId) {
             _dataAcquire = dataAcquire;
@@ -57,21 +83,44 @@ namespace SillyMonkeyD.ViewModels {
             AllItems = new ObservableCollection<string>(allItems);
             EnabledItems = new ObservableCollection<string>(enabledItems);
             AllSites = new ObservableCollection<byte>(_dataAcquire.GetSites().OrderBy(x => x));
-            AllHBins = new ObservableCollection<ushort>(_dataAcquire.GetHardBins().OrderBy(x => x));
-            AllSBins = new ObservableCollection<ushort>(_dataAcquire.GetSoftBins().OrderBy(x => x));
             EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.maskSites).OrderBy(x => x));
+            AllHBins = new ObservableCollection<ushort>(_dataAcquire.GetHardBins().OrderBy(x => x));
             EnabledHBins = new ObservableCollection<ushort>(AllHBins.Except(_filter.maskHardBins).OrderBy(x => x));
+            AllSBins = new ObservableCollection<ushort>(_dataAcquire.GetSoftBins().OrderBy(x => x));
             EnabledSBins = new ObservableCollection<ushort>(AllSBins.Except(_filter.maskSoftBins).OrderBy(x => x));
 
+            RaisePropertiesChanged("AllItems");
+            RaisePropertiesChanged("EnabledItems");
+            RaisePropertiesChanged("AllSites");
+            RaisePropertiesChanged("EnabledSites");
+            RaisePropertiesChanged("AllHBins");
+            RaisePropertiesChanged("EnabledHBins");
+            RaisePropertiesChanged("AllSBins");
+            RaisePropertiesChanged("EnabledSBins");
+
             ifmaskDuplicateChips = _filter.ifmaskDuplicateChips;
-            DuplicateSelectMode = DuplicateSelectMode.First;
-            JudgeMode = DuplicateJudgeMode.ID;
+            DuplicateSelectMode = _filter.DuplicateSelectMode;
+            JudgeMode = _filter.DuplicateJudgeMode;
 
-            MaskEnableCords = "";
-            MaskEnableChips = "";
+            StringBuilder sb = new StringBuilder();
+            foreach(var v in _filter.maskChips) {
+                sb.Append($"{v},");
+            }
+            if(sb.Length > 0)
+                sb.Remove(sb.Length - 1, 1);
+            MaskEnableChips = sb.ToString();
 
-            MaskOrEnableIds = false;
-            MaskOrEnableCords = false;
+            sb.Clear();
+            foreach (var v in _filter.maskCords) {
+                sb.Append($"{v.CordX},{v.CordY};");
+            }
+            if (sb.Length > 0)
+                sb.Remove(sb.Length - 1, 1);
+            MaskEnableCords = sb.ToString();
+
+
+            MaskOrEnableIds = _filter.ifMaskOrEnableIds;
+            MaskOrEnableCords = _filter.ifMaskOrEnableCords;
         }
         #region UI
         public ICommand ApplyFilter { get; private set;}
@@ -116,6 +165,8 @@ namespace SillyMonkeyD.ViewModels {
                 _filter.maskChips = ParseMaskEnableIds();
                 _filter.maskCords = ParseMaskEnableCords();
                 _dataAcquire.UpdateFilter(_filterId, _filter);
+
+                FilterUpdatedEvent?.Invoke(_dataAcquire, _filterId);
             });
             RemoveItem = new DelegateCommand<ListBox>((e) => {
                 var v = ((ListBox)(e));

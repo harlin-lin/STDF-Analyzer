@@ -8,9 +8,13 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="FileControl">
-<UserControl.DataContext>
-    <ViewModels:FileManagementViewModel/>
-</UserControl.DataContext>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding Path=LoadedCommand, Mode=OneWay}"/>
+    </dxmvvm:Interaction.Behaviors>
+
+    <UserControl.DataContext>
+        <ViewModels:FileManagementViewModel/>
+    </UserControl.DataContext>
     <Grid AllowDrop="True" DragDrop.DragEnter="Grid_DragEnter">
         <dxmvvm:Interaction.Behaviors>
             <dxmvvm:EventToCommand EventName="Drop" Command="{Binding Path=DropCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
@@ -88,7 +92,37 @@
                         </ListBox>
                     </Grid>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
-                    <ListBox Grid.Row="2"/>
+                    <ListBox Grid.Row="2" x:Name="tabCtr" ItemsSource="{Binding TabList}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="X"  HorizontalAlignment="Left" Margin="0,1,0,0" 
+                                            VerticalAlignment="Center" Width="12" 
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
+                                            Padding="0" ToolTip="Close" FontWeight="Bold" FontSize="8">
+                                        <dxmvvm:Interaction.Behaviors>
+                                            <dxmvvm:EventToCommand EventName="Click" Command="{Binding ElementName=FileControl, Path=DataContext.TabCloseCommand, Mode=OneWay}" 
+                                                                       CommandParameter="{Binding}"/>
+                                        </dxmvvm:Interaction.Behaviors>
+                                    </Button>
+                                    <TextBlock Text="{Binding Path=Header}"/>
+                                    <StackPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Set Filter">
+                                                <dxmvvm:Interaction.Behaviors>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetFilter, Mode=OneWay}"
+                                                                                   CommandParameter="{Binding}"/>
+                                                </dxmvvm:Interaction.Behaviors>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </StackPanel.ContextMenu>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand EventName="SelectionChanged" Command="{Binding FocusTab}"/>
+                        </dxmvvm:Interaction.Behaviors>
+                    </ListBox>
                     <GridSplitter Grid.Row="3" BorderBrush="Black" HorizontalAlignment="Stretch"/>
                     <TextBox Grid.Row="4" IsReadOnly="True" Text="{Binding Path=FileInfo, Mode=OneWay}">
                         <!--<TextBox.ContextMenu>
@@ -104,7 +138,6 @@
                 </Grid>
             </TabItem>
             <TabItem Name="tiServerFiles" Header="Server">
-                <Button Height="50" Click="Button_Click"/>
             </TabItem>
         </TabControl>
     </Grid>
