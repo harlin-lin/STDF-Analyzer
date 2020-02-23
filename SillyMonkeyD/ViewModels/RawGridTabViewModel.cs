@@ -46,9 +46,9 @@ namespace SillyMonkeyD.ViewModels {
             var i = dataAcquire.GetFilterIndex(filterId);
 
             if (DataAcquire.FileName.Length > 15)
-                TabTitle = $"F{i}-" + DataAcquire.FileName.Substring(0, 15) + "...";
+                TabTitle = DataAcquire.FileName.Substring(0, 15) + "..." + $"-F{i}-RAW";
             else
-                TabTitle = $"F{i}-" + DataAcquire.FileName;
+                TabTitle = DataAcquire.FileName + $"-F{i}-RAW";
             FilePath = DataAcquire.FilePath;
 
             CountPerPage = DefaultPerPageCount;

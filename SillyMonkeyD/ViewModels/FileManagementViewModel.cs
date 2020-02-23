@@ -31,7 +31,7 @@ namespace SillyMonkeyD.ViewModels {
 
         private FilterEditor _filterWindow;
         private Data _dataWindow;
-
+        private Misc _miscWindow;
 
         public ObservableCollection<IDataAcquire> Files { get; private set; }
         public ObservableCollection<DXTabItem> TabList { get; private set; }
@@ -54,14 +54,30 @@ namespace SillyMonkeyD.ViewModels {
             GC.Collect();
         }
 
-        private void AddTab(IDataAcquire dataAcquire, int filterId) {
-            RawGridTab rawGridTab = new RawGridTab(dataAcquire, filterId);
-            ((DataViewModel)_dataWindow.DataContext).AddTab(rawGridTab);
-            TabList.Add(rawGridTab); 
+        private void AddTab(DXTabItem tabItem) {
+            TabList.Add(tabItem);
+            TabList.OrderBy((e) => ((ITab)e).TabTitle);
+            RaisePropertiesChanged("TabList");
         }
 
-        private void RemoveTab(DXTabItem tabItem) {
+        private void AddDataTab(IDataAcquire dataAcquire, int filterId) {
+            RawGridTab rawGridTab = new RawGridTab(dataAcquire, filterId);
+            ((DataViewModel)_dataWindow.DataContext).AddTab(rawGridTab);
+            AddTab(rawGridTab); 
+        }
+
+        private void RemoveDataTab(DXTabItem tabItem) {
             ((DataViewModel)_dataWindow.DataContext).RemoveTab(tabItem);
+            TabList.Remove(tabItem);
+        }
+
+        private void AddMiscTab(DXTabItem miscTab) {
+            ((MiscViewModel)_miscWindow.DataContext).AddTab(miscTab);
+            AddTab(miscTab);
+        }
+
+        private void RemoveMiscTab(DXTabItem tabItem) {
+            ((MiscViewModel)_miscWindow.DataContext).RemoveTab(tabItem);
             TabList.Remove(tabItem);
         }
 
@@ -81,7 +97,10 @@ namespace SillyMonkeyD.ViewModels {
                 //_filterWindow.Visibility = Visibility.Hidden;
                 //_filterWindow.Show();
             }
-
+            if(_miscWindow is null) {
+                _miscWindow = new Misc();
+                ((MiscViewModel)_miscWindow.DataContext).SelectedTabEvent += ((e) => SelectedTab = e);
+            }
         }
 
         private void ShowFilterWindow(IDataAcquire dataAcquire, int filterId) {
@@ -96,6 +115,15 @@ namespace SillyMonkeyD.ViewModels {
         private void ShowDataWindow() {
             _dataWindow.Show();
         }
+
+        private void ShowMiscWindow(DXTabItem tabItem) {
+            _miscWindow.Show();
+            ((MiscViewModel)_miscWindow.DataContext).FocusTab(tabItem);
+        }
+        private void ShowMiscWindow() {
+            _miscWindow.Show();
+        }
+
 
         private void UpdateFilter(IDataAcquire dataAcquire, int filterId) {
             foreach(var t in TabList) {
@@ -125,7 +153,10 @@ namespace SillyMonkeyD.ViewModels {
         public ICommand UpdateInfo { get; private set; }
         public ICommand OpenFileDiag { get; private set; }
         public ICommand LoadedCommand { get; private set; }
-        public ICommand<DXTabItem> SetFilter { get; private set; }
+        public ICommand<DXTabItem> SetTabFilter { get; private set; }
+        public ICommand<IDataAcquire> SetFileFilter { get; private set; }
+        public ICommand<DXTabItem> ShowTabSummary { get; private set; }
+        public ICommand<IDataAcquire> ShowFileSummary { get; private set; }
 
         private void InitUiCtr() {
             DropCommand = new DelegateCommand<DragEventArgs>((e) => {
@@ -168,18 +199,20 @@ namespace SillyMonkeyD.ViewModels {
                 RemoveFile(e);
             });
             TabCloseCommand = new DelegateCommand<DXTabItem>((e) => {
-                RemoveTab(e);
+                RemoveDataTab(e);
             });
 
             FocusTab = new DelegateCommand(() => {
-                ShowDataWindow(SelectedTab);
-
+                if(SelectedTab.GetType().Name == "RawGridTab")
+                    ShowDataWindow(SelectedTab);
+                else
+                    ShowMiscWindow(SelectedTab);
             });
 
             OpenFileRawData = new DelegateCommand(() => {
                 var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(null), "RawGridTab");
                 if(v is null) {
-                    AddTab(SelectedFile, SelectedFile.GetFilterID(null));
+                    AddDataTab(SelectedFile, SelectedFile.GetFilterID(null));
                     ShowDataWindow();
                 } else {
                     ShowDataWindow(v);
@@ -189,7 +222,7 @@ namespace SillyMonkeyD.ViewModels {
             OpenSiteRawData = new DelegateCommand(() => {
                 var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key), "RawGridTab");
                 if (v is null) {
-                    AddTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key));
+                    AddDataTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key));
                     ShowDataWindow();
                 } else {
                     ShowDataWindow(v);
@@ -210,8 +243,29 @@ namespace SillyMonkeyD.ViewModels {
                 LoadWindow();
             });
 
-            SetFilter = new DelegateCommand<DXTabItem>((e) => {
+            SetTabFilter = new DelegateCommand<DXTabItem>((e) => {
                 ShowFilterWindow(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId);
+            });
+            SetFileFilter = new DelegateCommand<IDataAcquire>((e) => {
+                ShowFilterWindow(e, e.GetFilterID(null));
+            });
+            ShowTabSummary = new DelegateCommand<DXTabItem>((e) => {
+                var v = FindOpendTab(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId, "SummaryTab");
+                if (v is null) {
+                    AddMiscTab(new SummaryTab(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId));
+                    ShowMiscWindow();
+                } else {
+                    ShowMiscWindow(v);
+                }
+            });
+            ShowFileSummary = new DelegateCommand<IDataAcquire>((e) => {
+                var v = FindOpendTab(e, e.GetFilterID(null), "SummaryTab");
+                if (v is null) {
+                    AddMiscTab(new SummaryTab(e, e.GetFilterID(null)));
+                    ShowMiscWindow();
+                } else {
+                    ShowMiscWindow(v);
+                }
             });
         }
 

@@ -63,6 +63,20 @@
                                             </dxmvvm:Interaction.Behaviors>
                                         </Button>
                                         <TextBlock Text="{Binding Path=FileName}"/>
+                                        <StackPanel.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Set Filter">
+                                                    <dxmvvm:Interaction.Behaviors>
+                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetFileFilter, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                    </dxmvvm:Interaction.Behaviors>
+                                                </MenuItem>
+                                                <MenuItem Header="Show Summary">
+                                                    <dxmvvm:Interaction.Behaviors>
+                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowFileSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                    </dxmvvm:Interaction.Behaviors>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </StackPanel.ContextMenu>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -110,8 +124,12 @@
                                         <ContextMenu>
                                             <MenuItem Header="Set Filter">
                                                 <dxmvvm:Interaction.Behaviors>
-                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetFilter, Mode=OneWay}"
-                                                                                   CommandParameter="{Binding}"/>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetTabFilter, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                </dxmvvm:Interaction.Behaviors>
+                                            </MenuItem>
+                                            <MenuItem Header="Show Summary">
+                                                <dxmvvm:Interaction.Behaviors>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowTabSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
                                         </ContextMenu>

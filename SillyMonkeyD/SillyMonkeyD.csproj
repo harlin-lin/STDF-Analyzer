@@ -62,6 +62,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\SummaryTab.xaml.cs">
+      <DependentUpon>SummaryTab.xaml</DependentUpon>
+    </Compile>
     <Page Include="DXSplashScreen\SplashScreenView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -85,7 +88,9 @@
     <Compile Include="ViewModels\DataViewModel.cs" />
     <Compile Include="ViewModels\FileManagementViewModel.cs" />
     <Compile Include="ViewModels\FilterEditorViewModel.cs" />
+    <Compile Include="ViewModels\MiscViewModel.cs" />
     <Compile Include="ViewModels\RawGridTabViewModel.cs" />
+    <Compile Include="ViewModels\SummaryTabViewModel.cs" />
     <Compile Include="Views\Data.xaml.cs">
       <DependentUpon>Data.xaml</DependentUpon>
     </Compile>
@@ -94,6 +99,9 @@
     </Compile>
     <Compile Include="Views\FilterEditor.xaml.cs">
       <DependentUpon>FilterEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc.xaml.cs">
+      <DependentUpon>Misc.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RawGridTab.xaml.cs">
       <DependentUpon>RawGridTab.xaml</DependentUpon>
@@ -110,7 +118,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Misc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\RawGridTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SummaryTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
