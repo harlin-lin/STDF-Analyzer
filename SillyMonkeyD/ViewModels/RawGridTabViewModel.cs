@@ -22,6 +22,7 @@ namespace SillyMonkeyD.ViewModels {
 
         public string TabTitle { get { return GetProperty(() => TabTitle); } private set { SetProperty(() => TabTitle, value); } }
         public string FilePath { get { return GetProperty(() => FilePath); } private set { SetProperty(() => FilePath, value); } }
+        public int WindowFlag { get; private set; }
         public DataTable Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
         public int CountPerPage {
             get { return _countPerPage; }
@@ -42,6 +43,7 @@ namespace SillyMonkeyD.ViewModels {
         private void Init(IDataAcquire dataAcquire, int filterId) {
             DataAcquire = dataAcquire;
             FilterId = filterId;
+            WindowFlag = 1;
 
             var i = dataAcquire.GetFilterIndex(filterId);
 

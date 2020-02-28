@@ -15,6 +15,11 @@
     <UserControl.DataContext>
         <ViewModels:FileManagementViewModel/>
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <dxmvvm:BooleanNegationConverter x:Key="negbool"/>
+        <ViewModels:ImgVisibilityCtr x:Key="imgbool"/>
+    </UserControl.Resources>
+    
     <Grid AllowDrop="True" DragDrop.DragEnter="Grid_DragEnter">
         <dxmvvm:Interaction.Behaviors>
             <dxmvvm:EventToCommand EventName="Drop" Command="{Binding Path=DropCommand, Mode=OneWay}" PassEventArgsToCommand="True"/>
@@ -53,24 +58,27 @@
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Content="X"  HorizontalAlignment="Left" Margin="0,1,0,0" 
-                                            VerticalAlignment="Center" Width="12" 
-                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                                            Padding="0" ToolTip="Close" FontWeight="Bold" FontSize="8">
+                                        <Button Margin="0,0,3,0" 
+                                            Width="12" Height="14" 
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                            <Button.Background>
+                                                <ImageBrush ImageSource="/Resources/icons/delete.png"/>
+                                            </Button.Background>
                                             <dxmvvm:Interaction.Behaviors>
                                                 <dxmvvm:EventToCommand EventName="Click" Command="{Binding ElementName=FileControl, Path=DataContext.FileCloseCommand, Mode=OneWay}" 
                                                                        CommandParameter="{Binding}"/>
                                             </dxmvvm:Interaction.Behaviors>
                                         </Button>
+                                        <Image  Source="/Resources/icons/load.png" Width="12" Height="12"  Visibility="{Binding FilterDone, Converter={StaticResource imgbool}}"/>
                                         <TextBlock Text="{Binding Path=FileName}"/>
                                         <StackPanel.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem Header="Set Filter">
+                                                <MenuItem Header="Set Filter" IsEnabled="{Binding FilterDone}">
                                                     <dxmvvm:Interaction.Behaviors>
                                                         <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetFileFilter, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                     </dxmvvm:Interaction.Behaviors>
                                                 </MenuItem>
-                                                <MenuItem Header="Show Summary">
+                                                <MenuItem Header="Show Summary" IsEnabled="{Binding FilterDone}">
                                                     <dxmvvm:Interaction.Behaviors>
                                                         <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowFileSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                     </dxmvvm:Interaction.Behaviors>
@@ -110,10 +118,12 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Content="X"  HorizontalAlignment="Left" Margin="0,1,0,0" 
-                                            VerticalAlignment="Center" Width="12" 
-                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" 
-                                            Padding="0" ToolTip="Close" FontWeight="Bold" FontSize="8">
+                                    <Button Margin="0,0,3,0" 
+                                            Width="12" Height="14" 
+                                            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                        <Button.Background>
+                                            <ImageBrush ImageSource="/Resources/icons/delete.png"/>
+                                        </Button.Background>
                                         <dxmvvm:Interaction.Behaviors>
                                             <dxmvvm:EventToCommand EventName="Click" Command="{Binding ElementName=FileControl, Path=DataContext.TabCloseCommand, Mode=OneWay}" 
                                                                        CommandParameter="{Binding}"/>

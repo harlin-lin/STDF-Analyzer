@@ -9,6 +9,7 @@ namespace SillyMonkeyD {
     interface ITab {
         string TabTitle { get; }
         int FilterId { get; }
+        int WindowFlag { get; }
         IDataAcquire DataAcquire { get; }
         void UpdateFilter();
     }

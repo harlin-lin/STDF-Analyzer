@@ -11,6 +11,7 @@ using DataInterface;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using System.ComponentModel;
 
 namespace DataParse{
 
@@ -54,18 +55,27 @@ namespace DataParse{
 
         public string FilePath { get; private set; }
         public string FileName { get; private set; }
-        public bool ParseDone { get; private set; }
+
+        public bool _parseDone;
+        public bool ParseDone {
+            get { return _parseDone; }
+            private set {
+                _parseDone = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ParseDone"));
+            }
+        }
+
+        private bool _filterDone;
+        public bool FilterDone {
+            get { return _filterDone; }
+            private set {
+                _filterDone = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FilterDone"));
+            }
+        }
+
         //basic file information
         public IFileBasicInfo BasicInfo { get; private set; }
-        public int ParsePercent {
-            get { throw new NotImplementedException(); }
-            private set { }
-        }
-        public event ExtractDoneEventHandler ExtractDone;
-        private void OnExtractDone(IDataAcquire data) {
-            var handler = ExtractDone;
-            handler?.Invoke(data);/////////////////////////////////////////////////////////////////////////////////////////////////
-        }
 
         private Dictionary<int, FilterData> _filterList;
 
@@ -75,10 +85,15 @@ namespace DataParse{
         private Dictionary<ushort, Tuple<string, string>> _softBinNames;
         private Dictionary<ushort, Tuple<string, string>> _hardBinNames;
 
+        public event ExtractDoneEventHandler ExtractDone;
+        public event ExtractDoneEventHandler FilterGenerated;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public StdfParse(String filePath) {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
             ParseDone = false;
+            FilterDone = false;
             _stdfFile = null;
             _sites = new Dictionary<byte, int>();
 
@@ -87,7 +102,6 @@ namespace DataParse{
             _testItems = new TestItems(RawData.DefaultItemsCapacity);
 
             BasicInfo = null;
-            ParsePercent = 0;
 
             _filterList = new Dictionary<int, FilterData>();
             _defaultSitesSummary = new Dictionary<byte, IChipSummary>();
@@ -257,11 +271,11 @@ namespace DataParse{
                 }
 
             }
-            ParseDone = true;
 
             _testChips.UpdateSummary(ref _defaultSitesSummary);
             _defaultSummary = ChipSummary.Combine(_defaultSitesSummary);
-            OnExtractDone(this);
+            ParseDone = true;
+            ExtractDone?.Invoke(this);
 
             _stdfFile = null;
             rs = null;
@@ -269,6 +283,8 @@ namespace DataParse{
             GC.Collect();
 
             CreateDefaultFilters();
+            FilterDone = true;
+            FilterGenerated?.Invoke(this);
         }
 
         ////property get the file default infomation

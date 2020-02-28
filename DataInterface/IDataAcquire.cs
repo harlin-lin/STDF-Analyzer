@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 namespace DataInterface {
     public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
-    public interface IDataAcquire {
+    public interface IDataAcquire: INotifyPropertyChanged {
 
         event ExtractDoneEventHandler ExtractDone;
+        event ExtractDoneEventHandler FilterGenerated;
 
         void ExtractStdf();
 
@@ -98,8 +100,8 @@ namespace DataInterface {
         string FilePath { get; }
         string FileName { get; }
         bool ParseDone { get; }
+        bool FilterDone { get; }
         IFileBasicInfo BasicInfo { get; }
-        int ParsePercent { get; }
         #endregion
 
 
