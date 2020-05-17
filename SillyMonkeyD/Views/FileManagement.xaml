@@ -114,7 +114,7 @@
                         </ListBox>
                     </Grid>
                     <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
-                    <ListBox Grid.Row="2" x:Name="tabCtr" ItemsSource="{Binding TabList}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+                    <ListBox Grid.Row="2" x:Name="tabCtr" ItemsSource="{Binding TabList}" SelectionMode="Extended" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -140,6 +140,11 @@
                                             <MenuItem Header="Show Summary">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowTabSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                </dxmvvm:Interaction.Behaviors>
+                                            </MenuItem>
+                                            <MenuItem Header="Correlation">
+                                                <dxmvvm:Interaction.Behaviors>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowCorrelation, Mode=OneWay}" CommandParameter="{Binding Source={x:Reference tabCtr}, Path=SelectedItems}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
                                         </ContextMenu>

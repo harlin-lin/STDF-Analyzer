@@ -97,6 +97,10 @@ namespace SillyMonkeyD.ViewModels {
             ((DataViewModel)_dataWindow.DataContext).AddTab(rawGridTab);
             AddTab(rawGridTab); 
         }
+        private void AddDataTab(DXTabItem tabItem) {
+            ((DataViewModel)_dataWindow.DataContext).AddTab(tabItem);
+            AddTab(tabItem);
+        }
 
         private void RemoveDataTab(DXTabItem tabItem) {
             ((DataViewModel)_dataWindow.DataContext).RemoveTab(tabItem);
@@ -190,6 +194,7 @@ namespace SillyMonkeyD.ViewModels {
         public ICommand<IDataAcquire> SetFileFilter { get; private set; }
         public ICommand<DXTabItem> ShowTabSummary { get; private set; }
         public ICommand<IDataAcquire> ShowFileSummary { get; private set; }
+        public ICommand<IList<object>> ShowCorrelation { get; private set; }
 
         private void InitUiCtr() {
             DropCommand = new DelegateCommand<DragEventArgs>((e) => {
@@ -240,7 +245,7 @@ namespace SillyMonkeyD.ViewModels {
 
             FocusTab = new DelegateCommand(() => {
                 if (SelectedTab is null) return;
-                if (SelectedTab.GetType().Name == "RawGridTab")
+                if (((ITab)SelectedTab.DataContext).WindowFlag == 1)
                     ShowDataWindow(SelectedTab);
                 else
                     ShowMiscWindow(SelectedTab);
@@ -313,6 +318,25 @@ namespace SillyMonkeyD.ViewModels {
                 } else {
                     ShowMiscWindow(v);
                 }
+            });
+
+            ShowCorrelation = new DelegateCommand<IList<object>>((e) => {
+                if (e.Count < 2) {
+                    MessageBox.Show("Select at least 2 items!");
+                    return;
+                }
+                foreach(var t in e)
+                    if (t.GetType().Name != "RawGridTab") {
+                        MessageBox.Show("Select Raw Data Items Please!");
+                        return;
+                    }
+
+                var ll = (from r in e
+                          let p = new Tuple<IDataAcquire, int>(((ITab)((RawGridTab)r).DataContext).DataAcquire, ((ITab)((RawGridTab)r).DataContext).FilterId)
+                          select p).ToList();
+
+                AddDataTab(new CorrelationTab(ll));
+                ShowDataWindow();
             });
         }
 
