@@ -54,10 +54,6 @@
       <Project>{1d4e8891-2c00-4c85-a6b0-0ec68ec8f775}</Project>
       <Name>DataParse</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SillyMonkey\SillyMonkey.csproj">
-      <Project>{6fd8e12f-3513-4a7d-813c-6e23c93523ab}</Project>
-      <Name>SillyMonkey</Name>
-    </ProjectReference>
     <ProjectReference Include="..\StdfReader\StdfReader.csproj">
       <Project>{2a700e65-844e-490f-bbc5-cf450821e021}</Project>
       <Name>StdfReader</Name>

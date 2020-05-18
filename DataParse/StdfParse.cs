@@ -11,6 +11,7 @@ using DataInterface;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using System.ComponentModel;
 
 namespace DataParse{
 
@@ -54,28 +55,45 @@ namespace DataParse{
 
         public string FilePath { get; private set; }
         public string FileName { get; private set; }
-        public bool ParseDone { get; private set; }
+
+        public bool _parseDone;
+        public bool ParseDone {
+            get { return _parseDone; }
+            private set {
+                _parseDone = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ParseDone"));
+            }
+        }
+
+        private bool _filterDone;
+        public bool FilterDone {
+            get { return _filterDone; }
+            private set {
+                _filterDone = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("FilterDone"));
+            }
+        }
+
         //basic file information
         public IFileBasicInfo BasicInfo { get; private set; }
-        public int ParsePercent {
-            get { throw new NotImplementedException(); }
-            private set { }
-        }
-        public event ExtractDoneEventHandler ExtractDone;
-        private void OnExtractDone(IDataAcquire data) {
-            var handler = ExtractDone;
-            handler?.Invoke(data);/////////////////////////////////////////////////////////////////////////////////////////////////
-        }
 
         private Dictionary<int, FilterData> _filterList;
 
         private Dictionary<byte, IChipSummary> _defaultSitesSummary;
         private IChipSummary _defaultSummary;
 
+        private Dictionary<ushort, Tuple<string, string>> _softBinNames;
+        private Dictionary<ushort, Tuple<string, string>> _hardBinNames;
+
+        public event ExtractDoneEventHandler ExtractDone;
+        public event ExtractDoneEventHandler FilterGenerated;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public StdfParse(String filePath) {
             FilePath = filePath;
             FileName = Path.GetFileName(filePath);
             ParseDone = false;
+            FilterDone = false;
             _stdfFile = null;
             _sites = new Dictionary<byte, int>();
 
@@ -84,11 +102,13 @@ namespace DataParse{
             _testItems = new TestItems(RawData.DefaultItemsCapacity);
 
             BasicInfo = null;
-            ParsePercent = 0;
 
             _filterList = new Dictionary<int, FilterData>();
             _defaultSitesSummary = new Dictionary<byte, IChipSummary>();
             _defaultSummary = null;
+
+            _softBinNames = new Dictionary<ushort, Tuple<string, string>>();
+            _hardBinNames = new Dictionary<ushort, Tuple<string, string>>();
         }
 
         public override int GetHashCode() {
@@ -222,11 +242,16 @@ namespace DataParse{
 
                     InternalID[siteIdx] = _rawData.AddChip();
 
-                } else if (r.RecordType == StdfFile.BPS) {
-                    //do nothing
-                } else if (r.RecordType == StdfFile.EPS) {
-                    //do nothing
-                } else if (r.RecordType == StdfFile.PRR) {
+                } else if (r.RecordType == StdfFile.SBR) {
+                    if (!_softBinNames.ContainsKey(((Sbr)r).BinNumber)) {
+                        _softBinNames.Add(((Sbr)r).BinNumber, new Tuple<string,string>(((Sbr)r).BinName, ((Sbr)r).BinPassFail));
+                    }
+                } else if (r.RecordType == StdfFile.HBR) {
+                    if (!_hardBinNames.ContainsKey(((Hbr)r).BinNumber)) {
+                        _hardBinNames.Add(((Hbr)r).BinNumber, new Tuple<string, string>(((Hbr)r).BinName, ((Hbr)r).BinPassFail));
+                    }
+                }
+                else if (r.RecordType == StdfFile.PRR) {
                     if (!_sites.TryGetValue(((Prr)r).SiteNumber, out siteIdx)) throw new Exception("No Site");
 
                     if (!catchedPirFlag[siteIdx])
@@ -246,11 +271,11 @@ namespace DataParse{
                 }
 
             }
-            ParseDone = true;
 
             _testChips.UpdateSummary(ref _defaultSitesSummary);
             _defaultSummary = ChipSummary.Combine(_defaultSitesSummary);
-            OnExtractDone(this);
+            ParseDone = true;
+            ExtractDone?.Invoke(this);
 
             _stdfFile = null;
             rs = null;
@@ -258,6 +283,8 @@ namespace DataParse{
             GC.Collect();
 
             CreateDefaultFilters();
+            FilterDone = true;
+            FilterGenerated?.Invoke(this);
         }
 
         ////property get the file default infomation
@@ -307,7 +334,12 @@ namespace DataParse{
             return _defaultSummary;
         }
 
-
+        public Dictionary<ushort, Tuple<string, string>> GetSBinInfo() {
+            return _softBinNames;
+        }
+        public Dictionary<ushort, Tuple<string, string>> GetHBinInfo() {
+            return _hardBinNames;
+        }
 
 
         //////this info is filtered by filter
@@ -583,6 +615,14 @@ namespace DataParse{
 
         public void RemoveFilter(int filterId) {
             _filterList.Remove(filterId);
+        }
+
+        public int GetFilterIndex(int filterId) {
+            for(int i=0; i< _filterList.Count; i++) {
+                if (filterId == _filterList.ElementAt(i).Key)
+                    return i;
+            }
+            return -1;
         }
 
         private void CreateDefaultFilters() {

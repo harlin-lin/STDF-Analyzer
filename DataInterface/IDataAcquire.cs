@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 namespace DataInterface {
     public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
-    public interface IDataAcquire {
+    public interface IDataAcquire: INotifyPropertyChanged {
 
         event ExtractDoneEventHandler ExtractDone;
+        event ExtractDoneEventHandler FilterGenerated;
 
         void ExtractStdf();
 
@@ -81,13 +83,25 @@ namespace DataInterface {
         /// <returns></returns>
         IChipSummary GetChipSummary();
 
+        /// <summary>
+        /// get the soft bin names defined in the file, item1 is Pass/fail, item2 is bin name
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<ushort, Tuple<string, string>> GetSBinInfo();
+
+        /// <summary>
+        /// get the hard bin names defined in the file, item1 is Pass/fail, item2 is bin name
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<ushort, Tuple<string, string>> GetHBinInfo();
+
 
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }
         bool ParseDone { get; }
+        bool FilterDone { get; }
         IFileBasicInfo BasicInfo { get; }
-        int ParsePercent { get; }
         #endregion
 
 
@@ -143,6 +157,13 @@ namespace DataInterface {
         /// <param name="site">if is null means get the full sites one</param>
         /// <returns></returns>
         int GetFilterID(byte? site);
+
+        /// <summary>
+        /// find the index of the correspoding FilterId, return -1 if cannot find
+        /// </summary>
+        /// <param name="filterId"></param>
+        /// <returns></returns>
+        int GetFilterIndex(int filterId);
 
         FilterSetup GetFilterSetup(int filterId);
 

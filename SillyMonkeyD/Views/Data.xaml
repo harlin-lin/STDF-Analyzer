@@ -1,0 +1,25 @@
+﻿<Window x:Class="SillyMonkeyD.Views.Data"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" xmlns:ViewModels="clr-namespace:SillyMonkeyD.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" ShowInTaskbar="False" Closing="Window_Closing">
+    <Window.DataContext>
+        <ViewModels:DataViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBarPanel Grid.Row="0"/>
+        <dx:DXTabControl Grid.Row="1"  ItemsSource="{Binding DataTabItems}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+            <dxmvvm:Interaction.Behaviors>
+                <dxmvvm:EventToCommand EventName="SelectionChanged" Command="{Binding TabSelectionChanged}"/>
+            </dxmvvm:Interaction.Behaviors>
+        </dx:DXTabControl>
+    </Grid>
+</Window>

@@ -73,22 +73,16 @@ namespace FileHelper {
             });
         }
 
-        public string GetBriefSummary(int fileHash, byte? site) {
+        public static string GetBriefSummary(IDataAcquire data) {
             StringBuilder sb = new StringBuilder();
 
             IChipSummary summary;
-            IFileBasicInfo info = _files[fileHash].BasicInfo;
+            IFileBasicInfo info = data.BasicInfo;
 
-            if (site.HasValue) {
-                summary = _files[fileHash].GetChipSummaryBySite()[site.Value];
-            } else {
-                summary = _files[fileHash].GetChipSummary();
-            }
+            summary = data.GetChipSummary();
 
-            if (site.HasValue)
-                sb.AppendLine($"Site:{site}");
-            sb.AppendLine("");
             sb.AppendLine("General Info");
+            sb.AppendLine($"Path:{data.FilePath}");
             sb.AppendLine($"Total QTY:{summary.TotalCount}");
             sb.AppendLine($"Pass QTY:{summary.PassCount}\t\t{((double)summary.PassCount * 100 / summary.TotalCount).ToString("f4")}%");
             sb.AppendLine($"Fail QTY:{summary.FailCount}\t\t{((double)summary.FailCount * 100 / summary.TotalCount).ToString("f4")}%");

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ChipInfo.cs" />
     <Compile Include="ItemStatistic.cs" />
+    <Compile Include="Rst.cs" />
     <Compile Include="StdfParse.cs" />
     <Compile Include="FileBasicInfo.cs" />
     <Compile Include="ItemInfo.cs" />

@@ -10,7 +10,8 @@ namespace StdfReader {
         /// <summary>
         /// The underlying Stream
         /// </summary>
-        Stream _Stream;
+        BufferedStream _Stream;
+        //Stream _Stream;
         /// <summary>
         /// A stream we use for memoizing results of previous read operations,
         /// enabling us to rewind back into them
@@ -30,7 +31,8 @@ namespace StdfReader {
         byte[] _Buffer = new byte[2];
 
         public RewindableByteStream(Stream stream) {
-            _Stream = stream;
+            _Stream = new BufferedStream(stream, 4096);
+            //_Stream = stream;
             _MemoizedData = new MemoryStream(512);
         }
 
