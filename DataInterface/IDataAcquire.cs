@@ -116,8 +116,10 @@ namespace DataInterface {
         Dictionary<TestID, IItemInfo> GetFilteredTestIDs_Info(int filterId);
         List<int> GetFilteredChipsIndexes(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int filterId);
-        List<float?> GetFilteredItemData(TestID testID, int filterId);
-        List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
+        List<IChipInfo> GetFilteredChipsInfo(int startIndex, int count, int filterId);
+        List<Rst> GetFilteredItemData(TestID testID, int filterId);
+        List<Rst> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
+        Rst[] GetFilteredItemDataArr(TestID testID, int startIndex, int count, int filterId);
         DataTable GetFilteredItemData(int startIndex, int count, int filterId, bool enableRowHeader);
 
 

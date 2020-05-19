@@ -6,6 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <dx:DXTabItem.Header>
@@ -69,7 +70,10 @@
                     </dxmvvm:Interaction.Behaviors>
                 </Button>
             </StackPanel>
-            <dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="AddNew"
+            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding LogModel}">
+            </FastWpfGrid:FastGridControl>
+
+            <!--<dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="AddNew"
                         FontSize="8"
                         IsFilterEnabled="False" SelectionMode="None" AllowMRUFilterList="False" AllowColumnMRUFilterList="False" >
                 <dxg:GridControl.View>
@@ -104,7 +108,7 @@
                         </MenuItem>
                     </ContextMenu>
                 </dxg:GridControl.ContextMenu>
-            </dxg:GridControl>
+            </dxg:GridControl>-->
         </Grid>
     </dx:DXTabItem.Content>
 </dx:DXTabItem>

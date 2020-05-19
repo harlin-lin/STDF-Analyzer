@@ -25,6 +25,10 @@ namespace DataInterface {
             return $"{MainNumber}.{SubNumber}";
         }
 
+        public override string ToString() {
+            return $"{MainNumber}.{SubNumber}";
+        }
+
         public static TestID NewSubTestID(TestID testID) {
             return new TestID(testID.MainNumber, ++testID.SubNumber);
         }

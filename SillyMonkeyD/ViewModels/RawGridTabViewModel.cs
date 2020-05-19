@@ -23,7 +23,9 @@ namespace SillyMonkeyD.ViewModels {
         public string TabTitle { get { return GetProperty(() => TabTitle); } private set { SetProperty(() => TabTitle, value); } }
         public string FilePath { get { return GetProperty(() => FilePath); } private set { SetProperty(() => FilePath, value); } }
         public int WindowFlag { get; private set; }
-        public DataTable Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
+        //public DataTable Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
+        public StdLogGridModel Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
+
         public int CountPerPage {
             get { return _countPerPage; }
             set {
@@ -57,6 +59,8 @@ namespace SillyMonkeyD.ViewModels {
             TotalCount = DataAcquire.GetFilteredChipSummary(FilterId).TotalCount;
             TotalPages = TotalCount / CountPerPage + 1;
             CurrentPageIndex = 1;
+            Data = new StdLogGridModel(new StdLogTable(DataAcquire, 0, CountPerPage, FilterId));
+
             UpdateDataToStartPage();
 
 
@@ -65,9 +69,11 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToStartPage() {
             CurrentPageIndex = 1;
             if (TotalPages > 1)
-                Data = DataAcquire.GetFilteredItemData(0, CountPerPage, FilterId, true);
+                //Data = DataAcquire.GetFilteredItemData(0, CountPerPage, FilterId, true);
+                Data.ChangePage(0, CountPerPage);
             else
-                Data = DataAcquire.GetFilteredItemData(0, TotalCount, FilterId, true);
+                //Data = DataAcquire.GetFilteredItemData(0, TotalCount, FilterId, true);
+                Data.ChangePage(0, TotalCount);
 
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -75,7 +81,8 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToLastPage() {
             if (CurrentPageIndex > 1) {
                 CurrentPageIndex--;
-                Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
+                //Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
+                Data.ChangePage((CurrentPageIndex - 1) * CountPerPage, CountPerPage);
             }
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -85,9 +92,12 @@ namespace SillyMonkeyD.ViewModels {
                 CurrentPageIndex++;
                 int leftCnt = TotalCount - (CurrentPageIndex - 1) * CountPerPage;
                 if (leftCnt > CountPerPage)
-                    Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
+                    //Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, CountPerPage, FilterId, true);
+                    Data.ChangePage((CurrentPageIndex - 1) * CountPerPage, CountPerPage);
                 else
-                    Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
+                    //Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
+                    Data.ChangePage((CurrentPageIndex - 1) * CountPerPage, leftCnt);
+
             }
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");
@@ -95,7 +105,8 @@ namespace SillyMonkeyD.ViewModels {
         private void UpdateDataToEndPage() {
             CurrentPageIndex = TotalPages;
             int leftCnt = TotalCount - (CurrentPageIndex - 1) * CountPerPage;
-            Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
+            //Data = DataAcquire.GetFilteredItemData((CurrentPageIndex - 1) * CountPerPage, leftCnt, FilterId, true);
+            Data.ChangePage((CurrentPageIndex - 1) * CountPerPage, leftCnt);
 
             RaisePropertyChanged("Data");
             RaisePropertyChanged("CurrentPageIndex");

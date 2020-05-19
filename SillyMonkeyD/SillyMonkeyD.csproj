@@ -64,6 +64,7 @@
     </ApplicationDefinition>
     <Compile Include="ViewModels\CorrelationTabViewModel.cs" />
     <Compile Include="ViewModels\Cvt.cs" />
+    <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="Views\CorrelationTab.xaml.cs">
       <DependentUpon>CorrelationTab.xaml</DependentUpon>
     </Compile>
@@ -177,6 +178,10 @@
     <ProjectReference Include="..\DataParse\DataParse.csproj">
       <Project>{1D4E8891-2C00-4C85-A6B0-0EC68EC8F775}</Project>
       <Name>DataParse</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
+      <Project>{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}</Project>
+      <Name>FastWpfGrid</Name>
     </ProjectReference>
     <ProjectReference Include="..\FileHelper\FileHelper.csproj">
       <Project>{897bc392-7e1c-4c48-9c94-61127f1f5287}</Project>

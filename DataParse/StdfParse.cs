@@ -157,7 +157,8 @@ namespace DataParse{
                             _rawData.AddItem();
                         }
                     }
-                    _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], _testItems.GetItemInfo(testID).GetScaledRst(((Ptr)r).Result));
+                    Rst rst = new Rst(_testItems.GetItemInfo(testID).GetScaledRst(((Ptr)r).Result), _testItems.GetItemInfo(testID).LoLimit, _testItems.GetItemInfo(testID).HiLimit);
+                    _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], rst);
 
                     ptrLastTN[siteIdx] = testID;                    
                 } else if (r.RecordType == StdfFile.FTR) {
@@ -175,8 +176,8 @@ namespace DataParse{
                             _testItems.AddTestItem(testID, new ItemInfo(((Ftr)r).TestText, (float)0.5, (float)1.5, "", 0, 0, 0));
                             _rawData.AddItem();
                         }
-
-                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], ((Ftr)r).Results);
+                        Rst rst = new Rst(((Ftr)r).Results, (float)0.5, (float)1.5);
+                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], rst);
 
                         ptrLastTN[siteIdx] = testID;
                     }
@@ -211,7 +212,8 @@ namespace DataParse{
                             _rawData.AddItem();
                         }
 
-                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], _testItems.GetItemInfo(testID).GetScaledRst(((Mpr)r).Results[i]));
+                        Rst rst = new Rst(_testItems.GetItemInfo(testID).GetScaledRst(((Mpr)r).Results[i]), _testItems.GetItemInfo(testID).LoLimit, _testItems.GetItemInfo(testID).HiLimit);
+                        _rawData.Set(_testItems.GetIndex(testID), InternalID[siteIdx], rst);
                     }
 
                     ptrLastTN[siteIdx] = testItemID;
@@ -379,6 +381,10 @@ namespace DataParse{
         public List<IChipInfo> GetFilteredChipsInfo(int filterId) {
             return _testChips.GetFilteredChipsInfo(_filterList[filterId].ChipFilter);
         }
+        public List<IChipInfo> GetFilteredChipsInfo(int startIndex, int count, int filterId) {
+            return _testChips.GetFilteredChipsInfo(_filterList[filterId].ChipFilter).GetRange(startIndex, count);
+        }
+
         /// <summary>
         /// return an array of the selected item data with the filter, 
         /// it will be null if the correspond partdon't have result there, 
@@ -386,12 +392,15 @@ namespace DataParse{
         /// </summary>
         /// <param name="testID"></param>
         /// <returns></returns>
-        public List<float?> GetFilteredItemData(TestID testID, int filterId) {
+        public List<Rst> GetFilteredItemData(TestID testID, int filterId) {
             return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), _filterList[filterId].ChipFilter);
         }
 
-        public List<float?> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId) {
+        public List<Rst> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId) {
             return _rawData.GetItemDataFiltered(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
+        }
+        public Rst[] GetFilteredItemDataArr(TestID testID, int startIndex, int count, int filterId) {
+            return _rawData.GetItemDataFilteredArr(_testItems.GetIndex(testID), startIndex, count, _filterList[filterId].ChipFilter);
         }
 
         public DataTable GetFilteredItemData(int startIndex, int count, int filterId, bool enableRowHeader) {
@@ -521,8 +530,6 @@ namespace DataParse{
 
             return table;
         }
-
-
 
 
         public Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId) {

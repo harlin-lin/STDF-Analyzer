@@ -6,7 +6,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataParse {
+namespace DataInterface {
     public enum RstType {
         Pass=0x3,
         Fail_LL=0x1,
@@ -40,6 +40,18 @@ namespace DataParse {
                 _flag = 0;
             }
         }
+
+        public Rst(float? value, float? ll, float? hl) {
+            if (value.HasValue) {
+                _val = value.Value;
+                _flag = (byte)GetRstType(value.Value, ll, hl);
+            } else {
+                _val = 0;
+                _flag = 0;
+            }
+        }
+
+
 
         public bool HasValue {
             get { return _flag>0; }
@@ -78,7 +90,7 @@ namespace DataParse {
 
         public override string ToString() {
             if (HasValue) {
-                return _val.ToString();
+                return _val.ToString("F4");
             } else {
                 return string.Empty;
             }
@@ -92,6 +104,16 @@ namespace DataParse {
             } else {
                 throw new Exception("Rst is Null");
             }
+        }
+
+        public static RstType GetRstType(float rst, float? ll, float? hl) {
+            if (ll.HasValue && rst< ll.Value) {
+                return RstType.Fail_LL;
+            }
+            if (hl.HasValue && rst > hl.Value) {
+                return RstType.Fail_GH;
+            }
+            return RstType.Pass;
         }
 
     }

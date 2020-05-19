@@ -17,10 +17,10 @@ namespace DataParse {
         public int PassCount { get; private set; }
         public int FailCount { get; private set; }
 
-        public ItemStatistic(List<float?> data, float? ll, float? hl) {
+        public ItemStatistic(List<Rst> data, float? ll, float? hl) {
             List<float> listUnNullItems = (from r in data
-                                           where r != null
-                                           let v = (float)r
+                                           where r.HasValue
+                                           let v = r.Value
                                            select v).ToList();
 
             if (listUnNullItems.Count != 0) {
