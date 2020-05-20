@@ -70,7 +70,7 @@
                     </dxmvvm:Interaction.Behaviors>
                 </Button>
             </StackPanel>
-            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding LogModel}">
+            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding Data}">
             </FastWpfGrid:FastGridControl>
 
             <!--<dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="AddNew"

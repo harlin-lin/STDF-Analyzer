@@ -49,6 +49,7 @@ namespace DataInterface {
                 //_rst.Add(dataAcquire.GetFilteredItemData(_itemInfo.ElementAt(i).Key, filterId));
             }
 
+            _colCount = count;
         }
 
         public int ColumnCount { get { return _colCount + colFixedLength; } }

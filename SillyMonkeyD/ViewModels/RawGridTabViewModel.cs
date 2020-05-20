@@ -59,7 +59,11 @@ namespace SillyMonkeyD.ViewModels {
             TotalCount = DataAcquire.GetFilteredChipSummary(FilterId).TotalCount;
             TotalPages = TotalCount / CountPerPage + 1;
             CurrentPageIndex = 1;
-            Data = new StdLogGridModel(new StdLogTable(DataAcquire, 0, CountPerPage, FilterId));
+            
+            if (TotalPages > 1)
+                Data = new StdLogGridModel(new StdLogTable(DataAcquire, 0, CountPerPage, FilterId));
+            else
+                Data = new StdLogGridModel(new StdLogTable(DataAcquire, 0, TotalCount, FilterId));
 
             UpdateDataToStartPage();
 

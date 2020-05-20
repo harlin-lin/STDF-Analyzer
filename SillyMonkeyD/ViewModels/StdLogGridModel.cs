@@ -32,7 +32,7 @@ namespace SillyMonkeyD.ViewModels {
 
 
         public StdLogGridModel(StdLogTable logTable) {
-            DataSource = logTable;
+            _dataSource = logTable;
             NotifyRefresh();
         }
 
@@ -44,10 +44,10 @@ namespace SillyMonkeyD.ViewModels {
 
         public int ColumnCount { get { return _dataSource.ColumnCount; } }
 
-        public int RowCount { get { return _dataSource.RowCount; }}
+        public int RowCount { get { return _dataSource.RowCount; } }
 
         string GetCellText(int row, int column) {
-            return _dataSource.GetCellText(row,column);
+            return _dataSource.GetCellText(row, column);
         }
 
         public IFastGridCell GetCell(IFastGridView view, int row, int column) {
@@ -57,7 +57,7 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         public string GetRowHeaderText(int row) {
-            return GetCellText(row,0);
+            return GetCellText(row, 0);
         }
 
         public string GetColumnHeaderText(int column) {
@@ -221,8 +221,5 @@ namespace SillyMonkeyD.ViewModels {
         public Color? DecorationColor {
             get { return null; }
         }
-
-
-
     }
 }

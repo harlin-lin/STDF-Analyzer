@@ -221,8 +221,5 @@ namespace WpfTest {
         public Color? DecorationColor {
             get { return null; }
         }
-
-
-
     }
 }
