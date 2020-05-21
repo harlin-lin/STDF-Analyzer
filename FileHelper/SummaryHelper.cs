@@ -21,21 +21,21 @@ namespace FileHelper {
         private int _filter;
 
         public SummaryHelper(IDataAcquire dataAcquire, int filter) {
-            _flowDocument = new FlowDocument();
-            _paragraph = new Paragraph();
             _dataAcquire = dataAcquire;
             _filter = filter;
-
-            summary = _dataAcquire.GetFilteredChipSummary(_filter);
-            var ss = _dataAcquire.GetFilteredChipSummaryBySite(_filter).OrderBy(x=>x.Key);
-            sitesSummary = from r in ss
-                               select r.Value;
-            sitesNO = from r in ss
-                          let s = "Site:" + r.Key
-                          select s;
         }
 
         public FlowDocument GetSummary() {
+            summary = _dataAcquire.GetFilteredChipSummary(_filter);
+            var ss = _dataAcquire.GetFilteredChipSummaryBySite(_filter).OrderBy(x => x.Key);
+            sitesSummary = from r in ss
+                           select r.Value;
+            sitesNO = from r in ss
+                      let s = "Site:" + r.Key
+                      select s;
+            _flowDocument = new FlowDocument();
+            _paragraph = new Paragraph();
+
             AppendBasicInfo();
             AppendCounters();
             AppendSoftbin();
