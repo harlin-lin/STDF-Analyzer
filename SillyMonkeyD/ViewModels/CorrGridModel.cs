@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace SillyMonkeyD.ViewModels {
-    public class StdLogGridModel : IFastGridModel, IFastGridCell {
+    public class CorrGridModel : IFastGridModel, IFastGridCell {
 
-        private StdLogTable _dataSource;
+        private CorrelationTable _dataSource;
 
-        public StdLogTable DataSource {
+        public CorrelationTable DataSource {
             get { return _dataSource; }
             set {
                 _dataSource = value;
@@ -31,13 +31,13 @@ namespace SillyMonkeyD.ViewModels {
 
 
 
-        public StdLogGridModel(StdLogTable logTable) {
+        public CorrGridModel(CorrelationTable logTable) {
             _dataSource = logTable;
             NotifyRefresh();
         }
 
-        public void ChangePage(int startIndex, int count) {
-            _dataSource.Update(startIndex, count);
+        public void Update() {
+            _dataSource.Update();
             NotifyRefresh();
         }
 

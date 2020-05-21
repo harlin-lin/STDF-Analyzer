@@ -37,7 +37,7 @@ namespace DataInterface {
             _rowCount = _itemInfo.Count;
         }
 
-        public void ChangePage(int startIndex, int count) {
+        public void Update(int startIndex, int count) {
             _ststistic = _dataAcquire.GetFilteredStatistic(_filterId);
             _itemInfo = _dataAcquire.GetFilteredTestIDs_Info(_filterId);
 

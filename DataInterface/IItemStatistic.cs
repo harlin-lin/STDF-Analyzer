@@ -9,9 +9,9 @@ namespace DataInterface {
         float? MeanValue { get; }
         float? MinValue { get; }
         float? MaxValue { get; }
-        double? Cp { get; }
-        double? Cpk { get; }
-        double? Sigma { get; }
+        float? Cp { get; }
+        float? Cpk { get; }
+        float? Sigma { get; }
         int PassCount { get; }
         int FailCount { get; }
     }

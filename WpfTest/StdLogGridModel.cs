@@ -37,7 +37,7 @@ namespace WpfTest {
         }
 
         public void ChangePage(int startIndex, int count) {
-            _dataSource.ChangePage(startIndex, count);
+            _dataSource.Update(startIndex, count);
             NotifyRefresh();
         }
 

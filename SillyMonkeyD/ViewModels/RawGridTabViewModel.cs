@@ -65,7 +65,7 @@ namespace SillyMonkeyD.ViewModels {
             else
                 Data = new StdLogGridModel(new StdLogTable(DataAcquire, 0, TotalCount, FilterId));
 
-            UpdateDataToStartPage();
+            //UpdateDataToStartPage();
 
 
         }

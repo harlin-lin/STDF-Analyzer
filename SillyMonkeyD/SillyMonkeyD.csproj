@@ -64,6 +64,7 @@
     </ApplicationDefinition>
     <Compile Include="ViewModels\CorrelationTabViewModel.cs" />
     <Compile Include="ViewModels\Cvt.cs" />
+    <Compile Include="ViewModels\CorrGridModel.cs" />
     <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="Views\CorrelationTab.xaml.cs">
       <DependentUpon>CorrelationTab.xaml</DependentUpon>
