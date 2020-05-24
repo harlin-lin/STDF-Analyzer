@@ -110,11 +110,15 @@
     <Compile Include="ViewModels\CorrelationTabViewModel.cs" />
     <Compile Include="ViewModels\Cvt.cs" />
     <Compile Include="ViewModels\CorrGridModel.cs" />
+    <Compile Include="ViewModels\ItemChartTabViewModel.cs" />
     <Compile Include="ViewModels\WaferMapGridModel.cs" />
     <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="ViewModels\WaferMapViewModel.cs" />
     <Compile Include="Views\CorrelationTab.xaml.cs">
       <DependentUpon>CorrelationTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ItemChartTab.xaml.cs">
+      <DependentUpon>ItemChartTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SummaryTab.xaml.cs">
       <DependentUpon>SummaryTab.xaml</DependentUpon>
@@ -176,6 +180,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FilterEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ItemChartTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
