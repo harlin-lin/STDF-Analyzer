@@ -71,6 +71,9 @@ namespace DataInterface {
         /// <returns>return a list of all of the indexes</returns>
         List<int> GetChipsIndexes();
 
+        List<IChipInfo> GetChipsInfo();
+
+
         /// <summary>
         /// get the full file summary by site
         /// </summary>

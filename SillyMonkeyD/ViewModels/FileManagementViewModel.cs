@@ -194,6 +194,7 @@ namespace SillyMonkeyD.ViewModels {
         public ICommand<IDataAcquire> SetFileFilter { get; private set; }
         public ICommand<DXTabItem> ShowTabSummary { get; private set; }
         public ICommand<IDataAcquire> ShowFileSummary { get; private set; }
+        public ICommand<IDataAcquire> ShowWaferMap { get; private set; }
         public ICommand<IList<object>> ShowCorrelation { get; private set; }
 
         private void InitUiCtr() {
@@ -314,6 +315,17 @@ namespace SillyMonkeyD.ViewModels {
                 var v = FindOpendTab(e, e.GetFilterID(null), "SummaryTab");
                 if (v is null) {
                     AddMiscTab(new SummaryTab(e, e.GetFilterID(null)));
+                    ShowMiscWindow();
+                } else {
+                    ShowMiscWindow(v);
+                }
+            });
+            ShowWaferMap = new DelegateCommand<IDataAcquire>((e) => {
+                if (!e.FilterDone) return;
+
+                var v = FindOpendTab(e, e.GetFilterID(null), "WaferMapTab");
+                if (v is null) {
+                    AddMiscTab(new WaferMapTab(e, e.GetFilterID(null)));
                     ShowMiscWindow();
                 } else {
                     ShowMiscWindow(v);

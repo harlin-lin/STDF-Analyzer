@@ -329,6 +329,10 @@ namespace DataParse{
                 return _testChips.ChipsCount;
             }
         }
+        public List<IChipInfo> GetChipsInfo() {
+            return _testChips.GetChipsInfo();
+        }
+
         public Dictionary<byte, IChipSummary> GetChipSummaryBySite() {
             return _defaultSitesSummary;
         }

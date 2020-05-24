@@ -54,6 +54,7 @@
     <Compile Include="CorrVal.cs" />
     <Compile Include="Rst.cs" />
     <Compile Include="CorrelationTable.cs" />
+    <Compile Include="WaferMapTable.cs" />
     <Compile Include="StdLogTable.cs" />
     <Compile Include="TestID.cs" />
   </ItemGroup>

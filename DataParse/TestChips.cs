@@ -54,6 +54,11 @@ namespace DataParse
             }
             return infos;
         }
+        public List<IChipInfo> GetChipsInfo() {
+            List<IChipInfo> infos = new List<IChipInfo>(_testChips);
+            return infos;
+        }
+
         public void UpdateSummaryFiltered(bool[] chipsFilter, ref Dictionary<byte, IChipSummary> summary) {
             summary.Clear();
 

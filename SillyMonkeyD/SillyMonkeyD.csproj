@@ -57,10 +57,16 @@
     <ManifestKeyFile>SillyMonkeyD_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DevExpress.Mvvm.v19.2" />
@@ -104,12 +110,17 @@
     <Compile Include="ViewModels\CorrelationTabViewModel.cs" />
     <Compile Include="ViewModels\Cvt.cs" />
     <Compile Include="ViewModels\CorrGridModel.cs" />
+    <Compile Include="ViewModels\WaferMapGridModel.cs" />
     <Compile Include="ViewModels\StdLogGridModel.cs" />
+    <Compile Include="ViewModels\WaferMapViewModel.cs" />
     <Compile Include="Views\CorrelationTab.xaml.cs">
       <DependentUpon>CorrelationTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SummaryTab.xaml.cs">
       <DependentUpon>SummaryTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WaferMapTab.xaml.cs">
+      <DependentUpon>WaferMapTab.xaml</DependentUpon>
     </Compile>
     <Page Include="DXSplashScreen\SplashScreenView.xaml">
       <SubType>Designer</SubType>
@@ -180,6 +191,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\WaferMapTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -201,6 +216,7 @@
     </EmbeddedResource>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

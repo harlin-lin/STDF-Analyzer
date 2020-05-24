@@ -83,6 +83,12 @@
                                                         <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowFileSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                     </dxmvvm:Interaction.Behaviors>
                                                 </MenuItem>
+                                                <MenuItem Header="Show WaferMap" IsEnabled="{Binding FilterDone}">
+                                                    <dxmvvm:Interaction.Behaviors>
+                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowWaferMap, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                    </dxmvvm:Interaction.Behaviors>
+                                                </MenuItem>
+
                                             </ContextMenu>
                                         </StackPanel.ContextMenu>
                                     </StackPanel>
