@@ -91,8 +91,13 @@ namespace FastWpfGrid
 
         private void RecalculateHeaderSize()
         {
-            HeaderWidth = GetTextWidth("0000000", false, false);
-            HeaderHeight = 100;//_rowSizes.DefaultSize;
+            if (_model != null) {
+                HeaderWidth = _model.GetRowHeaderWidth();
+                HeaderHeight = _model.GetColumnHeaderHeight();
+            } else {
+                HeaderWidth = GetTextWidth("0000000", false, false);
+                HeaderHeight = 100;//_rowSizes.DefaultSize;
+            }
 
             if (IsTransposed) CountTransposedHeaderWidth();
             if (Model != null)

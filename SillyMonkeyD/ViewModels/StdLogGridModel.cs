@@ -108,6 +108,14 @@ namespace SillyMonkeyD.ViewModels {
             return _frozenRows;
         }
 
+        public int GetRowHeaderWidth() {
+            return 60;
+        }
+
+        public int GetColumnHeaderHeight() {
+            return 100;
+        }
+
         public void SetColumnArrange(HashSet<int> hidden, HashSet<int> frozen) {
             _hiddenColumns = hidden;
             _frozenColumns = frozen;

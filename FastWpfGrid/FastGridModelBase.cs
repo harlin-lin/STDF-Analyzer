@@ -176,6 +176,14 @@ namespace FastWpfGrid
         {
         }
 
+        public int GetRowHeaderWidth() {
+            return 15;
+        }
+
+        public int GetColumnHeaderHeight() {
+            return 100;
+        }
+
         public virtual string ToolTipText
         {
             get { return null; }

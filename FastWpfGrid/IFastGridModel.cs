@@ -13,6 +13,10 @@ namespace FastWpfGrid
         IFastGridCell GetCell(IFastGridView grid, int row, int column);
         IFastGridCell GetRowHeader(IFastGridView view, int row);
         IFastGridCell GetColumnHeader(IFastGridView view, int column);
+
+        int GetRowHeaderWidth();
+        int GetColumnHeaderHeight();
+
         IFastGridCell GetGridHeader(IFastGridView view);
         void AttachView(IFastGridView view);
         void DetachView(IFastGridView view);
