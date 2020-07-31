@@ -109,11 +109,11 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         public int GetRowHeaderWidth() {
-            return 15;
+            return 50;
         }
 
         public int GetColumnHeaderHeight() {
-            return 15;
+            return 50;
         }
 
         public void SetColumnArrange(HashSet<int> hidden, HashSet<int> frozen) {

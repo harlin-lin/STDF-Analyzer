@@ -57,7 +57,7 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         public string GetRowHeaderText(int row) {
-            return GetCellText(row, 0);
+            return (row+1).ToString();
         }
 
         public string GetColumnHeaderText(int column) {
@@ -109,11 +109,11 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         public int GetRowHeaderWidth() {
-            return 15;
+            return 100;
         }
 
         public int GetColumnHeaderHeight() {
-            return 100;
+            return 20;
         }
 
         public void SetColumnArrange(HashSet<int> hidden, HashSet<int> frozen) {

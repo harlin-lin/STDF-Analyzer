@@ -129,7 +129,7 @@ namespace DataInterface {
                 }
             } else {
                 var v = _chipInfo[column - colFixedLength];
-                return $"{v.PartId}\n{v.WaferCord}\n{v.HardBin}\n{v.SoftBin}\n{v.Result}\n{v.Site}\n{v.TestTime}ms";
+                return $"ID:{v.PartId}\n{v.WaferCord}\nHB:{v.HardBin}\nSB:{v.SoftBin}\nPF:{v.Result}\nS:{v.Site}\nT:{v.TestTime}ms";
             }
         }
 
