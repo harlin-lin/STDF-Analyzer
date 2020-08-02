@@ -4,9 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" xmlns:ViewModels="clr-namespace:SillyMonkeyD.ViewModels"
-        xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
         mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"  ShowInTaskbar="False" Closing="Window_Closing">
+             d:DesignHeight="300" d:DesignWidth="300"  ShowInTaskbar="True" Closing="Window_Closing">
 <Window.DataContext>
     <ViewModels:MiscViewModel/>
 </Window.DataContext>
@@ -16,10 +15,11 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <ToolBarPanel Grid.Row="0"/>
-        <dx:DXTabControl Grid.Row="1"  ItemsSource="{Binding DataTabItems}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+        <TabControl Grid.Row="1"  ItemsSource="{Binding DataTabItems}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
             <dxmvvm:Interaction.Behaviors>
                 <dxmvvm:EventToCommand EventName="SelectionChanged" Command="{Binding TabSelectionChanged}"/>
             </dxmvvm:Interaction.Behaviors>
-        </dx:DXTabControl>
+        </TabControl>
+
     </Grid>
 </Window>

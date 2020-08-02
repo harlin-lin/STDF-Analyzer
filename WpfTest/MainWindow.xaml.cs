@@ -22,7 +22,6 @@ namespace WpfTest {
     /// </summary>
     public partial class MainWindow : Window {
         //private GridModel1 _model1;
-        private StdLogGridModel gridModel;
         public MainWindow() {
             InitializeComponent();
             InitData();
@@ -33,10 +32,6 @@ namespace WpfTest {
             IDataAcquire dataAcquire = new StdfParse(@"E:\Data\12345678.stdf");
 
             dataAcquire.ExtractStdf();
-
-            gridModel = new StdLogGridModel(new StdLogTable(dataAcquire, 0, 100, dataAcquire.GetAllFilter().ElementAt(0).Key));
-
-            grid1.Model = gridModel;
         }
 
         private void grid1_SelectedCellsChanged(object sender, FastWpfGrid.SelectionChangedEventArgs e) {

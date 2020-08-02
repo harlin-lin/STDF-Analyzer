@@ -1,29 +1,20 @@
 ﻿using DataInterface;
-using DevExpress.Xpf.Core;
 using SillyMonkeyD.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using SciChart.Charting.Model.DataSeries;
+using SciChart.Charting.Visuals.RenderableSeries;
+using SciChart.Data.Model;
+using System.Collections.Generic;
 
 namespace SillyMonkeyD.Views {
     /// <summary>
     /// Interaction logic for ItemChartTab.xaml
     /// </summary>
-    public partial class ItemChartTab : DXTabItem {
+    public partial class ItemChartTab : TabItem {
         ItemChartTabViewModel itemChartTab;
-        public ItemChartTab(IDataAcquire dataAcquire, int filterId) {
+        public ItemChartTab(IDataAcquire dataAcquire, int filterId, List<TestID> testIDs) {
             InitializeComponent();
-            itemChartTab = new ItemChartTabViewModel(dataAcquire, filterId);
+            itemChartTab = new ItemChartTabViewModel(dataAcquire, filterId, testIDs);
             DataContext = itemChartTab;
         }
     }

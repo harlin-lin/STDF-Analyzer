@@ -1,21 +1,21 @@
-﻿<dx:DXTabItem x:Class="SillyMonkeyD.Views.ItemChartTab"
-              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+﻿<TabItem x:Class="SillyMonkeyD.Views.ItemChartTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" xmlns:ViewModels="clr-namespace:SillyMonkeyD.ViewModels"
-             xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
-              mc:Ignorable="d"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
+             xmlns:ViewModels="clr-namespace:SillyMonkeyD.ViewModels"
+            xmlns:s="http://schemas.abtsoftware.co.uk/scichart" 
+             mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <dx:DXTabItem.Header>
+    <TabItem.Header>
         <Binding Path="TabTitle"/>
-    </dx:DXTabItem.Header>
-    <dx:DXTabItem.ToolTip>
+    </TabItem.Header>
+    <TabItem.ToolTip>
         <Binding Path="FilePath"/>
-    </dx:DXTabItem.ToolTip>
+    </TabItem.ToolTip>
 
-    <dx:DXTabItem.Content>
+    <TabItem.Content>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
@@ -28,12 +28,26 @@
                     </dxmvvm:Interaction.Behaviors>
                 </Button>
             </StackPanel>
-            <d3:Chart Name="plotter" Grid.Row="1">
-                <d3:Chart.Title>
-                    <TextBlock HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5">Bar chart sample</TextBlock>
-                </d3:Chart.Title>
-                <d3:BarGraph Color="Blue" Sources="{Binding Data}"/>
-            </d3:Chart>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <ListBox Grid.Column="0"/>
+                
+                <!--  Create the chart surface  -->
+                <s:SciChartSurface x:Name="sciChart" Grid.Column="1"
+                                   RenderableSeries="{s:SeriesBinding RenderableSeries}">
+                    <s:SciChartSurface.XAxis>
+                        <s:NumericAxis/>
+                    </s:SciChartSurface.XAxis>
+
+                    <s:SciChartSurface.YAxis>
+                        <s:NumericAxis GrowBy="0.1, 0.1"/>
+                    </s:SciChartSurface.YAxis>
+                </s:SciChartSurface>
+            </Grid>
         </Grid>
-    </dx:DXTabItem.Content>
-</dx:DXTabItem>
+    </TabItem.Content>
+</TabItem>

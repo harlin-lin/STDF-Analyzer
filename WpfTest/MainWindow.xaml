@@ -7,13 +7,6 @@
         xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <FastWpfGrid:FastGridControl x:Name="grid1" 
-                    SelectedCellsChanged="grid1_SelectedCellsChanged">
-            <FastWpfGrid:FastGridControl.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Test" />
-                </ContextMenu>
-            </FastWpfGrid:FastGridControl.ContextMenu>
-        </FastWpfGrid:FastGridControl>
+
     </Grid>
 </Window>

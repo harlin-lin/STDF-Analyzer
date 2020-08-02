@@ -69,20 +69,16 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Mvvm.v19.2" />
-    <Reference Include="DevExpress.Data.v19.2" />
-    <Reference Include="DevExpress.Printing.v19.2.Core" />
-    <Reference Include="DevExpress.Xpf.Charts.v19.2, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Core.v19.2" />
-    <Reference Include="DevExpress.Xpf.Grid.v19.2, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v19.2.Core, Version=19.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Themes.Office2019Colorful.v19.2" />
-    <Reference Include="InteractiveDataDisplay.WPF, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\InteractiveDataDisplay.WPF.1.0.0\lib\net452\InteractiveDataDisplay.WPF.dll</HintPath>
+    <Reference Include="DevExpress.Mvvm, Version=20.2.0.0, Culture=neutral, PublicKeyToken=382ad28f6ae31f30, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpressMvvm.20.1.6\lib\net452\DevExpress.Mvvm.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Maps.MapControl.WPF, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Maps.MapControl.WPF.1.0.0.3\lib\net40-Client\Microsoft.Maps.MapControl.WPF.dll</HintPath>
+    <Reference Include="DevExpress.Mvvm.UI, Version=20.2.0.0, Culture=neutral, PublicKeyToken=382ad28f6ae31f30, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpressMvvm.20.1.6\lib\net452\DevExpress.Mvvm.UI.dll</HintPath>
     </Reference>
+    <Reference Include="SciChart.Charting, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL" />
+    <Reference Include="SciChart.Core, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL" />
+    <Reference Include="SciChart.Data, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL" />
+    <Reference Include="SciChart.Drawing, Version=5.4.0.12119, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Reactive, Version=4.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
@@ -111,6 +107,7 @@
     <Compile Include="ViewModels\Cvt.cs" />
     <Compile Include="ViewModels\CorrGridModel.cs" />
     <Compile Include="ViewModels\ItemChartTabViewModel.cs" />
+    <Compile Include="ViewModels\TrendChartModel.cs" />
     <Compile Include="ViewModels\WaferMapGridModel.cs" />
     <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="ViewModels\WaferMapViewModel.cs" />
@@ -126,10 +123,6 @@
     <Compile Include="Views\WaferMapTab.xaml.cs">
       <DependentUpon>WaferMapTab.xaml</DependentUpon>
     </Compile>
-    <Page Include="DXSplashScreen\SplashScreenView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -137,9 +130,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DXSplashScreen\SplashScreenView.xaml.cs">
-      <DependentUpon>SplashScreenView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ITab.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -231,10 +221,6 @@
     </None>
     <AppDesigner Include="Properties\" />
     <None Include="SillyMonkeyD_TemporaryKey.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="DXSplashScreen\Image.png" />
-    <Resource Include="DXSplashScreen\Logo.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataInterface\DataInterface.csproj">
