@@ -49,15 +49,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataParse\DataParse.csproj">
-      <Project>{1d4e8891-2c00-4c85-a6b0-0ec68ec8f775}</Project>
-      <Name>DataParse</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\StdfReader\StdfReader.csproj">
-      <Project>{2a700e65-844e-490f-bbc5-cf450821e021}</Project>
-      <Name>StdfReader</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

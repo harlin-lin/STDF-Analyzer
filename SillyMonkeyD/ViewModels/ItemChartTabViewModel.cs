@@ -23,7 +23,7 @@ namespace SillyMonkeyD.ViewModels {
 
         public ObservableCollection<IRenderableSeriesViewModel> RenderableSeries { get { return GetProperty(() => RenderableSeries); } private set { SetProperty(() => RenderableSeries, value); } }
 
-        private List<List<Rst>> _itemsData;
+        private List<float?[]> _itemsData;
         private List<TestID> _testIDs;
 
         private void Init(IDataAcquire dataAcquire, int filterId, List<TestID> testIDs) {
@@ -41,7 +41,7 @@ namespace SillyMonkeyD.ViewModels {
                 TabTitle = DataAcquire.FileName + $"-F{i}-TREND";
             FilePath = DataAcquire.FilePath;
 
-            _itemsData = new List<List<Rst>>();
+            _itemsData = new List<float?[]>();
 
             UpdateFilter();
         }

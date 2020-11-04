@@ -11,14 +11,17 @@ namespace DataInterface {
     /// </summary>
     [Serializable]
     public struct TestID:IEquatable<TestID> {
-        public uint MainNumber { get; private set; }
+        public uint MainNumber { get; }
         public uint SubNumber { get; private set; }
+
+        private int _hashCode;
 
         public TestID(uint testNumber) : this(testNumber, 0) { }
 
         public TestID(uint testNumber, uint subNumber) {
             MainNumber = testNumber;
             SubNumber = subNumber;
+            _hashCode = (testNumber + subNumber / 1000.0).GetHashCode();
         }
 
         public string GetGeneralTestNumber() {
@@ -44,7 +47,7 @@ namespace DataInterface {
         }
 
         public override int GetHashCode() {
-            return (MainNumber.GetHashCode() ^SubNumber.GetHashCode());
+            return _hashCode;
         }
 
         public bool Equals(TestID id) {

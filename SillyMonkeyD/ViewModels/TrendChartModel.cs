@@ -11,12 +11,12 @@ using SciChart.Charting.Model.DataSeries;
 
 namespace SillyMonkeyD.ViewModels {
     public static class TrendChartModel {
-        public static ObservableCollection<IRenderableSeriesViewModel> GetChartData(List<List<Rst>> itemsData) {
+        public static ObservableCollection<IRenderableSeriesViewModel> GetChartData(List<float?[]> itemsData) {
             ObservableCollection<IRenderableSeriesViewModel> renderableSeries = new ObservableCollection<IRenderableSeriesViewModel>();
 
             foreach(var itemData in itemsData) {
                 var xyData = new XyDataSeries<double, double>();
-                for (int i = 0; i < itemData.Count; i++) {
+                for (int i = 0; i < itemData.Length; i++) {
                     if(itemData[i].HasValue)
                         xyData.Append(i, itemData[i].Value);
                 }

@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using DataInterface;
-using DataParse;
+using FileReader;
 
 namespace WpfTest {
     /// <summary>
@@ -29,7 +29,7 @@ namespace WpfTest {
         }
 
         void InitData() {
-            IDataAcquire dataAcquire = new StdfParse(@"E:\Data\12345678.stdf");
+            IDataAcquire dataAcquire = new StdReader(@"E:\Data\12345678.stdf", StdFileType.STD);
 
             dataAcquire.ExtractStdf();
         }

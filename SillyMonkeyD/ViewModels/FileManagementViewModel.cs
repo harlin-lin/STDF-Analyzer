@@ -7,9 +7,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using DataInterface;
-using DataParse;
 using DevExpress.Mvvm;
 using FileHelper;
+using FileReader;
 using Microsoft.Win32;
 using SillyMonkeyD.Views;
 
@@ -43,18 +43,18 @@ namespace SillyMonkeyD.ViewModels {
 
 
         public async void AddFile(string path) {
-            IDataAcquire data = new StdfParse(path);
+            IDataAcquire data = new StdReader(path, StdFileType.STD);
             data.ExtractDone += Data_ExtractDone;
-            data.FilterGenerated += Data_FilterGenerated;
+            //data.FilterGenerated += Data_FilterGenerated;
             Files.Add(data);
             //extract the files
             await System.Threading.Tasks.Task.Run(new Action(() => data.ExtractStdf()));
         }
 
-        private void Data_FilterGenerated(IDataAcquire data) {
+        //private void Data_FilterGenerated(IDataAcquire data) {
             
 
-        }
+        //}
 
         private void Data_ExtractDone(IDataAcquire data) {
             if (data == SelectedFile) {
@@ -65,7 +65,7 @@ namespace SillyMonkeyD.ViewModels {
 
         private void RemoveFile(IDataAcquire data) {
             data.ExtractDone -= Data_ExtractDone;
-            data.ExtractDone -= Data_FilterGenerated;
+            //data.ExtractDone -= Data_FilterGenerated;
 
             for(int i = (TabList.Count - 1); i>= 0; i--) {
                 if (((ITab)TabList[i].DataContext).DataAcquire == data) {
@@ -190,11 +190,9 @@ namespace SillyMonkeyD.ViewModels {
         public ICommand OpenFileDiag { get; private set; }
         public ICommand LoadedCommand { get; private set; }
         public ICommand<TabItem> SetTabFilter { get; private set; }
-        public ICommand<IDataAcquire> SetFileFilter { get; private set; }
         public ICommand<TabItem> ShowTabSummary { get; private set; }
-        public ICommand<IDataAcquire> ShowFileSummary { get; private set; }
-        public ICommand<IDataAcquire> ShowWaferMap { get; private set; }
-        public ICommand<IDataAcquire> ShowChart { get; private set; }
+        public ICommand<TabItem> ShowWaferMap { get; private set; }
+        public ICommand<TabItem> ShowChart { get; private set; }
         public ICommand<IList<object>> ShowCorrelation { get; private set; }
 
         private void InitUiCtr() {
@@ -253,27 +251,30 @@ namespace SillyMonkeyD.ViewModels {
             });
 
             OpenFileRawData = new DelegateCommand(() => {
-                var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(null), "RawGridTab");
-                if(v is null) {
-                    if (SelectedFile.FilterDone) {
-                        AddDataTab(SelectedFile, SelectedFile.GetFilterID(null));
+                //var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(null), "RawGridTab");
+                //if(v is null) {
+                    if (SelectedFile.ParseDone) {
+                        AddDataTab(SelectedFile, SelectedFile.CreateFilter());
                         ShowDataWindow();
                     }
-                } else {
-                    ShowDataWindow(v);
-                }
+                //} else {
+                //    ShowDataWindow(v);
+                //}
 
             });
             OpenSiteRawData = new DelegateCommand(() => {
-                var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key), "RawGridTab");
-                if (v is null) {
-                    if (SelectedFile.FilterDone) {
-                        AddDataTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key));
+                //var v = FindOpendTab(SelectedFile, SelectedFile.GetFilterID(SelectedSite.Key), "RawGridTab");
+                //if (v is null) {
+                    if (SelectedFile.ParseDone) {
+                        FilterSetup f = new FilterSetup("Site:" + SelectedSite.Key);
+                        f.EnableSingleSite(SelectedFile.GetSites(), SelectedSite.Key);
+
+                        AddDataTab(SelectedFile, SelectedFile.CreateFilter(f));
                         ShowDataWindow();
                     }
-                } else {
-                    ShowDataWindow(v);
-                }
+                //} else {
+                //    ShowDataWindow(v);
+                //}
             });
 
             UpdateInfo = new DelegateCommand(() => {
@@ -296,10 +297,6 @@ namespace SillyMonkeyD.ViewModels {
             SetTabFilter = new DelegateCommand<TabItem>((e) => {
                 ShowFilterWindow(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId);
             });
-            SetFileFilter = new DelegateCommand<IDataAcquire>((e) => {
-                if (!e.FilterDone) return; 
-                ShowFilterWindow(e, e.GetFilterID(null));
-            });
             ShowTabSummary = new DelegateCommand<TabItem>((e) => {
                 var v = FindOpendTab(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId, "SummaryTab");
                 if (v is null) {
@@ -309,38 +306,15 @@ namespace SillyMonkeyD.ViewModels {
                     ShowMiscWindow(v);
                 }
             });
-            ShowFileSummary = new DelegateCommand<IDataAcquire>((e) => {
-                if (!e.FilterDone) return;
+            ShowWaferMap = new DelegateCommand<TabItem>((e) => {
 
-                var v = FindOpendTab(e, e.GetFilterID(null), "SummaryTab");
-                if (v is null) {
-                    AddMiscTab(new SummaryTab(e, e.GetFilterID(null)));
-                    ShowMiscWindow();
-                } else {
-                    ShowMiscWindow(v);
-                }
+                AddMiscTab(new WaferMapTab(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId));
+                ShowMiscWindow();
             });
-            ShowWaferMap = new DelegateCommand<IDataAcquire>((e) => {
-                if (!e.FilterDone) return;
+            ShowChart = new DelegateCommand<TabItem>((e) => {
 
-                var v = FindOpendTab(e, e.GetFilterID(null), "WaferMapTab");
-                if (v is null) {
-                    AddMiscTab(new WaferMapTab(e, e.GetFilterID(null)));
-                    ShowMiscWindow();
-                } else {
-                    ShowMiscWindow(v);
-                }
-            });
-            ShowChart = new DelegateCommand<IDataAcquire>((e) => {
-                if (!e.FilterDone) return;
-
-                var v = FindOpendTab(e, e.GetFilterID(null), "ItemChartTab");
-                if (v is null) {
-                    AddMiscTab(new ItemChartTab(e, e.GetFilterID(null), null));
-                    ShowMiscWindow();
-                } else {
-                    ShowMiscWindow(v);
-                }
+                AddMiscTab(new ItemChartTab(((ITab)e.DataContext).DataAcquire, ((ITab)e.DataContext).FilterId, null));
+                ShowMiscWindow();
             });
 
             ShowCorrelation = new DelegateCommand<IList<object>>((e) => {

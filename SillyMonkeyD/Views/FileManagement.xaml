@@ -69,32 +69,8 @@
                                                                        CommandParameter="{Binding}"/>
                                             </dxmvvm:Interaction.Behaviors>
                                         </Button>
-                                        <Image  Source="/Resources/icons/load.png" Width="12" Height="12"  Visibility="{Binding FilterDone, Converter={StaticResource imgbool}}"/>
+                                        <Image  Source="/Resources/icons/load.png" Width="12" Height="12"  Visibility="{Binding ParseDone, Converter={StaticResource imgbool}}"/>
                                         <TextBlock Text="{Binding Path=FileName}"/>
-                                        <StackPanel.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Set Filter" IsEnabled="{Binding FilterDone}">
-                                                    <dxmvvm:Interaction.Behaviors>
-                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetFileFilter, Mode=OneWay}" CommandParameter="{Binding}"/>
-                                                    </dxmvvm:Interaction.Behaviors>
-                                                </MenuItem>
-                                                <MenuItem Header="Show Summary" IsEnabled="{Binding FilterDone}">
-                                                    <dxmvvm:Interaction.Behaviors>
-                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowFileSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
-                                                    </dxmvvm:Interaction.Behaviors>
-                                                </MenuItem>
-                                                <MenuItem Header="Show WaferMap" IsEnabled="{Binding FilterDone}">
-                                                    <dxmvvm:Interaction.Behaviors>
-                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowWaferMap, Mode=OneWay}" CommandParameter="{Binding}"/>
-                                                    </dxmvvm:Interaction.Behaviors>
-                                                </MenuItem>
-                                                <MenuItem Header="Chart View" IsEnabled="{Binding FilterDone}">
-                                                    <dxmvvm:Interaction.Behaviors>
-                                                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowChart, Mode=OneWay}" CommandParameter="{Binding}"/>
-                                                    </dxmvvm:Interaction.Behaviors>
-                                                </MenuItem>
-                                            </ContextMenu>
-                                        </StackPanel.ContextMenu>
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -155,6 +131,16 @@
                                             <MenuItem Header="Correlation">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowCorrelation, Mode=OneWay}" CommandParameter="{Binding Source={x:Reference tabCtr}, Path=SelectedItems}"/>
+                                                </dxmvvm:Interaction.Behaviors>
+                                            </MenuItem>
+                                            <MenuItem Header="Show WaferMap">
+                                                <dxmvvm:Interaction.Behaviors>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowWaferMap, Mode=OneWay}" CommandParameter="{Binding}"/>
+                                                </dxmvvm:Interaction.Behaviors>
+                                            </MenuItem>
+                                            <MenuItem Header="Chart View">
+                                                <dxmvvm:Interaction.Behaviors>
+                                                    <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowChart, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
                                         </ContextMenu>

@@ -12,7 +12,7 @@ namespace DataInterface {
     public interface IDataAcquire: INotifyPropertyChanged {
 
         event ExtractDoneEventHandler ExtractDone;
-        event ExtractDoneEventHandler FilterGenerated;
+        //event ExtractDoneEventHandler FilterGenerated;
 
         void ExtractStdf();
 
@@ -99,11 +99,14 @@ namespace DataInterface {
         Dictionary<ushort, Tuple<string, string>> GetHBinInfo();
 
 
+        Dictionary<TestID, IItemStatistic> GetStatistic();
+
+
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }
         bool ParseDone { get; }
-        bool FilterDone { get; }
+        //bool FilterDone { get; }
         IFileBasicInfo BasicInfo { get; }
         #endregion
 
@@ -120,9 +123,8 @@ namespace DataInterface {
         List<int> GetFilteredChipsIndexes(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int startIndex, int count, int filterId);
-        List<Rst> GetFilteredItemData(TestID testID, int filterId);
-        List<Rst> GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
-        Rst[] GetFilteredItemDataArr(TestID testID, int startIndex, int count, int filterId);
+        float?[] GetFilteredItemData(TestID testID, int filterId);
+        float?[] GetFilteredItemData(TestID testID, int startIndex, int count, int filterId);
         DataTable GetFilteredItemData(int startIndex, int count, int filterId, bool enableRowHeader);
 
 
@@ -147,6 +149,7 @@ namespace DataInterface {
         /// <param name="filter">filter setup</param>
         /// <returns>the created filter's id</returns>
         int CreateFilter(FilterSetup filter);
+        int CreateFilter();
 
         int CreateFilterCopy(int filterId);
 
@@ -156,12 +159,12 @@ namespace DataInterface {
         /// <returns>filters' id and the corresponding comment</returns>
         Dictionary<int, FilterSetup> GetAllFilter();
 
-        /// <summary>
-        /// get corresponding site's filter
-        /// </summary>
-        /// <param name="site">if is null means get the full sites one</param>
-        /// <returns></returns>
-        int GetFilterID(byte? site);
+        ///// <summary>
+        ///// get corresponding site's filter
+        ///// </summary>
+        ///// <param name="site">if is null means get the full sites one</param>
+        ///// <returns></returns>
+        //int GetFilterID(byte? site);
 
         /// <summary>
         /// find the index of the correspoding FilterId, return -1 if cannot find

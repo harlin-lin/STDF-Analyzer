@@ -11,7 +11,7 @@ namespace DataInterface {
         Dictionary<TestID, IItemInfo> _itemInfo;
         List<IChipInfo> _chipInfo;
         //List<List<Rst>> _rst;
-        Rst[][] _rst;
+        float?[][] _rst;
         int _colCount;
         int _rowCount;
         int _filterId;
@@ -25,9 +25,9 @@ namespace DataInterface {
 
             _chipInfo = dataAcquire.GetFilteredChipsInfo(startIndex, count, filterId);
 
-            _rst = new Rst[_itemInfo.Count][];
+            _rst = new float?[_itemInfo.Count][];
             for(int i=0; i<_itemInfo.Count; i++) {
-                _rst[i] = dataAcquire.GetFilteredItemDataArr(_itemInfo.ElementAt(i).Key, startIndex, count, filterId);
+                _rst[i] = dataAcquire.GetFilteredItemData(_itemInfo.ElementAt(i).Key, startIndex, count, filterId);
                 //_rst.Add(dataAcquire.GetFilteredItemData(_itemInfo.ElementAt(i).Key, filterId));
             }
 
@@ -43,9 +43,9 @@ namespace DataInterface {
 
             _chipInfo = _dataAcquire.GetFilteredChipsInfo(startIndex, count, _filterId);
 
-            _rst = new Rst[_itemInfo.Count][];
+            _rst = new float?[_itemInfo.Count][];
             for (int i = 0; i < _itemInfo.Count; i++) {
-                _rst[i] = _dataAcquire.GetFilteredItemDataArr(_itemInfo.ElementAt(i).Key, startIndex, count, _filterId);
+                _rst[i] = _dataAcquire.GetFilteredItemData(_itemInfo.ElementAt(i).Key, startIndex, count, _filterId);
                 //_rst.Add(dataAcquire.GetFilteredItemData(_itemInfo.ElementAt(i).Key, filterId));
             }
 
@@ -134,17 +134,17 @@ namespace DataInterface {
         }
 
         public Color? GetCellFontColor(int row, int column) {
-            if (column < colFixedLength) {
-                return null;
-            } else {
-                var v = _rst[row][column - colFixedLength];
-                if (v.HasValue && !v.IsPass) {
-                    if (v.IsLessLL) return Colors.Blue;
-                    if (v.IsGreaterHL) return Colors.Red;
+            //if (column < colFixedLength) {
+            //    return null;
+            //} else {
+            //    var v = _rst[row][column - colFixedLength];
+            //    if (v.HasValue && !v.IsPass) {
+            //        if (v.IsLessLL) return Colors.Blue;
+            //        if (v.IsGreaterHL) return Colors.Red;
+            //        return null;
+            //    } else
                     return null;
-                } else
-                    return null;
-            }
+            //}
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using DataInterface;
-using DataParse;
+using FileReader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace FileHelper {
 
         public IDataAcquire AddFile(string path) {
             int key = path.GetHashCode();
-            IDataAcquire val = new StdfParse(path);
+            IDataAcquire val = new StdReader(path, StdFileType.STD);
             if (!_files.ContainsKey(key)) { 
                 _files.Add(key, val);
                 val.ExtractDone += stdFile_ExtractDone;
@@ -113,13 +113,13 @@ namespace FileHelper {
             return sb.ToString();
         }
 
-        public int? CreateFilterDataHandler(int fileHash, byte? site) {
-            if (!_files.ContainsKey(fileHash)) return null;
+        //public int? CreateFilterDataHandler(int fileHash, byte? site) {
+        //    if (!_files.ContainsKey(fileHash)) return null;
 
-            var id = _files[fileHash].CreateFilterCopy(_files[fileHash].GetFilterID(site));
+        //    var id = _files[fileHash].CreateFilterCopy(_files[fileHash].GetFilterID(site));
 
-            return id;
-        }
+        //    return id;
+        //}
 
         public FilterSetup GetFilterSetup(int fileHash, int filterId) {
             if (!_files.ContainsKey(fileHash)) return null;

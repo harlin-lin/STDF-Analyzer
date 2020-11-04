@@ -227,10 +227,6 @@
       <Project>{fd0b8b5f-dbb8-4564-86e4-67b8009230b0}</Project>
       <Name>DataInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataParse\DataParse.csproj">
-      <Project>{1D4E8891-2C00-4C85-A6B0-0EC68EC8F775}</Project>
-      <Name>DataParse</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
       <Project>{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}</Project>
       <Name>FastWpfGrid</Name>
@@ -238,6 +234,10 @@
     <ProjectReference Include="..\FileHelper\FileHelper.csproj">
       <Project>{897bc392-7e1c-4c48-9c94-61127f1f5287}</Project>
       <Name>FileHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileReader\FileReader.csproj">
+      <Project>{55776d52-9e3d-4509-925f-695fc9d8ea54}</Project>
+      <Name>FileReader</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

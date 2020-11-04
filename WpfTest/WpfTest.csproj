@@ -106,13 +106,13 @@
       <Project>{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}</Project>
       <Name>DataInterface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataParse\DataParse.csproj">
-      <Project>{1D4E8891-2C00-4C85-A6B0-0EC68EC8F775}</Project>
-      <Name>DataParse</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
       <Project>{e9d6f03c-bfb5-4d31-a15e-7f789b4bbcc3}</Project>
       <Name>FastWpfGrid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileReader\FileReader.csproj">
+      <Project>{55776D52-9E3D-4509-925F-695FC9D8EA54}</Project>
+      <Name>FileReader</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
