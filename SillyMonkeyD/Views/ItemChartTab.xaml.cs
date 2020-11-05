@@ -14,7 +14,7 @@ namespace SillyMonkeyD.Views {
         ItemChartTabViewModel itemChartTab;
         public ItemChartTab(IDataAcquire dataAcquire, int filterId, List<TestID> testIDs) {
             InitializeComponent();
-            itemChartTab = new ItemChartTabViewModel(dataAcquire, filterId, testIDs);
+            itemChartTab = new ItemChartTabViewModel(dataAcquire, filterId, testIDs, this);
             DataContext = itemChartTab;
         }
     }

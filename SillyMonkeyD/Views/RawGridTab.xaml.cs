@@ -11,7 +11,7 @@ namespace SillyMonkeyD.Views {
         public RawGridTab(IDataAcquire dataAcquire, int filterId) {
             InitializeComponent();
 
-            rawgridTab = new RawGridTabViewModel(dataAcquire, filterId);
+            rawgridTab = new RawGridTabViewModel(dataAcquire, filterId, this);
             DataContext = rawgridTab;
 
         }

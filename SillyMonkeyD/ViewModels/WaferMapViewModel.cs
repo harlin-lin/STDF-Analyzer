@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using DataInterface;
 using DevExpress.Mvvm;
 
 namespace SillyMonkeyD.ViewModels {
     public class WaferMapViewModel : ViewModelBase, ITab {
-        public WaferMapViewModel(IDataAcquire dataAcquire, int filterId) {
+        public WaferMapViewModel(IDataAcquire dataAcquire, int filterId, TabItem tab) {
             Init(dataAcquire, filterId);
+            CorrespondingTab = tab;
             InitUI();
         }
 
@@ -16,6 +19,11 @@ namespace SillyMonkeyD.ViewModels {
         public string TabTitle { get { return GetProperty(() => TabTitle); } private set { SetProperty(() => TabTitle, value); } }
         public string FilePath { get { return GetProperty(() => FilePath); } private set { SetProperty(() => FilePath, value); } }
         public int WindowFlag { get; private set; }
+        public TabType TabType { get { return TabType.WaferMapTab; } }
+        public bool IsMainTab { get { return false; } }
+        public Thickness LocationInTablist { get { return IsMainTab ? new Thickness(0, 0, 3, 0) : new Thickness(25, 0, 3, 0); } }
+        public TabItem CorrespondingTab { get; }
+
         public WaferMapGridModel Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
 
         private void Init(IDataAcquire dataAcquire, int filterId) {

@@ -71,7 +71,7 @@ namespace FileReader {
 
         }
 
-        public void AddChip(ChipInfo chipInfo) {
+        public void AddChip(IChipInfo chipInfo) {
             switch (chipInfo.ChipType) {
                 case DeviceType.Fresh:
                     FreshCount++; break;

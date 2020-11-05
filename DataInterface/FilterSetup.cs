@@ -9,7 +9,7 @@ namespace DataInterface {
     public enum DuplicateSelectMode {
         First,
         Last,
-        Both
+        OnlyDuplicated
     }
     public enum DuplicateJudgeMode {
         ID,

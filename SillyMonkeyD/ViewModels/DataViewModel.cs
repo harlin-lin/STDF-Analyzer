@@ -5,12 +5,12 @@ using System.Windows.Input;
 using DevExpress.Mvvm;
 
 namespace SillyMonkeyD.ViewModels {
-    public delegate void SelectedTabHandler(TabItem tabItem);
+    public delegate void SelectedTabHandler(ITab tabItem);
 
     public class DataViewModel : ViewModelBase {
 
         public ObservableCollection<TabItem> DataTabItems { get; private set; }
-        public TabItem SelectedTab { get { return GetProperty(() => SelectedTab); } set { SetProperty(() => SelectedTab, value); } }
+        public ITab SelectedTab { get { return GetProperty(() => SelectedTab); } set { SetProperty(() => SelectedTab, value); } }
 
         public SelectedTabHandler SelectedTabEvent;
 

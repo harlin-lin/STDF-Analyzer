@@ -104,7 +104,7 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
-                                    <Button Margin="0,0,3,0" 
+                                    <Button Margin="{Binding Path=LocationInTablist}" 
                                             Width="12" Height="14" 
                                             Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                                         <Button.Background>
@@ -115,7 +115,7 @@
                                                                        CommandParameter="{Binding}"/>
                                         </dxmvvm:Interaction.Behaviors>
                                     </Button>
-                                    <TextBlock Text="{Binding Path=Header}"/>
+                                    <TextBlock Text="{Binding Path=TabTitle}"/>
                                     <StackPanel.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Set Filter">
@@ -123,22 +123,22 @@
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.SetTabFilter, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
-                                            <MenuItem Header="Show Summary">
+                                            <MenuItem Header="Show Summary" IsEnabled="{Binding Path=IsMainTab}">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowTabSummary, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
-                                            <MenuItem Header="Correlation">
+                                            <MenuItem Header="Correlation" IsEnabled="{Binding Path=IsMainTab}">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowCorrelation, Mode=OneWay}" CommandParameter="{Binding Source={x:Reference tabCtr}, Path=SelectedItems}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
-                                            <MenuItem Header="Show WaferMap">
+                                            <MenuItem Header="Show WaferMap" IsEnabled="{Binding Path=IsMainTab}">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowWaferMap, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>
                                             </MenuItem>
-                                            <MenuItem Header="Chart View">
+                                            <MenuItem Header="Chart View" IsEnabled="{Binding Path=IsMainTab}">
                                                 <dxmvvm:Interaction.Behaviors>
                                                     <dxmvvm:EventToCommand EventName="Click" Command="{Binding Source={x:Reference FileControl}, Path=DataContext.ShowChart, Mode=OneWay}" CommandParameter="{Binding}"/>
                                                 </dxmvvm:Interaction.Behaviors>

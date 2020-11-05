@@ -13,7 +13,7 @@ namespace SillyMonkeyD.Views {
         public CorrelationTab(List<Tuple<IDataAcquire, int>> dataFilterTuple) {
             InitializeComponent();
 
-            corrTab = new CorrelationTabViewModel(dataFilterTuple);
+            corrTab = new CorrelationTabViewModel(dataFilterTuple, this);
             DataContext = corrTab;
 
         }

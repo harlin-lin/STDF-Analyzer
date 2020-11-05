@@ -120,7 +120,7 @@ namespace DataInterface {
         Dictionary<ushort, int> GetFilteredHardBinsCount(int filterId);
         List<TestID> GetFilteredTestIDs(int filterId);
         Dictionary<TestID, IItemInfo> GetFilteredTestIDs_Info(int filterId);
-        List<int> GetFilteredChipsIndexes(int filterId);
+        //List<int> GetFilteredChipsIndexes(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int filterId);
         List<IChipInfo> GetFilteredChipsInfo(int startIndex, int count, int filterId);
         float?[] GetFilteredItemData(TestID testID, int filterId);

@@ -8,7 +8,7 @@ using DevExpress.Xpf.Core;
 namespace SillyMonkeyD.ViewModels {
     public class MiscViewModel : ViewModelBase {
         public ObservableCollection<TabItem> DataTabItems { get; private set; }
-        public TabItem SelectedTab { get { return GetProperty(() => SelectedTab); } set { SetProperty(() => SelectedTab, value); } }
+        public ITab SelectedTab { get { return GetProperty(() => SelectedTab); } set { SetProperty(() => SelectedTab, value); } }
 
         public SelectedTabHandler SelectedTabEvent;
 

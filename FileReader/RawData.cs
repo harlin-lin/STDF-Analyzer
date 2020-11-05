@@ -91,32 +91,21 @@ namespace FileReader {
             listPinGroups = new List<PinGroupRecord>();
         }
 
-        public float?[] GetItemDataFiltered(TestID id, bool[] filter) {
-            var cnt = filter.Count(a => a == false);
-            float?[] rst = new float?[cnt];
+        public float?[] GetItemDataFiltered(TestID id, List<int> filter) {
             
-            int x = 0;
-            for (int i=0; i<filter.Length; i++) {
-                if (filter[i]) {
-                    rst[x] = _rawData[id][i];
-                    x++;
-                }
-                if ((x + 1) >= cnt) break;
-            }
-
-            return rst;
+            return (from i in filter let r=_rawData[id][i] select r).ToArray();
         }
 
-        public float?[] GetItemDataFiltered(TestID id, int chipIndexFrom, int count, bool[] filter) {
-            float?[] rst = new float?[count];
+        public float?[] GetItemDataFiltered(TestID id, int chipIndexFrom, int count, List<int> filter) {
+            int idxEnd = chipIndexFrom + count-1;
+            if (chipIndexFrom > (filter.Count + 1)) return null;
+            if((chipIndexFrom+count-1) > filter.Count) {
+                idxEnd = filter.Count - chipIndexFrom-1;
+            }
 
-            int x = 0;
-            for (int i = chipIndexFrom; i < filter.Length; i++) {
-                if (!filter[i]) {
-                    rst[x] = _rawData[id][i];
-                    x++;
-                }
-                if ((x+1) >= count) break;
+            float?[] rst = new float?[idxEnd - chipIndexFrom + 1];
+            for (int i = chipIndexFrom, x=0; i <= idxEnd; i++, x++) {
+                rst[x] = _rawData[id][filter[i]];
             }
 
             return rst;

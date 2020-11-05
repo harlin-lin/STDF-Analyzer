@@ -10,7 +10,7 @@ namespace SillyMonkeyD.Views {
         SummaryTabViewModel summaryTab;
         public SummaryTab(IDataAcquire dataAcquire, int filterId) {
             InitializeComponent();
-            summaryTab = new SummaryTabViewModel(dataAcquire, filterId);
+            summaryTab = new SummaryTabViewModel(dataAcquire, filterId, this);
             DataContext = summaryTab;
             rtbSum.Document = summaryTab.Summary;
 

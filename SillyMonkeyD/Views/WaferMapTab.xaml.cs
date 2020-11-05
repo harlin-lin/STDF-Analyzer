@@ -12,7 +12,7 @@ namespace SillyMonkeyD.Views {
         public WaferMapTab(IDataAcquire dataAcquire, int filterId) {
             InitializeComponent();
 
-            mapgridTab = new WaferMapViewModel(dataAcquire, filterId);
+            mapgridTab = new WaferMapViewModel(dataAcquire, filterId, this);
             DataContext = mapgridTab;
 
         }

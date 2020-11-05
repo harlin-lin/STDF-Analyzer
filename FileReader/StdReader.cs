@@ -36,7 +36,9 @@ namespace FileReader {
         [Serializable]
         private class FilterData {
             public FilterSetup Filter { get; private set; }
-            public bool[] ChipFilter;
+            //public bool[] ChipFilter;
+            public List<int> ChipFilter;
+
             public bool[] ItemFilter;
             public Dictionary<byte, IChipSummary> SitesSummary;
             public IChipSummary Summary;
@@ -44,7 +46,8 @@ namespace FileReader {
 
             public FilterData(FilterSetup filterSetup, int chipsCount, int itemsCount) {
                 Filter = filterSetup;
-                ChipFilter = new bool[chipsCount];
+                //ChipFilter = new bool[chipsCount];
+                ChipFilter = new List<int>(chipsCount);
                 ItemFilter = new bool[itemsCount];
                 SitesSummary = new Dictionary<byte, IChipSummary>();
                 Summary = null;
@@ -242,9 +245,9 @@ namespace FileReader {
             return _rawData._testItems.GetTestIDs_InfoFiltered(_filterList[filterId].ItemFilter);
         }
 
-        public List<int> GetFilteredChipsIndexes(int filterId) {
-            return _rawData._testChips.GetFilteredChipsIndexes(_filterList[filterId].ChipFilter);
-        }
+        //public List<int> GetFilteredChipsIndexes(int filterId) {
+        //    return _rawData._testChips.GetFilteredChipsIndexes(_filterList[filterId].ChipFilter);
+        //}
         public List<IChipInfo> GetFilteredChipsInfo(int filterId) {
             return _rawData._testChips.GetFilteredChipsInfo(_filterList[filterId].ChipFilter);
         }
@@ -430,6 +433,10 @@ namespace FileReader {
             while (_filterList.ContainsKey(key)) key++;
             _filterList.Add(key, new FilterData(new FilterSetup("all site"), _rawData._testChips.ChipsCount, _rawData._testItems.ItemsCount));
 
+            //init the chip filter
+            _filterList[key].ChipFilter.AddRange(Enumerable.Range(0, _rawData._testChips.ChipsCount));
+            //item filter doesn't need init
+
             _rawData._testChips.UpdateSummaryFiltered(_filterList[key].ChipFilter, ref _filterList[key].SitesSummary);
             _filterList[key].Summary = ChipSummary.Combine(_filterList[key].SitesSummary);
             _filterList[key].StatisticList = new Dictionary<TestID, IItemStatistic>(_defaultStatistic);
@@ -441,7 +448,7 @@ namespace FileReader {
             _filterList.Add(key, new FilterData(filter, _rawData._testChips.ChipsCount, _rawData._testItems.ItemsCount));
 
             _rawData._testChips.UpdateChipFilter(filter, ref _filterList[key].ChipFilter);
-            _rawData._testItems.UpdateItemFilter(filter, ref _filterList[key].ChipFilter);
+            _rawData._testItems.UpdateItemFilter(filter, ref _filterList[key].ItemFilter);
 
             _rawData._testChips.UpdateSummaryFiltered(_filterList[key].ChipFilter, ref _filterList[key].SitesSummary);
             _filterList[key].Summary = ChipSummary.Combine(_filterList[key].SitesSummary);

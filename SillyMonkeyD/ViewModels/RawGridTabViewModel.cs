@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using DataInterface;
 using DevExpress.Mvvm;
@@ -7,8 +9,9 @@ using DevExpress.Mvvm;
 namespace SillyMonkeyD.ViewModels {
     public class RawGridTabViewModel : ViewModelBase, ITab {
 
-        public RawGridTabViewModel(IDataAcquire dataAcquire, int filterId) {
+        public RawGridTabViewModel(IDataAcquire dataAcquire, int filterId, TabItem tab) {
             Init(dataAcquire, filterId);
+            CorrespondingTab = tab;
             InitUI();
         }
 
@@ -23,6 +26,11 @@ namespace SillyMonkeyD.ViewModels {
         public string TabTitle { get { return GetProperty(() => TabTitle); } private set { SetProperty(() => TabTitle, value); } }
         public string FilePath { get { return GetProperty(() => FilePath); } private set { SetProperty(() => FilePath, value); } }
         public int WindowFlag { get; private set; }
+        public TabType TabType { get { return TabType.RawDataTab; } }
+        public bool IsMainTab { get { return true; } }
+        public Thickness LocationInTablist { get { return IsMainTab ? new Thickness(0, 0, 3, 0) : new Thickness(25, 0, 3, 0); } }
+        public TabItem CorrespondingTab { get; }
+
         //public DataTable Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
         public StdLogGridModel Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
 
