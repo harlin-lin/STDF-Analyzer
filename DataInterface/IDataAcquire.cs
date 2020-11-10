@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DataInterface {
     public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
-    public interface IDataAcquire: INotifyPropertyChanged {
+    public interface IDataAcquire: INotifyPropertyChanged ,IDisposable{
 
         event ExtractDoneEventHandler ExtractDone;
         //event ExtractDoneEventHandler FilterGenerated;
@@ -182,6 +182,7 @@ namespace DataInterface {
         void RemoveFilter(int filterId);
         #endregion
 
+        
         void CleanUp();
     }
 }

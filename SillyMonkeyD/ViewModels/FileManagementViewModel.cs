@@ -65,7 +65,6 @@ namespace SillyMonkeyD.ViewModels {
 
         private void RemoveFile(IDataAcquire data) {
             data.ExtractDone -= Data_ExtractDone;
-            //data.ExtractDone -= Data_FilterGenerated;
 
             for(int i = (TabList.Count - 1); i>= 0; i--) {
                 if (TabList[i].DataAcquire == data) {
@@ -78,9 +77,9 @@ namespace SillyMonkeyD.ViewModels {
                     }
                 }
             }
-            
             Files.Remove(data);
-            GC.Collect();
+            data.Dispose();
+            data = null;
         }
 
 
@@ -273,6 +272,8 @@ namespace SillyMonkeyD.ViewModels {
                     RemoveDataTab(e);
                 else if(e.WindowFlag == 2)
                     RemoveMiscTab(e);
+
+                GC.Collect();
             });
 
             FocusTab = new DelegateCommand(() => {

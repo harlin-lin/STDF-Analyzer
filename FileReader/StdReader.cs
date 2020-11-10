@@ -537,11 +537,9 @@ namespace FileReader {
             GC.Collect();
         }
 
-
-
-
-
-
+        public void Dispose() {
+            CleanUp();
+        }
 
         private StdV4Reader _v4Reader;
         private RawData _rawData;
