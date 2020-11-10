@@ -10,16 +10,15 @@ using System.Windows.Media;
 
 namespace SillyMonkeyD.ViewModels {
     public class WaferMapGridModel : IFastGridModel, IFastGridCell {
+        List<IChipInfo> _chipInfo;
+        Dictionary<CordType, IChipInfo> _waferMap;
+        int _colCount;
+        int _rowCount;
+        bool valid;
+        int _filterId;
+        IDataAcquire _dataAcquire;
 
-        private WaferMapTable _dataSource;
 
-        public WaferMapTable DataSource {
-            get { return _dataSource; }
-            set {
-                _dataSource = value;
-                NotifyRefresh();
-            }
-        }
 
         private List<IFastGridView> _grids = new List<IFastGridView>();
         private int? _requestedRow;
@@ -31,23 +30,70 @@ namespace SillyMonkeyD.ViewModels {
 
 
 
-        public WaferMapGridModel(WaferMapTable logTable) {
-            _dataSource = logTable;
-            NotifyRefresh();
+        public WaferMapGridModel(IDataAcquire dataAcquire, int filterId) {
+
+            _dataAcquire = dataAcquire;
+            _filterId = filterId;
+            _waferMap = new Dictionary<CordType, IChipInfo>();
+
+            foreach (var v in dataAcquire.GetChipsInfo()) {
+                var c = new CordType(v.WaferCord.CordX, v.WaferCord.CordY);
+                if (_colCount <= c.CordX) _colCount = c.CordX + 1;
+                if (_rowCount <= c.CordY) _rowCount = c.CordY + 1;
+            }
+
+            Update();
         }
 
         public void Update() {
-            _dataSource.Update();
+            _chipInfo = _dataAcquire.GetFilteredChipsInfo(_filterId);
+            valid = true;
+            _waferMap.Clear();
+
+            //check if can be plot into wafer map
+            int i = 0;
+            foreach (var v in _chipInfo) {
+                if (v.WaferCord.CordX != 0 && v.WaferCord.CordY != 0) break;
+                else i++;
+
+                if (i >= 3) {
+                    _colCount = 0;
+                    _rowCount = 0;
+                    valid = false;
+                }
+            }
+
+            //get the cord dict
+            foreach (var v in _chipInfo) {
+                var c = new CordType(v.WaferCord.CordX, v.WaferCord.CordY);
+                if (_waferMap.ContainsKey(c)) {
+                    _waferMap[c] = v;
+                } else {
+                    _waferMap.Add(c, v);
+                }
+                if (_colCount <= c.CordX) _colCount = c.CordX + 1;
+                if (_rowCount <= c.CordY) _rowCount = c.CordY + 1;
+            }
             NotifyRefresh();
         }
 
 
-        public int ColumnCount { get { return _dataSource.ColumnCount; } }
+        public int ColumnCount { get { return _colCount; } }
 
-        public int RowCount { get { return _dataSource.RowCount; } }
+        public int RowCount { get { return _rowCount; } }
 
-        string GetCellText(int row, int column) {
-            return _dataSource.GetCellText(row, column);
+        public string GetCellText(int row, int column) {
+            if (!valid) return "";
+
+            CordType c = new CordType((short)(column - 1), (short)(row - 1));
+
+            if (!_waferMap.ContainsKey(c)) return "";
+
+            if (_waferMap[c].Result == ResultType.Null) {
+                return "";
+            } else {
+                return _waferMap[c].SoftBin.ToString();
+            }
         }
 
         public IFastGridCell GetCell(IFastGridView view, int row, int column) {
@@ -57,11 +103,15 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         public string GetRowHeaderText(int row) {
-            return _dataSource.GetRowHeader(row);
+            if (!valid) return "";
+
+            return $"{row}";
         }
 
         public string GetColumnHeaderText(int column) {
-            return _dataSource.GetColHeader(column);
+            if (!valid) return "";
+
+            return $"{column}";
         }
 
         public IFastGridCell GetRowHeader(IFastGridView view, int row) {
@@ -178,11 +228,27 @@ namespace SillyMonkeyD.ViewModels {
         public Color? BackgroundColor {
             get {
                 if (_requestedRow.HasValue && _requestedColumn.HasValue)
-                    return _dataSource.GetCellColor(_requestedRow.Value, _requestedColumn.Value);
+                    return GetCellColor(_requestedRow.Value, _requestedColumn.Value);
                 else
                     return null;
             }
         }
+        Color? GetCellColor(int row, int column) {
+            if (!valid) return null;
+
+            CordType c = new CordType((short)(column - 1), (short)(row - 1));
+
+            if (!_waferMap.ContainsKey(c)) return null;
+
+            switch (_waferMap[c].Result) {
+                case ResultType.Pass: return Colors.Green;
+                case ResultType.Fail: return Colors.Red;
+                case ResultType.Abort: return Colors.Yellow;
+                default: return null;
+            }
+
+        }
+
         public virtual Color? FontColor {
             get {
                 return null;

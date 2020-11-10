@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{EB23B3C1-3CB4-406C-A342-CADA4AE07804}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataInterface", "DataInterface\DataInterface.csproj", "{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileHelper", "FileHelper\FileHelper.csproj", "{897BC392-7E1C-4C48-9C94-61127F1F5287}"
@@ -12,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SillyMonkeyD", "SillyMonkeyD\SillyMonkeyD.csproj", "{C833F43D-5980-4F5C-8D63-9C986419784C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWpfGrid", "FastWpfGrid\FastWpfGrid.csproj", "{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfTest", "WpfTest\WpfTest.csproj", "{77668757-EB85-4454-AAAC-04C1318E2ABE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteableBitmapEx.Wpf", "WriteableBitmapEx\WriteableBitmapEx.Wpf.csproj", "{B0AA6A94-6784-4221-81F0-244A68C374C0}"
 EndProject
@@ -25,10 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EB23B3C1-3CB4-406C-A342-CADA4AE07804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB23B3C1-3CB4-406C-A342-CADA4AE07804}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB23B3C1-3CB4-406C-A342-CADA4AE07804}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB23B3C1-3CB4-406C-A342-CADA4AE07804}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD0B8B5F-DBB8-4564-86E4-67B8009230B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,10 +37,6 @@ Global
 		{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9D6F03C-BFB5-4D31-A15E-7F789B4BBCC3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77668757-EB85-4454-AAAC-04C1318E2ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77668757-EB85-4454-AAAC-04C1318E2ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77668757-EB85-4454-AAAC-04C1318E2ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77668757-EB85-4454-AAAC-04C1318E2ABE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Release|Any CPU.ActiveCfg = Release|Any CPU

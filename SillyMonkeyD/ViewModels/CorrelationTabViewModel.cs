@@ -23,7 +23,7 @@ namespace SillyMonkeyD.ViewModels {
 
             _dataFilterTuple = dataFilterTuple;
 
-            Data = new CorrGridModel(new CorrelationTable(dataFilterTuple));
+            Data = new CorrGridModel(dataFilterTuple);
 
             CorrespondingTab = tab;
 

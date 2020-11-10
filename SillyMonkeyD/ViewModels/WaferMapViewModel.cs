@@ -39,7 +39,7 @@ namespace SillyMonkeyD.ViewModels {
                 TabTitle = DataAcquire.FileName + $"-F{i}-RAW";
             FilePath = DataAcquire.FilePath;
 
-            Data = new WaferMapGridModel(new WaferMapTable(DataAcquire, FilterId));
+            Data = new WaferMapGridModel(DataAcquire, FilterId);
         }
 
 

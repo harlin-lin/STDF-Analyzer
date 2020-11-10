@@ -21,47 +21,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Width="18" Height="18" Margin="0,0,20,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/icons/angle-double-left.png"/>
-                    </Button.Background>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding JumpStartPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
-                    </dxmvvm:Interaction.Behaviors>
-                </Button>
-                <Button Width="18" Height="18" Margin="0,0,20,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/icons/angle-left.png"/>
-                    </Button.Background>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding JumpLastPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
-                    </dxmvvm:Interaction.Behaviors>
-                </Button>
-                <TextBlock FontSize="8" Margin="0,0,20,0" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                    <TextBlock.Text>
-                        <MultiBinding  StringFormat="QTY:{0} Total Pages:{1} Current:{2}">
-                            <Binding Path="TotalCount"/>
-                            <Binding Path="TotalPages"/>
-                            <Binding Path="CurrentPageIndex"/>
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-                <Button Width="18" Height="18" Margin="0,0,20,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/icons/angle-right.png"/>
-                    </Button.Background>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding JumpNextPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
-                    </dxmvvm:Interaction.Behaviors>
-                </Button>
-                <Button Width="18" Height="18" Margin="0,0,20,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/Resources/icons/angle-double-right.png"/>
-                    </Button.Background>
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:EventToCommand EventName="Click" Command="{Binding JumpEndPage, Mode=OneWay}" PassEventArgsToCommand="False"/>
-                    </dxmvvm:Interaction.Behaviors>
-                </Button>
                 <Button Width="18" Height="18" Margin="0,0,0,0">
                     <dxmvvm:Interaction.Behaviors>
                         <dxmvvm:EventToCommand EventName="Click" Command="{Binding ExportToExcel, Mode=OneWay}" PassEventArgsToCommand="False"/>
@@ -70,43 +29,6 @@
             </StackPanel>
             <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding Data}">
             </FastWpfGrid:FastGridControl>
-
-            <!--<dxg:GridControl x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}"  AutoGenerateColumns="AddNew"
-                        FontSize="8"
-                        IsFilterEnabled="False" SelectionMode="None" AllowMRUFilterList="False" AllowColumnMRUFilterList="False" >
-                <dxg:GridControl.View>
-                    <dxg:TableView AllowEditing="False" 
-                                AllowPerPixelScrolling="False" 
-                                AllowGrouping="False" 
-                                AllowColumnMoving="False" 
-                                AllowSorting="False" 
-                                AllowMoveColumnToDropArea="False" 
-                                AllowBandMultiRow="False" 
-                                AllowBandMoving="False" 
-                                AllowBandResizing="False" 
-                                ShowBandsInCustomizationForm="False" 
-                                ShowBandsPanel="False" 
-                                AllowColumnFiltering="False" 
-                                AllowFilterEditor="False" 
-                                ShowSearchPanelMode="Never" 
-                                ShowGroupPanel="False" 
-                                SearchPanelAllowFilter="False"
-                                AllowCascadeUpdate="False">
-
-                    </dxg:TableView>
-                </dxg:GridControl.View>
-
-
-                <dxg:GridControl.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="ShowInHistogram">
-                            <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="Click" Command="{Binding CreateHistogram, Mode=OneWay}" PassEventArgsToCommand="False"/>
-                            </dxmvvm:Interaction.Behaviors>
-                        </MenuItem>
-                    </ContextMenu>
-                </dxg:GridControl.ContextMenu>
-            </dxg:GridControl>-->
         </Grid>
     </TabItem.Content>
 </TabItem>

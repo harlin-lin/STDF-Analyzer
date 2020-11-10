@@ -58,8 +58,8 @@ namespace SillyMonkeyD.ViewModels {
             _itemsData.Clear();
 
             //debug code
-            _testIDs = new List<TestID>();
-            _testIDs.Add(DataAcquire.GetFilteredTestIDs(FilterId)[19]);
+            //_testIDs = new List<TestID>();
+            //_testIDs.Add(DataAcquire.GetFilteredTestIDs(FilterId)[19]);
 
             if (!_testIDs.IsNullOrEmpty()) {
                 foreach(var id in _testIDs)
