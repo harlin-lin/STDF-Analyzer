@@ -16,14 +16,9 @@ namespace SillyMonkeyD.Views {
     /// <summary>
     /// Interaction logic for Data.xaml
     /// </summary>
-    public partial class Data : Window {
+    public partial class Data : UserControl {
         public Data() {
             InitializeComponent();
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            e.Cancel = true;
-            this.Hide();
         }
     }
 }

@@ -20,6 +20,7 @@ namespace SillyMonkeyD.Views {
     public partial class FileManagement : UserControl {
         public FileManagement() {
             InitializeComponent();
+            this.DataContext = new FileManagementViewModel(this);
         }
 
 

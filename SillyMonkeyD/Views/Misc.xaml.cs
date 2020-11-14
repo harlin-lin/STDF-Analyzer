@@ -16,15 +16,9 @@ namespace SillyMonkeyD.Views {
     /// <summary>
     /// Interaction logic for Misc.xaml
     /// </summary>
-    public partial class Misc : Window {
+    public partial class Misc : UserControl {
         public Misc() {
             InitializeComponent();
         }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-            e.Cancel = true;
-            this.Hide();
-        }
-
     }
 }

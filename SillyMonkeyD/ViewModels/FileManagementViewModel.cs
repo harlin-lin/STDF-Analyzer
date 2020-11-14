@@ -17,7 +17,20 @@ namespace SillyMonkeyD.ViewModels {
 
     public class FileManagementViewModel : ViewModelBase {
 
-        public FileManagementViewModel() {
+        public FileManagementViewModel(FileManagement fileManagement) {
+            _fileManagementView = fileManagement;
+            _dataView = _fileManagementView._dataView;
+            ((DataViewModel)_dataView.DataContext).SelectedTabEvent += ((e) => SelectedTab = e);
+
+            _miscView = _fileManagementView._miscView;
+            ((MiscViewModel)_miscView.DataContext).SelectedTabEvent += ((e) => SelectedTab = e);
+
+            _filterWindow = new FilterEditor();
+            ((FilterEditorViewModel)_filterWindow.DataContext).FilterUpdatedEvent += ((x, y) => {
+                UpdateFilter(x, y);
+            });
+
+
             Files = new ObservableCollection<IDataAcquire>();
             Sites = null;
             SelectedFile = null;
@@ -29,8 +42,9 @@ namespace SillyMonkeyD.ViewModels {
         }
 
         private FilterEditor _filterWindow;
-        private Data _dataWindow;
-        private Misc _miscWindow;
+        private FileManagement _fileManagementView;
+        private Data _dataView;
+        private Misc _miscView;
 
         public ObservableCollection<IDataAcquire> Files { get; private set; }
         public ObservableCollection<ITab> TabList { get; private set; }
@@ -70,10 +84,10 @@ namespace SillyMonkeyD.ViewModels {
             for(int i = (TabList.Count - 1); i>= 0; i--) {
                 if (TabList[i].DataAcquire == data) {
                     if (TabList[i].WindowFlag==1) {
-                        ((DataViewModel)_dataWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                        ((DataViewModel)_dataView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         TabList.RemoveAt(i);
                     }else if (TabList[i].WindowFlag == 2) {
-                        ((MiscViewModel)_miscWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                        ((MiscViewModel)_miscView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         TabList.RemoveAt(i);
                     }
                 }
@@ -100,11 +114,11 @@ namespace SillyMonkeyD.ViewModels {
 
         private void AddDataTab(IDataAcquire dataAcquire, int filterId) {
             RawGridTab rawGridTab = new RawGridTab(dataAcquire, filterId);
-            ((DataViewModel)_dataWindow.DataContext).AddTab(rawGridTab);
+            ((DataViewModel)_dataView.DataContext).AddTab(rawGridTab);
             AddTab((ITab)rawGridTab.DataContext); 
         }
         private void AddDataTab(TabItem tabItem) {
-            ((DataViewModel)_dataWindow.DataContext).AddTab(tabItem);
+            ((DataViewModel)_dataView.DataContext).AddTab(tabItem);
             AddTab((ITab)tabItem.DataContext);
         }
 
@@ -114,20 +128,20 @@ namespace SillyMonkeyD.ViewModels {
                 for(int i=TabList.Count-1; i >= 0; i--) {
                     if (!TabList[i].IsMainTab && TabList[i].DataAcquire == tabItem.DataAcquire && TabList[i].FilterId == tabItem.FilterId) {
                         if(TabList[i].WindowFlag==1)
-                            ((DataViewModel)_dataWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                            ((DataViewModel)_dataView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         else
-                            ((MiscViewModel)_miscWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                            ((MiscViewModel)_miscView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         TabList.RemoveAt(i);
                     }
                 }
                 
             }
-            ((DataViewModel)_dataWindow.DataContext).RemoveTab(tabItem.CorrespondingTab);
+            ((DataViewModel)_dataView.DataContext).RemoveTab(tabItem.CorrespondingTab);
             TabList.Remove(tabItem);
         }
 
         private void AddMiscTab(TabItem tabItem) {
-            ((MiscViewModel)_miscWindow.DataContext).AddTab(tabItem);
+            ((MiscViewModel)_miscView.DataContext).AddTab(tabItem);
             AddTab((ITab)tabItem.DataContext);
         }
 
@@ -137,38 +151,16 @@ namespace SillyMonkeyD.ViewModels {
                 for (int i = TabList.Count - 1; i >= 0; i--) {
                     if (!TabList[i].IsMainTab && TabList[i].DataAcquire == tabItem.DataAcquire && TabList[i].FilterId == tabItem.FilterId) {
                         if (TabList[i].WindowFlag == 1)
-                            ((DataViewModel)_dataWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                            ((DataViewModel)_dataView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         else
-                            ((MiscViewModel)_miscWindow.DataContext).RemoveTab(TabList[i].CorrespondingTab);
+                            ((MiscViewModel)_miscView.DataContext).RemoveTab(TabList[i].CorrespondingTab);
                         TabList.RemoveAt(i);
                     }
                 }
 
             }
-            ((MiscViewModel)_miscWindow.DataContext).RemoveTab(tabItem.CorrespondingTab);
+            ((MiscViewModel)_miscView.DataContext).RemoveTab(tabItem.CorrespondingTab);
             TabList.Remove(tabItem);
-        }
-
-        private void LoadWindow() {
-            if (_dataWindow is null) {
-                //await System.Threading.Tasks.Task.Run(new Action(() => _dataWindow = new Data()));
-                _dataWindow = new Data();
-                ((DataViewModel)_dataWindow.DataContext).SelectedTabEvent += ((e) => SelectedTab = e);
-                //_dataWindow.Show();
-            }
-            if (_filterWindow is null) {
-                //await System.Threading.Tasks.Task.Run(new Action(() => new FilterEditor()));
-                _filterWindow = new FilterEditor();
-                ((FilterEditorViewModel)_filterWindow.DataContext).FilterUpdatedEvent += ((x, y)=> {
-                    UpdateFilter(x, y);
-                });
-                //_filterWindow.Visibility = Visibility.Hidden;
-                //_filterWindow.Show();
-            }
-            if(_miscWindow is null) {
-                _miscWindow = new Misc();
-                ((MiscViewModel)_miscWindow.DataContext).SelectedTabEvent += ((e) => SelectedTab = e);
-            }
         }
 
         private void ShowFilterWindow(IDataAcquire dataAcquire, int filterId) {
@@ -176,20 +168,12 @@ namespace SillyMonkeyD.ViewModels {
             _filterWindow.Show();
         }
 
-        private void ShowDataWindow(TabItem tabItem) {
-            _dataWindow.Show();
-            ((DataViewModel)_dataWindow.DataContext).FocusTab(tabItem);
-        }
-        private void ShowDataWindow() {
-            _dataWindow.Show();
+        private void ShowDataTab(TabItem tabItem) {
+            ((DataViewModel)_dataView.DataContext).FocusTab(tabItem);
         }
 
-        private void ShowMiscWindow(TabItem tabItem) {
-            _miscWindow.Show();
-            ((MiscViewModel)_miscWindow.DataContext).FocusTab(tabItem);
-        }
-        private void ShowMiscWindow() {
-            _miscWindow.Show();
+        private void ShowMiscTab(TabItem tabItem) {
+            ((MiscViewModel)_miscView.DataContext).FocusTab(tabItem);
         }
 
 
@@ -221,7 +205,6 @@ namespace SillyMonkeyD.ViewModels {
         public ICommand OpenSiteRawData { get; private set; }
         public ICommand UpdateInfo { get; private set; }
         public ICommand OpenFileDiag { get; private set; }
-        public ICommand LoadedCommand { get; private set; }
         public ICommand<ITab> SetTabFilter { get; private set; }
         public ICommand<ITab> ShowTabSummary { get; private set; }
         public ICommand<ITab> ShowWaferMap { get; private set; }
@@ -280,15 +263,15 @@ namespace SillyMonkeyD.ViewModels {
             FocusTab = new DelegateCommand(() => {
                 if (SelectedTab is null) return;
                 if (SelectedTab.WindowFlag == 1)
-                    ShowDataWindow(SelectedTab.CorrespondingTab);
+                    ShowDataTab(SelectedTab.CorrespondingTab);
                 else
-                    ShowMiscWindow(SelectedTab.CorrespondingTab);
+                    ShowMiscTab(SelectedTab.CorrespondingTab);
             });
 
             OpenFileRawData = new DelegateCommand(() => {
                 if (SelectedFile.ParseDone) {
                     AddDataTab(SelectedFile, SelectedFile.CreateFilter());
-                    ShowDataWindow();
+                    //ShowDataTab();
                 }
             });
             OpenSiteRawData = new DelegateCommand(() => {
@@ -297,7 +280,7 @@ namespace SillyMonkeyD.ViewModels {
                     f.EnableSingleSite(SelectedFile.GetSites(), SelectedSite.Key);
 
                     AddDataTab(SelectedFile, SelectedFile.CreateFilter(f));
-                    ShowDataWindow();
+                    //ShowDataTab();
                 }
             });
 
@@ -314,9 +297,6 @@ namespace SillyMonkeyD.ViewModels {
                     FileInfo = "";
                 }
             });
-            LoadedCommand = new DelegateCommand(() => {
-                LoadWindow();
-            });
 
             SetTabFilter = new DelegateCommand<ITab>((e) => {
                 ShowFilterWindow(e.DataAcquire, e.FilterId);
@@ -325,18 +305,18 @@ namespace SillyMonkeyD.ViewModels {
                 var v = FindOpendTab(e.DataAcquire, e.FilterId, TabType.SummaryTab);
                 if (v is null) {
                     AddMiscTab(new SummaryTab(e.DataAcquire, e.FilterId));
-                    ShowMiscWindow();
+                    //ShowMiscTab();
                 } else {
-                    ShowMiscWindow(v);
+                    ShowMiscTab(v);
                 }
             });
             ShowWaferMap = new DelegateCommand<ITab>((e) => {
                 var v = FindOpendTab(e.DataAcquire, e.FilterId, TabType.WaferMapTab);
                 if (v is null) {
                     AddMiscTab(new WaferMapTab(e.DataAcquire, e.FilterId));
-                    ShowMiscWindow();
+                    //ShowMiscTab();
                 } else {
-                    ShowMiscWindow(v);
+                    ShowMiscTab(v);
                 }
 
             });
@@ -346,7 +326,7 @@ namespace SillyMonkeyD.ViewModels {
                 id.Add(e.DataAcquire.GetFilteredTestIDs(e.FilterId)[0]);
 
                 AddMiscTab(new ItemChartTab(e.DataAcquire, e.FilterId, id));
-                ShowMiscWindow();
+                //ShowMiscTab();
             });
 
             ShowCorrelation = new DelegateCommand<IList<object>>((e) => {
@@ -365,7 +345,7 @@ namespace SillyMonkeyD.ViewModels {
                           select p).ToList();
 
                 AddDataTab(new CorrelationTab(ll));
-                ShowDataWindow();
+                //ShowMiscTab();
             });
         }
 
