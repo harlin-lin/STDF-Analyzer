@@ -15,6 +15,138 @@
         <Binding Path="FilePath"/>
     </TabItem.ToolTip>
 
+    <TabItem.Resources>
+        <!--  Define styles for the SciChartSurface  -->
+        <Style x:Key="SciChartSurfaceStyle" TargetType="s:SciChartSurface">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Foreground" Value="DarkOrchid"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontFamily" Value="Black"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!--  Define styles for the X and Y Axes  -->
+        <Style x:Key="AxisStyle" TargetType="s:AxisBase">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="TitleFontSize" Value="12"/>
+            <Setter Property="TitleFontWeight" Value="Bold"/>
+            <Setter Property="TickTextBrush" Value="Crimson"/>
+            <Setter Property="DrawMajorBands" Value="False"/>
+            <Setter Property="AxisBandsFill" Value="#55ff6655"/>
+            <Setter Property="MajorTickLineStyle">
+                <Setter.Value>
+                    <Style TargetType="Line">
+                        <Setter Property="Stroke" Value="LightGray"/>
+                        <Setter Property="StrokeThickness" Value="1"/>
+                        <Setter Property="X2" Value="8"/>
+                        <Setter Property="Y2" Value="8"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="MinorTickLineStyle">
+                <Setter.Value>
+                    <Style TargetType="Line">
+                        <Setter Property="Stroke" Value="LightGray"/>
+                        <Setter Property="StrokeThickness" Value="1"/>
+                        <Setter Property="X2" Value="4"/>
+                        <Setter Property="Y2" Value="4"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="MajorGridLineStyle">
+                <Setter.Value>
+                    <Style TargetType="Line">
+                        <Setter Property="Stroke" Value="LightGray"/>
+                        <Setter Property="StrokeThickness" Value="1"/>
+                        <Setter Property="StrokeDashArray" Value="10 5"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="MinorGridLineStyle">
+                <Setter.Value>
+                    <Style TargetType="Line">
+                        <Setter Property="Stroke" Value="LightGray"/>
+                        <Setter Property="StrokeThickness" Value="1"/>
+                        <Setter Property="StrokeDashArray" Value="2 2"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TitleTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="RosyBrown"/>
+        </Style>
+
+        <Style x:Key="BottomAxisTitleStyle" TargetType="s:AxisTitle">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel>
+                            <!--<TextBlock Margin="0,3,0,0" Style="{StaticResource TitleTextStyle}" Text="Showing time on"/>-->
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding}"/>
+                            <!--<TextBlock Margin="0,0,0,3" Style="{StaticResource TitleTextStyle}" Text="(daily Timeframe)"/>-->
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Define style for the SciChartScrollbar  -->
+        <Style x:Key="ScrollbarStyle" TargetType="s:SciChartScrollbar">
+            <Setter Property="GripsThickness" Value="10"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <!--  Define style for resizing grips  -->
+            <Setter Property="GripsStyle">
+                <Setter.Value>
+                    <Style TargetType="Control">
+                        <Setter Property="VerticalAlignment" Value="Bottom"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Control">
+                                    <Border Height="15" Background="#A90F0F" BorderBrush="Black" BorderThickness="2,2,2,2" CornerRadius="2">
+                                        <Line Stretch="Fill" Stroke="Black" StrokeThickness="2" X1="0" X2="0" Y1="0" Y2="1"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+            <!--  Define style for viewport area  -->
+            <Setter Property="ViewportStyle">
+                <Setter.Value>
+                    <Style TargetType="Control">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Control">
+                                    <Border Background="#99000000" BorderBrush="Black" BorderThickness="0,1,0,1"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+            <!--  Define style for non selected area  -->
+            <Setter Property="NonSelectedAreaStyle">
+                <Setter.Value>
+                    <Style TargetType="Path">
+                        <Setter Property="Fill" Value="#33000000"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+
+        </Style>        
+
+    </TabItem.Resources>
+    
     <TabItem.Content>
         <Grid>
             <Grid.RowDefinitions>
@@ -31,22 +163,73 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="2"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <ListBox Grid.Column="0"/>
-                
+                <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
                 <!--  Create the chart surface  -->
-                <s:SciChartSurface x:Name="sciChart" Grid.Column="1"
-                                   RenderableSeries="{s:SeriesBinding RenderableSeries}">
-                    <s:SciChartSurface.XAxis>
-                        <s:NumericAxis/>
-                    </s:SciChartSurface.XAxis>
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="2"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <s:SciChartSurface x:Name="_trendChart" Grid.Row="0"
+                                   RenderableSeries="{s:SeriesBinding TrendSeries}"
+                                       ChartTitle="{Binding TrendChartTitle}"
+                                       Style="{StaticResource SciChartSurfaceStyle}">
+                        <s:SciChartSurface.XAxis>
+                            <s:NumericAxis AxisTitle="Test Sequence"  Style="{StaticResource AxisStyle}" TitleStyle="{StaticResource BottomAxisTitleStyle}">
+                                <s:NumericAxis.Scrollbar>
+                                    <s:SciChartScrollbar Style="{StaticResource ScrollbarStyle}"/>
+                                </s:NumericAxis.Scrollbar>
+                            </s:NumericAxis>
+                        </s:SciChartSurface.XAxis>
 
-                    <s:SciChartSurface.YAxis>
-                        <s:NumericAxis GrowBy="0.1, 0.1"/>
-                    </s:SciChartSurface.YAxis>
-                </s:SciChartSurface>
+                        
+                        <s:SciChartSurface.YAxis>
+                            <s:NumericAxis AxisAlignment="Left" AxisTitle="Value" Style="{StaticResource AxisStyle}" TextFormatting="0.###"  >
+                                <!--Id="PrimaryAxisId"-->
+                                <s:NumericAxis GrowBy="0.2, 0.2"/>
+                                <!--<s:NumericAxis.GrowBy>
+                                    <s:DoubleRange Max="0.15" Min="0.6"/>
+                                </s:NumericAxis.GrowBy>-->
+                            </s:NumericAxis>
+                        </s:SciChartSurface.YAxis>
+                        <!--<s:SciChartSurface.YAxis>
+                            <s:NumericAxis GrowBy="0.1, 0.1"/>
+                        </s:SciChartSurface.YAxis>-->
+
+
+                        <s:SciChartSurface.ChartModifier>
+                            <!-- Ensure ModifierGroup DataContext is the MainViewModel (not the ChartViewModel)-->
+                            <s:ModifierGroup DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}" >
+                                <s:RubberBandXyZoomModifier IsEnabled="True" />
+                                <!--<s:ZoomPanModifier IsEnabled="True" ClipModeX="None" />-->
+                                <s:ZoomExtentsModifier/>
+
+                                <s:LegendModifier ShowLegend="True" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                                <s:RolloverModifier ShowTooltipOn="MouseHover"/>
+
+                            </s:ModifierGroup>
+                        </s:SciChartSurface.ChartModifier>
+
+                    </s:SciChartSurface>
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
+                    <s:SciChartSurface x:Name="_histogramChart" Grid.Row="2"
+                                   RenderableSeries="{s:SeriesBinding HistogramSeries}">
+                        <s:SciChartSurface.XAxis>
+                            <s:NumericAxis/>
+                        </s:SciChartSurface.XAxis>
+
+                        <s:SciChartSurface.YAxis>
+                            <s:NumericAxis GrowBy="0.1, 0.1"/>
+                        </s:SciChartSurface.YAxis>
+                    </s:SciChartSurface>
+
+                </Grid>
             </Grid>
         </Grid>
     </TabItem.Content>

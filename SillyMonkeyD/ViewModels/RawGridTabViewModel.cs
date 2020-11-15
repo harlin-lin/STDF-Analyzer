@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,8 +8,8 @@ using DataInterface;
 using DevExpress.Mvvm;
 
 namespace SillyMonkeyD.ViewModels {
+    public delegate void SelectedTestItemsEventHandler(List<TestID> iDs);
     public class RawGridTabViewModel : ViewModelBase, ITab {
-
         public RawGridTabViewModel(IDataAcquire dataAcquire, int filterId, TabItem tab) {
             Init(dataAcquire, filterId);
             CorrespondingTab = tab;
@@ -27,6 +28,8 @@ namespace SillyMonkeyD.ViewModels {
         public TabItem CorrespondingTab { get; }
 
         public StdLogGridModel Data { get { return GetProperty(() => Data); } private set { SetProperty(() => Data, value); } }
+
+        public SelectedTestItemsEventHandler SelectedTestItemsEvent;
 
         private void Init(IDataAcquire dataAcquire, int filterId) {
             DataAcquire = dataAcquire;

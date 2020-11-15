@@ -8,6 +8,7 @@ using DataInterface;
 using DevExpress.Mvvm;
 using SciChart.Charting.Model.ChartSeries;
 using SciChart.Core.Extensions;
+using System.Linq;
 
 namespace SillyMonkeyD.ViewModels {
     public class ItemChartTabViewModel : ViewModelBase, ITab {
@@ -22,24 +23,37 @@ namespace SillyMonkeyD.ViewModels {
 
         public string TabTitle { get { return GetProperty(() => TabTitle); } private set { SetProperty(() => TabTitle, value); } }
         public string FilePath { get { return GetProperty(() => FilePath); } private set { SetProperty(() => FilePath, value); } }
-        public int WindowFlag { get; private set; }
+        public int WindowFlag { get { return 2; } }
         public TabType TabType { get { return TabType.ChartTab; } }
         public bool IsMainTab { get { return false; } }
         public Thickness LocationInTablist { get { return IsMainTab ? new Thickness(0, 0, 3, 0) : new Thickness(25, 0, 3, 0); } }
         public TabItem CorrespondingTab { get; }
 
-        public ObservableCollection<IRenderableSeriesViewModel> RenderableSeries { get { return GetProperty(() => RenderableSeries); } private set { SetProperty(() => RenderableSeries, value); } }
+        public ObservableCollection<IRenderableSeriesViewModel> TrendSeries { get { return GetProperty(() => TrendSeries); } private set { SetProperty(() => TrendSeries, value); } }
+        public string TrendChartTitle { get { return GetProperty(() => TrendChartTitle); } private set { SetProperty(() => TrendChartTitle, value); } }
+
+
+        public ObservableCollection<IRenderableSeriesViewModel> HistogramSeries { get { return GetProperty(() => HistogramSeries); } private set { SetProperty(() => HistogramSeries, value); } }
+
+
 
         private List<float?[]> _itemsData;
         private List<TestID> _testIDs;
 
-        private void Init(IDataAcquire dataAcquire, int filterId, List<TestID> testIDs) {
+        private void Init(IDataAcquire dataAcquire, int filterId, List<TestID> iDs) {
             DataAcquire = dataAcquire;
             FilterId = filterId;
-            _testIDs = testIDs;
-            
-            WindowFlag = 2;
 
+            if(iDs is null) {
+                _testIDs = new List<TestID>();
+                _testIDs.Add(dataAcquire.GetFilteredTestIDs(filterId)[5]);
+                _testIDs.Add(dataAcquire.GetFilteredTestIDs(filterId)[6]);
+                //_testIDs.Add(dataAcquire.GetFilteredTestIDs(filterId)[234]);
+                //_testIDs.Add(dataAcquire.GetFilteredTestIDs(filterId)[235]);
+            } else {
+                _testIDs = new List<TestID>(iDs);
+            }
+            
             var i = dataAcquire.GetFilterIndex(filterId);
 
             if (DataAcquire.FileName.Length > 15)
@@ -50,29 +64,52 @@ namespace SillyMonkeyD.ViewModels {
 
             _itemsData = new List<float?[]>();
 
-            UpdateFilter();
+            InitUI();
+
+            UpdateChart();
         }
 
-
-        public void UpdateFilter() {
+        public void UpdateChart() {
+            UpdateTitle();
             _itemsData.Clear();
 
-            //debug code
-            //_testIDs = new List<TestID>();
-            //_testIDs.Add(DataAcquire.GetFilteredTestIDs(FilterId)[19]);
+            foreach (var id in _testIDs)
+                _itemsData.Add(DataAcquire.GetFilteredItemData(id, FilterId));
+            TrendSeries = TrendChartModel.GetChartData(_itemsData, _testIDs, DataAcquire.GetFilteredChipsInfo(FilterId));
+            RaisePropertyChanged("TrendSeries");
+        }
 
-            if (!_testIDs.IsNullOrEmpty()) {
-                foreach(var id in _testIDs)
-                    _itemsData.Add(DataAcquire.GetFilteredItemData(id, FilterId));
+        private void UpdateTitle() {
+            if (_testIDs.Count == 1) {
+                var t = DataAcquire.GetTestInfo(_testIDs[0]).TestText;
+                TrendChartTitle = $"Trend:{_testIDs[0].MainNumber}.{_testIDs[0].SubNumber} {t}";
+            } else {
+                string s = "Trend:";
+                foreach(var t in _testIDs) {
+                    s += $"{t.MainNumber}.{t.SubNumber}_";
+                }
+                s = s.Remove(s.Length - 1);
+                TrendChartTitle = s;
             }
-            RenderableSeries = TrendChartModel.GetChartData(_itemsData);
-            RaisePropertyChanged("RenderableSeries");
+
+        }
+
+        public void UpdateTestIds(List<TestID> iDs) {
+            _testIDs = new List<TestID>(iDs);
+            UpdateChart();
+        }
+
+        public void UpdateFilter() {
+
+            _testIDs=DataAcquire.GetFilteredTestIDs(FilterId).Intersect(_testIDs).ToList();
+            UpdateChart();
         }
 
         #region UI
         public ICommand ExportToExcel { get; private set; }
 
         private void InitUI() {
+
 
         }
         #endregion

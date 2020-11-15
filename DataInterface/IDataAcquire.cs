@@ -60,6 +60,18 @@ namespace DataInterface {
         List<TestID> GetTestIDs();
 
         /// <summary>
+        /// Get the test items Info by ID
+        /// </summary>
+        /// <returns>return test info</returns>
+        IItemInfo GetTestInfo(TestID id);
+
+        ///// <summary>
+        ///// Get the test items Info by ID
+        ///// </summary>
+        ///// <returns>return test info</returns>
+        //TestItem GetTestItem(TestID id);
+
+        /// <summary>
         /// Get all of the test ids and the corresponding item info
         /// </summary>
         /// <returns>return a dictionary of the id and th item info</returns>

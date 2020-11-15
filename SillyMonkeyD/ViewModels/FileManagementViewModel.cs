@@ -72,10 +72,10 @@ namespace SillyMonkeyD.ViewModels {
 
         private void Data_ExtractDone(IDataAcquire data) {
             SelectedFile = data;
-            //if (data == SelectedFile) {
-                Sites = SelectedFile.GetSitesChipCount();
-                FileInfo = StdFileHelper.GetBriefSummary(SelectedFile);
-            //}
+            Sites = SelectedFile.GetSitesChipCount();
+            FileInfo = StdFileHelper.GetBriefSummary(SelectedFile);
+
+            _fileManagementView.Dispatcher.Invoke(new Action(()=> AddDataTab(data, data.CreateFilter())));
         }
 
         private void RemoveFile(IDataAcquire data) {
@@ -322,10 +322,7 @@ namespace SillyMonkeyD.ViewModels {
             });
             ShowChart = new DelegateCommand<ITab>((e) => {
 
-                List<TestID> id = new List<TestID>();
-                id.Add(e.DataAcquire.GetFilteredTestIDs(e.FilterId)[0]);
-
-                AddMiscTab(new ItemChartTab(e.DataAcquire, e.FilterId, id));
+                AddMiscTab(new ItemChartTab(e.DataAcquire, e.FilterId,null));
                 //ShowMiscTab();
             });
 

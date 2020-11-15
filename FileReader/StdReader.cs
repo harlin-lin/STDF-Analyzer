@@ -181,6 +181,9 @@ namespace FileReader {
         public List<TestID> GetTestIDs() {
             return _rawData._testItems.GetTestIDsDefault();
         }
+        public IItemInfo GetTestInfo(TestID id) {
+            return _rawData._testItems.GetItemInfo(id);
+        }
         public Dictionary<TestID, IItemInfo> GetTestIDs_Info() {
             return _rawData._testItems.GetTestIDs_Info();
         }

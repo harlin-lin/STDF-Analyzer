@@ -28,6 +28,7 @@
                 </Button>
             </StackPanel>
             <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding Data}">
+                
             </FastWpfGrid:FastGridControl>
         </Grid>
     </TabItem.Content>

@@ -54,6 +54,7 @@
     <Compile Include="CorrVal.cs" />
     <Compile Include="Rst.cs" />
     <Compile Include="TestID.cs" />
+    <Compile Include="TestItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
