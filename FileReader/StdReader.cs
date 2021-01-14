@@ -221,10 +221,18 @@ namespace FileReader {
         public List<byte> GetFilteredSites(int filterId) {
             return new List<byte>(_filterList[filterId].SitesSummary.Keys);
         }
-        public Dictionary<byte, int> GetFilteredSitesChipCount(int filterId) {
+        public Dictionary<byte, int> GetFilteredSitesChipsCount(int filterId) {
             Dictionary<byte, int> rst = new Dictionary<byte, int>();
             foreach (var v in _filterList[filterId].SitesSummary) {
                 rst.Add(v.Key, v.Value.TotalCount);
+            }
+
+            return rst;
+        }
+        public int GetFilteredChipsCount(int filterId) {
+            int rst = 0;
+            foreach (var v in _filterList[filterId].SitesSummary) {
+                rst += v.Value.TotalCount;
             }
 
             return rst;

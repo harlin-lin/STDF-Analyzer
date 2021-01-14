@@ -125,7 +125,8 @@ namespace DataInterface {
 
         #region this info is filtered by filter
         List<byte> GetFilteredSites(int filterId);
-        Dictionary<byte, int> GetFilteredSitesChipCount(int filterId);
+        Dictionary<byte, int> GetFilteredSitesChipsCount(int filterId);
+        int GetFilteredChipsCount(int filterId);
         List<ushort> GetFilteredSoftBins(int filterId);
         Dictionary<ushort, int> GetFilteredSoftBinsCount(int filterId);
         List<ushort> GetFilteredHardBins(int filterId);
