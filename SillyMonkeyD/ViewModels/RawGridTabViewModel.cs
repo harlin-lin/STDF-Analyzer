@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -147,7 +148,7 @@ namespace SillyMonkeyD.ViewModels {
                             ws2.Cells[1, 10].Value = "Cpk";
                             ws2.Cells[1, 11].Value = "Pass Cnt";
 
-                            for(int i=0; i< chips.Count; i++) {
+                            for (int i = 0; i < chips.Count; i++) {
                                 ws2.Cells[1, 12 + i].Value = chips[i].PartId;
                                 ws2.Cells[2, 12 + i].Value = chips[i].WaferCord.ToString();
                                 ws2.Cells[3, 12 + i].Value = chips[i].HardBin;
@@ -165,7 +166,7 @@ namespace SillyMonkeyD.ViewModels {
                             ws2.Cells[7, 2].Value = "Test Time";
                         }
 
-                        for (int t=0; t < testIds.Count; t++) {
+                        for (int t = 0; t < testIds.Count; t++) {
                             var rst = DataAcquire.GetFilteredItemData(testIds[t], FilterId);
                             var info = testInfos[testIds[t]];
                             var stat = statistic[testIds[t]];
@@ -205,9 +206,11 @@ namespace SillyMonkeyD.ViewModels {
                             }
 
                         }
-
-
+                        
                         p.SaveAs(new System.IO.FileInfo(path));
+
+                        //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+
                     }
                 }
 
