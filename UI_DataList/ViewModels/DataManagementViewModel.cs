@@ -84,11 +84,19 @@ namespace UI_DataList.ViewModels {
 
             Files = new ObservableCollection<FileNode>();
 
+            SelectData = new DelegateCommand<object>((x)=> {
+                var t = x.GetType();
+
+            });
+
             //test
             StdFileHelper stdFileHelper = new StdFileHelper();
             var v =stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
             v.ExtractDone += V_ExtractDone;
             v.ExtractStdf();
+
+
+
         }
 
         private void V_ExtractDone(IDataAcquire data) {
@@ -102,6 +110,10 @@ namespace UI_DataList.ViewModels {
 
             _regionManager.RequestNavigate("Region_DataExplorer", "DataRaw", parameters);
         }
+
+
+        public DelegateCommand<object> SelectData { get; private set; }
+
 
     }
 }

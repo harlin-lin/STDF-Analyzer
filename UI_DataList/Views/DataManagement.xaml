@@ -24,7 +24,7 @@
         <TreeView Grid.Row="0" ItemsSource="{Binding Files}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
-                    <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=lbEnabledItems}"/>
+                    <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding }"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
