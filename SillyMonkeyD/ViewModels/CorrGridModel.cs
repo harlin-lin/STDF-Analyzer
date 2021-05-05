@@ -15,7 +15,7 @@ namespace SillyMonkeyD.ViewModels {
         CorrVal[][] _corr;
         int _colCount;
         int _rowCount;
-        List<Tuple<IDataAcquire, int>> _dataFilterTuple;
+        List<SubData> _dataFilterTuple;
         bool _multiCompare;
 
         const int colFixedLength = 5;
@@ -30,7 +30,7 @@ namespace SillyMonkeyD.ViewModels {
 
 
 
-        public CorrGridModel(List<Tuple<IDataAcquire, int>> dataFilterTuple) {
+        public CorrGridModel(List<SubData> dataFilterTuple) {
             if (dataFilterTuple.Count < 2)
                 throw new Exception("At least two compare items");
             else if (dataFilterTuple.Count == 2)
@@ -46,14 +46,14 @@ namespace SillyMonkeyD.ViewModels {
         public void Update() {
             if (!_multiCompare) {
                 _colCount = 11 + colFixedLength;
-                var i1 = _dataFilterTuple[0].Item1.GetFilteredTestIDs_Info(_dataFilterTuple[0].Item2);
-                var i2 = _dataFilterTuple[1].Item1.GetFilteredTestIDs_Info(_dataFilterTuple[1].Item2);
+                var i1 = _dataFilterTuple[0].DataAcquire.GetFilteredTestIDs_Info(_dataFilterTuple[0].FilterId);
+                var i2 = _dataFilterTuple[1].DataAcquire.GetFilteredTestIDs_Info(_dataFilterTuple[1].FilterId);
                 _itemInfo = (from r in i1
                              where i2.ContainsKey(r.Key)
                              select r);
 
-                Dictionary<TestID, IItemStatistic> ststistic1 = _dataFilterTuple[0].Item1.GetFilteredStatistic(_dataFilterTuple[0].Item2);
-                Dictionary<TestID, IItemStatistic> ststistic2 = _dataFilterTuple[1].Item1.GetFilteredStatistic(_dataFilterTuple[1].Item2);
+                Dictionary<TestID, IItemStatistic> ststistic1 = _dataFilterTuple[0].DataAcquire.GetFilteredStatistic(_dataFilterTuple[0].FilterId);
+                Dictionary<TestID, IItemStatistic> ststistic2 = _dataFilterTuple[1].DataAcquire.GetFilteredStatistic(_dataFilterTuple[1].FilterId);
 
                 _corr = new CorrVal[_itemInfo.Count()][];
                 for (int i = 0; i < _corr.GetLength(0); i++) {
@@ -96,14 +96,14 @@ namespace SillyMonkeyD.ViewModels {
                 _colCount = _dataFilterTuple.Count + 1 + colFixedLength;
                 List<Dictionary<TestID, IItemStatistic>> ststistic = new List<Dictionary<TestID, IItemStatistic>>();
 
-                _itemInfo = _dataFilterTuple[0].Item1.GetFilteredTestIDs_Info(_dataFilterTuple[0].Item2);
+                _itemInfo = _dataFilterTuple[0].DataAcquire.GetFilteredTestIDs_Info(_dataFilterTuple[0].FilterId);
                 foreach (var v in _dataFilterTuple) {
-                    var i2 = v.Item1.GetFilteredTestIDs_Info(v.Item2);
+                    var i2 = v.DataAcquire.GetFilteredTestIDs_Info(v.FilterId);
                     _itemInfo = (from r in _itemInfo
                                  where i2.ContainsKey(r.Key)
                                  select r);
 
-                    ststistic.Add(v.Item1.GetFilteredStatistic(v.Item2));
+                    ststistic.Add(v.DataAcquire.GetFilteredStatistic(v.FilterId));
                 }
 
                 _corr = new CorrVal[_itemInfo.Count()][];

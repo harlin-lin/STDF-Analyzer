@@ -10,7 +10,7 @@ namespace SillyMonkeyD.Views {
     /// </summary>
     public partial class CorrelationTab : TabItem {
         CorrelationTabViewModel corrTab;
-        public CorrelationTab(List<Tuple<IDataAcquire, int>> dataFilterTuple) {
+        public CorrelationTab(List<SubData> dataFilterTuple) {
             InitializeComponent();
 
             corrTab = new CorrelationTabViewModel(dataFilterTuple, this);

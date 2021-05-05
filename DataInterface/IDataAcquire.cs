@@ -98,6 +98,8 @@ namespace DataInterface {
         /// <returns></returns>
         IChipSummary GetChipSummary();
 
+        string GetSummary();
+
         /// <summary>
         /// get the soft bin names defined in the file, item1 is Pass/fail, item2 is bin name
         /// </summary>
@@ -143,6 +145,7 @@ namespace DataInterface {
 
         Dictionary<byte, IChipSummary> GetFilteredChipSummaryBySite(int filterId);
         IChipSummary GetFilteredChipSummary(int filterId);
+        string GetFilteredSummary(int filterId);
 
         Dictionary<TestID, IItemStatistic> GetFilteredStatistic(int filterId);
         #endregion

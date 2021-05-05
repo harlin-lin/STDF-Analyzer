@@ -338,7 +338,7 @@ namespace SillyMonkeyD.ViewModels {
                     }
 
                 var ll = (from r in e
-                          let p = new Tuple<IDataAcquire, int>(((ITab)((RawGridTab)r).DataContext).DataAcquire, ((ITab)((RawGridTab)r).DataContext).FilterId)
+                          let p = new SubData(((ITab)((RawGridTab)r).DataContext).DataAcquire, ((ITab)((RawGridTab)r).DataContext).FilterId)
                           select p).ToList();
 
                 AddDataTab(new CorrelationTab(ll));

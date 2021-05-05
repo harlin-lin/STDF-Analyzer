@@ -57,6 +57,7 @@
     <Compile Include="RecordType.cs" />
     <Compile Include="StdReader.cs" />
     <Compile Include="StdV4Reader.cs" />
+    <Compile Include="Summary.cs" />
     <Compile Include="TestChips.cs" />
     <Compile Include="TestItems.cs" />
   </ItemGroup>

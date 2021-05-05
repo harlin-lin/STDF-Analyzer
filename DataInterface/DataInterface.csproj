@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CorrVal.cs" />
     <Compile Include="Rst.cs" />
+    <Compile Include="SubData.cs" />
     <Compile Include="TestID.cs" />
     <Compile Include="TestItem.cs" />
   </ItemGroup>

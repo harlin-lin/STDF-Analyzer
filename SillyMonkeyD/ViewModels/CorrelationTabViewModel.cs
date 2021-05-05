@@ -10,7 +10,7 @@ using DevExpress.Mvvm;
 namespace SillyMonkeyD.ViewModels {
     public class CorrelationTabViewModel : ViewModelBase, ITab {
 
-        public CorrelationTabViewModel(List<Tuple<IDataAcquire, int>> dataFilterTuple, TabItem tab) {
+        public CorrelationTabViewModel(List<SubData> dataFilterTuple, TabItem tab) {
             DataAcquire = null;
             FilterId = 0;
             WindowFlag = 1;
@@ -18,7 +18,7 @@ namespace SillyMonkeyD.ViewModels {
             TabTitle = $"QTY:{dataFilterTuple.Count}-CORR";
             FilePath = "";
             foreach (var v in dataFilterTuple) {
-                FilePath += $"{v.Item1.FileName}:{v.Item2}-";
+                FilePath += $"{v.DataAcquire.FileName}:{v.FilterId}-";
             }
 
             _dataFilterTuple = dataFilterTuple;
@@ -30,7 +30,7 @@ namespace SillyMonkeyD.ViewModels {
             InitUI();
         }
 
-        List<Tuple<IDataAcquire, int>> _dataFilterTuple;
+        List<SubData> _dataFilterTuple;
 
         public int FilterId { get; private set; }
         public IDataAcquire DataAcquire { get; private set; }

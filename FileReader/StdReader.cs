@@ -205,7 +205,9 @@ namespace FileReader {
         public IChipSummary GetChipSummary() {
             return _defaultSummary;
         }
-
+        public string GetSummary() {
+            return Summary.GetSummary(this, null);
+        }
         public Dictionary<ushort, Tuple<string, string>> GetSBinInfo() {
             return _rawData._softBinNames;
         }
@@ -416,6 +418,11 @@ namespace FileReader {
         public IChipSummary GetFilteredChipSummary(int filterId) {
             return _filterList[filterId].Summary;
         }
+
+        public string GetFilteredSummary(int filterId) {
+            return Summary.GetSummary(this, filterId);
+        }
+
 
         public Dictionary<TestID, IItemStatistic> GetFilteredStatistic(int filterId) {
             return _filterList[filterId].StatisticList;
