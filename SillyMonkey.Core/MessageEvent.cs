@@ -20,7 +20,7 @@ namespace SillyMonkey.Core
 
     }
 
-    public class Event_NewFilter : PubSubEvent<SubData> {
+    public class Event_OpenData : PubSubEvent<SubData> {
 
     }
 

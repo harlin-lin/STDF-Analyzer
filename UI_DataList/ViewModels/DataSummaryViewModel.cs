@@ -29,7 +29,11 @@ namespace UI_DataList.ViewModels {
         }
 
         private void UpdateSummary(IDataAcquire dataSelected) {
-            Summary = dataSelected.GetSummary();
+            if(dataSelected is null) {
+                Summary = "";
+            } else {
+                Summary = dataSelected.GetSummary();
+            }
         }
 
     }

@@ -12,14 +12,17 @@ namespace FileReader {
 
         public static string GetSummary(IDataAcquire dataAcquire, int? filterId) {
             IChipSummary summary;
+            IOrderedEnumerable<KeyValuePair<byte, IChipSummary>> ss;
 
             if (filterId.HasValue) {
                 summary = dataAcquire.GetFilteredChipSummary(filterId.Value);
+                ss = dataAcquire.GetFilteredChipSummaryBySite(filterId.Value).OrderBy(x => x.Key);
             } else {
                 summary = dataAcquire.GetChipSummary();
+                ss = dataAcquire.GetChipSummaryBySite().OrderBy(x => x.Key);
             }
 
-            var ss = dataAcquire.GetFilteredChipSummaryBySite(filterId.Value).OrderBy(x => x.Key);
+
             IEnumerable<IChipSummary>  sitesSummary = from r in ss
                             select r.Value;
             IEnumerable<string>  sitesNO = from r in ss

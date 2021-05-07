@@ -21,10 +21,13 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TreeView Grid.Row="0" ItemsSource="{Binding Files}">
+        <TreeView x:Name="dataList" Grid.Row="0" ItemsSource="{Binding Files}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
-                    <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding }"/>
+                    <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
+                </i:EventTrigger>
+                <i:EventTrigger EventName="MouseDoubleClick" >
+                    <prism:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 
@@ -47,14 +50,9 @@
                             </StackPanel>
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock>
-                                        <TextBlock.Text>
-                                            <MultiBinding  StringFormat="Site {0}: {1}">
-                                                <Binding Path="Key"/>
-                                                <Binding Path="Value"/>
-                                            </MultiBinding>
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                    <StackPanel ToolTip="{Binding NodeTip}">
+                                        <TextBlock Text="{Binding NodeName}"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </HierarchicalDataTemplate.ItemTemplate>
                         </HierarchicalDataTemplate>

@@ -113,34 +113,31 @@ namespace UI_DataList.ViewModels {
             UpdateFilter();
             _ea.GetEvent<Event_SubDataSelected>().Subscribe(UpdateDisplay);
             _ea.GetEvent<Event_DataSelected>().Subscribe(UpdateFilter);
+            InitUiCtr();
         }
 
         private void UpdateDisplay(SubData selectedData) {
-            UpdateFilter(selectedData.DataAcquire, selectedData.FilterId);
-        }
+            _dataAcquire = selectedData.DataAcquire;
+            _filterId = selectedData.FilterId;
 
-        public void UpdateFilter(IDataAcquire dataAcquire, int filterId) {
-            _dataAcquire = dataAcquire;
-            _filterId = filterId;
+            _filter = selectedData.DataAcquire.GetFilterSetup(selectedData.FilterId);
 
-            _filter = dataAcquire.GetFilterSetup(filterId);
-
-            var allItems = (from r in dataAcquire.GetTestIDs_Info()
+            var allItems = (from r in selectedData.DataAcquire.GetTestIDs_Info()
                             let v = r.Key.GetGeneralTestNumber() + "<>" + r.Value.TestText
                             orderby v
                             select v);
-            var enabledItems = (from r in dataAcquire.GetFilteredTestIDs_Info(filterId)
+            var enabledItems = (from r in selectedData.DataAcquire.GetFilteredTestIDs_Info(selectedData.FilterId)
                                 let v = r.Key.GetGeneralTestNumber() + "<>" + r.Value.TestText
                                 orderby v
                                 select v);
 
             AllItems = new ObservableCollection<string>(allItems);
             EnabledItems = new ObservableCollection<string>(enabledItems);
-            AllSites = new ObservableCollection<byte>(dataAcquire.GetSites().OrderBy(x => x));
+            AllSites = new ObservableCollection<byte>(selectedData.DataAcquire.GetSites().OrderBy(x => x));
             EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.maskSites).OrderBy(x => x));
-            AllHBins = new ObservableCollection<ushort>(dataAcquire.GetHardBins().OrderBy(x => x));
+            AllHBins = new ObservableCollection<ushort>(selectedData.DataAcquire.GetHardBins().OrderBy(x => x));
             EnabledHBins = new ObservableCollection<ushort>(AllHBins.Except(_filter.maskHardBins).OrderBy(x => x));
-            AllSBins = new ObservableCollection<ushort>(dataAcquire.GetSoftBins().OrderBy(x => x));
+            AllSBins = new ObservableCollection<ushort>(selectedData.DataAcquire.GetSoftBins().OrderBy(x => x));
             EnabledSBins = new ObservableCollection<ushort>(AllSBins.Except(_filter.maskSoftBins).OrderBy(x => x));
 
             IfmaskDuplicateChips = _filter.ifmaskDuplicateChips;
@@ -166,9 +163,16 @@ namespace UI_DataList.ViewModels {
 
             MaskOrEnableIds = _filter.ifMaskOrEnableIds;
             MaskOrEnableCords = _filter.ifMaskOrEnableCords;
+
         }
 
         public void UpdateFilter(IDataAcquire dataAcquire) {
+            if(dataAcquire is null) {
+                UpdateFilter();
+
+                return;
+            }
+
             _dataAcquire = dataAcquire;
             _filterId = null;
             _filter = null;
@@ -273,7 +277,7 @@ namespace UI_DataList.ViewModels {
                     _filterId = _dataAcquire.CreateFilter(_filter);
                     //_dataAcquire.UpdateFilter(_filterId.Value, _filter);
                     //create new data with the new filter id
-                    _ea.GetEvent<Event_NewFilter>().Publish(new SubData(_dataAcquire, _filterId.Value));
+                    _ea.GetEvent<Event_OpenData>().Publish(new SubData(_dataAcquire, _filterId.Value));
                 }
 
             });
