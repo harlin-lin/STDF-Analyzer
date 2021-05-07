@@ -7,7 +7,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="10"/>
-            <ColumnDefinition Width="{Binding SplitterWidth, Mode=TwoWay}"/>
+            <ColumnDefinition Width="3"/>
             <ColumnDefinition Width="{Binding ChartViewWidth, Mode=TwoWay}"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -18,10 +18,10 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Button Width="18" Height="18" Margin="0,0,0,0" Command="{Binding ExportToExcel, Mode=OneWay}" />
             </StackPanel>
-            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding Data}">
+            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding DataTable}">
             </FastWpfGrid:FastGridControl>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="Region_ChartView"/>
+        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
     </Grid>
 </UserControl>

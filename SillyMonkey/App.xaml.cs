@@ -23,6 +23,7 @@ namespace SillyMonkey
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog) {
             moduleCatalog.AddModule<UI_DataList.UI_DataListModule>();
             moduleCatalog.AddModule<UI_Data.UI_DataModule>();
+            moduleCatalog.AddModule<UI_Chart.UI_ChartModule>();
         }
     }
 }

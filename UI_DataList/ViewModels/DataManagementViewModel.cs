@@ -131,7 +131,7 @@ namespace UI_DataList.ViewModels {
                 //    _ea.GetEvent<Event_OpenData>().Publish(new SubData(f,id));
                 //} else 
                 if (x.GetType().Name == "FilterNode") {
-                    _ea.GetEvent<Event_SubDataSelected>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
+                    _ea.GetEvent<Event_OpenData>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
                 } else if (x.GetType().Name == "SiteNode") {
                     var s = (x as SiteNode);
                     var f = s.ParentNode.DataAcquire;
@@ -151,7 +151,8 @@ namespace UI_DataList.ViewModels {
             ///////////////////////////////////////////////////
             //test
             StdFileHelper stdFileHelper = new StdFileHelper();
-            var v =stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
+            //var v =stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
+            var v = stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
             v.ExtractDone += V_ExtractDone;
             v.ExtractStdf();
             //////////////////////////////////////////////////
@@ -166,9 +167,9 @@ namespace UI_DataList.ViewModels {
 
         private void CreateNewRawTab(SubData data) {
             var parameters = new NavigationParameters();
-            parameters.Add("tab", data);
+            parameters.Add("subData", data);
 
-            _regionManager.RequestNavigate("Region_DataExplorer", "DataRaw", parameters);
+            _regionManager.RequestNavigate("Region_DataView", "DataRaw", parameters);
         }
 
 

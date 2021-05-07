@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="ViewModels\DataCorrelationViewModel.cs" />
     <Compile Include="ViewModels\DataRawViewModel.cs" />
+    <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="Views\DataCorrelation.xaml.cs">
       <DependentUpon>DataCorrelation.xaml</DependentUpon>
     </Compile>

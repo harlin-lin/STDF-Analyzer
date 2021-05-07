@@ -22,6 +22,8 @@ namespace UI_DataList.ViewModels {
 
             _ea.GetEvent<Event_DataSelected>().Subscribe(UpdateSummary);
             _ea.GetEvent<Event_SubDataSelected>().Subscribe(UpdateSubSummary);
+            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateSubSummary);
+
         }
 
         private void UpdateSubSummary(SubData dataSelected) {
