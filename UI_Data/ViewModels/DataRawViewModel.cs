@@ -57,6 +57,8 @@ namespace UI_Data.ViewModels {
 
             SplitterWidth = 0;
             ChartViewWidth = 0;
+
+            InitUi();
         }
 
         private void UpdateView(SubData data) {
@@ -88,5 +90,19 @@ namespace UI_Data.ViewModels {
                 RegionName = $"Region_{_filterId.ToString("x8")}";
             }
         }
+
+        public void InitUi() {
+            CloseCommand = new DelegateCommand<object>((x)=> {
+                //var v = _regionManager.Regions["Region_DataView"].Views.First().Equals(x);
+                if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
+                    _regionManager.Regions["Region_DataView"].Remove(x);
+                }
+
+                //_ea.GetEvent<Event_CloseData>().Publish(x);
+            });
+        }
+
+        public DelegateCommand<object> CloseCommand { get; private set; }
+
     }
 }

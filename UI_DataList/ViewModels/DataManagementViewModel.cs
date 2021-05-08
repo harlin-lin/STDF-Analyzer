@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using SillyMonkey.Core;
 using FileHelper;
+using System.Threading.Tasks;
 
 namespace UI_DataList.ViewModels {
 
@@ -110,6 +111,9 @@ namespace UI_DataList.ViewModels {
             _regionManager = regionManager;
             _ea = ea;
             _ea.GetEvent<Event_OpenData>().Subscribe(CreateNewRawTab);
+            _ea.GetEvent<Event_CloseData>().Subscribe((x) => {
+                _regionManager.Regions["Region_DataView"].Remove(x);
+            });
 
             Files = new ObservableCollection<FileNode>();
 
@@ -151,8 +155,8 @@ namespace UI_DataList.ViewModels {
             ///////////////////////////////////////////////////
             //test
             StdFileHelper stdFileHelper = new StdFileHelper();
-            //var v =stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
-            var v = stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
+            var v = stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
+            //var v = stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
             v.ExtractDone += V_ExtractDone;
             v.ExtractStdf();
             //////////////////////////////////////////////////
@@ -160,12 +164,20 @@ namespace UI_DataList.ViewModels {
 
         }
 
-        private void V_ExtractDone(IDataAcquire data) {
-            data.CreateFilter();
+        private async void V_ExtractDone(IDataAcquire data) {
+            var id = data.CreateFilter();
             Files.Add(new FileNode(data));
+            RaisePropertyChanged("Files");
+            await Task.Delay(1000);
+            _ea.GetEvent<Event_OpenData>().Publish(new SubData(data, id));
         }
 
         private void CreateNewRawTab(SubData data) {
+            foreach(var f in Files) {
+                f.Update();
+            }
+            RaisePropertyChanged("Files");
+
             var parameters = new NavigationParameters();
             parameters.Add("subData", data);
 

@@ -259,6 +259,9 @@ namespace UI_DataList.ViewModels {
 
         private void InitUiCtr() {
             ApplyFilter = new DelegateCommand(() => {
+                if(_filter is null) {
+                    _filter = new FilterSetup("raw");
+                }
                 _filter.DuplicateSelectMode = DuplicateSelectMode;
                 _filter.DuplicateJudgeMode = JudgeMode;
                 _filter.ifmaskDuplicateChips = IfmaskDuplicateChips;

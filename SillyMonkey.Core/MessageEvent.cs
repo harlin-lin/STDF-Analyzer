@@ -24,5 +24,8 @@ namespace SillyMonkey.Core
 
     }
 
+    public class Event_CloseData : PubSubEvent<object> {
+
+    }
 
 }

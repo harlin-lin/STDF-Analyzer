@@ -2,13 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:prism="http://prismlibrary.com/"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="700" Width="1000">
-    <Window.Resources>
-        <Style TargetType="TabItem">
+    <!--<Window.Resources>
+        <Style x:Key="HeaderResource"  TargetType="hc:TabItem">
             <Setter Property="Header" Value="{Binding DataContext.Header}" />
+            <Setter Property="ShowCloseButton" Value="True"/>
         </Style>
-    </Window.Resources>
+    </Window.Resources>-->
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,13 +21,23 @@
         <ContentControl Grid.Row="0" prism:RegionManager.RegionName="Region_Menu" />
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.35*"/>
+                <ColumnDefinition Width="0.35*" MinWidth="50"/>
                 <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" MinWidth="50"/>
             </Grid.ColumnDefinitions>
             <ContentControl Grid.Column="0" prism:RegionManager.RegionName="Region_DataList" />
             <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-            <TabControl Grid.Column="2" prism:RegionManager.RegionName="Region_DataView" />
+            <hc:TabControl Grid.Column="2" prism:RegionManager.RegionName="Region_DataView">
+                <hc:TabControl.Resources>
+                    <ContextMenu x:Key="HeaderContextMenu" Width="150">
+                        <MenuItem Header="Close" Command="{Binding DataContext.CloseCommand}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                    <Style TargetType="hc:TabItem">
+                        <Setter Property="Header" Value="{Binding DataContext.Header}" />
+                        <Setter Property="ContextMenu" Value="{StaticResource HeaderContextMenu}"/>
+                    </Style>
+                </hc:TabControl.Resources>
+            </hc:TabControl>
         </Grid>
         <ContentControl Grid.Row="2" prism:RegionManager.RegionName="Region_Strip" />
     </Grid>
