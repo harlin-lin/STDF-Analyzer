@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using SillyMonkey.Core;
-using FileHelper;
 using System.Threading.Tasks;
+using FileReader;
 
 namespace UI_DataList.ViewModels {
 
@@ -45,6 +45,8 @@ namespace UI_DataList.ViewModels {
 
         public SiteCollectionNode(FileNode file) {
             ParentNode = file;
+            if (!file.DataAcquire.ParseDone) 
+                return;
             SiteList = (from r in file.DataAcquire.GetSitesChipCount()
                         let l = new SiteNode(file, r.Key, r.Value)
                         select l);
@@ -70,7 +72,7 @@ namespace UI_DataList.ViewModels {
         }
     }
 
-    public class FileNode {
+    public class FileNode :BindableBase{
         public string NodeName { get; private set; }
         public string NodeTip { get; private set; }
         public bool ExtractedDone { get; private set; }
@@ -81,13 +83,15 @@ namespace UI_DataList.ViewModels {
         public FileNode(IDataAcquire dataAcquire) {
             DataAcquire = dataAcquire;
             SubDataList = new ObservableCollection<ISubNode>();
-            Update();
-        }
-
-        public void Update() {
             NodeName = DataAcquire.FileName;
             NodeTip = DataAcquire.FilePath;
             ExtractedDone = DataAcquire.ParseDone;
+            //Update();
+        }
+
+        public void Update() {
+            ExtractedDone = DataAcquire.ParseDone;
+            RaisePropertyChanged("ExtractedDone");
             SubDataList.Clear();
             SubDataList.Add(new SiteCollectionNode(this));
             int i = 0;
@@ -103,7 +107,7 @@ namespace UI_DataList.ViewModels {
 
         private ObservableCollection<FileNode> _files;
         public ObservableCollection<FileNode> Files {
-            get { return _files; }
+            get { return _files ?? (_files = new ObservableCollection<FileNode>()); }
             private set { SetProperty(ref _files, value); } 
         }
 
@@ -111,65 +115,64 @@ namespace UI_DataList.ViewModels {
             _regionManager = regionManager;
             _ea = ea;
             _ea.GetEvent<Event_OpenData>().Subscribe(CreateNewRawTab);
-            _ea.GetEvent<Event_CloseData>().Subscribe((x) => {
-                _regionManager.Regions["Region_DataView"].Remove(x);
-            });
-
-            Files = new ObservableCollection<FileNode>();
-
-            SelectData = new DelegateCommand<object>((x)=> {
-                if(x.GetType().Name == "FileNode") {
-                    _ea.GetEvent<Event_DataSelected>().Publish((x as FileNode).DataAcquire);
-                }else if(x.GetType().Name == "FilterNode") {
-                    _ea.GetEvent<Event_SubDataSelected>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
-                } else {
-                    _ea.GetEvent<Event_DataSelected>().Publish(null);
-                }
-
-            });
-
-            OpenData = new DelegateCommand<object>((x)=> {
-                //if (x.GetType().Name == "FileNode") {
-                //    var f = (x as FileNode).DataAcquire;
-                //    int id=f.CreateFilter();
-                //    _ea.GetEvent<Event_OpenData>().Publish(new SubData(f,id));
-                //} else 
-                if (x.GetType().Name == "FilterNode") {
-                    _ea.GetEvent<Event_OpenData>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
-                } else if (x.GetType().Name == "SiteNode") {
-                    var s = (x as SiteNode);
-                    var f = s.ParentNode.DataAcquire;
-                    int id;
-                    FilterSetup filter = new FilterSetup("Site:" + s.Site);
-                    filter.EnableSingleSite(f.GetSites(), s.Site);
-                    id = f.CreateFilter(filter);
-
-                    s.ParentNode.Update();
-                    RaisePropertyChanged("Files");
-
-                    _ea.GetEvent<Event_OpenData>().Publish(new SubData(f, id));
-                }
-
-            });
-
-            ///////////////////////////////////////////////////
-            //test
-            StdFileHelper stdFileHelper = new StdFileHelper();
-            var v = stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
+            _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
+            _ea.GetEvent<Event_ParseFileDone>().Subscribe(ParseDone, ThreadOption.UIThread);
+            /////////////////////////////////////////////////////
+            ////test
+            //StdFileHelper stdFileHelper = new StdFileHelper();
+            ////var v = stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
             //var v = stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
-            v.ExtractDone += V_ExtractDone;
-            v.ExtractStdf();
-            //////////////////////////////////////////////////
+            //v.ExtractDone += V_ExtractDone;
+            //v.ExtractStdf();
+            ////////////////////////////////////////////////////
 
 
         }
 
-        private async void V_ExtractDone(IDataAcquire data) {
-            var id = data.CreateFilter();
-            Files.Add(new FileNode(data));
+        /////////////////////////////////////////////////////
+        ////test
+        //private async void V_ExtractDone(IDataAcquire data) {
+        //    var id = data.CreateFilter();
+        //    Files.Add(new FileNode(data));
+        //    RaisePropertyChanged("Files");
+        //    await Task.Delay(1000);
+        //    _ea.GetEvent<Event_OpenData>().Publish(new SubData(data, id));
+        //}
+        ////////////////////////////////////////////////////
+
+        bool IfContainFile(string path) {
+            foreach(var v in Files) {
+                if(v.DataAcquire.FilePath == path) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private async void OpenStdFile(string path) {
+            if (IfContainFile(path)) return;
+
+            var dataAcquire = new StdReader(path, StdFileType.STD);
+            var file = new FileNode(dataAcquire);
+            Files.Add(file);
+
+            dataAcquire.ExtractDone += ((x) => {
+                _ea.GetEvent<Event_ParseFileDone>().Publish(x);
+            });
+
+            await System.Threading.Tasks.Task.Run(() => { 
+                dataAcquire.ExtractStdf(); 
+            });
+        }
+
+        private void ParseDone(IDataAcquire dataAcquire) {
+            var id = dataAcquire.CreateFilter();
+            Files.First((f) => {
+                if (f.DataAcquire.FilePath == dataAcquire.FilePath) return true;
+                return false;
+            }).Update();
             RaisePropertyChanged("Files");
-            await Task.Delay(1000);
-            _ea.GetEvent<Event_OpenData>().Publish(new SubData(data, id));
+            _ea.GetEvent<Event_OpenData>().Publish(new SubData(dataAcquire, id));
         }
 
         private void CreateNewRawTab(SubData data) {
@@ -185,8 +188,44 @@ namespace UI_DataList.ViewModels {
         }
 
 
-        public DelegateCommand<object> SelectData { get; private set; }
-        public DelegateCommand<object> OpenData { get; private set; }
+
+        private DelegateCommand<object> _selectData;
+        public DelegateCommand<object> SelectData =>
+            _selectData ?? (_selectData = new DelegateCommand<object>(ExecuteSelectData));
+
+        void ExecuteSelectData(object x) {
+            if (x.GetType().Name == "FileNode") {
+                if((x as FileNode).DataAcquire.ParseDone)
+                    _ea.GetEvent<Event_DataSelected>().Publish((x as FileNode).DataAcquire);
+            } else if (x.GetType().Name == "FilterNode") {
+                _ea.GetEvent<Event_SubDataSelected>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
+            } else {
+                _ea.GetEvent<Event_DataSelected>().Publish(null);
+            }
+        }
+
+        private DelegateCommand<object> _openData;
+        public DelegateCommand<object> OpenData =>
+            _openData ?? (_openData = new DelegateCommand<object>(ExecuteOpenData));
+
+        void ExecuteOpenData(object x) {
+            if (x.GetType().Name == "FilterNode") {
+                _ea.GetEvent<Event_OpenData>().Publish(new SubData((x as FilterNode).ParentNode.DataAcquire, (x as FilterNode).FilterId));
+            } else if (x.GetType().Name == "SiteNode") {
+                var s = (x as SiteNode);
+                var f = s.ParentNode.DataAcquire;
+                int id;
+                FilterSetup filter = new FilterSetup("Site:" + s.Site);
+                filter.EnableSingleSite(f.GetSites(), s.Site);
+                id = f.CreateFilter(filter);
+
+                s.ParentNode.Update();
+                RaisePropertyChanged("Files");
+
+                _ea.GetEvent<Event_OpenData>().Publish(new SubData(f, id));
+            }
+        }
+
 
     }
 }

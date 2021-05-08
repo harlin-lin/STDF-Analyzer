@@ -24,7 +24,25 @@ namespace SillyMonkey.Core
 
     }
 
-    public class Event_CloseData : PubSubEvent<object> {
+    public class Event_CloseData : PubSubEvent<SubData> {
+
+    }
+
+    public class Event_OpenFile : PubSubEvent<string> {
+
+    }
+    public class Event_ParseFileDone : PubSubEvent<IDataAcquire> {
+
+    }
+    public class Event_CloseFile : PubSubEvent<string> {
+
+    }
+
+    public class Event_CloseAllFiles : PubSubEvent {
+
+    }
+
+    public class Event_CloseSillyMonkey : PubSubEvent {
 
     }
 

@@ -12,7 +12,7 @@ namespace UI_DataList {
             regionManager.RegisterViewWithRegion("Region_DataList", typeof(DataManagement));
             regionManager.RegisterViewWithRegion("Region_Summary", typeof(DataSummary));
             regionManager.RegisterViewWithRegion("Region_Filter", typeof(DataFilter));
-
+            regionManager.RegisterViewWithRegion("Region_Menu", typeof(TopMenu));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)

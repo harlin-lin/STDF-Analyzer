@@ -14,7 +14,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
             <RowDefinition/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
@@ -40,5 +40,18 @@
             </hc:TabControl>
         </Grid>
         <ContentControl Grid.Row="2" prism:RegionManager.RegionName="Region_Strip" />
+
+        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push" IsOpen="True" MaskCanClose="False">
+            <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="10,0,0,0" Text="Header" Style="{StaticResource TextBlockTitle}" HorizontalAlignment="Left"/>
+                    <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                </Grid>
+            </Border>
+        </hc:Drawer>-->
     </Grid>
 </Window>

@@ -52,11 +52,7 @@ namespace UI_Data.ViewModels {
         public DataRawViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
-
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
-
-            SplitterWidth = 0;
-            ChartViewWidth = 0;
 
             InitUi();
         }
@@ -88,17 +84,18 @@ namespace UI_Data.ViewModels {
                 Header = $"F:{_filterId.ToString("x8")}";
 
                 RegionName = $"Region_{_filterId.ToString("x8")}";
+
+                SplitterWidth = 0;
+                ChartViewWidth = 0;
             }
         }
 
         public void InitUi() {
             CloseCommand = new DelegateCommand<object>((x)=> {
-                //var v = _regionManager.Regions["Region_DataView"].Views.First().Equals(x);
                 if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
                     _regionManager.Regions["Region_DataView"].Remove(x);
                 }
 
-                //_ea.GetEvent<Event_CloseData>().Publish(x);
             });
         }
 

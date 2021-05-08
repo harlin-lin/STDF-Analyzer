@@ -6,9 +6,9 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="10"/>
-            <ColumnDefinition Width="3"/>
-            <ColumnDefinition Width="{Binding ChartViewWidth, Mode=TwoWay}"/>
+            <ColumnDefinition MinWidth="10"/>
+            <ColumnDefinition Width="{Binding SplitterWidth, Mode=OneWay}"/>
+            <ColumnDefinition Width="{Binding ChartViewWidth, Mode=OneWay}"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>

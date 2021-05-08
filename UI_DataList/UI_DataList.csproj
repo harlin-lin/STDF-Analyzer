@@ -53,6 +53,7 @@
     <Compile Include="ViewModels\DataFilterViewModel.cs" />
     <Compile Include="ViewModels\DataManagementViewModel.cs" />
     <Compile Include="ViewModels\DataSummaryViewModel.cs" />
+    <Compile Include="ViewModels\TopMenuViewModel.cs" />
     <Compile Include="Views\DataFilter.xaml.cs">
       <DependentUpon>DataFilter.xaml</DependentUpon>
     </Compile>
@@ -75,6 +76,9 @@
     </Compile>
     <Compile Include="Views\DataSummary.xaml.cs">
       <DependentUpon>DataSummary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TopMenu.xaml.cs">
+      <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -99,6 +103,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\TopMenu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HandyControls">
@@ -121,10 +129,17 @@
       <Project>{897bc392-7e1c-4c48-9c94-61127f1f5287}</Project>
       <Name>FileHelper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FileReader\FileReader.csproj">
+      <Project>{55776d52-9e3d-4509-925f-695fc9d8ea54}</Project>
+      <Name>FileReader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
       <Name>SillyMonkey.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\load.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

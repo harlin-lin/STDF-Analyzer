@@ -23,7 +23,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <TabControl>
             <TabItem Header="Sites">
@@ -177,7 +177,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="20"/>
                         <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <RadioButton GroupName="ifMaskOrEnId" Content="Mask Ids" FontSize="8" IsChecked="{Binding MaskOrEnableIds,Converter={StaticResource negbool}, Mode=TwoWay}" Margin="10,0,0,0" VerticalAlignment="Center"/>
@@ -203,14 +203,14 @@
                             </ContextMenu>
                         </TextBox.ContextMenu>
                     </TextBox>
-                    <StackPanel Grid.Row="4">
-                        <CheckBox Content="maskDuplicate" FontSize="8" IsChecked="{Binding IfmaskDuplicateChips, Mode=TwoWay}" VerticalContentAlignment="Center"/>
-                        <ComboBox Name="judgeMode" FontSize="8" ItemsSource="{Binding Source={StaticResource judgeM}}" SelectedValue="{Binding JudgeMode, Mode=TwoWay}"/>
-                        <ComboBox Name="maskMode" FontSize="8" ItemsSource="{Binding Source={StaticResource dupliM}}" SelectedValue="{Binding DuplicateSelectMode}"/>
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" >
+                        <CheckBox Content="Duplicate" FontSize="8" Margin="10,0,0,0" IsChecked="{Binding IfmaskDuplicateChips, Mode=TwoWay}" VerticalContentAlignment="Center"/>
+                        <ComboBox Name="judgeMode" FontSize="8" Width="60" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource judgeM}}" SelectedValue="{Binding JudgeMode, Mode=TwoWay}"/>
+                        <ComboBox Name="maskMode" FontSize="8" Width="80" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource dupliM}}" SelectedValue="{Binding DuplicateSelectMode}"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button Grid.Row="1" Content="ApplyFilter" FontSize="10" Height="20" Width="80" Command="{Binding ApplyFilter}" />
+        <Button Grid.Row="1" Content="ApplyFilter" FontSize="8" Height="25" Width="80" Command="{Binding ApplyFilter}" />
     </Grid>
 </UserControl>

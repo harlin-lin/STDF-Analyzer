@@ -34,7 +34,7 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding SubDataList}">
                     <StackPanel Orientation="Horizontal" ToolTip="{Binding NodeTip}">
-                        <Image  Source="./Resources/icons/load.png" Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}"/>
+                        <Image  Source="load.png" Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}"/>
                         <TextBlock Text="{Binding NodeName}"/>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
