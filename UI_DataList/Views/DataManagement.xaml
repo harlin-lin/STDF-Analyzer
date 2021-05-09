@@ -9,6 +9,7 @@
              xmlns:hc="https://handyorg.github.io/handycontrol" 
              xmlns:UI_DataList="clr-namespace:UI_DataList"
              xmlns:local="clr-namespace:UI_DataList.ViewModels"
+             Name="FileControl"
              d:DesignHeight="300" d:DesignWidth="300"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
@@ -38,8 +39,7 @@
                         <TextBlock Text="{Binding NodeName}"/>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Close File">
-                                </MenuItem>
+                                <MenuItem Header="Close File" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.CmdCloseFile}" CommandParameter="{Binding}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>
@@ -47,6 +47,11 @@
                         <HierarchicalDataTemplate DataType="{x:Type local:FilterNode}" ItemsSource="{Binding SiteList}">
                             <StackPanel ToolTip="{Binding NodeTip}">
                                 <TextBlock Text="{Binding NodeName}"/>
+                                <StackPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Close Filtered Data" Command="{Binding CmdCloseData}" CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </StackPanel.ContextMenu>
                             </StackPanel>
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <DataTemplate>

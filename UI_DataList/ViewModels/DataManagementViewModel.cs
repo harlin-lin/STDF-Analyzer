@@ -117,28 +117,9 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_OpenData>().Subscribe(CreateNewRawTab);
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
             _ea.GetEvent<Event_ParseFileDone>().Subscribe(ParseDone, ThreadOption.UIThread);
-            /////////////////////////////////////////////////////
-            ////test
-            //StdFileHelper stdFileHelper = new StdFileHelper();
-            ////var v = stdFileHelper.AddFile(@"E:\Data\12345678.stdf");
-            //var v = stdFileHelper.AddFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
-            //v.ExtractDone += V_ExtractDone;
-            //v.ExtractStdf();
-            ////////////////////////////////////////////////////
 
 
         }
-
-        /////////////////////////////////////////////////////
-        ////test
-        //private async void V_ExtractDone(IDataAcquire data) {
-        //    var id = data.CreateFilter();
-        //    Files.Add(new FileNode(data));
-        //    RaisePropertyChanged("Files");
-        //    await Task.Delay(1000);
-        //    _ea.GetEvent<Event_OpenData>().Publish(new SubData(data, id));
-        //}
-        ////////////////////////////////////////////////////
 
         bool IfContainFile(string path) {
             foreach(var v in Files) {
@@ -226,6 +207,17 @@ namespace UI_DataList.ViewModels {
             }
         }
 
+        private DelegateCommand<object> _cmdCloseFile;
+        public DelegateCommand<object> CmdCloseFile =>
+            _cmdCloseFile ?? (_cmdCloseFile = new DelegateCommand<object>(ExecuteCmdCloseFile, CanExecuteCmdCloseFile));
+
+        void ExecuteCmdCloseFile(object parameter) {
+            var t = parameter.GetType();
+        }
+
+        bool CanExecuteCmdCloseFile(object parameter) {
+            return true;
+        }
 
     }
 }
