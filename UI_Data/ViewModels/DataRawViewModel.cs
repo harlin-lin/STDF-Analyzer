@@ -90,6 +90,13 @@ namespace UI_Data.ViewModels {
             }
         }
 
+        private void ShowTrend() {
+
+        }
+
+        public DelegateCommand<object> CloseCommand { get; private set; }
+        public DelegateCommand ShowTrendCommand { get; private set; }
+
         public void InitUi() {
             CloseCommand = new DelegateCommand<object>((x)=> {
                 if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
@@ -97,9 +104,12 @@ namespace UI_Data.ViewModels {
                 }
 
             });
+
+            ShowTrendCommand = new DelegateCommand(ShowTrend);
         }
 
-        public DelegateCommand<object> CloseCommand { get; private set; }
+
+
 
     }
 }

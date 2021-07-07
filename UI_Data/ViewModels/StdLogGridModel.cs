@@ -247,6 +247,8 @@ namespace UI_Data.ViewModels {
         }
 
         public void HandleSelectionCommand(IFastGridView view, string command) {
+            var cols = view.GetActiveColumns();
+
         }
 
         public int? SelectedRowCountLimit {

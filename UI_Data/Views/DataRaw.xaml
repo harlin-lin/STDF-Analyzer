@@ -15,8 +15,32 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Button Width="18" Height="18" Margin="0,0,0,0" Command="{Binding ExportToExcel, Mode=OneWay}" />
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Width="18" Height="18" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Trend Chart" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="2d_plot.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowHistogramCommand, Mode=OneWay}" ToolTip="Show Histogram Chart">
+                    <Button.Background>
+                        <ImageBrush ImageSource="histogram.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart">
+                    <Button.Background>
+                        <ImageBrush ImageSource="box_plot.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map">
+                    <Button.Background>
+                        <ImageBrush ImageSource="wafer_binning.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel">
+                    <Button.Background>
+                        <ImageBrush ImageSource="database.png"/>
+                    </Button.Background>
+                </Button>
             </StackPanel>
             <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding DataTable}">
             </FastWpfGrid:FastGridControl>
