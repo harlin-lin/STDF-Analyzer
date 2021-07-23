@@ -382,7 +382,9 @@ namespace System.Windows.Media.Imaging
 
         public static void Blit(BitmapContext destContext, int dpw, int dph, Rect destRect, BitmapContext srcContext, Rect sourceRect, int sourceWidth)
         {
+#pragma warning disable CS0219 // 变量已被赋值，但从未使用过它的值
             const BlendMode blendMode = BlendMode.Alpha;
+#pragma warning restore CS0219 // 变量已被赋值，但从未使用过它的值
 
             int dw = (int)destRect.Width;
             int dh = (int)destRect.Height;

@@ -70,11 +70,6 @@ namespace FastWpfGrid
         void NotifyRowArrangeChanged();
 
         /// <summary>
-        /// set/get whether grid is transposed
-        /// </summary>
-        bool IsTransposed { get; set; }
-
-        /// <summary>
         /// gets whether flexible rows (real rows) are curently used
         /// </summary>
         bool FlexibleRows { get; }
@@ -103,29 +98,17 @@ namespace FastWpfGrid
         ActiveSeries GetActiveColumns();
 
         /// <summary>
-        /// shows quick acces menu to selection
-        /// </summary>
-        /// <param name="commands"></param>
-        void ShowSelectionMenu(IEnumerable<string> commands);
-
-        ///// <summary>
-        ///// hides inline editor
-        ///// </summary>
-        ///// <param name="saveCellValue"></param>
-        //void HideInlineEditor(bool saveCellValue = true);
-
-        /// <summary>
         /// handles command
         /// </summary>
         /// <param name="address"></param>
         /// <param name="command"></param>
         void HandleCommand(FastGridCellAddress address, object command);
 
-        ///// <summary>
-        ///// selects all cells in grid (with given limits)
-        ///// </summary>
-        ///// <param name="rowCountLimit"></param>
-        ///// <param name="columnCountLimit"></param>
-        //void SelectAll(int? rowCountLimit, int? columnCountLimit);
+        /// <summary>
+        /// selects all cells in grid (with given limits)
+        /// </summary>
+        /// <param name="rowCountLimit"></param>
+        /// <param name="columnCountLimit"></param>
+        void SelectAll(int? rowCountLimit, int? columnCountLimit);
     }
 }

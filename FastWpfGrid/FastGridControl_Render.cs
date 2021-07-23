@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,7 +17,6 @@ namespace FastWpfGrid
     {
         private void RenderGrid()
         {
-            //var start = DateTime.Now;
             if (_drawBuffer == null)
             {
                 ClearInvalidation();
@@ -95,7 +95,6 @@ namespace FastWpfGrid
                     RenderColumnHeader(col);
                 }
 
-
                 // render column headers
                 for (int col = FirstVisibleColumnScrollIndex + _columnSizes.FrozenCount; col < FirstVisibleColumnScrollIndex + _columnSizes.FrozenCount + colsToRender; col++)
                 {
@@ -104,10 +103,6 @@ namespace FastWpfGrid
                     RenderColumnHeader(col);
                 }
             }
-            //if (_isInvalidatedAll)
-            //{
-            //    Debug.WriteLine("Render full grid: {0} ms", Math.Round((DateTime.Now - start).TotalMilliseconds));
-            //}
             ClearInvalidation();
         }
 
@@ -209,9 +204,6 @@ namespace FastWpfGrid
 
         private int RenderBlock(int leftPos, int rightPos, Color? selectedTextColor, Color bgColor, IntRect rectContent, IFastGridCell block, FastGridCellAddress cellAddr, bool leftAlign, bool isHoverCell)
         {
-            bool renderBlock = true;
-            if (block.MouseHoverBehaviour == MouseHoverBehaviours.HideWhenMouseOut && !isHoverCell) renderBlock = false;
-
             int width = 0, top = 0, height = 0;
 
             {
@@ -222,37 +214,12 @@ namespace FastWpfGrid
                 top = rectContent.Top + (int)Math.Round(rectContent.Height / 2.0 - textHeight / 2.0);
             }
 
-            if (renderBlock && block.CommandParameter != null)
             {
-                var activeRect = new IntRect(new IntPoint(leftAlign ? leftPos : rightPos - width, top), new IntSize(width, height)).GrowSymmetrical(1, 1);
-                var region = new ActiveRegion
-                    {
-                        CommandParameter = block.CommandParameter,
-                        Rect = activeRect,
-                        Tooltip = block.ToolTipText,
-                    };
-                CurrentCellActiveRegions.Add(region);
-                if (_mouseCursorPoint.HasValue && activeRect.Contains(_mouseCursorPoint.Value))
-                {
-                    _drawBuffer.FillRectangle(activeRect, ActiveRegionHoverFillColor);
-                    CurrentHoverRegion = region;
-                }
-
-                bool renderRectangle = true;
-                if (block.MouseHoverBehaviour == MouseHoverBehaviours.HideButtonWhenMouseOut && !isHoverCell) renderRectangle = false;
-
-                if (renderRectangle) _drawBuffer.DrawRectangle(activeRect, ActiveRegionFrameColor);
-            }
-
-            {
-                if (renderBlock)
-                {
-                    var textOrigin = new IntPoint(leftAlign ? leftPos : rightPos - width, top);
-                    var font = GetFont(block.IsBold, block.IsItalic);
-                    _drawBuffer.DrawString(textOrigin.X, textOrigin.Y, rectContent, selectedTextColor ?? block.FontColor ?? CellFontColor, UseClearType ? bgColor : (Color?) null,
-                                            font,
-                                            block.TextData);
-                }
+                var textOrigin = new IntPoint(leftAlign ? leftPos : rightPos - width, top);
+                var font = GetFont(block.IsBold, block.IsItalic);
+                _drawBuffer.DrawString(textOrigin.X, textOrigin.Y, rectContent, selectedTextColor ?? block.FontColor ?? CellFontColor, UseClearType ? bgColor : (Color?) null,
+                                        font,
+                                        block.TextData);
             }
 
             return width;
@@ -265,8 +232,6 @@ namespace FastWpfGrid
             if (isHoverCell)
             {
                 _mouseOverCellIsTrimmed = false;
-                CurrentCellActiveRegions.Clear();
-                CurrentHoverRegion = null;
             }
 
             if (cell == null) return;
@@ -316,8 +281,7 @@ namespace FastWpfGrid
                 {
                     InvalidateAll();
                 }
-                if (IsTransposed) OnScrolledModelColumns();
-                else OnScrolledModelRows();
+                OnScrolledModelRows();
                 return;
             }
 
@@ -334,8 +298,7 @@ namespace FastWpfGrid
                     _drawBuffer.ScrollX(scrollX, GetColumnHeadersScrollRect());
                     if (_rowSizes.FrozenCount > 0) _drawBuffer.ScrollX(scrollX, GetFrozenRowsRect());
                 }
-                if (IsTransposed) OnScrolledModelRows();
-                else OnScrolledModelColumns();
+                OnScrolledModelColumns();
                 return;
             }
 
@@ -353,13 +316,11 @@ namespace FastWpfGrid
 
             if (changedRow)
             {
-                if (IsTransposed) OnScrolledModelColumns();
-                else OnScrolledModelRows();
+                OnScrolledModelRows();
             }
             if (changedCol)
             {
-                if (IsTransposed) OnScrolledModelRows();
-                else OnScrolledModelColumns();
+                OnScrolledModelColumns();
             }
         }
     }

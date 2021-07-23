@@ -200,14 +200,7 @@ namespace FastWpfGrid
         }
         public void InvalidateModelRow(int row)
         {
-            if (IsTransposed)
-            {
-                InvalidateColumn(_columnSizes.ModelToReal(row));
-            }
-            else
-            {
-                InvalidateRow(_rowSizes.ModelToReal(row));
-            }
+            InvalidateRow(_rowSizes.ModelToReal(row));
         }
         public void InvalidateModelColumnHeader(int column)
         {
@@ -215,14 +208,7 @@ namespace FastWpfGrid
         }
         public void InvalidateModelColumn(int column)
         {
-            if (IsTransposed)
-            {
-                InvalidateRow(_rowSizes.ModelToReal(column));
-            }
-            else
-            {
-                InvalidateColumn(_columnSizes.ModelToReal(column));
-            }
+            InvalidateColumn(_columnSizes.ModelToReal(column));
         }
     }
 }

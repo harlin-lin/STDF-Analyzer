@@ -38,8 +38,6 @@ namespace FastWpfGrid
         //private Color _headerBackground = Color.FromRgb(0xDD, 0xDD, 0xDD);
         private WriteableBitmap _drawBuffer;
 
-        private bool _isTransposed;
-
         public FastGridControl()
         {
             InitializeComponent();
@@ -99,7 +97,6 @@ namespace FastWpfGrid
                 HeaderHeight = 100;//_rowSizes.DefaultSize;
             }
 
-            if (IsTransposed) CountTransposedHeaderWidth();
             if (Model != null)
             {
                 int width = GetCellContentWidth(Model.GetGridHeader(this));
@@ -141,8 +138,6 @@ namespace FastWpfGrid
             //FirstVisibleColumn = columnIndex;
             //RenderGrid();
             ScrollContent(rowIndex, columnIndex);
-            //AdjustInlineEditorPosition();
-            AdjustSelectionMenuPosition();
         }
 
 
@@ -323,19 +318,16 @@ namespace FastWpfGrid
 
         private IFastGridCell GetColumnHeader(int col)
         {
-            if (IsTransposed) return GetModelRowHeader(_columnSizes.RealToModel(col));
             return GetModelColumnHeader(_columnSizes.RealToModel(col));
         }
 
         private IFastGridCell GetRowHeader(int row)
         {
-            if (IsTransposed) return GetModelColumnHeader(_rowSizes.RealToModel(row));
             return GetModelRowHeader(_rowSizes.RealToModel(row));
         }
 
         private IFastGridCell GetCell(int row, int col)
         {
-            if (IsTransposed) return GetModelCell(_columnSizes.RealToModel(col), _rowSizes.RealToModel(row));
             return GetModelCell(_rowSizes.RealToModel(row), _columnSizes.RealToModel(col));
         }
 
@@ -346,29 +338,6 @@ namespace FastWpfGrid
             if (addr.IsColumnHeader) return GetColumnHeader(addr.Column.Value);
             if (addr.IsGridHeader && _model != null) return _model.GetGridHeader(this);
             return null;
-        }
-
-        private void AdjustSelectionMenuPosition()
-        {
-            FastGridCellAddress maxaddr = FastGridCellAddress.Empty;
-
-            foreach(var addr in _selectedCells)
-            {
-                if (!addr.IsCell) continue;
-                if (!maxaddr.IsCell) maxaddr = addr;
-                if (addr.Row.Value + addr.Column.Value > maxaddr.Row.Value + maxaddr.Column.Value) maxaddr = addr;
-            }
-
-            if (!maxaddr.IsCell) return;
-
-            int left = GetColumnLeft(maxaddr.Column.Value);
-            int top = GetRowTop(maxaddr.Row.Value + 1);
-
-            mnuSelection.Margin = new Thickness
-            {
-                Left = left / DpiDetector.DpiXKoef,
-                Top = top / DpiDetector.DpiYKoef,
-            };
         }
 
         private void InvalidateCurrentCell()
@@ -605,19 +574,5 @@ namespace FastWpfGrid
             set { CurrentCell = ModelToReal(value); }
         }
 
-        public void ShowSelectionMenu(IEnumerable<string> commands)
-        {
-            if (commands == null)
-            {
-                mnuSelection.ItemsSource = null;
-                mnuSelection.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                mnuSelection.ItemsSource = commands.Select(x => new SelectionQuickCommand(Model, x)).ToList();
-                mnuSelection.Visibility = Visibility.Visible;
-                AdjustSelectionMenuPosition();
-            }
-        }
     }
 }

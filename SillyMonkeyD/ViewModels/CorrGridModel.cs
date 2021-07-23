@@ -426,11 +426,6 @@ namespace SillyMonkeyD.ViewModels {
             }
         }
 
-
-        public MouseHoverBehaviours MouseHoverBehaviour {
-            get { return MouseHoverBehaviours.ShowAllWhenMouseOut; }
-        }
-
         public object CommandParameter {
             get { return null; }
         }

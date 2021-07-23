@@ -572,10 +572,8 @@ namespace FileReader {
                     break;
                 case StdFileType.STD_GZ:
                     throw new NotImplementedException();
-                    break;
                 default:
                     throw new NotImplementedException();
-                    break;
             }       
         }
 

@@ -8,34 +8,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
 
         <Grid x:Name="imageGrid" Grid.Row="0" Grid.Column="0" SizeChanged="imageGridResized">
             <Image 
-                x:Name="image" SnapsToDevicePixels="True" Focusable="True" KeyDown="imageKeyDown" MouseDown="imageMouseDown" 
+                x:Name="image" SnapsToDevicePixels="True" Focusable="True" RenderOptions.BitmapScalingMode="NearestNeighbor" 
+                KeyDown="imageKeyDown" 
+                MouseDown="imageMouseDown" 
                 Mouse.MouseLeave="imageMouseLeave"
-                RenderOptions.BitmapScalingMode="NearestNeighbor" MouseWheel="imageMouseWheel" />
-            <ItemsControl Visibility="Hidden" SnapsToDevicePixels="True" x:Name="mnuSelection" >
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Background="Wheat"><Hyperlink Click="selectionCommandClick"><Run Text="{Binding Text}"/></Hyperlink></TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                MouseWheel="imageMouseWheel" />
         </Grid>
         
-
         <ScrollBar Orientation="Horizontal" Grid.Column="0" Grid.Row="1" x:Name="hscroll" Maximum="100" Scroll="hscroll_Scroll" />
         <ScrollBar Orientation="Vertical" Grid.Column="1" Grid.Row="0" x:Name="vscroll" Maximum="100" Scroll="vscroll_Scroll" />
     </Grid>

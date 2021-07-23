@@ -90,14 +90,24 @@ namespace UI_Data.ViewModels {
             }
         }
 
-        private void ShowTrend() {
+        private int? _selectedRowIndex;
+        public int? SelectedRowIndex {
+            get { return _selectedRowIndex; }
+            set { SetProperty(ref _selectedRowIndex, value); }
+        }
 
+        private void ShowTrend() {
+            _ea.GetEvent<Event_ShowTrend>().Publish(_selectedRowIndex.Value);
         }
 
         public DelegateCommand<object> CloseCommand { get; private set; }
         public DelegateCommand ShowTrendCommand { get; private set; }
+        public DelegateCommand<object> OnSelectColumn { get; private set; }
+        public DelegateCommand<object> OnSelectRow { get; private set; }
 
         public void InitUi() {
+            _selectedRowIndex = null;
+
             CloseCommand = new DelegateCommand<object>((x)=> {
                 if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
                     _regionManager.Regions["Region_DataView"].Remove(x);
@@ -105,10 +115,21 @@ namespace UI_Data.ViewModels {
 
             });
 
-            ShowTrendCommand = new DelegateCommand(ShowTrend);
+            ShowTrendCommand = new DelegateCommand(ShowTrend, CanShowChart).ObservesProperty(() => SelectedRowIndex); ;
+
+            OnSelectColumn = new DelegateCommand<object>((x)=> {
+                System.Diagnostics.Debug.WriteLine(x.GetType());
+            });
+
+            OnSelectRow = new DelegateCommand<object>((x) => {
+                SelectedRowIndex = (x as RowClickEventArgs).Row;
+            });
+
         }
 
-
+        private bool CanShowChart() {
+            return SelectedRowIndex.HasValue;
+        }
 
 
     }

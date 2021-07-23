@@ -19,13 +19,6 @@ namespace FastWpfGrid
         OnlyWhenTrimmed,
     }
 
-    public enum MouseHoverBehaviours {
-        HideWhenMouseOut,
-        HideButtonWhenMouseOut,
-        ShowAllWhenMouseOut,
-    }
-
-
     public interface IFastGridCell
     {
         Color? BackgroundColor { get; }
@@ -39,10 +32,6 @@ namespace FastWpfGrid
 
         string ToolTipText { get; }
         TooltipVisibilityMode ToolTipVisibility { get; }
-
-
-        MouseHoverBehaviours MouseHoverBehaviour { get; }
-        object CommandParameter { get; }
 
     }
 }

@@ -46,4 +46,9 @@ namespace SillyMonkey.Core
 
     }
 
+    public class Event_ShowTrend : PubSubEvent<int> {
+
+    }
+
+
 }

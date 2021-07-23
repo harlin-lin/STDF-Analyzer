@@ -27,24 +27,6 @@ namespace FastWpfGrid
 
         #endregion
 
-        #region property IsTransposed
-
-        public bool IsTransposed
-        {
-            get { return (bool)this.GetValue(IsTransposedProperty); }
-            set { this.SetValue(IsTransposedProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsTransposedProperty = DependencyProperty.Register(
-            "IsTransposed", typeof(bool), typeof(FastGridControl), new PropertyMetadata(false, OnIsTransposedPropertyChanged));
-
-        private static void OnIsTransposedPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            ((FastGridControl)dependencyObject).OnIsTransposedPropertyChanged();
-        }
-
-        #endregion
-
         #region property UseClearType
 
         public bool UseClearType

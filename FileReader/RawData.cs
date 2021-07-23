@@ -459,7 +459,6 @@ namespace FileReader {
 
             } catch {
                 throw;
-                return;
             } 
 
 
