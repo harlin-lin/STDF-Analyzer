@@ -83,10 +83,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
-      <Project>{e9d6f03c-bfb5-4d31-a15e-7f789b4bbcc3}</Project>
-      <Name>FastWpfGrid</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
       <Name>SillyMonkey.Core</Name>
