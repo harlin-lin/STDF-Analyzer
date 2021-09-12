@@ -51,11 +51,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataInterface\DataInterface.csproj">
-      <Project>{fd0b8b5f-dbb8-4564-86e4-67b8009230b0}</Project>
-      <Name>DataInterface</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
