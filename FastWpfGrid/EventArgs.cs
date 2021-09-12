@@ -19,4 +19,11 @@ namespace FastWpfGrid
         public FastGridControl Grid;
         public bool Handled;
     }
+
+    public class CellClickEventArgs : EventArgs {
+        public FastGridCellAddress CellAddr;
+        public FastGridControl Grid;
+        public bool Handled;
+    }
+
 }

@@ -2,20 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"         
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <!--<Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="10"/>
             <ColumnDefinition Width="{Binding SplitterWidth, Mode=OneWay}"/>
             <ColumnDefinition Width="{Binding ChartViewWidth, Mode=OneWay}"/>
-        </Grid.ColumnDefinitions>-->
+        </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
-            <!--<Grid.RowDefinitions>
+            <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>-->
-            <!--<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Button Width="18" Height="18" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
                     <Button.Background>
                         <ImageBrush ImageSource="2d_plot.png"/>
@@ -41,20 +42,23 @@
                         <ImageBrush ImageSource="database.png"/>
                     </Button.Background>
                 </Button>
-            </StackPanel>-->
-            <FastWpfGrid:FastGridControl x:Name="grid" Grid.Row="1" Model="{Binding DataTable}">
-                <!--<i:Interaction.Triggers>
+            </StackPanel>
+            <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" Model="{Binding DataTable}">
+                <i:Interaction.Triggers>
                     <i:EventTrigger EventName="RowHeaderClick" >
-                        <prism:InvokeCommandAction Command="{Binding OnSelectRow}"/>
+                        <prism:InvokeCommandAction Command="{Binding OnSelectRow}" CommandParameter="{Binding ElementName=rawGrid}"/>
                     </i:EventTrigger>
                     <i:EventTrigger EventName="ColumnHeaderClick" >
-                        <prism:InvokeCommandAction Command="{Binding OnSelectColumn}"/>
+                        <prism:InvokeCommandAction Command="{Binding OnSelectColumn}"  CommandParameter="{Binding ElementName=rawGrid}"/>
                     </i:EventTrigger>
-                </i:Interaction.Triggers>-->
+                    <i:EventTrigger EventName="SelectedCellsChanged" >
+                        <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
+                    </i:EventTrigger> 
+                </i:Interaction.Triggers>
 
             </FastWpfGrid:FastGridControl>
         </Grid>
-        <!--<GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>-->
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
     </Grid>
 </UserControl>

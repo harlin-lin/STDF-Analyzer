@@ -568,6 +568,24 @@ namespace FastWpfGrid
             return res;
         }
 
+        public HashSet<int> GetSelectedColums() {
+            var res = new HashSet<int>();
+            foreach (var col in _selectedColumns) {
+                var cellModel = _columnSizes.RealToModel(col.Key);
+                res.Add(cellModel);
+            }
+            return res;
+        }
+
+        public HashSet<int> GetSelectedRows() {
+            var res = new HashSet<int>();
+            foreach (var row in _selectedRows) {
+                var cellModel = _rowSizes.RealToModel(row.Key);
+                res.Add(cellModel);
+            }
+            return res;
+        }
+
         public FastGridCellAddress CurrentModelCell
         {
             get { return RealToModel(CurrentCell); }

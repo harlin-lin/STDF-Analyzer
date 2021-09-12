@@ -46,7 +46,7 @@ namespace SillyMonkey.Core
 
     }
 
-    public class Event_ShowTrend : PubSubEvent<int> {
+    public class Event_ShowTrend : PubSubEvent<HashSet<int>> {
 
     }
 

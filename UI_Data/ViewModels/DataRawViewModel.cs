@@ -90,24 +90,55 @@ namespace UI_Data.ViewModels {
             }
         }
 
-        private int? _selectedRowIndex;
-        public int? SelectedRowIndex {
-            get { return _selectedRowIndex; }
-            set { SetProperty(ref _selectedRowIndex, value); }
+        private void OpenChartView() {
+            SplitterWidth = 3;
+            ChartViewWidth = 100;
         }
 
+        private HashSet<int> _selectedRowIdxList = new HashSet<int>();
+        private HashSet<int> _selectedColIdxList = new HashSet<int>();
+        private HashSet<FastGridCellAddress> _selectedCellList = new HashSet<FastGridCellAddress>();
+
         private void ShowTrend() {
-            _ea.GetEvent<Event_ShowTrend>().Publish(_selectedRowIndex.Value);
+            OpenChartView();
+
+            if (_selectedRowIdxList.Count > 0) {
+                _ea.GetEvent<Event_ShowTrend>().Publish(_selectedRowIdxList);
+            }
+
+        }
+        private void ShowHistogram() {
+
+        }
+        private void ShowBox() {
+
+        }
+        private void ShowWaferMap() {
+
+        }
+        private void ExportToExcel() {
+
         }
 
         public DelegateCommand<object> CloseCommand { get; private set; }
         public DelegateCommand ShowTrendCommand { get; private set; }
+        public DelegateCommand ShowHistogramCommand { get; private set; }
+        public DelegateCommand ShowBoxCommand { get; private set; }
+        public DelegateCommand ShowWaferMapCommand { get; private set; }
+        public DelegateCommand ExportToExcelCommand { get; private set; }
+
+
         public DelegateCommand<object> OnSelectColumn { get; private set; }
         public DelegateCommand<object> OnSelectRow { get; private set; }
+        public DelegateCommand<object> OnSelectionChanged { get; private set; }
+
+
+        enum SelectType {
+            row,col,cell
+        }
+        private SelectType _selectType= SelectType.cell;
 
         public void InitUi() {
-            _selectedRowIndex = null;
-
             CloseCommand = new DelegateCommand<object>((x)=> {
                 if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
                     _regionManager.Regions["Region_DataView"].Remove(x);
@@ -115,21 +146,41 @@ namespace UI_Data.ViewModels {
 
             });
 
-            ShowTrendCommand = new DelegateCommand(ShowTrend, CanShowChart).ObservesProperty(() => SelectedRowIndex); ;
+            ShowTrendCommand = new DelegateCommand(ShowTrend);
+            ShowHistogramCommand = new DelegateCommand(ShowHistogram);
+            ShowBoxCommand = new DelegateCommand(ShowBox);
+            ShowWaferMapCommand = new DelegateCommand(ShowWaferMap);
+            ExportToExcelCommand = new DelegateCommand(ExportToExcel);
+
 
             OnSelectColumn = new DelegateCommand<object>((x)=> {
-                System.Diagnostics.Debug.WriteLine(x.GetType());
+                _selectType = SelectType.col;
             });
 
             OnSelectRow = new DelegateCommand<object>((x) => {
-                SelectedRowIndex = (x as RowClickEventArgs).Row;
+                _selectType = SelectType.row;
+            });
+
+            OnSelectionChanged = new DelegateCommand<object>((x) => {
+                _selectedRowIdxList.Clear();
+                _selectedColIdxList.Clear();
+                _selectedCellList.Clear();
+
+                switch (_selectType) {
+                    case SelectType.row:
+                        _selectedRowIdxList = (x as FastWpfGrid.FastGridControl).GetSelectedRows();
+                        break;
+                    default:break;
+                }
+                foreach (var v in _selectedRowIdxList) {
+                    System.Diagnostics.Debug.WriteLine(v);
+                }
+
+                _selectType = SelectType.cell;
             });
 
         }
 
-        private bool CanShowChart() {
-            return SelectedRowIndex.HasValue;
-        }
 
 
     }

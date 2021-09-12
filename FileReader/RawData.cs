@@ -508,6 +508,7 @@ namespace FileReader {
 
                     i += (ushort)(1 + record[i]);
                     i += (ushort)(1 + record[i]);
+                    i += (ushort)(1 + record[i]);
 
                     txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
                 } catch {

@@ -20,6 +20,7 @@ namespace FastWpfGrid
 
         public event Action<object, ColumnClickEventArgs> ColumnHeaderClick;
         public event Action<object, RowClickEventArgs> RowHeaderClick;
+        public event Action<object, CellClickEventArgs> CellClick;
         public event EventHandler ScrolledModelRows;
         public event EventHandler ScrolledModelColumns;
 
@@ -134,40 +135,44 @@ namespace FastWpfGrid
 
                 if (cell.IsCell)
                 {
-                    if (ControlPressed)
-                    {
-                        //HideInlineEditor();
-                        if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
-                        else AddSelectedCell(cell);
-                        InvalidateCell(cell);
-                    }
-                    else if (ShiftPressed)
-                    {
-                        _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
-
-                        foreach (var cellItem in GetCellRange(_currentCell, cell))
+                    bool isCellClickHandled = false;
+                    isCellClickHandled = OnModelCellClick(cell);
+                    if (!isCellClickHandled) {
+                        if (ControlPressed)
                         {
-                            AddSelectedCell(cellItem);
-                            InvalidateCell(cellItem);
+                            //HideInlineEditor();
+                            if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
+                            else AddSelectedCell(cell);
+                            InvalidateCell(cell);
                         }
-                    }
-                    else
-                    {
-                        _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
-                        if (_currentCell == cell)
+                        else if (ShiftPressed)
                         {
-                            _showCellEditorIfMouseUp = _currentCell;
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+
+                            foreach (var cellItem in GetCellRange(_currentCell, cell))
+                            {
+                                AddSelectedCell(cellItem);
+                                InvalidateCell(cellItem);
+                            }
                         }
                         else
                         {
-                            SetCurrentCell(cell);
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+                            if (_currentCell == cell)
+                            {
+                                _showCellEditorIfMouseUp = _currentCell;
+                            }
+                            else
+                            {
+                                SetCurrentCell(cell);
+                            }
+                            AddSelectedCell(cell);
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
                         }
-                        AddSelectedCell(cell);
-                        _dragStartCell = cell;
-                        _dragTimer.IsEnabled = true;
-                        CaptureMouse();
                     }
                     OnChangeSelectedCells(true);
                 }
@@ -351,51 +356,22 @@ namespace FastWpfGrid
                     RowHeaderClick(this, args);
                 }
                 return args.Handled;
-                //if (!args.Handled)
-                //{
-                //    HideInlinEditor();
-
-                //    if (ControlPressed)
-                //    {
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            if (_selectedCells.Contains(cell)) _selectedCells.Remove(cell);
-                //            else _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //    else if (ShiftPressed)
-                //    {
-                //        _selectedCells.ToList().ForEach(InvalidateCell);
-                //        _selectedCells.Clear();
-                //        var currentModel = RealToModel(_currentCell);
-
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(currentModel.Row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        _selectedCells.ToList().ForEach(InvalidateCell);
-                //        _selectedCells.Clear();
-                //        if (_currentCell.IsCell)
-                //        {
-                //            var currentModel = RealToModel(_currentCell);
-                //            SetCurrentCell(ModelToReal(new FastGridCellAddress(row, currentModel.Column)));
-                //            _dragStartCell = ModelToReal(new FastGridCellAddress(row, null));
-                //        }
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //}
             }
             return false;
         }
+
+        private bool OnModelCellClick(FastGridCellAddress cell) {
+            var args = new CellClickEventArgs {
+                Grid = this,
+                CellAddr=cell,
+                Handled=false,
+            };
+            if (CellClick != null) {
+                CellClick(this, args);
+            }
+            return args.Handled;
+        }
+
 
         private void imageMouseWheel(object sender, MouseWheelEventArgs e)
         {
