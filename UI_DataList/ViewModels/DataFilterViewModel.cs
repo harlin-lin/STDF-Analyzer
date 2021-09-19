@@ -104,7 +104,7 @@ namespace UI_DataList.ViewModels {
             set { SetProperty(ref _judgeMode, value); }
         }
 
-        IDataAcquire _dataAcquire;
+        string _filePath;
         int? _filterId;
         FilterSetup _filter;
 
@@ -117,94 +117,64 @@ namespace UI_DataList.ViewModels {
         }
 
         private void UpdateDisplay(SubData selectedData) {
-            //_dataAcquire = selectedData.DataAcquire;
-            //_filterId = selectedData.FilterId;
 
-            //_filter = selectedData.DataAcquire.GetFilterSetup(selectedData.FilterId);
+            var dataAcquire = StdDB.GetDataAcquire(selectedData.StdFilePath);
+            _filePath = selectedData.StdFilePath;
+            _filterId = selectedData.FilterId;
 
-            //var allItems = (from r in selectedData.DataAcquire.GetTestIDs_Info()
-            //                let v = r.Key.GetGeneralTestNumber() + "<>" + r.Value.TestText
-            //                orderby v
-            //                select v);
-            //var enabledItems = (from r in selectedData.DataAcquire.GetFilteredTestIDs_Info(selectedData.FilterId)
-            //                    let v = r.Key.GetGeneralTestNumber() + "<>" + r.Value.TestText
-            //                    orderby v
-            //                    select v);
+            _filter = dataAcquire.GetFilterSetup(selectedData.FilterId);
 
-            //AllItems = new ObservableCollection<string>(allItems);
-            //EnabledItems = new ObservableCollection<string>(enabledItems);
-            //AllSites = new ObservableCollection<byte>(selectedData.DataAcquire.GetSites().OrderBy(x => x));
-            //EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.maskSites).OrderBy(x => x));
-            //AllHBins = new ObservableCollection<ushort>(selectedData.DataAcquire.GetHardBins().OrderBy(x => x));
-            //EnabledHBins = new ObservableCollection<ushort>(AllHBins.Except(_filter.maskHardBins).OrderBy(x => x));
-            //AllSBins = new ObservableCollection<ushort>(selectedData.DataAcquire.GetSoftBins().OrderBy(x => x));
-            //EnabledSBins = new ObservableCollection<ushort>(AllSBins.Except(_filter.maskSoftBins).OrderBy(x => x));
+            var items = dataAcquire.GetTestIDs_Info();
+            var allItems = (from r in items
+                            let v = r.Key + "<>" + r.Value.TestText
+                            orderby v
+                            select v);
+            var enabledItems = (from r in items.Keys.Except(_filter.MaskTestIDs)
+                                let v = r + "<>" + items[r].TestText
+                                orderby v
+                                select v);
 
-            //IfmaskDuplicateChips = _filter.ifmaskDuplicateChips;
-            //DuplicateSelectMode = _filter.DuplicateSelectMode;
-            //JudgeMode = _filter.DuplicateJudgeMode;
+            AllItems = new ObservableCollection<string>(allItems);
+            EnabledItems = new ObservableCollection<string>(enabledItems);
+            AllSites = new ObservableCollection<byte>(dataAcquire.GetSites().OrderBy(x => x));
+            EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.MaskSites).OrderBy(x => x));
+            AllHBins = new ObservableCollection<ushort>(dataAcquire.GetHardBins().OrderBy(x => x));
+            EnabledHBins = new ObservableCollection<ushort>(AllHBins.Except(_filter.MaskHardBins).OrderBy(x => x));
+            AllSBins = new ObservableCollection<ushort>(dataAcquire.GetSoftBins().OrderBy(x => x));
+            EnabledSBins = new ObservableCollection<ushort>(AllSBins.Except(_filter.MaskSoftBins).OrderBy(x => x));
 
-            //StringBuilder sb = new StringBuilder();
-            //foreach (var v in _filter.maskChips) {
-            //    sb.Append($"{v},");
-            //}
-            //if (sb.Length > 0)
-            //    sb.Remove(sb.Length - 1, 1);
-            //MaskEnableChips = sb.ToString();
+            IfmaskDuplicateChips = _filter.IfmaskDuplicateChips;
+            DuplicateSelectMode = _filter.DuplicateSelectMode;
+            JudgeMode = _filter.DuplicateJudgeMode;
 
-            //sb.Clear();
-            //foreach (var v in _filter.maskCords) {
-            //    sb.Append($"{v.CordX},{v.CordY};");
-            //}
-            //if (sb.Length > 0)
-            //    sb.Remove(sb.Length - 1, 1);
-            //MaskEnableCords = sb.ToString();
+            StringBuilder sb = new StringBuilder();
+            foreach (var v in _filter.MaskChips) {
+                sb.Append($"{v},");
+            }
+            if (sb.Length > 0)
+                sb.Remove(sb.Length - 1, 1);
+            MaskEnableChips = sb.ToString();
+
+            sb.Clear();
+            foreach (var v in _filter.MaskCords) {
+                sb.Append($"{v.Item1},{v.Item2};");
+            }
+            if (sb.Length > 0)
+                sb.Remove(sb.Length - 1, 1);
+            MaskEnableCords = sb.ToString();
 
 
-            //MaskOrEnableIds = _filter.ifMaskOrEnableIds;
-            //MaskOrEnableCords = _filter.ifMaskOrEnableCords;
+            MaskOrEnableIds = _filter.IfMaskOrEnableIds;
+            MaskOrEnableCords = _filter.IfMaskOrEnableCords;
 
         }
 
         public void UpdateFilter(string path) {
-            //if(dataAcquire is null) {
-            //    UpdateFilter();
-
-            //    return;
-            //}
-
-            //_dataAcquire = dataAcquire;
-            //_filterId = null;
-            //_filter = null;
-
-
-            //var allItems = (from r in dataAcquire.GetTestIDs_Info()
-            //                let v = r.Key.GetGeneralTestNumber() + "<>" + r.Value.TestText
-            //                orderby v
-            //                select v);
-
-            //AllItems = new ObservableCollection<string>(allItems);
-            //EnabledItems = new ObservableCollection<string>(allItems);
-            //AllSites = new ObservableCollection<byte>(dataAcquire.GetSites().OrderBy(x => x));
-            //EnabledSites = new ObservableCollection<byte>(AllSites);
-            //AllHBins = new ObservableCollection<ushort>(dataAcquire.GetHardBins().OrderBy(x => x));
-            //EnabledHBins = new ObservableCollection<ushort>(AllHBins);
-            //AllSBins = new ObservableCollection<ushort>(dataAcquire.GetSoftBins().OrderBy(x => x));
-            //EnabledSBins = new ObservableCollection<ushort>(AllSBins);
-
-            //IfmaskDuplicateChips = false;
-            //DuplicateSelectMode = DuplicateSelectMode.First;
-            //JudgeMode = DuplicateJudgeMode.ID;
-
-            //MaskEnableChips = "";
-            //MaskEnableCords = "";
-
-            //MaskOrEnableIds = false;
-            //MaskOrEnableCords = false;
+            UpdateFilter();
         }
 
         public void UpdateFilter() {
-            _dataAcquire = null;
+            _filePath = null;
             _filterId = null;
             _filter = null;
 
@@ -259,30 +229,23 @@ namespace UI_DataList.ViewModels {
 
         private void InitUiCtr() {
             ApplyFilter = new DelegateCommand(() => {
-                //if(_filter is null) {
-                //    _filter = new FilterSetup("raw");
-                //}
-                //_filter.DuplicateSelectMode = DuplicateSelectMode;
-                //_filter.DuplicateJudgeMode = JudgeMode;
-                //_filter.ifmaskDuplicateChips = IfmaskDuplicateChips;
-                //_filter.ifMaskOrEnableIds = MaskOrEnableIds;
-                //_filter.ifMaskOrEnableCords = MaskOrEnableCords;
+                if (_filter is null) {
+                    return;
+                }
+                _filter.DuplicateSelectMode = DuplicateSelectMode;
+                _filter.DuplicateJudgeMode = JudgeMode;
+                _filter.IfmaskDuplicateChips = IfmaskDuplicateChips;
+                _filter.IfMaskOrEnableIds = MaskOrEnableIds;
+                _filter.IfMaskOrEnableCords = MaskOrEnableCords;
 
-                //_filter.maskSites = AllSites.Except(EnabledSites).ToList();
-                //_filter.maskHardBins = AllHBins.Except(EnabledHBins).ToList();
-                //_filter.maskSoftBins = AllSBins.Except(EnabledSBins).ToList();
-                //_filter.maskChips = ParseMaskEnableIds();
-                //_filter.maskCords = ParseMaskEnableCords();
-                //if (_filterId.HasValue) {
-                //    _dataAcquire.UpdateFilter(_filterId.Value, _filter);
-                //    _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_dataAcquire, _filterId.Value));
-                //} else {
-                //    _filterId = _dataAcquire.CreateFilter(_filter);
-                //    //_dataAcquire.UpdateFilter(_filterId.Value, _filter);
-                //    //create new data with the new filter id
-                //    _ea.GetEvent<Event_OpenData>().Publish(new SubData(_dataAcquire, _filterId.Value));
-                //}
-
+                _filter.MaskSites = AllSites.Except(EnabledSites).ToList();
+                _filter.MaskHardBins = AllHBins.Except(EnabledHBins).ToList();
+                _filter.MaskSoftBins = AllSBins.Except(EnabledSBins).ToList();
+                _filter.MaskChips = ParseMaskEnableIds();
+                _filter.MaskCords = ParseMaskEnableCords();
+                var dataAcquire = StdDB.GetDataAcquire(_filePath);
+                dataAcquire.UpdateFilter(_filterId.Value, _filter);
+                _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId.Value));
             });
 
             RemoveItem = new DelegateCommand<ListBox>((e) => {

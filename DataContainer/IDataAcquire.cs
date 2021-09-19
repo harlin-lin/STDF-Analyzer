@@ -123,7 +123,7 @@ namespace DataContainer{
 
 
         #region this info is filtered by filter
-        Filter GetFilter(int filterId);
+        //Filter GetFilter(int filterId);
 
         float?[] GetFilteredItemData(string testID, int filterId);
         float?[] GetFilteredItemData(string testID, int startIndex, int count, int filterId);
@@ -136,7 +136,7 @@ namespace DataContainer{
         int CreateFilter(byte enSite);
         void ResetFilter(int filterId);
         void UpdateFilter(int filterId, FilterSetup externalFilter);
-
+        FilterSetup GetFilterSetup(int filterId);
         //int CreateFilterCopy(int filterId);
 
         ///// <summary>

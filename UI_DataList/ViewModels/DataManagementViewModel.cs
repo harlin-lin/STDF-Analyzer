@@ -47,12 +47,12 @@ namespace UI_DataList.ViewModels {
             ParentNode = file;
             if (!file.ExtractedDone) 
                 return;
+            FilePath = file.FilePath;
             var dataAcquire = StdDB.GetDataAcquire(FilePath);
             SiteList = (from r in dataAcquire.GetSitesChipCount()
                         let l = new SiteNode(file, r.Key, r.Value)
                         select l);
             NodeName = "Site List";
-            FilePath = file.FilePath;
         }
     }
 

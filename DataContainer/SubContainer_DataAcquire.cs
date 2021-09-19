@@ -88,8 +88,8 @@ namespace DataContainer {
         }
 
 
-        public Filter GetFilter(int filterId) {
-            return _filterContainer[filterId];
+        public FilterSetup GetFilterSetup(int filterId){
+            return _filterSetupContainer[filterId];
         }
 
         public int[] GetAllFilterId() {

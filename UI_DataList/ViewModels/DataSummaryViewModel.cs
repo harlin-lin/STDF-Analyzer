@@ -31,7 +31,7 @@ namespace UI_DataList.ViewModels {
         }
 
         private void UpdateSummary(string filePath) {
-            if(filePath=="") {
+            if(filePath is null) {
                 Summary = "";
             } else {
                 Summary = GenerateBriefSummary(filePath);
