@@ -11,6 +11,17 @@ namespace DataContainer {
             return _siteContainer.Keys.ToArray();
         }
 
+        public int[] GetAllIndex() {
+            return Enumerable.Range(0, _partIdx + 1).ToArray();
+        }
+
+        public int[] GetSiteIndex(byte site) {
+            return (from i in Enumerable.Range(0, _partIdx + 1)
+                    where _site_PartContainer[i] == site
+                    select i).ToArray();
+        }
+
+
         public Dictionary<byte, int> GetSitesChipCount() {
             return new Dictionary<byte, int>(_partStatistic.SiteCnt);
         }
@@ -79,6 +90,10 @@ namespace DataContainer {
 
         public Filter GetFilter(int filterId) {
             return _filterContainer[filterId];
+        }
+
+        public int[] GetAllFilterId() {
+            return _filterContainer.Keys.ToArray();
         }
 
         public int GetFilterIndex(int filterId) {

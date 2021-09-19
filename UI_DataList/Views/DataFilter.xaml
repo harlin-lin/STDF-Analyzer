@@ -5,7 +5,7 @@
              xmlns:prism="http://prismlibrary.com/" 
              xmlns:local="clr-namespace:UI_DataList"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:en="clr-namespace:DataInterface;assembly=DataInterface"
+             xmlns:en="clr-namespace:DataContainer;assembly=DataContainer"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <local:BooleanNegationConverter x:Key="negbool"/>

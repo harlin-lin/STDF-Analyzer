@@ -18,6 +18,7 @@ namespace DataContainer {
         private List<ResultType> _resultType_PartContainer;
 
         private PartStatistic _partStatistic;
+        private bool _ifCordValid;
 
         private void Initialize_PartStatistic() {
             _site_PartContainer = new List<byte>(200000);
@@ -29,6 +30,8 @@ namespace DataContainer {
             _yCord_PartContainer = new List<short?>(200000);
             _chipType_PartContainer = new List<DeviceType>(200000);
             _resultType_PartContainer = new List<ResultType>(200000);
+
+            _ifCordValid = true;
         }
 
         private void AnalyseParts() {

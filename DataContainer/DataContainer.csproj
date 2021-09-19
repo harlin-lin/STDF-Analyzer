@@ -46,7 +46,7 @@
     <Compile Include="ItemInfo.cs" />
     <Compile Include="ItemStatistic.cs" />
     <Compile Include="PartStatistic.cs" />
-    <Compile Include="StdContainer.cs" />
+    <Compile Include="StdDB.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="IDataAcquire.cs" />
     <Compile Include="IDataCollect.cs" />
@@ -58,6 +58,7 @@
     <Compile Include="SubContainer_ItemStatistic.cs" />
     <Compile Include="SubContainer_Filter.cs" />
     <Compile Include="SubContainer_RawData.cs" />
+    <Compile Include="SubData.cs" />
     <Compile Include="TestID.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

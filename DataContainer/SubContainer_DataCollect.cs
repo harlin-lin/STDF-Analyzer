@@ -50,6 +50,9 @@ namespace DataContainer {
             _partId_PartContainer.Add(partId);
             _xCord_PartContainer.Add(xCord);
             _yCord_PartContainer.Add(yCord);
+            if(_ifCordValid && (!xCord.HasValue || !yCord.HasValue)) {
+                _ifCordValid = false;
+            }
             _chipType_PartContainer.Add(deviceType);
             _resultType_PartContainer.Add(result);
         }

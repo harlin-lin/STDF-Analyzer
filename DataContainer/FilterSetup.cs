@@ -20,14 +20,14 @@ namespace DataContainer {
     /// </summary>
     [Serializable]
     public class FilterSetup {
-        public List<byte> maskSites { get; set; }
-        public List<ushort> maskSoftBins { get; set; }
-        public List<ushort> maskHardBins { get; set; }
-        public List<string> maskChips { get; set; }
-        public List<Tuple<ushort, ushort>> maskCords { get; set; }
-        public bool ifmaskDuplicateChips { get; set; }
-        public bool ifMaskOrEnableIds { get; set; }
-        public bool ifMaskOrEnableCords { get; set; }
+        public List<byte> MaskSites { get; set; }
+        public List<ushort> MaskSoftBins { get; set; }
+        public List<ushort> MaskHardBins { get; set; }
+        public List<string> MaskChips { get; set; }
+        public List<Tuple<ushort, ushort>> MaskCords { get; set; }
+        public bool IfmaskDuplicateChips { get; set; }
+        public bool IfMaskOrEnableIds { get; set; }
+        public bool IfMaskOrEnableCords { get; set; }
         public DuplicateSelectMode DuplicateSelectMode{ get; set; }
 
         public string Comment { get; private set; }
@@ -36,39 +36,39 @@ namespace DataContainer {
         /// </summary>
         public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
 
-        public List<string> maskTestIDs { get; set; }
+        public List<string> MaskTestIDs { get; set; }
 
         public FilterSetup(string comment) {
-            maskSites = new List<byte>();
-            maskSoftBins = new List<ushort>();
-            maskHardBins = new List<ushort>();
-            maskTestIDs = new List<string>();
-            maskChips = new List<string>();
-            maskCords = new List<Tuple<ushort, ushort>>();
-            ifmaskDuplicateChips = false;
-            ifMaskOrEnableIds = false;
-            ifMaskOrEnableCords = false;
+            MaskSites = new List<byte>();
+            MaskSoftBins = new List<ushort>();
+            MaskHardBins = new List<ushort>();
+            MaskTestIDs = new List<string>();
+            MaskChips = new List<string>();
+            MaskCords = new List<Tuple<ushort, ushort>>();
+            IfmaskDuplicateChips = false;
+            IfMaskOrEnableIds = false;
+            IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             Comment = comment;
         }
 
-        public FilterSetup(List<byte> sites, byte enSite, string comment) {
-            maskSites = new List<byte>();
+        public FilterSetup(IEnumerable<byte> sites, byte enSite, string comment) {
+            MaskSites = new List<byte>();
             foreach (var v in sites) {
                 if (v != enSite)
-                    maskSites.Add(v);
+                    MaskSites.Add(v);
             }
 
-            maskSoftBins = new List<ushort>();
-            maskHardBins = new List<ushort>();
-            maskTestIDs = new List<string>();
-            maskChips = new List<string>();
-            maskCords = new List<Tuple<ushort, ushort>>();
-            ifmaskDuplicateChips = false;
-            ifMaskOrEnableIds = false;
-            ifMaskOrEnableCords = false;
+            MaskSoftBins = new List<ushort>();
+            MaskHardBins = new List<ushort>();
+            MaskTestIDs = new List<string>();
+            MaskChips = new List<string>();
+            MaskCords = new List<Tuple<ushort, ushort>>();
+            IfmaskDuplicateChips = false;
+            IfMaskOrEnableIds = false;
+            IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
@@ -76,24 +76,24 @@ namespace DataContainer {
         }
 
 
-        public void EnableSingleSite(List<byte> sites, byte enSite) {
-            maskSites.Clear();
+        public void EnableSingleSite(byte[] sites, byte enSite) {
+            MaskSites.Clear();
             foreach(var v in sites) {
                 if (v != enSite)
-                    maskSites.Add(v);
+                    MaskSites.Add(v);
             }
         }
 
         public void ClearAllFilter() {
-            maskSites.Clear();
-            maskSoftBins.Clear();
-            maskHardBins.Clear();
-            maskTestIDs.Clear();
-            maskChips.Clear();
-            maskCords.Clear();
-            ifmaskDuplicateChips = false;
-            ifMaskOrEnableIds = false;
-            ifMaskOrEnableCords = false;
+            MaskSites.Clear();
+            MaskSoftBins.Clear();
+            MaskHardBins.Clear();
+            MaskTestIDs.Clear();
+            MaskChips.Clear();
+            MaskCords.Clear();
+            IfmaskDuplicateChips = false;
+            IfMaskOrEnableIds = false;
+            IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
         }

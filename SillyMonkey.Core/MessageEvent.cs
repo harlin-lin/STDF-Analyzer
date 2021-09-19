@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DataInterface;
+using DataContainer;
 
 namespace SillyMonkey.Core
 {
-    public class Event_DataSelected : PubSubEvent<IDataAcquire> {
+    public class Event_DataSelected : PubSubEvent<string> {
     
     }
 
@@ -29,9 +29,6 @@ namespace SillyMonkey.Core
     }
 
     public class Event_OpenFile : PubSubEvent<string> {
-
-    }
-    public class Event_ParseFileDone : PubSubEvent<IDataAcquire> {
 
     }
     public class Event_CloseFile : PubSubEvent<string> {

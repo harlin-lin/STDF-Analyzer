@@ -4,7 +4,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataInterface;
+using DataContainer;
 using SillyMonkey.Core;
 
 namespace UI_DataList.ViewModels {
@@ -27,15 +27,24 @@ namespace UI_DataList.ViewModels {
         }
 
         private void UpdateSubSummary(SubData dataSelected) {
-            Summary = dataSelected.DataAcquire.GetFilteredSummary(dataSelected.FilterId);
+            Summary = GenerateBriefSummary(dataSelected);
         }
 
-        private void UpdateSummary(IDataAcquire dataSelected) {
-            if(dataSelected is null) {
+        private void UpdateSummary(string filePath) {
+            if(filePath=="") {
                 Summary = "";
             } else {
-                Summary = dataSelected.GetSummary();
+                Summary = GenerateBriefSummary(filePath);
             }
+        }
+
+
+        private string GenerateBriefSummary(SubData subData) {
+            return "Summary";
+        }
+
+        private string GenerateBriefSummary(string filePath) {
+            return "Summary";
         }
 
     }

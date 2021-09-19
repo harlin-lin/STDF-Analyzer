@@ -45,7 +45,7 @@
                     </StackPanel>
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate DataType="{x:Type local:FilterNode}" ItemsSource="{Binding SiteList}">
-                            <StackPanel ToolTip="{Binding NodeTip}">
+                            <StackPanel ToolTip="{Binding FilePath}">
                                 <TextBlock Text="{Binding NodeName}"/>
                                 <StackPanel.ContextMenu>
                                     <ContextMenu>
@@ -55,7 +55,7 @@
                             </StackPanel>
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel ToolTip="{Binding NodeTip}">
+                                    <StackPanel ToolTip="{Binding FilePath}">
                                         <TextBlock Text="{Binding NodeName}"/>
                                     </StackPanel>
                                 </DataTemplate>

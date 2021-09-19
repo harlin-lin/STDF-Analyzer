@@ -65,7 +65,6 @@
     </Compile>
     <Compile Include="ViewModels\DataCorrelationViewModel.cs" />
     <Compile Include="ViewModels\DataRawViewModel.cs" />
-    <Compile Include="ViewModels\StdLogGridModel.cs" />
     <Compile Include="Views\DataCorrelation.xaml.cs">
       <DependentUpon>DataCorrelation.xaml</DependentUpon>
     </Compile>
@@ -83,6 +82,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataContainer\DataContainer.csproj">
+      <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
+      <Name>DataContainer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
       <Name>SillyMonkey.Core</Name>

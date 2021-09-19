@@ -51,5 +51,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataContainer\DataContainer.csproj">
+      <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
+      <Name>DataContainer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

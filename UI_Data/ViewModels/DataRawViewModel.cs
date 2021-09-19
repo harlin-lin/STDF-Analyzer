@@ -1,4 +1,4 @@
-﻿using DataInterface;
+﻿using DataContainer;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -6,8 +6,8 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using FastWpfGrid;
 
 namespace UI_Data.ViewModels {
     public class DataRawViewModel : BindableBase, INavigationAware {
@@ -28,11 +28,10 @@ namespace UI_Data.ViewModels {
             }
         }
 
-        int _filterId;
-        IDataAcquire _dataAcquire;
+        SubData _subData;
 
-        private StdLogGridModel _dataTable;
-        public StdLogGridModel DataTable {
+        private DataTable _dataTable;
+        public DataTable DataTable {
             get { return _dataTable; }
             set { SetProperty(ref _dataTable, value); }
         }
@@ -58,8 +57,8 @@ namespace UI_Data.ViewModels {
         }
 
         private void UpdateView(SubData data) {
-            if(data.DataAcquire.FilePath == _dataAcquire.FilePath && data.FilterId == _filterId) {
-                DataTable.Update();
+            if(data.Equals(_subData)) {
+                //DataTable.Update();
                 RaisePropertyChanged("DataTable");
             }
         }
@@ -67,7 +66,7 @@ namespace UI_Data.ViewModels {
         public bool IsNavigationTarget(NavigationContext navigationContext) {
             var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.DataAcquire.FilePath==_dataAcquire.FilePath && data.FilterId==_filterId;
+            return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
@@ -77,13 +76,12 @@ namespace UI_Data.ViewModels {
         public void OnNavigatedTo(NavigationContext navigationContext) {
             if (DataTable is null) {
                 var data = (SubData)navigationContext.Parameters["subData"];
-                _filterId = data.FilterId;
-                _dataAcquire = data.DataAcquire;
-                DataTable = new StdLogGridModel(_dataAcquire, _filterId);
+                _subData = data;
+                //DataTable = new DataTable(_dataAcquire, _filterId);
 
-                Header = $"F:{_filterId.ToString("x8")}";
+                Header = $"F:{_subData.FilterId:x8}";
 
-                RegionName = $"Region_{_filterId.ToString("x8")}";
+                RegionName = $"Region_{_subData.FilterId:x8}";
 
                 SplitterWidth = 0;
                 ChartViewWidth = 0;
@@ -97,7 +95,7 @@ namespace UI_Data.ViewModels {
 
         private HashSet<int> _selectedRowIdxList = new HashSet<int>();
         private HashSet<int> _selectedColIdxList = new HashSet<int>();
-        private HashSet<FastGridCellAddress> _selectedCellList = new HashSet<FastGridCellAddress>();
+        //private HashSet<FastGridCellAddress> _selectedCellList = new HashSet<FastGridCellAddress>();
 
         private void ShowTrend() {
             OpenChartView();
@@ -162,21 +160,21 @@ namespace UI_Data.ViewModels {
             });
 
             OnSelectionChanged = new DelegateCommand<object>((x) => {
-                _selectedRowIdxList.Clear();
-                _selectedColIdxList.Clear();
-                _selectedCellList.Clear();
+                //_selectedRowIdxList.Clear();
+                //_selectedColIdxList.Clear();
+                //_selectedCellList.Clear();
 
-                switch (_selectType) {
-                    case SelectType.row:
-                        _selectedRowIdxList = (x as FastWpfGrid.FastGridControl).GetSelectedRows();
-                        break;
-                    default:break;
-                }
-                foreach (var v in _selectedRowIdxList) {
-                    System.Diagnostics.Debug.WriteLine(v);
-                }
+                //switch (_selectType) {
+                //    case SelectType.row:
+                //        _selectedRowIdxList = (x as FastWpfGrid.FastGridControl).GetSelectedRows();
+                //        break;
+                //    default:break;
+                //}
+                //foreach (var v in _selectedRowIdxList) {
+                //    System.Diagnostics.Debug.WriteLine(v);
+                //}
 
-                _selectType = SelectType.cell;
+                //_selectType = SelectType.cell;
             });
 
         }

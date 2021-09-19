@@ -17,6 +17,9 @@ namespace DataContainer{
         /// <returns>return a list of site number</returns>
         byte[] GetSites();
 
+        int[] GetAllIndex();
+
+        int[] GetSiteIndex(byte site);
         /// <summary>
         /// Get all of the sites and the corresponding test devices
         /// </summary>
@@ -129,24 +132,10 @@ namespace DataContainer{
 
 
         #region filter
-        ///// <summary>
-        ///// set the corresponding filter
-        ///// </summary>
-        ///// <param name="filterId">filter ID</param>
-        ///// <param name="filter">filter setup</param>
-        //void UpdateFilter(int filterId, FilterSetup newFilter);
-
-        ///// <summary>
-        ///// create a new filter with the setup
-        ///// </summary>
-        ///// <param name="filter">filter setup</param>
-        ///// <returns>the created filter's id</returns>
-        //int CreateFilter(FilterSetup filter);
         int CreateFilter();
-
+        int CreateFilter(byte enSite);
         void ResetFilter(int filterId);
-
-        void UpdateFilter(int filterId, int[] maskIds, int[] maskItemIds);
+        void UpdateFilter(int filterId, FilterSetup externalFilter);
 
         //int CreateFilterCopy(int filterId);
 
@@ -169,6 +158,7 @@ namespace DataContainer{
         /// <param name="filterId"></param>
         /// <returns></returns>
         int GetFilterIndex(int filterId);
+        int[] GetAllFilterId();
 
         //FilterSetup GetFilterSetup(int filterId);
 

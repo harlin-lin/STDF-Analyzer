@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"         
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -43,7 +42,7 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" Model="{Binding DataTable}">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding DataTable}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="RowHeaderClick" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectRow}" CommandParameter="{Binding ElementName=rawGrid}"/>
@@ -56,7 +55,7 @@
                     </i:EventTrigger> 
                 </i:Interaction.Triggers>
 
-            </FastWpfGrid:FastGridControl>
+            </DataGrid>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
         <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
