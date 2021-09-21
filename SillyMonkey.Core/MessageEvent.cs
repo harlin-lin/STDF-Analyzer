@@ -43,9 +43,8 @@ namespace SillyMonkey.Core
 
     }
 
-    public class Event_ShowTrend : PubSubEvent<HashSet<int>> {
+    public class Event_ItemsSelected : PubSubEvent<Tuple<SubData, List<string>>> {
 
     }
-
 
 }

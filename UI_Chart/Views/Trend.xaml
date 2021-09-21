@@ -1,9 +1,33 @@
 ﻿<UserControl x:Class="UI_Chart.Views.Trend"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:prism="http://prismlibrary.com/" 
+             xmlns:oxy="http://oxyplot.org/wpf"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="3"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <oxy:Plot Title="Trend" Grid.Row="0">
+            <!--<oxy:Plot.Axes>
+                <oxy:LinearAxis Title="Idx" Position="Bottom" />
+                <oxy:LinearAxis Title="Val" Position="Left"/>
+            </oxy:Plot.Axes>-->
+            <oxy:Plot.Series>
+                <oxy:LineSeries ItemsSource="{Binding TrendData}"
+                                DataFieldX="X" 
+                                DataFieldY="Y"
+                                StrokeThickness="2"
+                                MarkerSize="0"
+                                LineStyle="Solid"
+                                Color="{Binding LineColor}"
+                                MarkerType="None" 
+                                />
+            </oxy:Plot.Series>
+        </oxy:Plot>
+        <GridSplitter Grid.Row="1"/>
+        
     </Grid>
 </UserControl>

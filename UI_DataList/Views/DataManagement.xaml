@@ -66,13 +66,13 @@
             </TreeView.ItemTemplate>
         </TreeView>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch"/>
-        <hc:TabControl Grid.Row="2" IsTabFillEnabled="True">
-            <hc:TabItem Header="数据汇总">
+        <TabControl Grid.Row="2" >
+            <TabItem Header="数据汇总">
                 <ContentControl prism:RegionManager.RegionName="Region_Summary" />
-            </hc:TabItem>
-            <hc:TabItem Header="过滤器">
+            </TabItem>
+            <TabItem Header="过滤器">
                 <ContentControl prism:RegionManager.RegionName="Region_Filter" />
-            </hc:TabItem>
-        </hc:TabControl>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

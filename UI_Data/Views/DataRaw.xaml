@@ -5,17 +5,11 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="10"/>
-            <ColumnDefinition Width="{Binding SplitterWidth, Mode=OneWay}"/>
-            <ColumnDefinition Width="{Binding ChartViewWidth, Mode=OneWay}"/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Button Width="18" Height="18" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
                     <Button.Background>
                         <ImageBrush ImageSource="2d_plot.png"/>
@@ -42,29 +36,22 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding Items}">
-                <!--<DataGrid.Columns>
-                    --><!--<DataGridTextColumn Header="TestNO" Binding="{Binding TestText}" Width="*"/>--><!--
-                    <DataGridTextColumn Header="TestText" Binding="{Binding TestText}" Width="100"/>
-                    <DataGridTextColumn Header="LoLimit" Binding="{Binding LoLimit}" Width="10"/>
-                    <DataGridTextColumn Header="HiLimit" Binding="{Binding HiLimit}" Width="10"/>
-                    <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="8"/>
-                </DataGrid.Columns>-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*" MinWidth="10"/>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="0.7*"/>
+            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="rawGrid" Grid.Column="0" ItemsSource="{Binding TestItems}" IsReadOnly="True">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="RowHeaderClick" >
-                        <prism:InvokeCommandAction Command="{Binding OnSelectRow}" CommandParameter="{Binding ElementName=rawGrid}"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="ColumnHeaderClick" >
-                        <prism:InvokeCommandAction Command="{Binding OnSelectColumn}"  CommandParameter="{Binding ElementName=rawGrid}"/>
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="SelectedCellsChanged" >
+                    <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
                     </i:EventTrigger> 
                 </i:Interaction.Triggers>
 
             </DataGrid>
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+            <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
         </Grid>
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
     </Grid>
 </UserControl>

@@ -15,26 +15,12 @@ namespace UI_Data.ViewModels {
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
-        private int _splitterWidth;
-        public int SplitterWidth {
-            get { return _splitterWidth; }
-            set { SetProperty(ref _splitterWidth, value); }
-        }
-
-        private int _chartViewWidth;
-        public int ChartViewWidth {
-            get { return _chartViewWidth; }
-            set {
-                SetProperty(ref _chartViewWidth, value);
-            }
-        }
-
         SubData _subData;
 
-        private ObservableCollection<Item> _items;
-        public ObservableCollection<Item> Items {
-            get { return _items; }
-            set { SetProperty(ref _items, value); }
+        private ObservableCollection<Item> _testItems;
+        public ObservableCollection<Item> TestItems {
+            get { return _testItems; }
+            set { SetProperty(ref _testItems, value); }
         }
 
         private string _header;
@@ -59,8 +45,9 @@ namespace UI_Data.ViewModels {
 
         private void UpdateView(SubData data) {
             if(data.Equals(_subData)) {
-                //DataTable.Update();
-                RaisePropertyChanged("DataTable");
+                var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
+                TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
+                RaisePropertyChanged("TestItems");
             }
         }
 
@@ -75,38 +62,30 @@ namespace UI_Data.ViewModels {
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
-            if (Items is null) {
+            if (TestItems is null) {
                 var data = (SubData)navigationContext.Parameters["subData"];
                 _subData = data;
 
                 var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
 
-                Items = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
+                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
 
                 Header = $"F:{_subData.FilterId:x8}";
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
-
-                SplitterWidth = 0;
-                ChartViewWidth = 0;
             }
         }
 
-        private void OpenChartView() {
-            SplitterWidth = 3;
-            ChartViewWidth = 100;
-        }
-
-        private HashSet<int> _selectedRowIdxList = new HashSet<int>();
-        private HashSet<int> _selectedColIdxList = new HashSet<int>();
-        //private HashSet<FastGridCellAddress> _selectedCellList = new HashSet<FastGridCellAddress>();
+        private List<string> _selectedItemList= new List<string>();
 
         private void ShowTrend() {
-            OpenChartView();
 
-            if (_selectedRowIdxList.Count > 0) {
-                _ea.GetEvent<Event_ShowTrend>().Publish(_selectedRowIdxList);
-            }
+            var parameters = new NavigationParameters();
+            parameters.Add("itemList", _selectedItemList);
+            parameters.Add("subData", _subData);
+
+
+            _regionManager.RequestNavigate(RegionName, "Trend", parameters);
 
         }
         private void ShowHistogram() {
@@ -134,12 +113,6 @@ namespace UI_Data.ViewModels {
         public DelegateCommand<object> OnSelectRow { get; private set; }
         public DelegateCommand<object> OnSelectionChanged { get; private set; }
 
-
-        enum SelectType {
-            row,col,cell
-        }
-        private SelectType _selectType= SelectType.cell;
-
         public void InitUi() {
             CloseCommand = new DelegateCommand<object>((x)=> {
                 if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
@@ -154,31 +127,16 @@ namespace UI_Data.ViewModels {
             ShowWaferMapCommand = new DelegateCommand(ShowWaferMap);
             ExportToExcelCommand = new DelegateCommand(ExportToExcel);
 
-
-            OnSelectColumn = new DelegateCommand<object>((x)=> {
-                _selectType = SelectType.col;
-            });
-
-            OnSelectRow = new DelegateCommand<object>((x) => {
-                _selectType = SelectType.row;
-            });
-
             OnSelectionChanged = new DelegateCommand<object>((x) => {
-                //_selectedRowIdxList.Clear();
-                //_selectedColIdxList.Clear();
-                //_selectedCellList.Clear();
+                _selectedItemList.Clear();
+                var grid = x as System.Windows.Controls.DataGrid;
+                foreach(var v in grid.SelectedItems) {
+                    _selectedItemList.Add((v as Item).TestNumber);
+                }
 
-                //switch (_selectType) {
-                //    case SelectType.row:
-                //        _selectedRowIdxList = (x as FastWpfGrid.FastGridControl).GetSelectedRows();
-                //        break;
-                //    default:break;
-                //}
-                //foreach (var v in _selectedRowIdxList) {
-                //    System.Diagnostics.Debug.WriteLine(v);
-                //}
-
-                //_selectType = SelectType.cell;
+                if (_selectedItemList.Count > 0) {
+                    _ea.GetEvent<Event_ItemsSelected>().Publish(new Tuple<SubData, List<string>>(_subData, _selectedItemList));
+                }
             });
 
         }

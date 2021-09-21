@@ -109,9 +109,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HandyControls">
-      <Version>3.3.4</Version>
-    </PackageReference>
     <PackageReference Include="Prism.Core">
       <Version>8.0.0.1909</Version>
     </PackageReference>

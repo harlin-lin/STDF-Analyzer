@@ -93,7 +93,16 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\DataContainer\DataContainer.csproj">
+      <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
+      <Name>DataContainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
+      <Project>{0649EF81-84CA-4882-BB22-C0599BE5D3D1}</Project>
+      <Name>SillyMonkey.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Box.xaml">
       <SubType>Designer</SubType>
@@ -117,8 +126,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HandyControls">
-      <Version>3.3.4</Version>
+    <PackageReference Include="OxyPlot.Wpf">
+      <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Prism.Core">
       <Version>8.0.0.1909</Version>
