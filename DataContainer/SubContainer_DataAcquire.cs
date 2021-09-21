@@ -87,6 +87,14 @@ namespace DataContainer {
             return GetItemVal(testID, startIndex, count, _filterContainer[filterId]).ToArray();
         }
 
+        public IEnumerable<Item> GetFilteredItems(int filterId) {
+            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
+
+            return from r in _filterContainer[filterId].FilterItemStatistics
+                    let item = new Item(r.Key, _itemContainer[r.Key], r.Value)
+                    select item;
+
+        }
 
         public FilterSetup GetFilterSetup(int filterId){
             return _filterSetupContainer[filterId];

@@ -6,6 +6,7 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 
@@ -30,10 +31,10 @@ namespace UI_Data.ViewModels {
 
         SubData _subData;
 
-        private DataTable _dataTable;
-        public DataTable DataTable {
-            get { return _dataTable; }
-            set { SetProperty(ref _dataTable, value); }
+        private ObservableCollection<Item> _items;
+        public ObservableCollection<Item> Items {
+            get { return _items; }
+            set { SetProperty(ref _items, value); }
         }
 
         private string _header;
@@ -74,10 +75,13 @@ namespace UI_Data.ViewModels {
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
-            if (DataTable is null) {
+            if (Items is null) {
                 var data = (SubData)navigationContext.Parameters["subData"];
                 _subData = data;
-                //DataTable = new DataTable(_dataAcquire, _filterId);
+
+                var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
+
+                Items = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
 
                 Header = $"F:{_subData.FilterId:x8}";
 

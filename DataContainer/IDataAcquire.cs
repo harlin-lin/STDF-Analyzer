@@ -123,10 +123,10 @@ namespace DataContainer{
 
 
         #region this info is filtered by filter
-        //Filter GetFilter(int filterId);
 
         float?[] GetFilteredItemData(string testID, int filterId);
         float?[] GetFilteredItemData(string testID, int startIndex, int count, int filterId);
+        IEnumerable<Item> GetFilteredItems(int filterId);
 
         #endregion
 
@@ -137,35 +137,8 @@ namespace DataContainer{
         void ResetFilter(int filterId);
         void UpdateFilter(int filterId, FilterSetup externalFilter);
         FilterSetup GetFilterSetup(int filterId);
-        //int CreateFilterCopy(int filterId);
-
-        ///// <summary>
-        ///// get all of the created filters, include the default created 1 for basic file and n for n sites
-        ///// </summary>
-        ///// <returns>filters' id and the corresponding comment</returns>
-        //Dictionary<int, FilterSetup> GetAllFilter();
-
-        ///// <summary>
-        ///// get corresponding site's filter
-        ///// </summary>
-        ///// <param name="site">if is null means get the full sites one</param>
-        ///// <returns></returns>  
-        //int GetFilterID(byte? site);
-
-        /// <summary>
-        /// find the index of the correspoding FilterId, return -1 if cannot find
-        /// </summary>
-        /// <param name="filterId"></param>
-        /// <returns></returns>
         int GetFilterIndex(int filterId);
         int[] GetAllFilterId();
-
-        //FilterSetup GetFilterSetup(int filterId);
-
-        /// <summary>
-        /// remove the corresponding filter
-        /// </summary>
-        /// <param name="filterId">the filter's id which need to be removed</param>
         void RemoveFilter(int filterId);
         #endregion
 

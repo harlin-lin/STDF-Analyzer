@@ -42,7 +42,14 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding DataTable}">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding Items}">
+                <!--<DataGrid.Columns>
+                    --><!--<DataGridTextColumn Header="TestNO" Binding="{Binding TestText}" Width="*"/>--><!--
+                    <DataGridTextColumn Header="TestText" Binding="{Binding TestText}" Width="100"/>
+                    <DataGridTextColumn Header="LoLimit" Binding="{Binding LoLimit}" Width="10"/>
+                    <DataGridTextColumn Header="HiLimit" Binding="{Binding HiLimit}" Width="10"/>
+                    <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="8"/>
+                </DataGrid.Columns>-->
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="RowHeaderClick" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectRow}" CommandParameter="{Binding ElementName=rawGrid}"/>

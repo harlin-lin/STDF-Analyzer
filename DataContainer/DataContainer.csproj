@@ -44,6 +44,7 @@
     <Compile Include="Filter.cs" />
     <Compile Include="FilterSetup.cs" />
     <Compile Include="ItemInfo.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="ItemStatistic.cs" />
     <Compile Include="PartStatistic.cs" />
     <Compile Include="StdDB.cs" />
