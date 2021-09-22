@@ -120,17 +120,41 @@ namespace UI_DataList.ViewModels {
             if (StdDB.IfExsistFile(path)) return;
             var f = new FileNode(path);
             Files.Add(f);
-
-            using (var data = new StdReader(path, StdFileType.STD)) {
-                try {
+            try {
+                var dataAcquire = StdDB.CreateSubContainer(path);
+                dataAcquire.PropertyChanged += DataAcquire_PropertyChanged;
+                using (var data = new StdReader(path, StdFileType.STD)) {
                     await Task.Run(() => { data.ExtractStdf();});
-                }catch {
-                    Files.Remove(f);
-                    return;
+                    LoadingDone(path);
                 }
-                LoadingDone(path);
+            }catch {
+                Files.Remove(f);
+                StdDB.RemoveFile(path);
+                return;
             }
 
+        }
+
+        private void DataAcquire_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if(e.PropertyName== "CurrentLoadingProgress" || e.PropertyName== "CurrentLoadingPhase") {
+                var dataAcquire = sender as IDataAcquire;
+                string info="";
+                switch (dataAcquire.CurrentLoadingPhase) {
+                    case LoadingPhase.NotStart:
+                        info = "";
+                        break;
+                    case LoadingPhase.Analysing:
+                        info = $"Analysing {dataAcquire.FileName}";
+                        break;
+                    case LoadingPhase.Reading:
+                        info = $"Loading {dataAcquire.FileName}";
+                        break;
+                    case LoadingPhase.Done:
+                        info = "";
+                        break;
+                }
+                _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>(info, dataAcquire.CurrentLoadingProgress));
+            }
         }
 
         private void LoadingDone(string path) {

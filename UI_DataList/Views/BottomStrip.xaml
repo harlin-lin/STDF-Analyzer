@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="UI_DataList.Views.BottomStrip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="  :-)  ->harlin_zhang@outlook.com" HorizontalAlignment="Left"/>
+        <TextBlock Grid.Column="1" Text="{Binding Info}" HorizontalAlignment="Right" Margin="20,0"/>
+        <ProgressBar Grid.Column="2" Value="{Binding Progress}" Width="200" Height="16"/>
+    </Grid>
+</UserControl>

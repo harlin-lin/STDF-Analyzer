@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataContainer{
-    public delegate void ExtractDoneEventHandler(IDataAcquire data);
+    //public delegate void ExtractDoneEventHandler(IDataAcquire data);
 
-    public interface IDataAcquire : IDisposable {
+    public interface IDataAcquire : IDisposable , INotifyPropertyChanged {
 
         #region property get the file default infomation
         /// <summary>

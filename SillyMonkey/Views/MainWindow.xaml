@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <ContentControl Grid.Row="0" prism:RegionManager.RegionName="Region_Menu" />
         <Grid Grid.Row="1">

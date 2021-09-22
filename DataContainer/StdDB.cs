@@ -25,11 +25,22 @@ namespace DataContainer
             return _subContainers.Any(x=> x.Value.FilePath == filePath);
         }
 
-        public static IDataCollect CreateSubContainer(string filePath) {
+        //public static IDataCollect CreateSubContainer(string filePath) {
+        //    if (IfExsistFile(filePath)) throw new Exception("Already exsist this file");
+        //    _subContainers.TryAdd(filePath, new SubContainer(filePath));
+        //    return _subContainers[filePath];
+        //}
+        public static IDataCollect GetDataCollect(string filePath) {
+            if (!IfExsistFile(filePath)) throw new Exception("No file in container");
+            return _subContainers[filePath];
+        }
+
+        public static IDataAcquire CreateSubContainer(string filePath) {
             if (IfExsistFile(filePath)) throw new Exception("Already exsist this file");
             _subContainers.TryAdd(filePath, new SubContainer(filePath));
             return _subContainers[filePath];
         }
+
 
         public static IDataAcquire GetDataAcquire(string filePath) {
             if (!IfExsistFile(filePath)) throw new Exception("No file in container");

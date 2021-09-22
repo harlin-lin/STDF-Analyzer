@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataContainer {
-    public partial class SubContainer : INotifyPropertyChanged, IDataCollect, IDataAcquire{
+    public partial class SubContainer : IDataCollect, IDataAcquire{
         const int DEFAULT_ITEMS_COUNT = 400;
 
         public event PropertyChangedEventHandler PropertyChanged;

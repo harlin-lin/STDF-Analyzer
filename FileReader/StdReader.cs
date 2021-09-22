@@ -39,7 +39,7 @@ namespace FileReader {
         public void ExtractStdf() {
             var s = new System.Diagnostics.Stopwatch();
             using(StdV4Reader _v4Reader = new StdV4Reader(FilePath)) {
-                var dc = StdDB.CreateSubContainer(FilePath);
+                var dc = StdDB.GetDataCollect(FilePath);
                 try {
                     s.Start();
                     _v4Reader.ReadRaw(dc);
@@ -52,7 +52,6 @@ namespace FileReader {
                 }
                 catch {
                     //release table in data base
-                    StdDB.RemoveFile(FilePath);
                     throw new Exception("File Read Fail");
                 }
             }
