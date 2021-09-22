@@ -65,9 +65,9 @@ namespace DataContainer {
             Unit = u;
         }
 
-        public float? GetScaledRst(float? value) {
-            if (!value.HasValue)
-                return null;
+        public float GetScaledRst(float value) {
+            if (value == float.NaN)
+                return float.NaN;
 
             return _rstScale * value;
         }

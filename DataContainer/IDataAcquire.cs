@@ -124,8 +124,8 @@ namespace DataContainer{
 
         #region this info is filtered by filter
 
-        float?[] GetFilteredItemData(string testID, int filterId);
-        float?[] GetFilteredItemData(string testID, int startIndex, int count, int filterId);
+        float[] GetFilteredItemData(string testID, int filterId);
+        float[] GetFilteredItemData(string testID, int startIndex, int count, int filterId);
         IEnumerable<Item> GetFilteredItems(int filterId);
 
         #endregion

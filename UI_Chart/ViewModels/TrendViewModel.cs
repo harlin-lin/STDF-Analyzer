@@ -52,7 +52,7 @@ namespace UI_Chart.ViewModels {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             int i = 0;
             TrendData = (from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
-                         let p = new DataPoint(i++, r.HasValue ? r.Value : double.NaN)
+                         let p = new DataPoint(i++, r)
                          select p).ToList();
         }
 

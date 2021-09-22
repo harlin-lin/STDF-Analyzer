@@ -80,10 +80,10 @@ namespace DataContainer {
         }
 
 
-        public float?[] GetFilteredItemData(string testID, int filterId) {
+        public float[] GetFilteredItemData(string testID, int filterId) {
             return GetItemVal(testID, _filterContainer[filterId]).ToArray();
         }
-        public float?[] GetFilteredItemData(string testID, int startIndex, int count, int filterId) {
+        public float[] GetFilteredItemData(string testID, int startIndex, int count, int filterId) {
             return GetItemVal(testID, startIndex, count, _filterContainer[filterId]).ToArray();
         }
 

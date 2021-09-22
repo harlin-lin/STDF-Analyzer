@@ -12,7 +12,7 @@ namespace DataContainer{
         void AddSbr(ushort binNO, Tuple<string, string> binNmaeInfo);
         void AddHbr(ushort binNO, Tuple<string, string> binNmaeInfo);
         void UpdateItemInfo(string uid, ItemInfo itemInfo);
-        void AddTestData(byte siteNum, string uid, float? rst);
+        void AddTestData(byte siteNum, string uid, float rst);
         void AddPrr(byte siteNum, UInt32? testTime, UInt16 hardBin, UInt16 softBin, string partId,
             short? xCord, short? yCord, DeviceType deviceType, ResultType result);
         //TestID GetUid(TempID id, byte siteNum);

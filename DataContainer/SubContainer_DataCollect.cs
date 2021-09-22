@@ -36,7 +36,7 @@ namespace DataContainer {
         public void UpdateItemInfo(string uid, ItemInfo itemInfo) {
             _itemContainer[uid] = itemInfo;
         }
-        public void AddTestData(byte siteNum, string uid, float? rst) {
+        public void AddTestData(byte siteNum, string uid, float rst) {
             SetData(uid, _siteContainer[siteNum], rst);
         }
 
