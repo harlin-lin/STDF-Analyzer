@@ -3,16 +3,13 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OxyPlot;
 using System.Windows.Media;
 using SillyMonkey.Core;
 using Prism.Regions;
 using Prism.Events;
 using DataContainer;
 using System.Drawing;
-using LiveCharts.Wpf;
-using LiveCharts;
-using LiveCharts.Geared;
+using SciChart.Charting.Model.DataSeries;
 
 namespace UI_Chart.ViewModels {
     public class TrendViewModel : BindableBase, INavigationAware {
@@ -28,8 +25,8 @@ namespace UI_Chart.ViewModels {
         //    set { SetProperty(ref _trendData, value); }
         //}
 
-        private GearedValues<float> _trendData = new GearedValues<float>();
-        public GearedValues<float> TrendData {
+        private XyDataSeries<double, double> _trendData= new XyDataSeries<double, double>();
+        public XyDataSeries<double, double> TrendData {
             get { return _trendData; }
             set { SetProperty(ref _trendData, value); }
         }
@@ -60,14 +57,18 @@ namespace UI_Chart.ViewModels {
         }
         void UpdateData() {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
-            int i = 0;
             //TrendData = (from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
             //             let p = new DataPoint(i++, r)
             //             select p).ToList();
+            //TrendData = null;
+            //var dataSeries = new XyDataSeries<double, double>();
+            var data = (from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
+                        select (double)r);
+            var xs = Enumerable.Range(0, data.Count()).Select(x=> (double)x);
+            //dataSeries.Append( xs, data);
+            //TrendData = dataSeries;
             TrendData.Clear();
-            TrendData.AddRange(from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
-                          select r);
-
+            TrendData.Append(xs, data);
             RaisePropertyChanged("TrendData");
         }
 
