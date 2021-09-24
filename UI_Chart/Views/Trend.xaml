@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/" 
              xmlns:oxy="http://oxyplot.org/wpf"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:geared="clr-namespace:LiveCharts.Geared;assembly=LiveCharts.Geared"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.RowDefinitions>
@@ -10,11 +12,11 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <oxy:Plot Title="Trend" Grid.Row="0">
-            <!--<oxy:Plot.Axes>
+        <!--<oxy:Plot Title="Trend" Grid.Row="0">
+            --><!--<oxy:Plot.Axes>
                 <oxy:LinearAxis Title="Idx" Position="Bottom" />
                 <oxy:LinearAxis Title="Val" Position="Left"/>
-            </oxy:Plot.Axes>-->
+            </oxy:Plot.Axes>--><!--
             <oxy:Plot.Series>
                 <oxy:LineSeries ItemsSource="{Binding TrendData}"
                                 DataFieldX="X" 
@@ -26,7 +28,27 @@
                                 MarkerType="None" 
                                 />
             </oxy:Plot.Series>
-        </oxy:Plot>
+        </oxy:Plot>-->
+        <lvc:CartesianChart Grid.Row="0"
+                            DisableAnimations="True" 
+                            Hoverable="False" DataTooltip="{x:Null}"
+                            >
+            <lvc:CartesianChart.Series>
+                <geared:GLineSeries StrokeThickness="1"
+                                    Values="{Binding TrendData}"
+                                    Stroke="Blue"
+                                    Fill="{x:Null}"
+                                    PointGeometrySize="0"
+                                    PointGeometry="{x:Null}" 
+                                    LineSmoothness="0"/>
+            </lvc:CartesianChart.Series>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis/>
+            </lvc:CartesianChart.AxisY>
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis/>
+            </lvc:CartesianChart.AxisX>
+        </lvc:CartesianChart>
         <GridSplitter Grid.Row="1"/>
         
     </Grid>

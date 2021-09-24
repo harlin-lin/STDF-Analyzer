@@ -9,6 +9,10 @@ using SillyMonkey.Core;
 using Prism.Regions;
 using Prism.Events;
 using DataContainer;
+using System.Drawing;
+using LiveCharts.Wpf;
+using LiveCharts;
+using LiveCharts.Geared;
 
 namespace UI_Chart.ViewModels {
     public class TrendViewModel : BindableBase, INavigationAware {
@@ -18,17 +22,23 @@ namespace UI_Chart.ViewModels {
         SubData _subData;
         List<string> _selectedIds;
 
-        private IList<DataPoint> _trendData;
-        public IList<DataPoint> TrendData {
+        //private IList<DataPoint> _trendData;
+        //public IList<DataPoint> TrendData {
+        //    get { return _trendData; }
+        //    set { SetProperty(ref _trendData, value); }
+        //}
+
+        private GearedValues<float> _trendData = new GearedValues<float>();
+        public GearedValues<float> TrendData {
             get { return _trendData; }
             set { SetProperty(ref _trendData, value); }
         }
 
-        private Color _lineColor= Color.FromRgb(0, 0, 255);
-        public Color LineColor {
-            get { return _lineColor; }
-            set { SetProperty(ref _lineColor, value); }
-        }
+        //private Color _lineColor= Color.Blue;
+        //public Color LineColor {
+        //    get { return _lineColor; }
+        //    set { SetProperty(ref _lineColor, value); }
+        //}
 
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
@@ -51,9 +61,14 @@ namespace UI_Chart.ViewModels {
         void UpdateData() {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             int i = 0;
-            TrendData = (from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
-                         let p = new DataPoint(i++, r)
-                         select p).ToList();
+            //TrendData = (from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
+            //             let p = new DataPoint(i++, r)
+            //             select p).ToList();
+            TrendData.Clear();
+            TrendData.AddRange(from r in StdDB.GetDataAcquire(_subData.StdFilePath).GetFilteredItemData(_selectedIds[0], _subData.FilterId)
+                          select r);
+
+            RaisePropertyChanged("TrendData");
         }
 
         void UpdateChart(SubData subData) {
