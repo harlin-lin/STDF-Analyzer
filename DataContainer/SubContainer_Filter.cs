@@ -25,23 +25,10 @@ namespace DataContainer {
             _filterContainer.Add(key, new Filter(_partIdx+1, _itemContainer.Count));
             _filterSetupContainer.Add(key, new FilterSetup(""));
 
-            _filterContainer[key].FilterPartStatistic = new PartStatistic(_partStatistic);
-            _filterContainer[key].FilterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>(_itemStatistics);
+            ResetFilterStatistic(key);
+
             return key;
         }
-
-        //public int CreateFilter(int[] maskIds) {
-        //    int key = System.DateTime.UtcNow.Ticks.GetHashCode();
-        //    while (_filterContainer.ContainsKey(key)) key++;
-
-        //    _filterContainer.Add(key, new Filter(_partIdx + 1, _itemContainer.Count));
-
-        //    _filterContainer[key].FilterPartStatistic = new PartStatistic(_siteContainer.Keys);
-        //    //_filterContainer[key].FilterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>();
-
-        //    UpdateFilter(key, maskIds, new int[0]);
-        //    return key;
-        //}
 
         public int CreateFilter(byte enSite) {
             if (!_siteContainer.ContainsKey(enSite)) throw new Exception("No Such site");
@@ -66,25 +53,27 @@ namespace DataContainer {
         public void ResetFilter(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
             _filterContainer[filterId].ResetFilter();
+            ResetFilterStatistic(filterId);
         }
-        
-        public void UpdateFilter(int filterId, IEnumerable<int> maskIds, IEnumerable<int> maskItemIds) {
-            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
-            try {
-                foreach(var id in maskIds) {
-                    _filterContainer[filterId].FilterIdxFlag[id]=true;
-                }
-                foreach (var id in maskItemIds) {
-                    _filterContainer[filterId].FilterItemFlag[id] = true;
-                }
-            }
-            catch {
-                _filterContainer[filterId].ResetFilter();
-                throw new Exception("Id not in idx list, Reset Filter");
-            }
+
+        void ResetFilterStatistic(int filterId) {
+            _filterContainer[filterId].FilterPartStatistic = new PartStatistic(_partStatistic);
+            _filterContainer[filterId].FilterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>(_itemStatistics);
+            _filterContainer[filterId].FilteredPartIdx = _allIndex;
+            _filterContainer[filterId].FilteredUid = _itemContainer.Keys;
+        }
+
+        void UpdateFilterStatistic(int filterId) {
 
             CurrentLoadingProgress = 0;
             OnPropertyChanged("CurrentLoadingProgress");
+
+            _filterContainer[filterId].FilteredPartIdx = from i in Enumerable.Range(0, _partIdx + 1)
+                                                         where !_filterContainer[filterId].FilterIdxFlag[i]
+                                                         select i;
+            _filterContainer[filterId].FilteredUid = from i in Enumerable.Range(0, _itemContainer.Count)
+                                                     where !_filterContainer[filterId].FilterItemFlag[i]
+                                                     select _itemContainer.ElementAt(i).Key;
 
             Task[] asyncTask = new Task[2];
             asyncTask[0] = Task.Run(() => {
@@ -103,6 +92,27 @@ namespace DataContainer {
             });
 
             Task.WaitAll(asyncTask);
+
+
+        }
+
+        public void UpdateFilter(int filterId, IEnumerable<int> maskIds, IEnumerable<int> maskItemIds) {
+            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
+            try {
+                foreach(var id in maskIds) {
+                    _filterContainer[filterId].FilterIdxFlag[id]=true;
+                }
+                foreach (var id in maskItemIds) {
+                    _filterContainer[filterId].FilterItemFlag[id] = true;
+                }
+                
+                UpdateFilterStatistic(filterId);
+            }
+            catch {
+                _filterContainer[filterId].ResetFilter();
+                ResetFilterStatistic(filterId);
+                throw new Exception("Id not in idx list, Reset Filter");
+            }
 
         }
 
@@ -123,30 +133,14 @@ namespace DataContainer {
                     var i = _itemContainer.Keys.ToList().FindIndex(x => x==id);
                     _filterContainer[filterId].FilterItemFlag[i] = true;
                 }
+    
+                UpdateFilterStatistic(filterId);
             }
             catch {
                 _filterContainer[filterId].ResetFilter();
+                ResetFilterStatistic(filterId);
                 throw new Exception("Id not in idx list, Reset Filter");
             }
-
-
-            Task[] asyncTask = new Task[2];
-            asyncTask[0] = Task.Run(() => {
-                AnalyseParts_Filtered(_filterContainer[filterId]);
-                CurrentLoadingProgress += 50;
-                OnPropertyChanged("CurrentLoadingProgress");
-
-                Console.WriteLine("Parts Done");
-            });
-            asyncTask[1] = Task.Run(() => {
-                AnalyseItems_Filtered(_filterContainer[filterId]);
-                CurrentLoadingProgress += 50;
-                OnPropertyChanged("CurrentLoadingProgress");
-
-                Console.WriteLine("Items Done");
-            });
-
-            Task.WaitAll(asyncTask);
 
         }
 
@@ -154,6 +148,7 @@ namespace DataContainer {
         public void RemoveFilter(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
             _filterContainer.Remove(filterId);
+            _filterSetupContainer.Remove(filterId);
         }
 
         private List<int> GetMaskIds(FilterSetup filter) {

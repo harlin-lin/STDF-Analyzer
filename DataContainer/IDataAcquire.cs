@@ -17,9 +17,9 @@ namespace DataContainer{
         /// <returns>return a list of site number</returns>
         byte[] GetSites();
 
-        int[] GetAllIndex();
+        IEnumerable<int> GetAllIndex();
 
-        int[] GetSiteIndex(byte site);
+        IEnumerable<int> GetSiteIndex(byte site);
         /// <summary>
         /// Get all of the sites and the corresponding test devices
         /// </summary>
@@ -54,7 +54,7 @@ namespace DataContainer{
         /// Get all of the test items ID(Id consist of the TN and the sub number)in the stdf file
         /// </summary>
         /// <returns>return a list of the test items ID</returns>
-        string[] GetTestIDs();
+        IEnumerable<string> GetTestIDs();
 
         /// <summary>
         /// Get the test items Info by ID
@@ -124,9 +124,10 @@ namespace DataContainer{
 
         #region this info is filtered by filter
 
-        float[] GetFilteredItemData(string testID, int filterId);
-        float[] GetFilteredItemData(string testID, int startIndex, int count, int filterId);
+        IEnumerable<float> GetFilteredItemData(string testID, int filterId);
+        IEnumerable<float> GetFilteredItemData(string testID, int startIndex, int count, int filterId);
         IEnumerable<Item> GetFilteredItems(int filterId);
+        IEnumerable<int> GetFilteredIndex(int filterId);
 
         #endregion
 

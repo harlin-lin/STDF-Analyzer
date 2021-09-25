@@ -16,7 +16,7 @@ namespace DataContainer {
         public int PassCount { get; private set; }
         public int FailCount { get; private set; }
 
-        public ItemStatistic(List<float> data, float? ll, float? hl) {
+        public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {
             List<float> listUnNullItems = (from r in data
                                            where r!=float.NaN && r!=float.NegativeInfinity && r != float.PositiveInfinity
                                            select r).ToList();
@@ -51,7 +51,7 @@ namespace DataContainer {
 
             if(!ll.HasValue && !hl.HasValue) {
                 PassCount = listUnNullItems.Count;
-                FailCount = data.Count - PassCount;
+                FailCount = data.Count() - PassCount;
             } else {
                 foreach(var v in listUnNullItems) {
                     if (ll.HasValue && !hl.HasValue){
@@ -65,7 +65,7 @@ namespace DataContainer {
                             PassCount++;
                     }
                 }
-                FailCount = data.Count - PassCount;
+                FailCount = data.Count() - PassCount;
             }
 
 

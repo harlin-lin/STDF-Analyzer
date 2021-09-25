@@ -12,12 +12,13 @@ namespace DataContainer {
         public bool IfNoChanged { get; private set; }
         public PartStatistic FilterPartStatistic;
         public ConcurrentDictionary<string, ItemStatistic> FilterItemStatistics;
+        public IEnumerable<int> FilteredPartIdx;
+        public IEnumerable<string> FilteredUid;
 
         public Filter(int partCnt, int itemCnt) {
 
             FilterIdxFlag = new bool[partCnt];
             FilterItemFlag = new bool[itemCnt];
-
             IfNoChanged = true;
         }
 

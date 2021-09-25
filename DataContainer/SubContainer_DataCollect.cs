@@ -18,6 +18,7 @@ namespace DataContainer {
         public void AddPir(byte siteNum) {
             _partIdx +=1 ;
             _siteContainer[siteNum] = _partIdx;
+            _allIndex.Add(_partIdx);
             AdjustDataBaseCapcity();
         }
 

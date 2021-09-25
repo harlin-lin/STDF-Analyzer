@@ -10,6 +10,7 @@ using SillyMonkey.Core;
 using System.Threading.Tasks;
 using DataContainer;
 using FileReader;
+using System.Windows;
 
 namespace UI_DataList.ViewModels {
 
@@ -17,9 +18,11 @@ namespace UI_DataList.ViewModels {
         string NodeName { get; }
         string FilePath { get; }
         FileNode ParentNode { get; }
+        IEnumerable<SiteNode> SiteList { get; }
+        Visibility EnableContextMenu { get; }
     }
 
-    public class SiteNode : ISubNode {
+    public class SiteNode {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
 
@@ -42,6 +45,7 @@ namespace UI_DataList.ViewModels {
         public IEnumerable<SiteNode> SiteList { get; private set; }
 
         public FileNode ParentNode { get; private set; }
+        public Visibility EnableContextMenu { get { return  Visibility.Hidden; } }
 
         public SiteCollectionNode(FileNode file) {
             ParentNode = file;
@@ -61,15 +65,22 @@ namespace UI_DataList.ViewModels {
 
         public string FilePath { get; private set; }
 
+        public IEnumerable<SiteNode> SiteList { get; private set; }
+
         public FileNode ParentNode { get; private set; }
 
+        public Visibility EnableContextMenu { get { return Visibility.Visible; } }
+
         public int FilterId { get; }
+
+        public SubData SubData { get; }
 
         public FilterNode(FileNode file, int filterId, int filterIdx) {
             ParentNode = file;
             FilterId = filterId;
             NodeName = $"Filter_{filterIdx}:{filterId.ToString("x8")}";
-            FilePath = "";
+            FilePath = file.FilePath;
+            SubData = new SubData(FilePath, filterId);
         }
     }
 
@@ -77,6 +88,7 @@ namespace UI_DataList.ViewModels {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
         public bool ExtractedDone { get; private set; }
+        public Visibility EnableContextMenu { get { return ExtractedDone? Visibility.Visible :Visibility.Hidden; } }
         public ObservableCollection<ISubNode> SubDataList { get; private set; }
 
         public FileNode(string path) {
@@ -90,6 +102,8 @@ namespace UI_DataList.ViewModels {
             var dataAcquire = StdDB.GetDataAcquire(FilePath);
             ExtractedDone = dataAcquire.LoadingDone;
             RaisePropertyChanged("ExtractedDone");
+            RaisePropertyChanged("EnableContextMenu");
+
             SubDataList.Clear();
             SubDataList.Add(new SiteCollectionNode(this));
             int i = 0;
@@ -112,8 +126,8 @@ namespace UI_DataList.ViewModels {
         public DataManagementViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_OpenData>().Subscribe(CreateNewRawTab);
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
+            _ea.GetEvent<Event_CloseData>().Subscribe(CloseSubData);
         }
 
         private async void OpenStdFile(string path) {
@@ -165,17 +179,33 @@ namespace UI_DataList.ViewModels {
                 return false;
             }).Update();
             RaisePropertyChanged("Files");
-            _ea.GetEvent<Event_OpenData>().Publish(new SubData(path, id));
+            RequestRawTab(new SubData(path, id));
         }
 
-        private void CreateNewRawTab(SubData data) {
+        private void RequestRawTab(SubData data) {
             var parameters = new NavigationParameters();
             parameters.Add("subData", data);
-
             _regionManager.RequestNavigate("Region_DataView", "DataRaw", parameters);
         }
 
+        private void RemoveRawTab(SubData data) {
+            var v =_regionManager.Regions["Region_DataView"].Views;
+            var view = v.First(x => ((x as System.Windows.Controls.UserControl).DataContext as IDataView).CurrentData.Equals(data));
+            _regionManager.Regions["Region_DataView"].Remove(view);
+        }
 
+        private void CloseSubData(SubData data) {
+            RemoveRawTab(data);
+
+            var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
+            dataAcquire.RemoveFilter(data.FilterId);
+            Files.First((f) => {
+                if (f.FilePath == dataAcquire.FilePath) return true;
+                return false;
+            }).Update();
+            RaisePropertyChanged("Files");
+
+        }
 
         private DelegateCommand<object> _selectData;
         public DelegateCommand<object> SelectData =>
@@ -186,7 +216,8 @@ namespace UI_DataList.ViewModels {
                 if((x as FileNode).ExtractedDone)
                     _ea.GetEvent<Event_DataSelected>().Publish((x as FileNode).FilePath);
             } else if (x.GetType().Name == "FilterNode") {
-                _ea.GetEvent<Event_SubDataSelected>().Publish(new SubData((x as FilterNode).ParentNode.FilePath, (x as FilterNode).FilterId));
+                _ea.GetEvent<Event_SubDataSelected>().Publish((x as FilterNode).SubData);
+                RequestRawTab((x as FilterNode).SubData);
             } else {
                 _ea.GetEvent<Event_DataSelected>().Publish(null);
             }
@@ -198,7 +229,7 @@ namespace UI_DataList.ViewModels {
 
         void ExecuteOpenData(object x) {
             if (x.GetType().Name == "FilterNode") {
-                _ea.GetEvent<Event_OpenData>().Publish(new SubData((x as FilterNode).ParentNode.FilePath, (x as FilterNode).FilterId));
+                RequestRawTab((x as FilterNode).SubData);
             } else if (x.GetType().Name == "SiteNode") {
                 var s = (x as SiteNode);
                 var f = StdDB.GetDataAcquire(s.FilePath);
@@ -207,21 +238,38 @@ namespace UI_DataList.ViewModels {
                 s.ParentNode.Update();
                 RaisePropertyChanged("Files");
 
-                _ea.GetEvent<Event_OpenData>().Publish(new SubData(s.FilePath, id));
+                RequestRawTab(new SubData(s.FilePath, id));
+            }else if(x.GetType().Name == "FileNode") {
+                var f = x as FileNode;
+                var id = StdDB.GetDataAcquire(f.FilePath).CreateFilter();
+                f.Update();
+                RaisePropertyChanged("Files");
+                RequestRawTab(new SubData(f.FilePath, id));
+
             }
         }
 
         private DelegateCommand<object> _cmdCloseFile;
         public DelegateCommand<object> CmdCloseFile =>
-            _cmdCloseFile ?? (_cmdCloseFile = new DelegateCommand<object>(ExecuteCmdCloseFile, CanExecuteCmdCloseFile));
+            _cmdCloseFile ?? (_cmdCloseFile = new DelegateCommand<object>(ExecuteCmdCloseFile));
 
         void ExecuteCmdCloseFile(object parameter) {
-            var t = parameter.GetType();
+            var f = parameter as FileNode;
+            foreach(var v in f.SubDataList) {
+                if (v is FilterNode) {
+                    RemoveRawTab((v as FilterNode).SubData);
+                }
+            }
+            StdDB.RemoveFile(f.FilePath);
+            Files.Remove(f);
         }
 
-        bool CanExecuteCmdCloseFile(object parameter) {
-            return true;
-        }
+        private DelegateCommand<object> _cmdCloseData;
+        public DelegateCommand<object> CmdCloseData =>
+            _cmdCloseData ?? (_cmdCloseData = new DelegateCommand<object>(ExecuteCmdCloseData));
 
+        void ExecuteCmdCloseData(object parameter) {
+            CloseSubData((parameter as FilterNode).SubData);
+        }
     }
 }

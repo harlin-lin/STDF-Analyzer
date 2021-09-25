@@ -20,6 +20,8 @@ namespace DataContainer {
         private PartStatistic _partStatistic;
         private bool _ifCordValid;
 
+        private List<int> _allIndex;
+
         private void Initialize_PartStatistic() {
             _site_PartContainer = new List<byte>(200000);
             _testTime_PartContainer = new List<uint?>(200000);
@@ -30,7 +32,7 @@ namespace DataContainer {
             _yCord_PartContainer = new List<short?>(200000);
             _chipType_PartContainer = new List<DeviceType>(200000);
             _resultType_PartContainer = new List<ResultType>(200000);
-
+            _allIndex = new List<int>(200000);
             _ifCordValid = true;
         }
 
@@ -44,7 +46,7 @@ namespace DataContainer {
             _yCord_PartContainer.TrimExcess();
             _chipType_PartContainer.TrimExcess();
             _resultType_PartContainer.TrimExcess();
-
+            _allIndex.TrimExcess();
             _partStatistic = new PartStatistic(_siteContainer.Keys);
 
             if (_site_PartContainer.Count - 1 != _partIdx) throw new Exception("Error");

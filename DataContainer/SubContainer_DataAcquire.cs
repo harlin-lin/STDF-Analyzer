@@ -11,19 +11,18 @@ namespace DataContainer {
             return _siteContainer.Keys.ToArray();
         }
 
-        public int[] GetAllIndex() {
-            return Enumerable.Range(0, _partIdx + 1).ToArray();
+        public IEnumerable<int> GetAllIndex() {
+            return _allIndex;
         }
 
-        public int[] GetSiteIndex(byte site) {
-            return (from i in Enumerable.Range(0, _partIdx + 1)
-                    where _site_PartContainer[i] == site
-                    select i).ToArray();
+        public IEnumerable<int> GetSiteIndex(byte site) {
+            return from i in _allIndex
+                   where _site_PartContainer[i] == site
+                   select i;
         }
-
 
         public Dictionary<byte, int> GetSitesChipCount() {
-            return new Dictionary<byte, int>(_partStatistic.SiteCnt);
+            return _partStatistic.SiteCnt;
         }
 
         public ushort[] GetSoftBins() {
@@ -31,7 +30,7 @@ namespace DataContainer {
         }
 
         public Dictionary<ushort, int> GetSoftBinsCount() {
-            return new Dictionary<ushort, int>(_partStatistic.SoftBin);
+            return _partStatistic.SoftBin;
         }
 
         public ushort[] GetHardBins() {
@@ -39,30 +38,30 @@ namespace DataContainer {
         }
 
         public Dictionary<ushort, int> GetHardBinsCount() {
-            return new Dictionary<ushort, int>(_partStatistic.HardBin);
+            return _partStatistic.HardBin;
         }
 
-        public string[] GetTestIDs() {
-            return _itemContainer.Keys.ToArray();
+        public IEnumerable<string> GetTestIDs() {
+            return _itemContainer.Keys;
         }
 
         public ItemInfo GetTestInfo(string id) {
             if (!_itemContainer.ContainsKey(id)) throw new Exception("No required Test Id");
-            return new ItemInfo(_itemContainer[id]);
+            return _itemContainer[id];
         }
 
         public Dictionary<string, ItemInfo> GetTestIDs_Info() {
-            return new Dictionary<string, ItemInfo>(_itemContainer);
+            return _itemContainer;
         }
 
         public Dictionary<ushort, Tuple<string, string>> GetSBinInfo() {
-            return new Dictionary<ushort, Tuple<string, string>>(_softBinNames);
+            return _softBinNames;
         }
 
         public Dictionary<ushort, Tuple<string, string>> GetHBinInfo() {
-            return new Dictionary<ushort, Tuple<string, string>>(_hardBinNames);
+            return _hardBinNames;
         }
-
+        //
         public Dictionary<string, ItemStatistic> GetStatistic() {
             return new Dictionary<string, ItemStatistic>(_itemStatistics);
         }
@@ -80,21 +79,29 @@ namespace DataContainer {
         }
 
 
-        public float[] GetFilteredItemData(string testID, int filterId) {
-            return GetItemVal(testID, _filterContainer[filterId]).ToArray();
+        public IEnumerable<float> GetFilteredItemData(string testID, int filterId) {
+            return GetItemVal(testID, _filterContainer[filterId]);
         }
-        public float[] GetFilteredItemData(string testID, int startIndex, int count, int filterId) {
-            return GetItemVal(testID, startIndex, count, _filterContainer[filterId]).ToArray();
+        public IEnumerable<float> GetFilteredItemData(string testID, int startIndex, int count, int filterId) {
+            return GetItemVal(testID, startIndex, count, _filterContainer[filterId]);
         }
 
         public IEnumerable<Item> GetFilteredItems(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
 
-            return from r in _filterContainer[filterId].FilterItemStatistics
-                    let item = new Item(r.Key, _itemContainer[r.Key], r.Value)
-                    select item;
+            //return from r in _filterContainer[filterId].FilterItemStatistics
+            //        let item = new Item(r.Key, _itemContainer[r.Key], r.Value)
+            //        select item;
+            return from r in _filterContainer[filterId].FilteredUid
+                   let item = new Item(r, _itemContainer[r], _filterContainer[filterId].FilterItemStatistics[r])
+                   select item;
 
         }
+
+        public IEnumerable<int> GetFilteredIndex(int filterId) {
+            return _filterContainer[filterId].FilteredPartIdx;
+        }
+
 
         public FilterSetup GetFilterSetup(int filterId){
             return _filterSetupContainer[filterId];

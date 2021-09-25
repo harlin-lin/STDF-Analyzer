@@ -6,23 +6,24 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:hc="https://handyorg.github.io/handycontrol" 
              xmlns:UI_DataList="clr-namespace:UI_DataList"
              xmlns:local="clr-namespace:UI_DataList.ViewModels"
-             Name="FileControl"
+             xmlns:core="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
+             x:Name="FileManagement"
              d:DesignHeight="300" d:DesignWidth="300"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <UI_DataList:ImgVisibilityCtr x:Key="imgbool"/>
+        <core:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid DataContext="{Binding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TreeView x:Name="dataList" Grid.Row="0" ItemsSource="{Binding Files}">
+        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
                     <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
@@ -34,27 +35,27 @@
 
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding SubDataList}">
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding NodeTip}">
+                    <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
                         <Image  Source="load.png" Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}"/>
                         <TextBlock Text="{Binding NodeName}"/>
                         <StackPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Close File" Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.CmdCloseFile}" CommandParameter="{Binding}"/>
+                            <ContextMenu  Visibility="{Binding EnableContextMenu}">
+                                <MenuItem Header="Close File" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseFile}" CommandParameter="{Binding}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>
                     <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="{x:Type local:FilterNode}" ItemsSource="{Binding SiteList}">
+                        <HierarchicalDataTemplate ItemsSource="{Binding SiteList}">
                             <StackPanel ToolTip="{Binding FilePath}">
                                 <TextBlock Text="{Binding NodeName}"/>
                                 <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Close Filtered Data" Command="{Binding CmdCloseData}" CommandParameter="{Binding}"/>
+                                    <ContextMenu Visibility="{Binding EnableContextMenu}">
+                                        <MenuItem Header="Close Filtered Data" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
                                     </ContextMenu>
                                 </StackPanel.ContextMenu>
                             </StackPanel>
                             <HierarchicalDataTemplate.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate DataType="{x:Type local:SiteNode}" >
                                     <StackPanel ToolTip="{Binding FilePath}">
                                         <TextBlock Text="{Binding NodeName}"/>
                                     </StackPanel>

@@ -11,11 +11,12 @@ using System.Data;
 using System.Linq;
 
 namespace UI_Data.ViewModels {
-    public class DataRawViewModel : BindableBase, INavigationAware {
+    public class DataRawViewModel : BindableBase, INavigationAware, IDataView {
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
         SubData _subData;
+        public SubData CurrentData { get { return _subData; } }
 
         private ObservableCollection<Item> _testItems;
         public ObservableCollection<Item> TestItems {
@@ -101,7 +102,15 @@ namespace UI_Data.ViewModels {
 
         }
 
-        public DelegateCommand<object> CloseCommand { get; private set; }
+        private DelegateCommand<object> _closeCmd;
+        public DelegateCommand<object> CloseCommand =>
+            _closeCmd ?? (_closeCmd = new DelegateCommand<object>(ExecuteCommandName));
+
+        void ExecuteCommandName(object x) {
+            //_regionManager.Regions["Region_DataView"].Remove(x);
+            _ea.GetEvent<Event_CloseData>().Publish(_subData);
+        }
+
         public DelegateCommand ShowTrendCommand { get; private set; }
         public DelegateCommand ShowHistogramCommand { get; private set; }
         public DelegateCommand ShowBoxCommand { get; private set; }
@@ -114,12 +123,6 @@ namespace UI_Data.ViewModels {
         public DelegateCommand<object> OnSelectionChanged { get; private set; }
 
         public void InitUi() {
-            CloseCommand = new DelegateCommand<object>((x)=> {
-                if (_regionManager.Regions["Region_DataView"].Views.Contains(x)) {
-                    _regionManager.Regions["Region_DataView"].Remove(x);
-                }
-
-            });
 
             ShowTrendCommand = new DelegateCommand(ShowTrend);
             ShowHistogramCommand = new DelegateCommand(ShowHistogram);

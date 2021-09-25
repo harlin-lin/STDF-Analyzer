@@ -541,8 +541,9 @@ namespace FileReader {
 
                 TestID id;
                 if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {
-                    id = new TestID(tn, txt);
-                    _lastUidBySite[sn] = id;
+                    //id = new TestID(tn, txt);
+                    //_lastUidBySite[sn] = id;
+                    id = _lastUidBySite[sn];
                 } else {
                     id = new TestID(_lastUidBySite[sn]);
                     _lastUidBySite[sn] = id;
