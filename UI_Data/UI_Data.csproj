@@ -90,6 +90,10 @@
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
       <Name>SillyMonkey.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UI_Chart\UI_Chart.csproj">
+      <Project>{BE889C30-FC1C-4B2F-8686-44E4BB0FC333}</Project>
+      <Name>UI_Chart</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\DataCorrelation.xaml">
@@ -109,21 +113,6 @@
       <Version>8.0.0.1909</Version>
     </PackageReference>
     <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Views\2d_plot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Views\histogram.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Views\box_plot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Views\wafer_binning.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Views\database.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

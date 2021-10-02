@@ -18,7 +18,7 @@ namespace DataContainer {
 
         public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {
             List<float> listUnNullItems = (from r in data
-                                           where r!=float.NaN && r!=float.NegativeInfinity && r != float.PositiveInfinity
+                                           where !float.IsNaN(r) && !float.IsInfinity(r)
                                            select r).ToList();
 
             if (listUnNullItems.Count != 0) {

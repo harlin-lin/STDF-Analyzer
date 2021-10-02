@@ -2,54 +2,72 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/" 
-             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"                
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
+             d:DesignHeight="700" d:DesignWidth="600"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Name="chart">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!--<oxy:Plot Title="Trend" Grid.Row="0">
-            --><!--<oxy:Plot.Axes>
-                <oxy:LinearAxis Title="Idx" Position="Bottom" />
-                <oxy:LinearAxis Title="Val" Position="Left"/>
-            </oxy:Plot.Axes>--><!--
-            <oxy:Plot.Series>
-                <oxy:LineSeries ItemsSource="{Binding TrendData}"
-                                DataFieldX="X" 
-                                DataFieldY="Y"
-                                StrokeThickness="2"
-                                MarkerSize="0"
-                                LineStyle="Solid"
-                                Color="{Binding LineColor}"
-                                MarkerType="None" 
-                                />
-            </oxy:Plot.Series>
-        </oxy:Plot>-->
-        <s:SciChartSurface x:Name="sciChart"
-                           Grid.Row="0">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
+                </Button.Background>
+            </Button>
+            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="Yaxis" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigma}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMax}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimit}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUser}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <TextBox Width="100" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="100" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <Button Width="40" Height="20" Content="Apply" Command="{Binding CmdApplyTrendRange}"/>
+        </StackPanel>
+        <s:SciChartSurface x:Name="sciChart" Background="White"
+                           Grid.Row="1" Margin="6,10,0,19" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxis}" YAxis="{s:AxesBinding YAxis}"  RenderableSeries="{s:SeriesBinding TrendSeries}">
 
-            <s:SciChartSurface.RenderableSeries>
-                <s:FastLineRenderableSeries DataSeries="{Binding TrendData}" Stroke="DarkOrange" />
-            </s:SciChartSurface.RenderableSeries>
-
-            <s:SciChartSurface.XAxis>
-                <s:NumericAxis AutoRange="Always" />
-            </s:SciChartSurface.XAxis>
-
-            <s:SciChartSurface.YAxis>
-                <s:NumericAxis AutoRange="Always" />
-            </s:SciChartSurface.YAxis>
-
+            <!--<s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries DataSeries="{Binding TrendData}" Stroke="Blue" />
+            </s:SciChartSurface.RenderableSeries>-->
+            
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
-                    <s:RubberBandXyZoomModifier IsAnimated="True" />
-                    <s:CursorModifier ShowTooltip="False"/>
-                    <s:ZoomPanModifier ClipModeX="None"
-                                       ExecuteOn="MouseLeftButton"
-                                       ReceiveHandledEvents="True" />
-                    <s:ZoomExtentsModifier IsAnimated="True" />
+                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
+                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
+                    <s:MouseWheelZoomModifier XyDirection="XDirection" IsEnabled="True" />
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
 

@@ -9,6 +9,8 @@ namespace DataContainer {
         private float _llScale;
         private float _hlScale;
         private float _rstScale;
+        private float? unScaledLo;
+        private float? unScaledHi;
 
         public ItemInfo(ItemInfo info) {
             TestText = info.TestText;
@@ -29,6 +31,9 @@ namespace DataContainer {
 
             LoLimit = _llScale * ll;
             HiLimit = _hlScale * hl;
+
+            unScaledLo = ll;
+            unScaledHi = hl;
 
             switch (rstScale) {
                 case 15:
@@ -70,6 +75,14 @@ namespace DataContainer {
                 return float.NaN;
 
             return _rstScale * value;
+        }
+
+        public float? GetUnScaledLowLimit() {
+            return unScaledLo;
+        }
+
+        public float? GetUnScaledHighLimit() {
+            return unScaledHi;
         }
 
         public void SetTestText(string testText) {

@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -97,6 +98,10 @@
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
+      <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
+      <Name>SillyMonkey.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UI_Chart\UI_Chart.csproj">
       <Project>{be889c30-fc1c-4b2f-8686-44e4bb0fc333}</Project>
       <Name>UI_Chart</Name>

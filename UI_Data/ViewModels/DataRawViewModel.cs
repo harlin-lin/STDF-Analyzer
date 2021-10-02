@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using UI_Chart.Views;
 
 namespace UI_Data.ViewModels {
     public class DataRawViewModel : BindableBase, INavigationAware, IDataView {
@@ -74,6 +75,8 @@ namespace UI_Data.ViewModels {
                 Header = $"F:{_subData.FilterId:x8}";
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
+
+                ShowTrend();                
             }
         }
 
@@ -87,7 +90,6 @@ namespace UI_Data.ViewModels {
 
 
             _regionManager.RequestNavigate(RegionName, "Trend", parameters);
-
         }
         private void ShowHistogram() {
 

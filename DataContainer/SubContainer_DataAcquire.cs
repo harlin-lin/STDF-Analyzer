@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -62,8 +63,8 @@ namespace DataContainer {
             return _hardBinNames;
         }
         //
-        public Dictionary<string, ItemStatistic> GetStatistic() {
-            return new Dictionary<string, ItemStatistic>(_itemStatistics);
+        public ConcurrentDictionary<string, ItemStatistic> GetStatistic() {
+            return _itemStatistics;
         }
 
         public int ChipsCount { 
@@ -102,6 +103,11 @@ namespace DataContainer {
             return _filterContainer[filterId].FilteredPartIdx;
         }
 
+        public int GetFilteredChipsCount(int filterId) {
+            return _filterContainer[filterId].FilterPartStatistic.TotalCnt;
+        }
+
+
 
         public FilterSetup GetFilterSetup(int filterId){
             return _filterSetupContainer[filterId];
@@ -119,5 +125,14 @@ namespace DataContainer {
             }
             return idx;
         }
+
+        public ConcurrentDictionary<string, ItemStatistic> GetFilteredStatistic(int filterId) {
+            return _filterContainer[filterId].FilterItemStatistics;
+        }
+        public ItemStatistic GetFilteredStatistic(int filterId, string uid) {
+            return _filterContainer[filterId].FilterItemStatistics[uid];
+        }
+
+
     }
 }

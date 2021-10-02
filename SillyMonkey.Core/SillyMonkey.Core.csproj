@@ -59,5 +59,28 @@
       <Name>DataContainer</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\box_plot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\histogram.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\wafer_binning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\database.png" />
+    <Resource Include="Resource\icon\delete.png" />
+    <Resource Include="Resource\icon\load.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\trend.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\save.jfif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

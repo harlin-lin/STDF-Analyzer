@@ -3,46 +3,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"         
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="18" Height="18" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*" MinWidth="50"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="0.7*" MinWidth="50"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Width="23" Height="23" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
                     <Button.Background>
-                        <ImageBrush ImageSource="2d_plot.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/trend.png" />
                     </Button.Background>
                 </Button>
-                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowHistogramCommand, Mode=OneWay}" ToolTip="Show Histogram Chart">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowHistogramCommand, Mode=OneWay}" ToolTip="Show Histogram Chart">
                     <Button.Background>
-                        <ImageBrush ImageSource="histogram.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart">
                     <Button.Background>
-                        <ImageBrush ImageSource="box_plot.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/box_plot.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map">
                     <Button.Background>
-                        <ImageBrush ImageSource="wafer_binning.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/wafer_binning.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="18" Height="18" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel">
                     <Button.Background>
-                        <ImageBrush ImageSource="database.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
                     </Button.Background>
                 </Button>
             </StackPanel>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.3*" MinWidth="10"/>
-                <ColumnDefinition Width="3"/>
-                <ColumnDefinition Width="0.7*"/>
-            </Grid.ColumnDefinitions>
-            <DataGrid x:Name="rawGrid" Grid.Column="0" ItemsSource="{Binding TestItems}" IsReadOnly="True">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
@@ -50,7 +54,9 @@
                 </i:Interaction.Triggers>
 
             </DataGrid>
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        </Grid>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <Grid Grid.Column="2">
             <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
         </Grid>
     </Grid>

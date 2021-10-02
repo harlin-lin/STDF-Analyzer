@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -110,7 +111,7 @@ namespace DataContainer{
         Dictionary<ushort, Tuple<string, string>> GetHBinInfo();
 
 
-        Dictionary<string, ItemStatistic> GetStatistic();
+        ConcurrentDictionary<string, ItemStatistic> GetStatistic();
 
 
         int ChipsCount { get; }
@@ -129,6 +130,9 @@ namespace DataContainer{
         IEnumerable<Item> GetFilteredItems(int filterId);
         IEnumerable<int> GetFilteredIndex(int filterId);
 
+        ConcurrentDictionary<string, ItemStatistic> GetFilteredStatistic(int filterId);
+        ItemStatistic GetFilteredStatistic(int filterId, string uid);
+        int GetFilteredChipsCount(int filterId);
         #endregion
 
 
