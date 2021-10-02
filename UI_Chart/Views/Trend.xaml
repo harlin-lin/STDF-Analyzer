@@ -15,40 +15,40 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="3"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
             <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
                 </Button.Background>
             </Button>
-            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="Yaxis" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
+            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigma}"/>
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
+            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMax}"/>
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
+            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimit}"/>
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="Yaxis" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
+            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUser}"/>
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
@@ -57,12 +57,7 @@
             <Button Width="40" Height="20" Content="Apply" Command="{Binding CmdApplyTrendRange}"/>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChart" Background="White"
-                           Grid.Row="1" Margin="6,10,0,19" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxis}" YAxis="{s:AxesBinding YAxis}"  RenderableSeries="{s:SeriesBinding TrendSeries}">
-
-            <!--<s:SciChartSurface.RenderableSeries>
-                <s:FastLineRenderableSeries DataSeries="{Binding TrendData}" Stroke="Blue" />
-            </s:SciChartSurface.RenderableSeries>-->
-            
+                           Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}" BorderBrush="#FF111111">
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
@@ -70,10 +65,56 @@
                     <s:MouseWheelZoomModifier XyDirection="XDirection" IsEnabled="True" />
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
-
+        </s:SciChartSurface>
+        <GridSplitter Grid.Row="2"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save Histo Chart">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
+                </Button.Background>
+            </Button>
+            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Checked" >
+                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </RadioButton>
+            <TextBox Width="100" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="100" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <Button Width="40" Height="20" Content="Apply" Command="{Binding CmdApplyHistoRange}"/>
+        </StackPanel>
+        <s:SciChartSurface x:Name="sciChartHisto" Background="White"
+                           Grid.Row="4" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  BorderBrush="#FF111111">
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
+                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
+                    <s:MouseWheelZoomModifier XyDirection="YDirection" IsEnabled="True" />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
         </s:SciChartSurface>
 
-        <GridSplitter Grid.Row="1"/>
-        
     </Grid>
 </UserControl>

@@ -27,26 +27,28 @@ namespace UI_Chart.ViewModels {
 
         private float _sigmaLow,_sigmaHigh, _min, _max, _lowLimit, _highLimit;
 
-        private XyDataSeries<double, double> _trendData= new XyDataSeries<double, double>();
-        public XyDataSeries<double, double> TrendData {
-            get { return _trendData; }
-            set { SetProperty(ref _trendData, value); }
-        }
+        #region Binding_prop
         public ObservableCollection<IRenderableSeriesViewModel> _trendSeries= new ObservableCollection<IRenderableSeriesViewModel>();
         public ObservableCollection<IRenderableSeriesViewModel> TrendSeries { 
             get { return _trendSeries; }
             set { SetProperty(ref _trendSeries, value); }
         }
 
-        private IAxisViewModel _xAxis;
-        public IAxisViewModel XAxis {
-            get { return _xAxis; }
-            set { SetProperty(ref _xAxis, value); }
+        public ObservableCollection<IRenderableSeriesViewModel> _histoSeries = new ObservableCollection<IRenderableSeriesViewModel>();
+        public ObservableCollection<IRenderableSeriesViewModel> HistoSeries {
+            get { return _histoSeries; }
+            set { SetProperty(ref _histoSeries, value); }
         }
-        private IAxisViewModel _yAxis;
-        public IAxisViewModel YAxis {
-            get { return _yAxis; }
-            set { SetProperty(ref _yAxis, value); }
+
+        private IAxisViewModel _xAxisTrend;
+        public IAxisViewModel XAxisTrend {
+            get { return _xAxisTrend; }
+            set { SetProperty(ref _xAxisTrend, value); }
+        }
+        private IAxisViewModel _yAxisTrend;
+        public IAxisViewModel YAxisTrend {
+            get { return _yAxisTrend; }
+            set { SetProperty(ref _yAxisTrend, value); }
         }
 
         private string _userTrendLowRange;
@@ -85,6 +87,56 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _ifTrendLimitByUser, value); }
         }
 
+        private IAxisViewModel _xAxisHisto;
+        public IAxisViewModel XAxisHisto {
+            get { return _xAxisHisto; }
+            set { SetProperty(ref _xAxisHisto, value); }
+        }
+        private IAxisViewModel _yAxisHisto;
+        public IAxisViewModel YAxisHisto {
+            get { return _yAxisHisto; }
+            set { SetProperty(ref _yAxisHisto, value); }
+        }
+
+        private string _userHistoLowRange;
+        public string UserHistoLowRange {
+            get { return _userHistoLowRange; }
+            set { SetProperty(ref _userHistoLowRange, value); }
+        }
+
+        private string _userHistoHighRange;
+        public string UserHistoHighRange {
+            get { return _userHistoHighRange; }
+            set { SetProperty(ref _userHistoHighRange, value); }
+        }
+
+        private bool _ifHistoLimitBySigma;
+        public bool IfHistoLimitBySigma {
+            get { return _ifHistoLimitBySigma; }
+            set { SetProperty(ref _ifHistoLimitBySigma, value); }
+        }
+
+        private bool _ifHistoLimitByMinMax;
+        public bool IfHistoLimitByMinMax {
+            get { return _ifHistoLimitByMinMax; }
+            set { SetProperty(ref _ifHistoLimitByMinMax, value); }
+        }
+
+        private bool _ifHistoLimitByLimit;
+        public bool IfHistoLimitByLimit {
+            get { return _ifHistoLimitByLimit; }
+            set { SetProperty(ref _ifHistoLimitByLimit, value); }
+        }
+
+        private bool _ifHistoLimitByUser;
+        public bool IfHistoLimitByUser {
+            get { return _ifHistoLimitByUser; }
+            set { SetProperty(ref _ifHistoLimitByUser, value); }
+        }
+
+
+        #endregion
+
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
@@ -107,32 +159,11 @@ namespace UI_Chart.ViewModels {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-
-            //var data = (from r in da.GetFilteredItemData(_selectedIds[0], _subData.FilterId)
-            //            select (double)r);
-            //var xs = Enumerable.Range(0, data.Count()).Select(x=> (double)x);
-
-            //var statistic = da.GetFilteredStatistic(_subData.FilterId, _selectedIds[0]);
-            //_min = statistic.MinValue ?? 0;
-            //_max = statistic.MaxValue ?? 1;
-
-            //_sigmaLow = statistic.MeanValue??0 - statistic.Sigma??1 * 6;
-            //_sigmaHigh = statistic.MeanValue??0 + statistic.Sigma??1 * 6;
-
-            //var idInfo = da.GetTestInfo(_selectedIds[0]);
-            //_lowLimit = idInfo.GetUnScaledLowLimit() ?? _min;
-            //_highLimit = idInfo.GetUnScaledHighLimit() ?? _max;
-
-
-            //TrendData.Clear();
-            //TrendData.Append(xs, data);
-            //RaisePropertyChanged("TrendData");
-
+            #region trendChart
             var xs = Enumerable.Range(1, da.GetFilteredChipsCount(_subData.FilterId));
             TrendSeries.Clear();
             for(int i=0; i< (_selectedIds.Count>16 ? 16: _selectedIds.Count); i++) {
-                var data = from r in da.GetFilteredItemData(_selectedIds[i], _subData.FilterId)
-                            select r;
+                var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
 
                 var statistic = da.GetFilteredStatistic(_subData.FilterId, _selectedIds[i]);
                 if (i == 0) {
@@ -172,17 +203,33 @@ namespace UI_Chart.ViewModels {
 
             //set the y axix
             if (IfTrendLimitBySigma) {
-                ExecuteCmdSelectAxisSigma();
+                ExecuteCmdSelectAxisSigmaTrend();
             }else if (IfTrendLimitByMinMax) {
-                ExecuteCmdSelectAxisMinMax();
+                ExecuteCmdSelectAxisMinMaxTrend();
             }else if (IfTrendLimitByLimit) {
-                ExecuteCmdSelectAxisLimit();
+                ExecuteCmdSelectAxisLimitTrend();
             }else {
-                ExecuteCmdSelectAxisUser();
+                ExecuteCmdSelectAxisUserTrend();
             }
 
-            XAxis.VisibleRange.SetMinMax(1, xs.Count());
-            RaisePropertyChanged("XAxis");
+            XAxisTrend.VisibleRange.SetMinMax(1, xs.Count());
+            RaisePropertyChanged("XAxisTrend");
+            #endregion
+
+            #region histogramChart
+            //set the y axix
+            if (IfHistoLimitBySigma) {
+                ExecuteCmdSelectAxisSigmaHisto();
+            } else if (IfHistoLimitByMinMax) {
+                ExecuteCmdSelectAxisMinMaxHisto();
+            } else if (IfHistoLimitByLimit) {
+                ExecuteCmdSelectAxisLimitHisto();
+            } else {
+                ExecuteCmdSelectAxisUserHisto();
+            }
+
+            #endregion
+
         }
 
         void UpdateChart(SubData subData) {
@@ -214,9 +261,72 @@ namespace UI_Chart.ViewModels {
             }
         }
 
+        //default 100 bins, and enable outliers count, total 112bins
+        (float[], int[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
+            var step = (stop - start) / 100;
+            float[] range = new float[113];
+            var actStart = start - step * 5;
+            var actStop = stop + step * 5;
+
+            for (int i = 0; i < 113; i++) {
+                range[i] = start + (i-6) * step;
+            }
+            int[] rangeCnt = new int[113];
+
+            foreach(var f in data) {
+                if (float.IsNaN(f) || float.IsInfinity(f)) continue;
+                if (f < actStart) {
+                    rangeCnt[0]++;
+                } else if (f >= actStop) {
+                    rangeCnt[112]++;
+                } else {
+                    var idx = (int)Math.Round((f-actStart) / step) + 1;
+                    rangeCnt[idx]++;
+                }
+            }
+
+            return (range, rangeCnt);
+        }
+
+        void UpdateHistoSeries(float start, float stop) {
+            if (_selectedIds == null || _selectedIds.Count == 0) return;
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+            var maxCnt=0;
+            HistoSeries.Clear();
+            for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
+                var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
+
+                var histo = GetHistogramData(start, stop, data);
+                var series = new XyDataSeries<float, int>();
+                series.Append(histo.Item1, histo.Item2);
+
+                HistoSeries.Add(new ColumnRenderableSeriesViewModel {
+                    DataSeries = series,
+                    Stroke = GetColor(i)
+                });
+
+                if (i == 0) {
+                    maxCnt = histo.Item2.Max();
+                } else {
+                    if (maxCnt < histo.Item2.Max()) maxCnt = histo.Item2.Max();
+                }
+            }
+            RaisePropertyChanged("HistoSeries");
+
+            var step = (stop - start) / 100;
+            var actStart = start - step * 5;
+            var actStop = stop + step * 5;
+            XAxisHisto.VisibleRange.SetMinMax(actStart, actStop);
+            RaisePropertyChanged("XAxisHisto");
+
+            YAxisHisto.VisibleRange.SetMinMax(0, maxCnt);
+            RaisePropertyChanged("YAxisHisto");
+
+        }
 
         void InitUi() {
-            XAxis = new NumericAxisViewModel {
+            XAxisTrend = new NumericAxisViewModel {
                 //AxisTitle = "XAxis",
                 DrawMinorGridLines = false,
                 DrawMajorBands = false,
@@ -225,7 +335,7 @@ namespace UI_Chart.ViewModels {
                 FontSize = 8,
                 VisibleRange = new DoubleRange(1, 1),
             };
-            YAxis = new NumericAxisViewModel {
+            YAxisTrend = new NumericAxisViewModel {
                 AxisAlignment= AxisAlignment.Right,
                 //AxisTitle = "YAxis",
                 DrawMinorGridLines = false,
@@ -237,6 +347,29 @@ namespace UI_Chart.ViewModels {
             };
 
             IfTrendLimitBySigma = true;
+
+            XAxisHisto = new NumericAxisViewModel {
+                //AxisTitle = "XAxis",
+                DrawMinorGridLines = false,
+                DrawMajorBands = false,
+                DrawMajorGridLines = true,
+                TextFormatting = "e2",
+                FontSize = 8,
+                VisibleRange = new DoubleRange(1, 1),
+            };
+            YAxisHisto = new NumericAxisViewModel {
+                AxisAlignment = AxisAlignment.Right,
+                //AxisTitle = "YAxis",
+                DrawMinorGridLines = false,
+                DrawMajorBands = false,
+                DrawMajorGridLines = true,
+                TextFormatting = "#",
+                FontSize = 8,
+                VisibleRange = new DoubleRange(0, 1),
+            };
+
+            IfHistoLimitBySigma = true;
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
@@ -330,7 +463,7 @@ namespace UI_Chart.ViewModels {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            string dftName = _selectedIds[0];
+            string dftName = _selectedIds[0] + "_Trend";
             if (_selectedIds.Count > 1) dftName += "_cmp";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
@@ -338,50 +471,50 @@ namespace UI_Chart.ViewModels {
             
         }
 
-        private DelegateCommand _CmdSelectAxisSigma;
-        public DelegateCommand CmdSelectAxisSigma =>
-            _CmdSelectAxisSigma ?? (_CmdSelectAxisSigma = new DelegateCommand(ExecuteCmdSelectAxisSigma));
+        private DelegateCommand _CmdSelectAxisSigmaTrend;
+        public DelegateCommand CmdSelectAxisSigmaTrend =>
+            _CmdSelectAxisSigmaTrend ?? (_CmdSelectAxisSigmaTrend = new DelegateCommand(ExecuteCmdSelectAxisSigmaTrend));
 
-        void ExecuteCmdSelectAxisSigma() {
-            YAxis.VisibleRange.SetMinMax(_sigmaLow, _sigmaHigh);
-            RaisePropertyChanged("YAxis");
+        void ExecuteCmdSelectAxisSigmaTrend() {
+            YAxisTrend.VisibleRange.SetMinMax(_sigmaLow, _sigmaHigh);
+            RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = _sigmaLow.ToString();
             UserTrendHighRange = _sigmaHigh.ToString();
         }
 
-        private DelegateCommand _CmdSelectAxisMinMax;
-        public DelegateCommand CmdSelectAxisMinMax =>
-            _CmdSelectAxisMinMax ?? (_CmdSelectAxisMinMax = new DelegateCommand(ExecuteCmdSelectAxisMinMax));
+        private DelegateCommand _CmdSelectAxisMinMaxTrend;
+        public DelegateCommand CmdSelectAxisMinMaxTrend =>
+            _CmdSelectAxisMinMaxTrend ?? (_CmdSelectAxisMinMaxTrend = new DelegateCommand(ExecuteCmdSelectAxisMinMaxTrend));
 
-        void ExecuteCmdSelectAxisMinMax() {
-            YAxis.VisibleRange.SetMinMax(_min, _max);
-            RaisePropertyChanged("YAxis");
+        void ExecuteCmdSelectAxisMinMaxTrend() {
+            YAxisTrend.VisibleRange.SetMinMax(_min, _max);
+            RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = _min.ToString();
             UserTrendHighRange = _max.ToString();
         }
 
-        private DelegateCommand _CmdSelectAxisLimit;
-        public DelegateCommand CmdSelectAxisLimit =>
-            _CmdSelectAxisLimit ?? (_CmdSelectAxisLimit = new DelegateCommand(ExecuteCmdSelectAxisLimit));
+        private DelegateCommand _CmdSelectAxisLimitTrend;
+        public DelegateCommand CmdSelectAxisLimitTrend =>
+            _CmdSelectAxisLimitTrend ?? (_CmdSelectAxisLimitTrend = new DelegateCommand(ExecuteCmdSelectAxisLimitTrend));
 
-        void ExecuteCmdSelectAxisLimit() {
-            YAxis.VisibleRange.SetMinMax(_lowLimit, _highLimit);
-            RaisePropertyChanged("YAxis");
+        void ExecuteCmdSelectAxisLimitTrend() {
+            YAxisTrend.VisibleRange.SetMinMax(_lowLimit, _highLimit);
+            RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = _lowLimit.ToString();
             UserTrendHighRange = _highLimit.ToString();
         }
 
-        private DelegateCommand _CmdSelectAxisUser;
-        public DelegateCommand CmdSelectAxisUser =>
-            _CmdSelectAxisUser ?? (_CmdSelectAxisUser = new DelegateCommand(ExecuteCmdSelectAxisUser));
+        private DelegateCommand _CmdSelectAxisUserTrend;
+        public DelegateCommand CmdSelectAxisUserTrend =>
+            _CmdSelectAxisUserTrend ?? (_CmdSelectAxisUserTrend = new DelegateCommand(ExecuteCmdSelectAxisUserTrend));
 
-        void ExecuteCmdSelectAxisUser() {
+        void ExecuteCmdSelectAxisUserTrend() {
             float l, h;
             try {
                 float.TryParse(UserTrendLowRange, out l);
                 float.TryParse(UserTrendHighRange, out h);
-                YAxis.VisibleRange.SetMinMax(l, h);
-                RaisePropertyChanged("YAxis");
+                YAxisTrend.VisibleRange.SetMinMax(l, h);
+                RaisePropertyChanged("YAxisTrend");
             }
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
@@ -394,8 +527,88 @@ namespace UI_Chart.ViewModels {
 
         void ExecuteCmdApplyTrendRange() {
             IfTrendLimitByUser = true;
-            ExecuteCmdSelectAxisUser();
+            ExecuteCmdSelectAxisUserTrend();
         }
+
+
+
+
+        private DelegateCommand<object> _CmdSaveHisto;
+        public DelegateCommand<object> CmdSaveHisto =>
+            _CmdSaveHisto ?? (_CmdSaveHisto = new DelegateCommand<object>(ExecuteCmdSaveHisto));
+
+        void ExecuteCmdSaveHisto(object e) {
+            string filePath;
+            if (_selectedIds == null || _selectedIds.Count == 0) {
+                System.Windows.MessageBox.Show("Select at list one item");
+                return;
+            }
+            string dftName = _selectedIds[0] + "_Histo";
+            if (_selectedIds.Count > 1) dftName += "_cmp";
+            if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
+                (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
+            }
+
+        }
+
+        private DelegateCommand _CmdSelectAxisSigmaHisto;
+        public DelegateCommand CmdSelectAxisSigmaHisto =>
+            _CmdSelectAxisSigmaHisto ?? (_CmdSelectAxisSigmaHisto = new DelegateCommand(ExecuteCmdSelectAxisSigmaHisto));
+
+        void ExecuteCmdSelectAxisSigmaHisto() {
+            UpdateHistoSeries(_sigmaLow, _sigmaHigh);
+
+            UserHistoLowRange = _sigmaLow.ToString();
+            UserHistoHighRange = _sigmaHigh.ToString();
+        }
+
+        private DelegateCommand _CmdSelectAxisMinMaxHisto;
+        public DelegateCommand CmdSelectAxisMinMaxHisto =>
+            _CmdSelectAxisMinMaxHisto ?? (_CmdSelectAxisMinMaxHisto = new DelegateCommand(ExecuteCmdSelectAxisMinMaxHisto));
+
+        void ExecuteCmdSelectAxisMinMaxHisto() {
+            UpdateHistoSeries(_min, _max);
+
+            UserHistoLowRange = _min.ToString();
+            UserHistoHighRange = _max.ToString();
+        }
+
+        private DelegateCommand _CmdSelectAxisLimitHisto;
+        public DelegateCommand CmdSelectAxisLimitHisto =>
+            _CmdSelectAxisLimitHisto ?? (_CmdSelectAxisLimitHisto = new DelegateCommand(ExecuteCmdSelectAxisLimitHisto));
+
+        void ExecuteCmdSelectAxisLimitHisto() {
+            UpdateHistoSeries(_lowLimit, _highLimit);
+
+            UserHistoLowRange = _lowLimit.ToString();
+            UserHistoHighRange = _highLimit.ToString();
+        }
+
+        private DelegateCommand _CmdSelectAxisUserHisto;
+        public DelegateCommand CmdSelectAxisUserHisto =>
+            _CmdSelectAxisUserHisto ?? (_CmdSelectAxisUserHisto = new DelegateCommand(ExecuteCmdSelectAxisUserHisto));
+
+        void ExecuteCmdSelectAxisUserHisto() {
+            float l, h;
+            try {
+                float.TryParse(UserHistoLowRange, out l);
+                float.TryParse(UserHistoHighRange, out h);
+                UpdateHistoSeries(l, h);
+            }
+            catch {
+                System.Windows.MessageBox.Show("Wrong Limit");
+            }
+        }
+
+        private DelegateCommand _CmdApplyHistoRange;
+        public DelegateCommand CmdApplyHistoRange =>
+            _CmdApplyHistoRange ?? (_CmdApplyHistoRange = new DelegateCommand(ExecuteCmdApplyHistoRange));
+
+        void ExecuteCmdApplyHistoRange() {
+            IfHistoLimitByUser = true;
+            ExecuteCmdSelectAxisUserHisto();
+        }
+
 
     }
 }
