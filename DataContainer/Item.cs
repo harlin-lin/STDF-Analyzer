@@ -12,14 +12,15 @@ namespace DataContainer {
         public float? LoLimit { get; private set; }
         public float? HiLimit { get; private set; }
         public string Unit { get; private set; }
+        public int PassCnt { get; private set; }
+        public int FailCnt { get; private set; }
+        public double FailPer { get; private set; }
         public float? MeanValue { get; private set; }
         public float? MinValue { get; private set; }
         public float? MaxValue { get; private set; }
         public float? Cp { get; private set; }
         public float? Cpk { get; private set; }
         public float? Sigma { get; private set; }
-        public int PassCount { get; private set; }
-        public int FailCount { get; private set; }
 
         public Item(string uid, ItemInfo info, ItemStatistic statistic) {
             TestNumber = uid;
@@ -34,8 +35,9 @@ namespace DataContainer {
             Cp = statistic.Cp;
             Cpk = statistic.Cpk;
             Sigma = statistic.Sigma;
-            PassCount = statistic.PassCount;
-            FailCount = statistic.FailCount;
+            PassCnt = statistic.PassCount;
+            FailCnt = statistic.FailCount;
+            FailPer = FailCnt * 100.0 / (FailCnt + PassCnt);
         }
 
     }

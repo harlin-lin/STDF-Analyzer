@@ -358,7 +358,8 @@ namespace FileReader {
             var tf = rdB1(record, i, len); i += 1;
             var pf = rdB1(record, i, len); i += 1;
 
-            if (Bit(tf, 1)) return;
+            if (Bit(tf, 1)) 
+                return;
 
             var result = rdR4(record, i, len); i += 4;
             var txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
@@ -371,8 +372,9 @@ namespace FileReader {
                 id = new TestID(_lastUidBySite[sn]);
                 _lastUidBySite[sn] = id;
             }
+            var info = _dc.IfContainItemInfo(id.GetUID());
 
-            if ((!_dc.IfContainItemInfo(id.GetUID())) && i < len) {
+            if (info==null && i < len) {
                 var alarm = rdCn(record, i, len); i += (ushort)(1 + alarm.Length);
                 var oFg = rdB1(record, i, len); i += 1;
 
@@ -405,6 +407,9 @@ namespace FileReader {
                 }
                 i += (ushort)(1 + unit.Length);
                 _dc.UpdateItemInfo(id.GetUID(), new ItemInfo(txt, ll, hl, unit, llScal, hlScal, resScal));
+                result = _dc.IfContainItemInfo(id.GetUID()).GetScaledRst(result);
+            } else {
+                result = info.GetScaledRst(result);
             }
 
             _dc.AddTestData(sn, id.GetUID(), result);
@@ -444,16 +449,14 @@ namespace FileReader {
                 TestID[] uids = new TestID[rsts.Length];
 
                 uids[0] = id;
-                bool flg = _dc.IfContainItemInfo(uids[0].GetUID());
-                _dc.AddTestData(sn, uids[0].GetUID(), rsts[0]);
+                var info = _dc.IfContainItemInfo(uids[0].GetUID());
 
                 for (uint j = 1; j < rtnCnt; j++) {
                     uids[j] = new TestID(uids[j-1]);
                     _dc.IfContainItemInfo(uids[j].GetUID());
-                    _dc.AddTestData(sn, uids[j].GetUID(), rsts[j]);
                 }
 
-                if (!flg && i < len) {
+                if (info == null && i < len) {
 
                     var alarm = rdCn(record, i, len); i += (ushort)(1 + alarm.Length);
                     if (i >= len) return;
@@ -498,10 +501,18 @@ namespace FileReader {
                     for (uint j = 0; j < idxs.Length; j++) {
                         var pin = listPinMaps.Find(x => x.PinIndex == idxs[j]).ChanName;
                         _dc.UpdateItemInfo(uids[j].GetUID(), new ItemInfo(txt + "_" + pin, ll, hl, unit, llScal, hlScal, resScal));
+                        rsts[j] = _dc.IfContainItemInfo(uids[0].GetUID()).GetScaledRst(rsts[j]);
+                    }
+                } else {
+                    for (uint j = 0; j < rtnCnt; j++) {
+                        rsts[j] = info.GetScaledRst(rsts[j]);
                     }
                 }
-
-            } catch {
+                for (uint j = 0; j < rtnCnt; j++) {
+                    _dc.AddTestData(sn, uids[j].GetUID(), rsts[j]);
+                }
+            }
+            catch {
                 throw;
             }
 
@@ -517,11 +528,17 @@ namespace FileReader {
             //FTR no sub test, same test number means fail cyc record, do not need proceed
             var tf = rdB1(record, i, len); i += 1;
             if (Bit(tf, 2)) return;
-
             int result = (Bit(tf, 6) || Bit(tf, 7)) == false ? 1 : 0;
 
+            if (i >= len) return;
             try {
-                i += 25; //option flag
+                var of = rdB1(record, i, len); i += 1; //option flag
+                if (Bit(of, 0)) i += 4;
+                if (Bit(of, 1)) i += 4;
+                if (Bit(of, 2)) i += 4;
+                if (Bit(of, 3)) i += 4;
+                if (Bit(of, 4)) i += 8;
+                if (Bit(of, 5)) i += 2;
 
                 var rtncnt = rdU2(record, i, len); i += 2;
                 var pgmcnt = rdU2(record, i, len); i += 2;
@@ -541,15 +558,15 @@ namespace FileReader {
 
                 TestID id;
                 if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {
-                    //id = new TestID(tn, txt);
-                    //_lastUidBySite[sn] = id;
-                    id = _lastUidBySite[sn];
-                } else {
-                    id = new TestID(_lastUidBySite[sn]);
+                    id = new TestID(tn, txt);
                     _lastUidBySite[sn] = id;
+                } else {
+                    id = _lastUidBySite[sn];
+                    //id = new TestID(_lastUidBySite[sn]);
+                    //_lastUidBySite[sn] = id;
                 }
 
-                if (!_dc.IfContainItemInfo(id.GetUID())) {
+                if (_dc.IfContainItemInfo(id.GetUID()) is null) {
                     _dc.UpdateItemInfo(id.GetUID(), new ItemInfo(txt, 0.5f, 1.5f, "", 0, 0, 0));
                 }
                 //proceed the rst

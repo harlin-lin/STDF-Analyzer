@@ -25,7 +25,7 @@ namespace UI_Chart.ViewModels {
         SubData _subData;
         List<string> _selectedIds;
 
-        private float _sigmaLow,_sigmaHigh, _min, _max, _lowLimit, _highLimit;
+        private float _sigmaLow,_sigmaHigh, _min, _max;
 
         #region Binding_prop
         public ObservableCollection<IRenderableSeriesViewModel> _trendSeries= new ObservableCollection<IRenderableSeriesViewModel>();
@@ -49,6 +49,18 @@ namespace UI_Chart.ViewModels {
         public IAxisViewModel YAxisTrend {
             get { return _yAxisTrend; }
             set { SetProperty(ref _yAxisTrend, value); }
+        }
+
+        private float _lowLimit;
+        public float LowLimit {
+            get { return _lowLimit; }
+            set { SetProperty(ref _lowLimit, value); }
+        }
+
+        private float _highLimit;
+        public float HighLimit {
+            get { return _highLimit; }
+            set { SetProperty(ref _highLimit, value); }
         }
 
         private string _userTrendLowRange;
@@ -174,8 +186,8 @@ namespace UI_Chart.ViewModels {
                     _sigmaHigh = (statistic.MeanValue ?? 0) + (statistic.Sigma ?? 1) * 6;
 
                     var idInfo = da.GetTestInfo(_selectedIds[0]);
-                    _lowLimit = idInfo.GetUnScaledLowLimit() ?? _min;
-                    _highLimit = idInfo.GetUnScaledHighLimit() ?? _max;
+                    LowLimit = idInfo.LoLimit ?? _min;
+                    HighLimit = idInfo.HiLimit ?? _max;
                 } else {
                     if (statistic.MinValue.HasValue) { 
                         _min = statistic.MinValue.Value<_min ? statistic.MinValue.Value : _min;
@@ -198,6 +210,7 @@ namespace UI_Chart.ViewModels {
                     DataSeries = series,
                     Stroke = GetColor(i)
                 });
+
             }
             RaisePropertyChanged("TrendSeries");
 
@@ -303,7 +316,9 @@ namespace UI_Chart.ViewModels {
 
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,
-                    Stroke = GetColor(i)
+                    Stroke = Colors.DarkBlue,
+                    Fill = new SolidColorBrush(GetColor(i)),
+                    DataPointWidth = 1
                 });
 
                 if (i == 0) {
@@ -332,7 +347,9 @@ namespace UI_Chart.ViewModels {
                 DrawMajorBands = false,
                 DrawMajorGridLines = true,
                 TextFormatting = "#",
-                FontSize = 8,
+                FontSize = 10,
+                TickTextBrush = Brushes.Black,
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
                 VisibleRange = new DoubleRange(1, 1),
             };
             YAxisTrend = new NumericAxisViewModel {
@@ -341,8 +358,10 @@ namespace UI_Chart.ViewModels {
                 DrawMinorGridLines = false,
                 DrawMajorBands = false,
                 DrawMajorGridLines = true,
-                TextFormatting = "e2",
-                FontSize=8,
+                TextFormatting = "f3",
+                FontSize = 10,
+                TickTextBrush = Brushes.Black,
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
                 VisibleRange = new DoubleRange(0, 1),
             };
 
@@ -353,8 +372,10 @@ namespace UI_Chart.ViewModels {
                 DrawMinorGridLines = false,
                 DrawMajorBands = false,
                 DrawMajorGridLines = true,
-                TextFormatting = "e2",
-                FontSize = 8,
+                TextFormatting = "f3",
+                FontSize = 10,
+                TickTextBrush = Brushes.Black,
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
                 VisibleRange = new DoubleRange(1, 1),
             };
             YAxisHisto = new NumericAxisViewModel {
@@ -364,7 +385,9 @@ namespace UI_Chart.ViewModels {
                 DrawMajorBands = false,
                 DrawMajorGridLines = true,
                 TextFormatting = "#",
-                FontSize = 8,
+                FontSize = 10,
+                TickTextBrush = Brushes.Black,
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
                 VisibleRange = new DoubleRange(0, 1),
             };
 
@@ -487,7 +510,8 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisMinMaxTrend ?? (_CmdSelectAxisMinMaxTrend = new DelegateCommand(ExecuteCmdSelectAxisMinMaxTrend));
 
         void ExecuteCmdSelectAxisMinMaxTrend() {
-            YAxisTrend.VisibleRange.SetMinMax(_min, _max);
+            var ov = 0.05 * (_max - _min);
+            YAxisTrend.VisibleRange.SetMinMax(_min-ov, _max+ov);
             RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = _min.ToString();
             UserTrendHighRange = _max.ToString();
@@ -498,10 +522,11 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitTrend ?? (_CmdSelectAxisLimitTrend = new DelegateCommand(ExecuteCmdSelectAxisLimitTrend));
 
         void ExecuteCmdSelectAxisLimitTrend() {
-            YAxisTrend.VisibleRange.SetMinMax(_lowLimit, _highLimit);
+            var ov = 0.1 * (HighLimit - LowLimit);
+            YAxisTrend.VisibleRange.SetMinMax(LowLimit-ov, HighLimit+ov);
             RaisePropertyChanged("YAxisTrend");
-            UserTrendLowRange = _lowLimit.ToString();
-            UserTrendHighRange = _highLimit.ToString();
+            UserTrendLowRange = LowLimit.ToString();
+            UserTrendHighRange = HighLimit.ToString();
         }
 
         private DelegateCommand _CmdSelectAxisUserTrend;
@@ -578,10 +603,10 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitHisto ?? (_CmdSelectAxisLimitHisto = new DelegateCommand(ExecuteCmdSelectAxisLimitHisto));
 
         void ExecuteCmdSelectAxisLimitHisto() {
-            UpdateHistoSeries(_lowLimit, _highLimit);
+            UpdateHistoSeries(LowLimit, HighLimit);
 
-            UserHistoLowRange = _lowLimit.ToString();
-            UserHistoHighRange = _highLimit.ToString();
+            UserHistoLowRange = LowLimit.ToString();
+            UserHistoHighRange = HighLimit.ToString();
         }
 
         private DelegateCommand _CmdSelectAxisUserHisto;

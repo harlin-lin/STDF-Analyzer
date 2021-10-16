@@ -17,7 +17,7 @@ namespace DataContainer{
             short? xCord, short? yCord, DeviceType deviceType, ResultType result);
         //TestID GetUid(TempID id, byte siteNum);
         //TestID GetUid_AutoIncSubId(TestID uid);
-        bool IfContainItemInfo(string uid);
+        ItemInfo IfContainItemInfo(string uid);
         void SetReadingPercent(int percent);
         void AnalyseData();
     }

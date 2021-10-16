@@ -10,9 +10,9 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*" MinWidth="50"/>
+            <ColumnDefinition Width="0.4*" MinWidth="50"/>
             <ColumnDefinition Width="3"/>
-            <ColumnDefinition Width="0.7*" MinWidth="50"/>
+            <ColumnDefinition Width="0.6*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -46,7 +46,7 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="1">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>

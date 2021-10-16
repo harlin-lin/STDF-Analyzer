@@ -58,11 +58,11 @@ namespace DataContainer {
             _resultType_PartContainer.Add(result);
         }
 
-        public bool IfContainItemInfo(string uid) {
+        public ItemInfo IfContainItemInfo(string uid) {
             if (CheckItemContainer(uid)) {
-                return true;
+                return _itemContainer[uid];
             }
-            return false;
+            return null;
         } 
 
         public void SetReadingPercent(int percent) {
