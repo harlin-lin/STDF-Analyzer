@@ -532,13 +532,14 @@ namespace FileReader {
 
             if (i >= len) return;
             try {
-                var of = rdB1(record, i, len); i += 1; //option flag
-                if (Bit(of, 0)) i += 4;
-                if (Bit(of, 1)) i += 4;
-                if (Bit(of, 2)) i += 4;
-                if (Bit(of, 3)) i += 4;
-                if (Bit(of, 4)) i += 8;
-                if (Bit(of, 5)) i += 2;
+                //var of = rdB1(record, i, len); i += 1; //option flag
+                //if (Bit(of, 0)) i += 4;
+                //if (Bit(of, 1)) i += 4;
+                //if (Bit(of, 2)) i += 4;
+                //if (Bit(of, 3)) i += 4;
+                //if (Bit(of, 4)) i += 8;
+                //if (Bit(of, 5)) i += 2;
+                i += 27;
 
                 var rtncnt = rdU2(record, i, len); i += 2;
                 var pgmcnt = rdU2(record, i, len); i += 2;
@@ -548,12 +549,15 @@ namespace FileReader {
                 i += (ushort)(pgmcnt * 2);
                 i += (ushort)(pgmcnt / 2 + pgmcnt % 2);
 
-                var failpin = rdDn(record, i, len); i += (ushort)(2 + failpin.Length);
+                if (i >= len) return;
+                //var failpin = rdDn(record, i, len); i += (ushort)(2 + failpin.Length);
+                i += skipDn(record, i, len);
 
                 i += (ushort)(1 + record[i]);
                 i += (ushort)(1 + record[i]);
                 i += (ushort)(1 + record[i]);
 
+                if (i >= len) return;
                 var txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
 
                 TestID id;
@@ -745,7 +749,8 @@ namespace FileReader {
         }
         private byte[] rdDn(byte[] record, ushort i, ushort len) {
             if ((i + 1) > len) throw new Exception("wrong record index");
-            ushort byteCnt = BitConverter.ToUInt16(record, i);
+            ushort bitCnt = BitConverter.ToUInt16(record, i);
+            var byteCnt = bitCnt / 8 + ((bitCnt % 8)>0 ? 1 : 0);
             if ((i + byteCnt) > len) throw new Exception("wrong record index");
             byte[] rst = new byte[byteCnt];
             for (byte j = 0; j < byteCnt; j++) {
@@ -753,6 +758,13 @@ namespace FileReader {
             }
             return rst;
         }
+        private ushort skipDn(byte[] record, ushort i, ushort len) {
+            if ((i + 1) > len) throw new Exception("wrong record index");
+            ushort bitCnt = BitConverter.ToUInt16(record, i);
+            var byteCnt = bitCnt / 8 + ((bitCnt % 8) > 0 ? 1 : 0);
+            return (ushort)byteCnt;
+        }
+
         private byte[] rdNx(byte[] record, ushort i, ushort len, ushort nibbleCnt) {
             if ((i + nibbleCnt - 1) > len) throw new Exception("wrong record index");
             byte[] rst = new byte[nibbleCnt];

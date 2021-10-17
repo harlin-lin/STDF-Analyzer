@@ -27,7 +27,7 @@ namespace DataContainer {
         }
 
         public ushort[] GetSoftBins() {
-            return _softBin_PartContainer.ToArray();
+            return _softBinNames.Keys.ToArray();
         }
 
         public Dictionary<ushort, int> GetSoftBinsCount() {
@@ -35,7 +35,7 @@ namespace DataContainer {
         }
 
         public ushort[] GetHardBins() {
-            return _hardBin_PartContainer.ToArray();
+            return _hardBinNames.Keys.ToArray();
         }
 
         public Dictionary<ushort, int> GetHardBinsCount() {
