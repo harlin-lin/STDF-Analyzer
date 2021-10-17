@@ -17,6 +17,7 @@ namespace UI_DataList.ViewModels {
     public interface ISubNode {
         string NodeName { get; }
         string FilePath { get; }
+        bool IsSelected { get; set; }
         FileNode ParentNode { get; }
         IEnumerable<SiteNode> SiteList { get; }
         Visibility EnableContextMenu { get; }
@@ -41,7 +42,7 @@ namespace UI_DataList.ViewModels {
     public class SiteCollectionNode : ISubNode {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
-
+        public bool IsSelected { get; set; }
         public IEnumerable<SiteNode> SiteList { get; private set; }
 
         public FileNode ParentNode { get; private set; }
@@ -57,6 +58,7 @@ namespace UI_DataList.ViewModels {
                         let l = new SiteNode(file, r.Key, r.Value)
                         select l);
             NodeName = "Site List";
+            IsSelected = false;
         }
     }
 
@@ -64,6 +66,7 @@ namespace UI_DataList.ViewModels {
         public string NodeName { get; private set; }
 
         public string FilePath { get; private set; }
+        public bool IsSelected { get; set; }
 
         public IEnumerable<SiteNode> SiteList { get; private set; }
 
@@ -81,20 +84,23 @@ namespace UI_DataList.ViewModels {
             NodeName = $"Filter_{filterIdx}:{filterId.ToString("x8")}";
             FilePath = file.FilePath;
             SubData = new SubData(FilePath, filterId);
+            IsSelected = true;
         }
     }
 
     public class FileNode : BindableBase {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
+        public int FileIdx { get; }
         public bool ExtractedDone { get; private set; }
         public Visibility EnableContextMenu { get { return ExtractedDone? Visibility.Visible :Visibility.Hidden; } }
         public ObservableCollection<ISubNode> SubDataList { get; private set; }
 
-        public FileNode(string path) {
+        public FileNode(string path, int idx) {
             SubDataList = new ObservableCollection<ISubNode>();
             FilePath = path;
-            NodeName = System.IO.Path.GetFileName(path);
+            FileIdx = idx;
+            NodeName = $"File_{idx}:{System.IO.Path.GetFileName(path)}";
             ExtractedDone = false;
         }
 
@@ -117,6 +123,8 @@ namespace UI_DataList.ViewModels {
         IEventAggregator _ea;
         IRegionManager _regionManager;
 
+        int _fileIdx = 1;
+
         private ObservableCollection<FileNode> _files;
         public ObservableCollection<FileNode> Files {
             get { return _files ?? (_files = new ObservableCollection<FileNode>()); }
@@ -132,7 +140,7 @@ namespace UI_DataList.ViewModels {
 
         private async void OpenStdFile(string path) {
             if (StdDB.IfExsistFile(path)) return;
-            var f = new FileNode(path);
+            var f = new FileNode(path, _fileIdx++);
             Files.Add(f);
             try {
                 var dataAcquire = StdDB.CreateSubContainer(path);

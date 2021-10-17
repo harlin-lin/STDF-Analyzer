@@ -15,6 +15,15 @@
     <UserControl.Resources>
         <UI_DataList:ImgVisibilityCtr x:Key="imgbool"/>
         <core:BindingProxy x:Key="Proxy" Data="{Binding}"/>
+
+        <!--<Style x:Key="expandT" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" 
+                Value="True" />
+        </Style>
+        <Style x:Key="expandF" TargetType="TreeViewItem">
+            <Setter Property="IsExpanded" 
+                Value="False" />
+        </Style>-->
     </UserControl.Resources>
 
     <Grid DataContext="{Binding}">
@@ -23,7 +32,7 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}">
+        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
                     <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
@@ -32,7 +41,11 @@
                     <prism:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding SubDataList}">
                     <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
@@ -44,6 +57,12 @@
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>
+                    <HierarchicalDataTemplate.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="False" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                        </Style>
+                    </HierarchicalDataTemplate.ItemContainerStyle>
                     <HierarchicalDataTemplate.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding SiteList}">
                             <StackPanel ToolTip="{Binding FilePath}">
