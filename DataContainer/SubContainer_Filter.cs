@@ -99,7 +99,8 @@ namespace DataContainer {
         public void UpdateFilter(int filterId, IEnumerable<int> maskIds, IEnumerable<int> maskItemIds) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
             try {
-                foreach(var id in maskIds) {
+                _filterContainer[filterId].IfNoChanged = false;
+                foreach (var id in maskIds) {
                     _filterContainer[filterId].FilterIdxFlag[id]=true;
                 }
                 foreach (var id in maskItemIds) {
@@ -125,7 +126,9 @@ namespace DataContainer {
 
             var maskIds = GetMaskIds(externalFilter);
 
+            _filterContainer[filterId].ResetFilter();
             try {
+                _filterContainer[filterId].IfNoChanged = false;
                 foreach (var id in maskIds) {
                     _filterContainer[filterId].FilterIdxFlag[id] = true;
                 }
@@ -238,30 +241,50 @@ namespace DataContainer {
             //}
 
             for (int i = 0; i < _partIdx; i++) {
-            //foreach (int i in dupSelected) {
+                //foreach (int i in dupSelected) {
+
+                //site
+                if (filter.MaskSites.Contains(_site_PartContainer[i])) {
+                    chipsFilter.Add(i);
+                    continue;
+                }
+                //softbin
+                if (filter.MaskSoftBins.Contains(_softBin_PartContainer[i])) {
+                    chipsFilter.Add(i);
+                    continue;
+                }
+                //hardbin
+                if (filter.MaskHardBins.Contains(_hardBin_PartContainer[i])) {
+                    chipsFilter.Add(i);
+                    continue;
+                }
+
                 //init
                 if (!filter.IfMaskOrEnableIds) {
-                    if (filter.MaskChips.Contains(_partId_PartContainer[i])) continue;
+                    if (filter.MaskChips.Contains(_partId_PartContainer[i])) {
+                        chipsFilter.Add(i);
+                        continue;
+                    }
                 } else {
-                    if (!filter.MaskChips.Contains(_partId_PartContainer[i])) continue;
+                    if (!filter.MaskChips.Contains(_partId_PartContainer[i])) {
+                        chipsFilter.Add(i);
+                        continue;
+                    }
                 }
 
                 if (_ifCordValid) {
                     if (!filter.IfMaskOrEnableCords) {
-                        if (filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) continue;
+                        if (filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) {
+                            chipsFilter.Add(i);
+                            continue;
+                        }
                     } else {
-                        if (!filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) continue;
+                        if (!filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) {
+                            chipsFilter.Add(i);
+                            continue;
+                        }
                     }
                 }
-
-                //site
-                if (filter.MaskSites.Contains(_site_PartContainer[i])) continue;
-                //softbin
-                if (filter.MaskSoftBins.Contains(_softBin_PartContainer[i])) continue;
-                //hardbin
-                if (filter.MaskHardBins.Contains(_hardBin_PartContainer[i])) continue;
-
-                chipsFilter.Add(i);
             }
 
             return chipsFilter;

@@ -152,8 +152,9 @@ namespace DataContainer {
                 filter.FilterPartStatistic.RtByIdCntBySite.Add(s.Key, 0);
                 filter.FilterPartStatistic.RtByCordCntBySite.Add(s.Key, 0);
             }
-
-            for (int i = 0; i <= _partIdx; i++) {
+            
+            //for (int i = 0; i <= _partIdx; i++) {
+            foreach(var i in filter.FilteredPartIdx) { 
                 var sn = _site_PartContainer[i];
                 filter.FilterPartStatistic.SiteCnt[sn] += 1;
 

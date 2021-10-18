@@ -9,7 +9,7 @@ namespace DataContainer {
     public class Filter {
         public bool[] FilterIdxFlag;
         public bool[] FilterItemFlag;
-        public bool IfNoChanged { get; private set; }
+        public bool IfNoChanged;
         public PartStatistic FilterPartStatistic;
         public ConcurrentDictionary<string, ItemStatistic> FilterItemStatistics;
         public IEnumerable<int> FilteredPartIdx;
@@ -24,8 +24,8 @@ namespace DataContainer {
 
         public void ResetFilter() {
             if (IfNoChanged) return;
-            FilterIdxFlag.Initialize();
-            FilterItemFlag.Initialize();
+            Array.Clear(FilterIdxFlag, 0, FilterIdxFlag.Length);
+            Array.Clear(FilterItemFlag, 0, FilterItemFlag.Length);
             IfNoChanged = true;
         }
 
