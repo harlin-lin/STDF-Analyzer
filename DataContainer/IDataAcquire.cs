@@ -113,6 +113,8 @@ namespace DataContainer{
 
         ConcurrentDictionary<string, ItemStatistic> GetStatistic();
 
+        PartStatistic GetPartStatistic();
+
 
         int ChipsCount { get; }
         string FilePath { get; }
@@ -132,6 +134,7 @@ namespace DataContainer{
 
         ConcurrentDictionary<string, ItemStatistic> GetFilteredStatistic(int filterId);
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
+        PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
         #endregion
 
@@ -146,6 +149,8 @@ namespace DataContainer{
         int[] GetAllFilterId();
         void RemoveFilter(int filterId);
         #endregion
+
+        string GetBasicInfo(string key);
 
     }
 }

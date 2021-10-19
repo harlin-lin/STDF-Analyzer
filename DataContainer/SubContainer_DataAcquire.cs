@@ -67,6 +67,10 @@ namespace DataContainer {
             return _itemStatistics;
         }
 
+        public PartStatistic GetPartStatistic() {
+            return _partStatistic;
+        }
+
         public int ChipsCount { 
             get {
                 return _partIdx + 1;
@@ -77,6 +81,9 @@ namespace DataContainer {
             get {
                 return Path.GetFileName(FilePath);
             }
+        }
+        public string GetBasicInfo(string key) {
+            return _basicInfo[key];
         }
 
 
@@ -132,6 +139,12 @@ namespace DataContainer {
         public ItemStatistic GetFilteredStatistic(int filterId, string uid) {
             return _filterContainer[filterId].FilterItemStatistics[uid];
         }
+
+        public PartStatistic GetFilteredPartStatistic(int filterId) {
+            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
+            return _filterContainer[filterId].FilterPartStatistic;
+        }
+
 
 
     }
