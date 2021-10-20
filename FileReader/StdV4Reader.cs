@@ -248,8 +248,15 @@ namespace FileReader {
             var sn = rdU1(record, i, len); i += 1;
             var binNO = rdU2(record, i, len); i += 2;
             i += 4; //skip bin count
-            var PorF = rdCx(record, i, len, 1); i += 1;
-            var binName = rdCn(record, i, len);
+            var PorF = "";
+            var binName = "";
+            if (i < len) {
+                PorF = rdCx(record, i, len, 1); i += 1;
+            }
+            if (i < len) {
+                binName = rdCn(record, i, len);
+            }
+
             _dc.AddHbr(binNO, new Tuple<string, string>(binName, PorF));
 
         }
@@ -259,8 +266,14 @@ namespace FileReader {
             var sn = rdU1(record, i, len); i += 1;
             var binNO = rdU2(record, i, len); i += 2;
             i += 4; //skip bin count
-            var PorF = rdCx(record, i, len, 1); i += 1;
-            var binName = rdCn(record, i, len);
+            var PorF = "";
+            var binName = "";
+            if (i < len) {
+                PorF = rdCx(record, i, len, 1); i += 1;
+            }
+            if (i < len) {
+                binName = rdCn(record, i, len);
+            }
             _dc.AddSbr(binNO, new Tuple<string, string>(binName, PorF));
         }
         private void AddPmr(byte[] record, ushort len) {
@@ -270,8 +283,8 @@ namespace FileReader {
             var chanName = rdCn(record, i, len); i += (ushort)(1 + chanName.Length);
             var phyName = rdCn(record, i, len); i += (ushort)(1 + phyName.Length);
             var logicName = rdCn(record, i, len); i += (ushort)(1 + logicName.Length);
-            var hn = rdU1(record, i, len); i += 1;
-            var sn = rdU1(record, i, len); i += 1;
+            //var hn = rdU1(record, i, len); i += 1;
+            //var sn = rdU1(record, i, len); i += 1;
 
             listPinMaps.Add(new PinMapRecord(pinIdx, chanName, phyName, logicName));
         }

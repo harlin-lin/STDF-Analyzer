@@ -70,7 +70,7 @@ namespace UI_DataList.ViewModels {
 
             AppendField(ref sb, "Lot Number", dataAcquire.GetBasicInfo("LotId"));
             AppendField(ref sb, "Sub Lot", dataAcquire.GetBasicInfo("SublotId"));
-            AppendField(ref sb, "Date Code", dataAcquire.GetBasicInfo("DateCode"));
+            //AppendField(ref sb, "Date Code", dataAcquire.GetBasicInfo("DateCode"));
 
             AppendField(ref sb, "Setup Time", dataAcquire.GetBasicInfo("SetupTime"));
             AppendField(ref sb, "Start Time", dataAcquire.GetBasicInfo("StartTime"));
