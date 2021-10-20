@@ -139,7 +139,10 @@ namespace UI_DataList.ViewModels {
         }
 
         private async void OpenStdFile(string path) {
-            if (StdDB.IfExsistFile(path)) return;
+            if (StdDB.IfExsistFile(path)) {
+                Log("Already Exist:" + path);
+                return;
+            } 
             var f = new FileNode(path, _fileIdx++);
             Files.Add(f);
             try {
@@ -149,9 +152,10 @@ namespace UI_DataList.ViewModels {
                     await Task.Run(() => { data.ExtractStdf();});
                     LoadingDone(path);
                 }
-            }catch {
+            }catch (Exception e) {
                 Files.Remove(f);
                 StdDB.RemoveFile(path);
+                Log("File Open Failed:" + e);
                 return;
             }
 
@@ -278,6 +282,10 @@ namespace UI_DataList.ViewModels {
 
         void ExecuteCmdCloseData(object parameter) {
             CloseSubData((parameter as FilterNode).SubData);
+        }
+
+        private void Log(string s) {
+            _ea.GetEvent<Event_Log>().Publish(s);
         }
     }
 }

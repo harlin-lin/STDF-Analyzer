@@ -20,7 +20,13 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="23" Height="23" Margin="10,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
+                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/summary.jpeg"/>
+                    </Button.Background>
+                </Button>
+
+                <Button Width="23" Height="23" Margin="0,0,10,0"  Command="{Binding ShowTrendCommand}" ToolTip="Show Trend Chart" >
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/trend.png" />
                     </Button.Background>

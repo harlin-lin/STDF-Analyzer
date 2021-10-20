@@ -76,7 +76,8 @@ namespace UI_Data.ViewModels {
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
 
-                ShowTrend();                
+                //ShowTrend();                
+                ExecuteOpenSummaryCommand();
             }
         }
 
@@ -118,7 +119,17 @@ namespace UI_Data.ViewModels {
         public DelegateCommand ShowBoxCommand { get; private set; }
         public DelegateCommand ShowWaferMapCommand { get; private set; }
         public DelegateCommand ExportToExcelCommand { get; private set; }
+        private DelegateCommand openSummary;
+        public DelegateCommand OpenSummaryCommand =>
+            openSummary ?? (openSummary = new DelegateCommand(ExecuteOpenSummaryCommand));
 
+        void ExecuteOpenSummaryCommand() {
+            var parameters = new NavigationParameters();
+            parameters.Add("subData", _subData);
+
+            _regionManager.RequestNavigate(RegionName, "Summary", parameters);
+
+        }
 
         public DelegateCommand<object> OnSelectColumn { get; private set; }
         public DelegateCommand<object> OnSelectRow { get; private set; }

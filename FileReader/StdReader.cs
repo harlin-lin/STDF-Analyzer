@@ -52,7 +52,7 @@ namespace FileReader {
                 }
                 catch {
                     //release table in data base
-                    throw new Exception("File Read Fail");
+                    throw;
                 }
             }
 

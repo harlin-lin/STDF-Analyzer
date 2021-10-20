@@ -38,6 +38,10 @@ namespace UI_DataList.ViewModels {
                 Progress = x.Item2;
             });
 
+            _ea.GetEvent<Event_Log>().Subscribe(x => {
+                Info = x;
+            });
+
         }
     }
 }

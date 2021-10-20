@@ -15,6 +15,7 @@ namespace UI_Chart
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<Trend>();
+            containerRegistry.RegisterForNavigation<Summary>();
 
         }
     }

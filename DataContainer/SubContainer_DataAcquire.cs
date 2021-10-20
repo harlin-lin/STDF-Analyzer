@@ -83,7 +83,11 @@ namespace DataContainer {
             }
         }
         public string GetBasicInfo(string key) {
-            return _basicInfo[key];
+            if (_basicInfo.ContainsKey(key)) {
+                return _basicInfo[key];
+            } else {
+                return "";
+            }
         }
 
 

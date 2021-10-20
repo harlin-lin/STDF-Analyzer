@@ -46,5 +46,8 @@ namespace SillyMonkey.Core
     public class Event_Progress : PubSubEvent<Tuple<string, int>> {
 
     }
+    public class Event_Log : PubSubEvent<string> {
+
+    }
 
 }
