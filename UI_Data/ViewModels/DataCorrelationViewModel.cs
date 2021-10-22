@@ -22,5 +22,9 @@ namespace UI_Data.ViewModels {
         public void OnNavigatedTo(NavigationContext navigationContext) {
             throw new NotImplementedException();
         }
+
+
+
+
     }
 }

@@ -76,12 +76,15 @@ namespace UI_DataList.ViewModels {
 
         public int FilterId { get; }
 
+        public int FilterIdx { get; }
+
         public SubData SubData { get; }
 
         public FilterNode(FileNode file, int filterId, int filterIdx) {
             ParentNode = file;
             FilterId = filterId;
-            NodeName = $"Filter_{filterIdx}:{filterId.ToString("x8")}";
+            FilterIdx = filterIdx;
+            NodeName = $"Filter_{filterIdx}";
             FilePath = file.FilePath;
             SubData = new SubData(FilePath, filterId);
             IsSelected = true;
@@ -112,9 +115,8 @@ namespace UI_DataList.ViewModels {
 
             SubDataList.Clear();
             SubDataList.Add(new SiteCollectionNode(this));
-            int i = 0;
             foreach(var f in dataAcquire.GetAllFilterId()) {
-                SubDataList.Add(new FilterNode(this, f, i++));
+                SubDataList.Add(new FilterNode(this, f, dataAcquire.GetFilterIndex(f)));
             }
         }
     }
@@ -150,7 +152,7 @@ namespace UI_DataList.ViewModels {
                 dataAcquire.PropertyChanged += DataAcquire_PropertyChanged;
                 using (var data = new StdReader(path, StdFileType.STD)) {
                     await Task.Run(() => { data.ExtractStdf();});
-                    LoadingDone(path);
+                    LoadingDone(f);
                 }
             }catch (Exception e) {
                 Files.Remove(f);
@@ -183,20 +185,19 @@ namespace UI_DataList.ViewModels {
             }
         }
 
-        private void LoadingDone(string path) {
-            var dataAcquire = StdDB.GetDataAcquire(path);
+        private void LoadingDone(FileNode fn) {
+            var dataAcquire = StdDB.GetDataAcquire(fn.FilePath);
             var id = dataAcquire.CreateFilter();
-            Files.First((f) => {
-                if (f.FilePath == dataAcquire.FilePath) return true;
-                return false;
-            }).Update();
+            fn.Update();
             RaisePropertyChanged("Files");
-            RequestRawTab(new SubData(path, id));
+            RequestRawTab(new SubData(fn.FilePath, id), fn.FileIdx, dataAcquire.GetFilterIndex(id));
         }
 
-        private void RequestRawTab(SubData data) {
+        private void RequestRawTab(SubData data, int fileIdx, int filterIdx) {
             var parameters = new NavigationParameters();
             parameters.Add("subData", data);
+            parameters.Add("fileIdx", fileIdx);
+            parameters.Add("filterIdx", filterIdx);
             _regionManager.RequestNavigate("Region_DataView", "DataRaw", parameters);
         }
 
@@ -229,7 +230,8 @@ namespace UI_DataList.ViewModels {
                     _ea.GetEvent<Event_DataSelected>().Publish((x as FileNode).FilePath);
             } else if (x.GetType().Name == "FilterNode") {
                 _ea.GetEvent<Event_SubDataSelected>().Publish((x as FilterNode).SubData);
-                RequestRawTab((x as FilterNode).SubData);
+                var f = (x as FilterNode);
+                RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
             } else {
                 _ea.GetEvent<Event_DataSelected>().Publish(null);
             }
@@ -241,7 +243,8 @@ namespace UI_DataList.ViewModels {
 
         void ExecuteOpenData(object x) {
             if (x.GetType().Name == "FilterNode") {
-                RequestRawTab((x as FilterNode).SubData);
+                var f = (x as FilterNode);
+                RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
             } else if (x.GetType().Name == "SiteNode") {
                 var s = (x as SiteNode);
                 var f = StdDB.GetDataAcquire(s.FilePath);
@@ -250,13 +253,14 @@ namespace UI_DataList.ViewModels {
                 s.ParentNode.Update();
                 RaisePropertyChanged("Files");
 
-                RequestRawTab(new SubData(s.FilePath, id));
+                RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx, f.GetFilterIndex(id));
             }else if(x.GetType().Name == "FileNode") {
                 var f = x as FileNode;
-                var id = StdDB.GetDataAcquire(f.FilePath).CreateFilter();
+                var da = StdDB.GetDataAcquire(f.FilePath);
+                var id = da.CreateFilter();
                 f.Update();
                 RaisePropertyChanged("Files");
-                RequestRawTab(new SubData(f.FilePath, id));
+                RequestRawTab(new SubData(f.FilePath, id), f.FileIdx, da.GetFilterIndex(id));
 
             }
         }

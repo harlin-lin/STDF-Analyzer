@@ -19,6 +19,9 @@ namespace UI_Data.ViewModels {
         SubData _subData;
         public SubData CurrentData { get { return _subData; } }
 
+        int _fileIdx=-1;
+        int _filterIdx=-1;
+
         private ObservableCollection<Item> _testItems;
         public ObservableCollection<Item> TestItems {
             get { return _testItems; }
@@ -64,15 +67,17 @@ namespace UI_Data.ViewModels {
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
-            if (TestItems is null) {
-                var data = (SubData)navigationContext.Parameters["subData"];
-                _subData = data;
+            if (_fileIdx == -1) {
+                _subData = (SubData)navigationContext.Parameters["subData"];
+                _fileIdx = (int)navigationContext.Parameters["fileIdx"];
+                _filterIdx = (int)navigationContext.Parameters["filterIdx"];
 
-                var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
 
-                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
+                var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-                Header = $"F:{_subData.FilterId:x8}";
+                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(_subData.FilterId));
+
+                Header = $"File_{_fileIdx}|Filter_{_filterIdx}";
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
 

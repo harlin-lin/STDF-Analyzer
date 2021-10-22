@@ -110,7 +110,7 @@ namespace DataContainer {
 
         }
 
-        public IEnumerable<int> GetFilteredIndex(int filterId) {
+        public IEnumerable<int> GetFilteredPartIndex(int filterId) {
             return _filterContainer[filterId].FilteredPartIdx;
         }
 

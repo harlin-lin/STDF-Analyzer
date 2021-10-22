@@ -172,7 +172,7 @@ namespace UI_Chart.ViewModels {
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
             #region trendChart
-            var xs = da.GetFilteredIndex(_subData.FilterId);
+            var xs = da.GetFilteredPartIndex(_subData.FilterId);
             TrendSeries.Clear();
             for(int i=0; i< (_selectedIds.Count>16 ? 16: _selectedIds.Count); i++) {
                 var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
