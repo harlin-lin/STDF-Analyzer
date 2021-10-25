@@ -90,6 +90,25 @@ namespace DataContainer {
             }
         }
 
+        public string GetPartId(int partIndex) {
+            return _partId_PartContainer[partIndex];
+        }
+
+        public string GetWaferCord(int partIndex) {
+            return $"{_xCord_PartContainer[partIndex]}_{_yCord_PartContainer[partIndex]}";
+        }
+
+        public ushort GetHardBin(int partIndex) {
+            return _hardBin_PartContainer[partIndex];
+        }
+
+        public ushort GetSoftBin(int partIndex) {
+            return _softBin_PartContainer[partIndex];
+        }
+
+        public byte GetSite(int partIndex) {
+            return _site_PartContainer[partIndex];
+        }
 
         public IEnumerable<float> GetFilteredItemData(string testID, int filterId) {
             return GetItemVal(testID, _filterContainer[filterId]);

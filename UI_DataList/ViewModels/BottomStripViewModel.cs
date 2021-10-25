@@ -40,6 +40,7 @@ namespace UI_DataList.ViewModels {
 
             _ea.GetEvent<Event_Log>().Subscribe(x => {
                 Info = x;
+                Progress = 0;
             });
 
         }

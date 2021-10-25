@@ -10,6 +10,9 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using UI_Chart.Views;
+using OfficeOpenXml;
+using System.Windows.Forms;
+using System.Threading.Tasks;
 
 namespace UI_Data.ViewModels {
     public class DataRawViewModel : BindableBase, INavigationAware, IDataView {
@@ -97,17 +100,108 @@ namespace UI_Data.ViewModels {
 
             _regionManager.RequestNavigate(RegionName, "Trend", parameters);
         }
-        private void ShowHistogram() {
-
-        }
         private void ShowBox() {
 
         }
         private void ShowWaferMap() {
 
         }
-        private void ExportToExcel() {
+        private async void ExportToExcelAsync() {
+            string path;
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Filter = "Excel Files | *.xlsx";
+                saveFileDialog.DefaultExt = "xlsx";
+                saveFileDialog.ValidateNames = true;
+                if (saveFileDialog.ShowDialog() != DialogResult.OK) {
+                    return;
+                }
+                path = saveFileDialog.FileName;
+            };
 
+            await System.Threading.Tasks.Task.Run(() => {
+                //get file path
+
+                //write data
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (var p = new ExcelPackage()) {
+                    var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+                    string phase="Loading start";
+                    int percent = 0;
+                    System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
+                        SetProgress(phase, percent);
+                    }, null, 100, 100);
+
+
+                    //write basic info
+                    //var ws1 = p.Workbook.Worksheets.Add("BasicInfo");
+
+                    //write raw data
+                    var ws2 = p.Workbook.Worksheets.Add("Raw");
+                    var testItems = dataAcquire.GetFilteredItems(_subData.FilterId);
+                    var chips = dataAcquire.GetFilteredPartIndex(_subData.FilterId);
+                    
+
+                    //header
+                    ws2.Cells[1, 1].Value = "Test NO";
+                    ws2.Cells[1, 2].Value = "Cord";
+                    ws2.Cells[1, 3].Value = "HardBin";
+                    ws2.Cells[1, 4].Value = "SoftBin";
+                    ws2.Cells[1, 5].Value = "Site";
+
+                    ws2.Cells[2, 1].Value = "Test Name";
+                    ws2.Cells[3, 1].Value = "Low Limit";
+                    ws2.Cells[4, 1].Value = "High Limit";
+                    ws2.Cells[5, 1].Value = "Unit";
+
+                    phase = "Export chip idx";
+                    percent = 1;
+
+                    int i = 6;
+                    foreach (var v in chips) {
+                        ws2.Cells[i, 1].Value = dataAcquire.GetPartId(v);
+                        ws2.Cells[i, 2].Value = dataAcquire.GetWaferCord(v);
+                        ws2.Cells[i, 3].Value = dataAcquire.GetHardBin(v);
+                        ws2.Cells[i, 4].Value = dataAcquire.GetSoftBin(v);
+                        ws2.Cells[i, 5].Value = dataAcquire.GetSite(v);
+                        i++;
+                    }
+
+                    phase = "Export chip items";
+                    percent = 5;
+
+
+                    int col = 6;
+                    double totalItemCnt = testItems.Count();
+                    foreach (var v in testItems) {
+                        int row = 6;
+                        ws2.Cells[1, col].Value = v.TestNumber;
+                        ws2.Cells[2, col].Value = v.TestText;
+                        ws2.Cells[3, col].Value = v.LoLimit;
+                        ws2.Cells[4, col].Value = v.HiLimit;
+                        ws2.Cells[5, col].Value = v.Unit;
+
+                        foreach (var r in dataAcquire.GetFilteredItemData(v.TestNumber, _subData.FilterId)) {
+                            ws2.Cells[row, col].Value = r;
+                            row++;
+                        }
+                        col++;
+
+                        percent = (int)((col/totalItemCnt)*100);
+                    }
+
+                    p.SaveAs(new System.IO.FileInfo(path));
+                    //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+                    
+                    myTimer.Dispose();
+                }
+            });
+            _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
+        }
+
+        private void SetProgress(string log, int percent) {
+            _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>(log, percent));
         }
 
         private DelegateCommand<object> _closeCmd;
@@ -120,7 +214,6 @@ namespace UI_Data.ViewModels {
         }
 
         public DelegateCommand ShowTrendCommand { get; private set; }
-        public DelegateCommand ShowHistogramCommand { get; private set; }
         public DelegateCommand ShowBoxCommand { get; private set; }
         public DelegateCommand ShowWaferMapCommand { get; private set; }
         public DelegateCommand ExportToExcelCommand { get; private set; }
@@ -143,10 +236,9 @@ namespace UI_Data.ViewModels {
         public void InitUi() {
 
             ShowTrendCommand = new DelegateCommand(ShowTrend);
-            ShowHistogramCommand = new DelegateCommand(ShowHistogram);
             ShowBoxCommand = new DelegateCommand(ShowBox);
             ShowWaferMapCommand = new DelegateCommand(ShowWaferMap);
-            ExportToExcelCommand = new DelegateCommand(ExportToExcel);
+            ExportToExcelCommand = new DelegateCommand(ExportToExcelAsync);
 
             OnSelectionChanged = new DelegateCommand<object>((x) => {
                 _selectedItemList.Clear();

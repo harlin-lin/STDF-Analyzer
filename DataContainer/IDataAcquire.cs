@@ -116,6 +116,16 @@ namespace DataContainer{
         PartStatistic GetPartStatistic();
 
 
+        string GetPartId(int partIndex);
+
+        string GetWaferCord(int partIndex);
+
+        ushort GetHardBin(int partIndex);
+
+        ushort GetSoftBin(int partIndex);
+
+        byte GetSite(int partIndex);
+
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }

@@ -73,16 +73,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ViewModels\BoxViewModel.cs" />
-    <Compile Include="ViewModels\HistogramViewModel.cs" />
     <Compile Include="ViewModels\PieViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\TrendViewModel.cs" />
     <Compile Include="ViewModels\WaferMapViewModel.cs" />
     <Compile Include="Views\Box.xaml.cs">
       <DependentUpon>Box.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Histogram.xaml.cs">
-      <DependentUpon>Histogram.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pie.xaml.cs">
       <DependentUpon>Pie.xaml</DependentUpon>
@@ -118,10 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Box.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Histogram.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
