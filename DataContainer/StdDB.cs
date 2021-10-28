@@ -47,6 +47,20 @@ namespace DataContainer
             return _subContainers[filePath];
         }
 
+        public static string MergeFiles(List<string> files) {
+            var filePath = "MergerFile_" + DateTime.Now;
+            _subContainers.TryAdd(filePath, new SubContainer(filePath));
+            foreach(var f in files) {
+                if (!IfExsistFile(f)) throw new Exception("File not exsist");
+            }
+            foreach (var f in files) {
+                _subContainers[filePath].MergeData(_subContainers[f]);
+            }
+            _subContainers[filePath].AnalyseData();
+
+            return filePath;
+        }
+
         public static bool RemoveFile(string filePath) {
             SubContainer tmp;
             var rst = _subContainers.TryRemove(filePath, out tmp);

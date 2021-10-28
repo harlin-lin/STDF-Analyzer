@@ -8,6 +8,7 @@
             <MenuItem Header="File">
                 <MenuItem Header="Open File" Command="{Binding Path=OpenFileDiag}"/>
                 <MenuItem Header="Close All Files" Command="{Binding Path=CloseAllFiles}"/>
+                <MenuItem Header="Merge Files" Command="{Binding Path=OpenFileMergeDiag}"/>
                 <MenuItem Header="Exit" Command="{Binding Path=CmdExit}"/>
             </MenuItem>
             <MenuItem Header="Help">

@@ -138,6 +138,25 @@ namespace UI_DataList.ViewModels {
             _ea = ea;
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
             _ea.GetEvent<Event_CloseData>().Subscribe(CloseSubData);
+            _ea.GetEvent<Event_MergeFiles>().Subscribe(MergeFiles);
+        }
+
+        private void MergeFiles(List<string> files) {
+            try {
+                Task<string> task = Task.Run(() => {
+                    return StdDB.MergeFiles(files);
+                });
+                task.Wait();
+
+                var f = new FileNode(task.Result, _fileIdx++);
+                Files.Add(f);
+                LoadingDone(f);
+            }
+            catch (Exception e) {
+                Log("File Merger Failed:" + e);
+                return;
+            }
+
         }
 
         private async void OpenStdFile(string path) {

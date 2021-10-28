@@ -110,8 +110,9 @@ namespace UI_Data.ViewModels {
             string path;
             using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
                 saveFileDialog.AddExtension = true;
-                saveFileDialog.Filter = "Excel Files | *.xlsx";
-                saveFileDialog.DefaultExt = "xlsx";
+                saveFileDialog.Filter = "Excel Files | *.csv";
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath);
                 saveFileDialog.ValidateNames = true;
                 if (saveFileDialog.ShowDialog() != DialogResult.OK) {
                     return;
@@ -190,8 +191,8 @@ namespace UI_Data.ViewModels {
 
                         percent = (int)((col/totalItemCnt)*100);
                     }
-
-                    p.SaveAs(new System.IO.FileInfo(path));
+                    ws2.Cells[1,1, chips.Count()+6 , testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+                    //p.SaveAs(new System.IO.FileInfo(path));
                     //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
                     
                     myTimer.Dispose();

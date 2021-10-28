@@ -110,5 +110,10 @@ namespace DataContainer {
             LoadingDone = true;
             OnPropertyChanged("LoadingDone");
         }
+
+        public void MergeData(IDataAcquire da) {
+
+        }
+
     }
 }

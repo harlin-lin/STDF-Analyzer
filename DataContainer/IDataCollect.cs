@@ -20,5 +20,6 @@ namespace DataContainer{
         ItemInfo IfContainItemInfo(string uid);
         void SetReadingPercent(int percent);
         void AnalyseData();
+        void MergeData(IDataAcquire da);
     }
 }

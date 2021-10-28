@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using DataContainer;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using UI_DataList.Views;
 
 namespace UI_DataList.ViewModels {
     public class TopMenuViewModel : BindableBase {
@@ -57,6 +59,18 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_CloseAllFiles>().Publish();
         }
 
+        private DelegateCommand openFileMergeDiag;
+        public DelegateCommand OpenFileMergeDiag =>
+            openFileMergeDiag ?? (openFileMergeDiag = new DelegateCommand(ExecuteOpenFileMergeDiag));
+
+        void ExecuteOpenFileMergeDiag() {
+            var mergerWindow = new FileMergeWindow();
+            var vm = (mergerWindow.DataContext as FileMergeWindowViewModel);
+            vm.FileList = StdDB.GetAllFiles();
+            mergerWindow.ShowDialog();
+        }
+
+
         private DelegateCommand _cmdExit;
         public DelegateCommand CmdExit =>
             _cmdExit ?? (_cmdExit = new DelegateCommand(ExecuteCmdExit));
@@ -78,7 +92,7 @@ namespace UI_DataList.ViewModels {
             _cmdHelp ?? (_cmdHelp = new DelegateCommand(ExecuteCmdHelp));
 
         void ExecuteCmdHelp() {
-            throw new NotImplementedException();
+            ;
         }
     }
 }

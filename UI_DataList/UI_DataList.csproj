@@ -54,6 +54,7 @@
     <Compile Include="ViewModels\DataFilterViewModel.cs" />
     <Compile Include="ViewModels\DataManagementViewModel.cs" />
     <Compile Include="ViewModels\DataSummaryViewModel.cs" />
+    <Compile Include="ViewModels\FileMergeWindowViewModel.cs" />
     <Compile Include="ViewModels\TopMenuViewModel.cs" />
     <Compile Include="Views\BottomStrip.xaml.cs">
       <DependentUpon>BottomStrip.xaml</DependentUpon>
@@ -80,6 +81,9 @@
     </Compile>
     <Compile Include="Views\DataSummary.xaml.cs">
       <DependentUpon>DataSummary.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileMergeWindow.xaml.cs">
+      <DependentUpon>FileMergeWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TopMenu.xaml.cs">
       <DependentUpon>TopMenu.xaml</DependentUpon>
@@ -108,6 +112,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataSummary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileMergeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
