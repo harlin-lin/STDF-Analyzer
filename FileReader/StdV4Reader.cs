@@ -771,11 +771,12 @@ namespace FileReader {
             }
             return rst;
         }
+        
         private ushort skipDn(byte[] record, ushort i, ushort len) {
             if ((i + 1) > len) throw new Exception("wrong record index");
             ushort bitCnt = BitConverter.ToUInt16(record, i);
             var byteCnt = bitCnt / 8 + ((bitCnt % 8) > 0 ? 1 : 0);
-            return (ushort)byteCnt;
+            return (ushort)(byteCnt + 2);
         }
 
         private byte[] rdNx(byte[] record, ushort i, ushort len, ushort nibbleCnt) {
