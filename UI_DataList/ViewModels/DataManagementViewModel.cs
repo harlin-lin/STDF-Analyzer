@@ -151,6 +151,8 @@ namespace UI_DataList.ViewModels {
                 var f = new FileNode(task.Result, _fileIdx++);
                 Files.Add(f);
                 LoadingDone(f);
+
+                MessageBox.Show("Merge Done!");
             }
             catch (Exception e) {
                 Log("File Merger Failed:" + e);

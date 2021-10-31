@@ -112,7 +112,66 @@ namespace DataContainer {
         }
 
         public void MergeData(SubContainer da) {
-            
+            SetReadingPercent(0);
+
+            //merge the misc
+            foreach(var s in da._siteContainer) {
+                if (!_siteContainer.ContainsKey(s.Key)) {
+                    _siteContainer.Add(s.Key, 0);
+                }
+            }
+            _basicInfo = new Dictionary<string, string>(da._basicInfo);
+
+            foreach (var s in da._softBinNames) {
+                if (!_softBinNames.ContainsKey(s.Key)) {
+                    _softBinNames.Add(s.Key, s.Value);
+                }
+            }
+            foreach (var s in da._hardBinNames) {
+                if (!_hardBinNames.ContainsKey(s.Key)) {
+                    _hardBinNames.Add(s.Key, s.Value);
+                }
+            }
+
+            //add item info
+            foreach (var item in da._itemContainer) {
+                if (!CheckItemContainer(item.Key)) {
+                    _itemContainer[item.Key] = new ItemInfo(item.Value);
+                }
+            }
+            SetReadingPercent(2);
+
+            int start = _partIdx + 1;
+            _partIdx += da._partIdx+1;
+            AdjustDataBaseCapcity();
+            SetReadingPercent(5);
+            double p = 1.0;
+            foreach (var uid in da._dataBase_Result.Keys) {
+                int i = start;
+                foreach(var v in da.GetItemVal(uid)) {
+                    SetData(uid, i++, v);
+                }
+                SetReadingPercent((int)((p / (double)(da._dataBase_Result.Keys.Count()))*90));
+            }
+
+            for (int i = 0; i<= da._partIdx; i++) {
+                _site_PartContainer.Add(da._site_PartContainer[i]);
+                _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
+                _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
+                _softBin_PartContainer.Add(da._softBin_PartContainer[i]);
+                _partId_PartContainer.Add(da._partId_PartContainer[i]);
+                _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
+                _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
+                if (_ifCordValid && (!da._xCord_PartContainer[i].HasValue || !da._yCord_PartContainer[i].HasValue)) {
+                    _ifCordValid = false;
+                }
+                _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
+                _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
+            }
+            _allIndex= (from i in Enumerable.Range(0, _partIdx + 1)
+                       select i).ToList();
+
+            SetReadingPercent(100);
         }
 
     }
