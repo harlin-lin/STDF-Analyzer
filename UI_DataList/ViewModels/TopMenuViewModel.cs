@@ -49,6 +49,24 @@ namespace UI_DataList.ViewModels {
                     //log message not supported
                 }
             }
+
+            //FolderBrowserDialog openFileDialog = new FolderBrowserDialog();
+
+            //var dir = openFileDialog.ShowDialog();
+            //if (dir != DialogResult.OK) return;
+
+            //string[] dicFileList = System.IO.Directory.GetFiles(openFileDialog.SelectedPath, "*.std", System.IO.SearchOption.AllDirectories);
+
+            //foreach (string path in dicFileList) {
+            //    var ext = System.IO.Path.GetExtension(path).ToLower();
+            //    if (ext == ".stdf" || ext == ".std") {
+            //        _ea.GetEvent<Event_OpenFile>().Publish(path);
+            //    } else {
+            //        //log message not supported
+            //    }
+            //}
+
+
         }
 
         private DelegateCommand _closeAllFiles;
@@ -84,7 +102,7 @@ namespace UI_DataList.ViewModels {
             _cmdAbout ?? (_cmdAbout = new DelegateCommand(ExecuteCmdAbout));
 
         void ExecuteCmdAbout() {
-            MessageBox.Show("SillyMonkey V2.0\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com");
+            System.Windows.MessageBox.Show("SillyMonkey V2.0\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com");
         }
 
         private DelegateCommand _cmdHelp;

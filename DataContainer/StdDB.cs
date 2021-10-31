@@ -48,7 +48,7 @@ namespace DataContainer
         }
 
         public static string MergeFiles(List<string> files) {
-            var filePath = "MergerFile_" + DateTime.Now;
+            var filePath = "\\MergerFile_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
             _subContainers.TryAdd(filePath, new SubContainer(filePath));
             foreach(var f in files) {
                 if (!IfExsistFile(f)) throw new Exception("File not exsist");

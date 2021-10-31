@@ -120,6 +120,64 @@ namespace UI_Data.ViewModels {
                 path = saveFileDialog.FileName;
             };
 
+            #region getRcm
+            //List<ItemStatistic> rcmSt = new List<ItemStatistic>();
+            //List<int> wfCnt = new List<int>();
+            //var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+            //var waferId = dataAcquire.GetFilteredItemData("201008_0", _subData.FilterId).ToList();
+            //var rcmValue = dataAcquire.GetFilteredItemData("620001_0", _subData.FilterId).ToList();
+            //for (int i=1; i<=25; i++) {
+            //    var rcmByWf = (from r in dataAcquire.GetAllIndex()
+            //                where waferId[r] == i
+            //                select rcmValue[r]).ToList();
+            //    wfCnt.Add(rcmByWf.Count);
+            //    var st = new ItemStatistic(rcmByWf, 5, 62);
+            //    rcmSt.Add(st);
+            //}
+
+            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            //using (var p = new ExcelPackage()) {
+            //    //write raw data
+            //    var ws2 = p.Workbook.Worksheets.Add("Raw");
+
+
+            //    ws2.Cells[1, 1].Value = "Wafer NO";
+            //    ws2.Cells[1, 2].Value = "Lo Limit";
+            //    ws2.Cells[1, 3].Value = "Hi Limit";
+            //    ws2.Cells[1, 4].Value = "Mean";
+            //    ws2.Cells[1, 5].Value = "Min";
+            //    ws2.Cells[1, 6].Value = "Max";
+            //    ws2.Cells[1, 7].Value = "Cp";
+            //    ws2.Cells[1, 8].Value = "Cpk";
+            //    ws2.Cells[1, 9].Value = "Sigma";
+            //    ws2.Cells[1, 10].Value = "Total Cnt";
+            //    ws2.Cells[1, 11].Value = "Pass Cnt";
+            //    ws2.Cells[1, 12].Value = "Fail Cnt";
+            //    ws2.Cells[1, 13].Value = "Fail Rate";
+
+            //    for (int i = 1; i <= 25; i++) {
+            //        ws2.Cells[i+1, 1].Value = i;
+            //        ws2.Cells[i + 1, 2].Value = 5;
+            //        ws2.Cells[i + 1, 3].Value = 62;
+            //        ws2.Cells[i + 1, 4].Value = rcmSt[i - 1].MeanValue;
+            //        ws2.Cells[i + 1, 5].Value = rcmSt[i - 1].MinValue;
+            //        ws2.Cells[i + 1, 6].Value = rcmSt[i - 1].MaxValue;
+            //        ws2.Cells[i + 1, 7].Value = rcmSt[i - 1].Cp;
+            //        ws2.Cells[i + 1, 8].Value = rcmSt[i - 1].Cpk;
+            //        ws2.Cells[i + 1, 9].Value = rcmSt[i - 1].Sigma;
+            //        ws2.Cells[i + 1, 10].Value = wfCnt[i - 1];
+            //        ws2.Cells[i + 1, 11].Value = rcmSt[i - 1].PassCount;
+            //        ws2.Cells[i + 1, 12].Value = rcmSt[i - 1].FailCount;
+            //        ws2.Cells[i + 1, 13].Value = (rcmSt[i - 1].FailCount*100.0)/ wfCnt[i - 1];
+            //    }
+
+            //    ws2.Cells[1, 1, 26, 13].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+
+            //}
+
+            #endregion
+
+
             await System.Threading.Tasks.Task.Run(() => {
                 //get file path
 
@@ -128,7 +186,7 @@ namespace UI_Data.ViewModels {
                 using (var p = new ExcelPackage()) {
                     var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-                    string phase="Loading start";
+                    string phase = "Loading start";
                     int percent = 0;
                     System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
                         SetProgress(phase, percent);
@@ -142,7 +200,7 @@ namespace UI_Data.ViewModels {
                     var ws2 = p.Workbook.Worksheets.Add("Raw");
                     var testItems = dataAcquire.GetFilteredItems(_subData.FilterId);
                     var chips = dataAcquire.GetFilteredPartIndex(_subData.FilterId);
-                    
+
 
                     //header
                     ws2.Cells[1, 1].Value = "Test NO";
@@ -189,12 +247,12 @@ namespace UI_Data.ViewModels {
                         }
                         col++;
 
-                        percent = (int)((col/totalItemCnt)*100);
+                        percent = (int)((col / totalItemCnt) * 100);
                     }
-                    ws2.Cells[1,1, chips.Count()+6 , testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+                    ws2.Cells[1, 1, chips.Count() + 6, testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
                     //p.SaveAs(new System.IO.FileInfo(path));
                     //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
-                    
+
                     myTimer.Dispose();
                 }
             });

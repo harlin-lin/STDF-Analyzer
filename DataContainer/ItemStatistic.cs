@@ -15,6 +15,7 @@ namespace DataContainer {
         public float? Sigma { get; private set; }
         public int PassCount { get; private set; }
         public int FailCount { get; private set; }
+        public int ValidCount { get; private set; }
 
         public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {
             List<float> listUnNullItems = (from r in data
@@ -46,16 +47,17 @@ namespace DataContainer {
                 }
             }
 
+            ValidCount = listUnNullItems.Count;
             PassCount = 0;
             FailCount = 0;
 
             if(!ll.HasValue && !hl.HasValue) {
-                PassCount = listUnNullItems.Count;
-                FailCount = data.Count() - PassCount;
+                PassCount = ValidCount;
+                FailCount = ValidCount - PassCount;
             } else {
                 foreach(var v in listUnNullItems) {
                     if (ll.HasValue && !hl.HasValue){
-                        if(v>=ll)
+                        if (v >= ll)
                             PassCount++;
                     }else if(!ll.HasValue && hl.HasValue) {
                         if (v <= hl)
@@ -65,7 +67,7 @@ namespace DataContainer {
                             PassCount++;
                     }
                 }
-                FailCount = data.Count() - PassCount;
+                FailCount = ValidCount - PassCount;
             }
 
 
