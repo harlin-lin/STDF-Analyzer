@@ -5,6 +5,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:c ="clr-namespace:UI_Chart.Views;assembly=UI_Chart"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -46,7 +47,8 @@
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
         <Grid Grid.Column="2">
-            <ContentControl Grid.Column="2" prism:RegionManager.RegionName="Region_CorrChart"/>
+            <!--<ContentControl Grid.Column="2" prism:RegionManager.RegionName="Region_CorrChart"/>-->
+            <c:CorrChart/>
         </Grid>
     </Grid>
 </UserControl>

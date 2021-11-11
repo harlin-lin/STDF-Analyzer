@@ -109,12 +109,16 @@ namespace UI_Chart.ViewModels {
             _subDataList = new List<SubData>(para.Item2);
             _selectedId = para.Item1;
 
+            bool axisFlg = false;
+
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
+                if (!da.IfFilterContainsTestId(_subDataList[i].FilterId, _selectedId)) continue;
+
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 
                 var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
-                if (i == 0) {
+                if (axisFlg == false) {
                     _min = statistic.MinValue ?? 0;
                     _max = statistic.MaxValue ?? 1;
 
@@ -124,6 +128,7 @@ namespace UI_Chart.ViewModels {
                     var idInfo = da.GetTestInfo(_selectedId);
                     LowLimit = idInfo.LoLimit ?? _min;
                     HighLimit = idInfo.HiLimit ?? _max;
+                    axisFlg = true;
                 } else {
                     if (statistic.MinValue.HasValue) {
                         _min = statistic.MinValue.Value < _min ? statistic.MinValue.Value : _min;
@@ -213,6 +218,7 @@ namespace UI_Chart.ViewModels {
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
 
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
+                if (!da.IfFilterContainsTestId(_subDataList[i].FilterId, _selectedId)) continue;
 
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 

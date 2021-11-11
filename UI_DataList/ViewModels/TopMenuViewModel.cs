@@ -82,9 +82,12 @@ namespace UI_DataList.ViewModels {
             openFileMergeDiag ?? (openFileMergeDiag = new DelegateCommand(ExecuteOpenFileMergeDiag));
 
         void ExecuteOpenFileMergeDiag() {
-            var mergerWindow = new FileMergeWindow();
-            var vm = (mergerWindow.DataContext as FileMergeWindowViewModel);
-            vm.FileList = StdDB.GetAllFiles();
+            var mergerWindow = new FileMergeWindow(StdDB.GetAllFiles());
+            mergerWindow.ReturnHandler += new SubWindowReturnHandler((x) => {
+                var ll = x as List<string>;
+
+                _ea.GetEvent<Event_MergeFiles>().Publish(ll);
+            });
             mergerWindow.ShowDialog();
         }
 

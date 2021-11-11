@@ -55,7 +55,6 @@
     <Compile Include="ViewModels\DataFilterViewModel.cs" />
     <Compile Include="ViewModels\DataManagementViewModel.cs" />
     <Compile Include="ViewModels\DataSummaryViewModel.cs" />
-    <Compile Include="ViewModels\FileMergeWindowViewModel.cs" />
     <Compile Include="ViewModels\TopMenuViewModel.cs" />
     <Compile Include="Views\BottomStrip.xaml.cs">
       <DependentUpon>BottomStrip.xaml</DependentUpon>

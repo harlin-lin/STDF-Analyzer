@@ -136,6 +136,7 @@ namespace UI_Data.ViewModels {
                 r[3] = v.HiLimit;
                 r[4] = v.Unit;
                 for (int i = 0; i < cnt; i++) {
+                    if (!allDa[i].IfFilterContainsTestId(_subDataList[i].FilterId, v.TestNumber)) continue;
                     var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
                     r[5 + i] = s.MeanValue;
                     r[5 + 1 * cnt + i] = s.MinValue;
@@ -149,8 +150,8 @@ namespace UI_Data.ViewModels {
 
             for (int i = 1; i < cnt; i++) {
                 var appendId = allDa[i].GetFilteredTestId(_subDataList[i].FilterId).Except(allId);
-                DataRow r = dt.NewRow();
                 foreach(var uid in appendId) {
+                    DataRow r = dt.NewRow();
                     var  s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, uid);
                     var v = allDa[i].GetTestInfo(uid);
                     r[0] = uid;
@@ -165,8 +166,8 @@ namespace UI_Data.ViewModels {
                     r[5 + 3 * cnt + i] = s.Cp;
                     r[5 + 4 * cnt + i] = s.Cpk;
                     r[5 + 5 * cnt + i] = s.Sigma;
+                    dt.Rows.Add(r);
                 }
-                dt.Rows.Add(r);
             }
 
             RaisePropertyChanged("TestItems");

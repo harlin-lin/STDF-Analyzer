@@ -146,6 +146,7 @@ namespace DataContainer{
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
+        bool IfFilterContainsTestId(int filterId, string uid);
         #endregion
 
 

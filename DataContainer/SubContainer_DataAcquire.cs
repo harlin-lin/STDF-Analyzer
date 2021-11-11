@@ -129,6 +129,11 @@ namespace DataContainer {
 
         }
 
+        public bool IfFilterContainsTestId(int filterId, string uid) {
+            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
+            return _filterContainer[filterId].FilteredUid.Contains(uid);
+        }
+
         public IEnumerable<string> GetFilteredTestId(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
 

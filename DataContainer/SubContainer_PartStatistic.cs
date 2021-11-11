@@ -58,13 +58,13 @@ namespace DataContainer {
                 if (_partStatistic.HardBinBySite[sn].ContainsKey(_hardBin_PartContainer[i])) {
                     _partStatistic.HardBinBySite[sn][_hardBin_PartContainer[i]] += 1;
                 }else {
-                    _partStatistic.HardBinBySite[sn].Add(_hardBin_PartContainer[i], 0);
+                    _partStatistic.HardBinBySite[sn].Add(_hardBin_PartContainer[i], 1);
                 }
                 
                 if (_partStatistic.SoftBinBySite[sn].ContainsKey(_softBin_PartContainer[i])) {
                     _partStatistic.SoftBinBySite[sn][_softBin_PartContainer[i]] += 1;
                 } else {
-                    _partStatistic.SoftBinBySite[sn].Add(_softBin_PartContainer[i], 0);
+                    _partStatistic.SoftBinBySite[sn].Add(_softBin_PartContainer[i], 1);
                 }
                 
                 switch (_chipType_PartContainer[i]) {

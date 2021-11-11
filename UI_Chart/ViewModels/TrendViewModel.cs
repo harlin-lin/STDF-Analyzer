@@ -486,7 +486,9 @@ namespace UI_Chart.ViewModels {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            string dftName = _selectedIds[0] + "_Trend";
+            var txt = StdDB.GetDataAcquire(_subData.StdFilePath).GetTestInfo(_selectedIds[0]).TestText;
+
+            string dftName = $"{_selectedIds[0]}_{txt}_Trend";
             if (_selectedIds.Count > 1) dftName += "_cmp";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
@@ -568,7 +570,9 @@ namespace UI_Chart.ViewModels {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            string dftName = _selectedIds[0] + "_Histo";
+            var txt = StdDB.GetDataAcquire(_subData.StdFilePath).GetTestInfo(_selectedIds[0]).TestText;
+
+            string dftName = $"{_selectedIds[0]}_{txt}_Histo";
             if (_selectedIds.Count > 1) dftName += "_cmp";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
