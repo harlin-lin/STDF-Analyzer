@@ -11,6 +11,9 @@
                 <MenuItem Header="Merge Files" Command="{Binding Path=OpenFileMergeDiag}"/>
                 <MenuItem Header="Exit" Command="{Binding Path=CmdExit}"/>
             </MenuItem>
+            <MenuItem Header="Correlation">
+                <MenuItem Header="Select Data" Command="{Binding Path=OpenCorrelationDiag}"/>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Command="{Binding Path=CmdAbout}"/>
                 <MenuItem Header="Help" Command="{Binding Path=CmdHelp}"/>

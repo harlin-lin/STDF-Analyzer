@@ -129,6 +129,13 @@ namespace DataContainer {
 
         }
 
+        public IEnumerable<string> GetFilteredTestId(int filterId) {
+            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
+
+            return from r in _filterContainer[filterId].FilteredUid
+                   select r;
+        }
+
         public IEnumerable<int> GetFilteredPartIndex(int filterId) {
             return _filterContainer[filterId].FilteredPartIdx;
         }
@@ -156,9 +163,7 @@ namespace DataContainer {
             return idx;
         }
 
-        public ConcurrentDictionary<string, ItemStatistic> GetFilteredStatistic(int filterId) {
-            return _filterContainer[filterId].FilterItemStatistics;
-        }
+
         public ItemStatistic GetFilteredStatistic(int filterId, string uid) {
             return _filterContainer[filterId].FilterItemStatistics[uid];
         }

@@ -60,6 +60,9 @@
     <Compile Include="Views\BottomStrip.xaml.cs">
       <DependentUpon>BottomStrip.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CorrDataSelectWindow.xaml.cs">
+      <DependentUpon>CorrDataSelectWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataFilter.xaml.cs">
       <DependentUpon>DataFilter.xaml</DependentUpon>
     </Compile>
@@ -101,6 +104,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\BottomStrip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CorrDataSelectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

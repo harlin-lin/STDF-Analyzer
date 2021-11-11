@@ -26,7 +26,7 @@ namespace UI_DataList.ViewModels {
     public class SiteNode {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
-
+        public bool IsSelected { get; set; }
         public byte Site { get; private set; }
 
         public FileNode ParentNode { get; private set; }
@@ -84,7 +84,7 @@ namespace UI_DataList.ViewModels {
             ParentNode = file;
             FilterId = filterId;
             FilterIdx = filterIdx;
-            NodeName = $"Filter_{filterIdx}";
+            NodeName = $"Filter_{filterIdx}:{filterId:X8}";
             FilePath = file.FilePath;
             SubData = new SubData(FilePath, filterId);
             IsSelected = true;
@@ -126,6 +126,7 @@ namespace UI_DataList.ViewModels {
         IRegionManager _regionManager;
 
         int _fileIdx = 1;
+        int _corrDataIdx = 1;
 
         private ObservableCollection<FileNode> _files;
         public ObservableCollection<FileNode> Files {
@@ -139,6 +140,15 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
             _ea.GetEvent<Event_CloseData>().Subscribe(CloseSubData);
             _ea.GetEvent<Event_MergeFiles>().Subscribe(MergeFiles);
+            _ea.GetEvent<Event_CorrData>().Subscribe(RequestCorrTab);
+            _ea.GetEvent<Event_CloseAllFiles>().Subscribe(CloseAllFiles);
+        }
+
+        private void RequestCorrTab(IEnumerable<SubData> data) {
+            var parameters = new NavigationParameters();
+            parameters.Add("subDataList", data);
+            parameters.Add("corrDataIdx", _corrDataIdx++);
+            _regionManager.RequestNavigate("Region_DataView", "DataCorrelation", parameters);
         }
 
         private void MergeFiles(List<string> files) {
@@ -241,6 +251,23 @@ namespace UI_DataList.ViewModels {
 
         }
 
+        private void CloseFile(FileNode f) {
+            foreach (var v in f.SubDataList) {
+                if (v is FilterNode) {
+                    RemoveRawTab((v as FilterNode).SubData);
+                }
+            }
+            StdDB.RemoveFile(f.FilePath);
+            Files.Remove(f);
+
+        }
+
+        private void CloseAllFiles() {
+            foreach(var f in _files) {
+                CloseFile(f);
+            }
+        }
+
         private DelegateCommand<object> _selectData;
         public DelegateCommand<object> SelectData =>
             _selectData ?? (_selectData = new DelegateCommand<object>(ExecuteSelectData));
@@ -291,14 +318,7 @@ namespace UI_DataList.ViewModels {
             _cmdCloseFile ?? (_cmdCloseFile = new DelegateCommand<object>(ExecuteCmdCloseFile));
 
         void ExecuteCmdCloseFile(object parameter) {
-            var f = parameter as FileNode;
-            foreach(var v in f.SubDataList) {
-                if (v is FilterNode) {
-                    RemoveRawTab((v as FilterNode).SubData);
-                }
-            }
-            StdDB.RemoveFile(f.FilePath);
-            Files.Remove(f);
+            CloseFile(parameter as FileNode);
         }
 
         private DelegateCommand<object> _cmdCloseData;

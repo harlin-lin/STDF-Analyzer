@@ -88,6 +88,19 @@ namespace UI_DataList.ViewModels {
             mergerWindow.ShowDialog();
         }
 
+        private DelegateCommand _openCorrelationDiag;
+        public DelegateCommand OpenCorrelationDiag =>
+             _openCorrelationDiag ?? ( _openCorrelationDiag = new DelegateCommand(ExecuteOpenCorrelationDiag));
+
+        void ExecuteOpenCorrelationDiag() {
+            var corrWindow = new CorrDataSelectWindow(from r in StdDB.GetAllSubData() select r);
+            corrWindow.ReturnHandler += new SubWindowReturnHandler((x) => {
+                var ll = x as IEnumerable<SubData>;
+
+                _ea.GetEvent<Event_CorrData>().Publish(ll);
+            });
+            corrWindow.ShowDialog();
+        }
 
         private DelegateCommand _cmdExit;
         public DelegateCommand CmdExit =>

@@ -11,7 +11,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*" MinWidth="50"/>
-            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="0.6*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -20,28 +20,28 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter">
+                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0">
                     <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/summary.jpeg"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/summary.png"/>
                     </Button.Background>
                 </Button>
 
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/box_plot.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/wafer_binning.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
                     </Button.Background>

@@ -20,7 +20,8 @@ namespace UI_Data.ViewModels {
         IEventAggregator _ea;
 
         SubData _subData;
-        public SubData CurrentData { get { return _subData; } }
+        public SubData? CurrentData { get { return _subData; } }
+        public TabType CurrentTabType { get { return TabType.RawDataTab; } }
 
         int _fileIdx=-1;
         int _filterIdx=-1;
@@ -265,9 +266,9 @@ namespace UI_Data.ViewModels {
 
         private DelegateCommand<object> _closeCmd;
         public DelegateCommand<object> CloseCommand =>
-            _closeCmd ?? (_closeCmd = new DelegateCommand<object>(ExecuteCommandName));
+            _closeCmd ?? (_closeCmd = new DelegateCommand<object>(ExecuteCloseCommand));
 
-        void ExecuteCommandName(object x) {
+        void ExecuteCloseCommand(object x) {
             //_regionManager.Regions["Region_DataView"].Remove(x);
             _ea.GetEvent<Event_CloseData>().Publish(_subData);
         }

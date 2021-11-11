@@ -84,7 +84,10 @@
     <Resource Include="Resource\icon\save.jfif" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\icon\summary.jpeg" />
+    <Resource Include="Resource\icon\summary.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\check.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

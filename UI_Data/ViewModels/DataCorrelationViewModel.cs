@@ -7,6 +7,7 @@ using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 
 namespace UI_Data.ViewModels {
@@ -28,19 +29,20 @@ namespace UI_Data.ViewModels {
         //public CorrItem()
     }
 
-    public class DataCorrelationViewModel : BindableBase, INavigationAware {
+    public class DataCorrelationViewModel : BindableBase, INavigationAware, IDataView {
+        public SubData? CurrentData { get { return null; } }
+        public TabType CurrentTabType { get { return TabType.RawDataCorTab; } }
+
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
-        int _fileIdx = -1;
-        int _filterIdx = -1;
+        List<SubData> _subDataList;
+        int _corrDataIdx = -1;
 
-        List<SubData> _subDataList = new List<SubData>();
-
-        private ObservableCollection<Item> _testItems;
-        public ObservableCollection<Item> TestItems {
-            get { return _testItems; }
-            set { SetProperty(ref _testItems, value); }
+        private DataTable dt;
+        public DataTable TestItems {
+            get { return dt; }
+            set { SetProperty(ref dt, value); }
         }
 
         private string _header;
@@ -49,11 +51,11 @@ namespace UI_Data.ViewModels {
             set { SetProperty(ref _header, value); }
         }
 
-        private string _regionName;
-        public string RegionName {
-            get { return _regionName; }
-            set { SetProperty(ref _regionName, value); }
-        }
+        //private string _regionName;
+        //public string RegionName {
+        //    get { return _regionName; }
+        //    set { SetProperty(ref _regionName, value); }
+        //}
 
         public DataCorrelationViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
@@ -63,25 +65,169 @@ namespace UI_Data.ViewModels {
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-            throw new NotImplementedException();
+
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
-            throw new NotImplementedException();
-        }
+            if(_corrDataIdx == -1) {
+                _subDataList = new List<SubData>((IEnumerable<SubData>)navigationContext.Parameters["subDataList"]);
+                _corrDataIdx = (int)navigationContext.Parameters["corrDataIdx"];
 
-        private void UpdateView(SubData data) {
-            if (_subDataList.Contains(data)) {
-                var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
-                //TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
-                RaisePropertyChanged("TestItems");
+                Header = $"Corr_{_corrDataIdx}";
+
+                //RegionName = $"Region_Corr_{_corrDataIdx}";
+                InitView();
+                UpdateView();
             }
         }
 
+        private void InitView() {
+            dt = new DataTable();
+            dt.Columns.Add("TestNumber");
+            dt.Columns.Add("TestText");
+            dt.Columns.Add("LoLimit");
+            dt.Columns.Add("HiLimit");
+            dt.Columns.Add("Unit");
+
+            for(int i=0; i<_subDataList.Count; i++) {
+                dt.Columns.Add("MeanValue_" + i);
+            }
+            for (int i = 0; i < _subDataList.Count; i++) {
+                dt.Columns.Add("MinValue_" + i);
+            }
+            for (int i = 0; i < _subDataList.Count; i++) {
+                dt.Columns.Add("MaxValue_" + i);
+            }
+            for (int i = 0; i < _subDataList.Count; i++) {
+                dt.Columns.Add("Cp_" + i);
+            }
+            for (int i = 0; i < _subDataList.Count; i++) {
+                dt.Columns.Add("Cpk_" + i);
+            }
+            for (int i = 0; i < _subDataList.Count; i++) {
+                dt.Columns.Add("Sigma_" + i);
+            }
+        }
+
+        private void UpdateView() {
+            List<IDataAcquire> allDa = new List<IDataAcquire>();
+
+            int cnt = _subDataList.Count;
+
+            allDa.Add(StdDB.GetDataAcquire(_subDataList[0].StdFilePath));
+            List<string> allId = new List<string>(allDa[0].GetFilteredTestId(_subDataList[0].FilterId));
+            var baseItem = allDa[0].GetFilteredItems(_subDataList[0].FilterId);
+
+            for (int i = 1; i < cnt; i++) {
+                allDa.Add(StdDB.GetDataAcquire(_subDataList[i].StdFilePath));
+            }
+
+            dt.Rows.Clear();
+
+            foreach (var v in baseItem) {
+                DataRow r = dt.NewRow();
+                r[0] = v.TestNumber;
+                r[1] = v.TestText;
+                r[2] = v.LoLimit;
+                r[3] = v.HiLimit;
+                r[4] = v.Unit;
+                for (int i = 0; i < cnt; i++) {
+                    var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
+                    r[5 + i] = s.MeanValue;
+                    r[5 + 1 * cnt + i] = s.MinValue;
+                    r[5 + 2 * cnt + i] = s.MaxValue;
+                    r[5 + 3 * cnt + i] = s.Cp;
+                    r[5 + 4 * cnt + i] = s.Cpk;
+                    r[5 + 5 * cnt + i] = s.Sigma;
+                }
+                dt.Rows.Add(r);
+            }
+
+            for (int i = 1; i < cnt; i++) {
+                var appendId = allDa[i].GetFilteredTestId(_subDataList[i].FilterId).Except(allId);
+                DataRow r = dt.NewRow();
+                foreach(var uid in appendId) {
+                    var  s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, uid);
+                    var v = allDa[i].GetTestInfo(uid);
+                    r[0] = uid;
+                    r[1] = v.TestText;
+                    r[2] = v.LoLimit;
+                    r[3] = v.HiLimit;
+                    r[4] = v.Unit;
+
+                    r[5 + i] = s.MeanValue;
+                    r[5 + 1 * cnt + i] = s.MinValue;
+                    r[5 + 2 * cnt + i] = s.MaxValue;
+                    r[5 + 3 * cnt + i] = s.Cp;
+                    r[5 + 4 * cnt + i] = s.Cpk;
+                    r[5 + 5 * cnt + i] = s.Sigma;
+                }
+                dt.Rows.Add(r);
+            }
+
+            RaisePropertyChanged("TestItems");
+        }
+
+
+        private void UpdateView(SubData data) {
+            if (_subDataList.Contains(data)) {
+                UpdateView();
+            }
+        }
+
+        private string corrErrorLimit;
+        public string CorrErrorLimit {
+            get { return corrErrorLimit; }
+            set { SetProperty(ref corrErrorLimit, value); }
+        }
+
+        private string corrWarnLimit;
+        public string CorrWarnLimit {
+            get { return corrWarnLimit; }
+            set { SetProperty(ref corrWarnLimit, value); }
+        }
+
+        private DelegateCommand _exportToExcel;
+        public DelegateCommand ExportToExcelCommand =>
+            _exportToExcel ?? (_exportToExcel = new DelegateCommand(ExecuteExportToExcelCommand));
+
+        void ExecuteExportToExcelCommand() {
+
+        }
+
+        private DelegateCommand _applyLimt;
+        public DelegateCommand ApplyLimitCommand =>
+            _applyLimt ?? (_applyLimt = new DelegateCommand(ExecuteApplyLimitCommand));
+
+        void ExecuteApplyLimitCommand() {
+
+        }
+
+
+        private string _selectedItem;
+
+        private DelegateCommand<object> _onselection;
+        public DelegateCommand<object> OnSelectionChanged =>
+            _onselection ?? (_onselection = new DelegateCommand<object>(ExecuteOnSelectionChanged));
+
+        void ExecuteOnSelectionChanged(object parameter) {
+            var grid = parameter as System.Windows.Controls.DataGrid;
+            _selectedItem = (grid.SelectedItem as DataRowView).Row[0].ToString();
+            _ea.GetEvent<Event_CorrItemSelected>().Publish(new Tuple<string, IEnumerable<SubData>>(_selectedItem, _subDataList));
+        }
+
+
+        private DelegateCommand<object> _closeCmd;
+        public DelegateCommand<object> CloseCommand =>
+            _closeCmd ?? (_closeCmd = new DelegateCommand<object>(ExecuteCloseCommand));
+
+        void ExecuteCloseCommand(object x) {
+            _regionManager.Regions["Region_DataView"].Remove(x);
+        }
 
     }
 }

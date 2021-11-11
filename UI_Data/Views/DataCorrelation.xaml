@@ -1,19 +1,52 @@
 ﻿<UserControl x:Class="UI_Data.Views.DataCorrelation"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:prism="http://prismlibrary.com/"      
+             xmlns:prism="http://prismlibrary.com/"     
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Width="18" Height="18" Margin="0,0,0,0" />
-        </StackPanel>
-        <DataGrid x:Name="grid" Grid.Row="1" ItemsSource="{Binding Data}">
-            
-        </DataGrid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+            <ColumnDefinition Width="5"/>
+            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
+                    </Button.Background>
+                </Button>
+                <TextBlock Text="Error Limit" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding CorrErrorLimit}" Width="30"/>
+                <TextBlock Text="Warning Limit" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                <TextBox Text="{Binding CorrWarnLimit}" Width="30"/>
+                <Button  Width="23" Height="23" Margin="20,0,0,0" Command="{Binding ApplyLimitCommand, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
+                    </Button.Background>
+                </Button>
+            </StackPanel>
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="1">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged" >
+                        <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
+            </DataGrid>
+        </Grid>
+        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <Grid Grid.Column="2">
+            <ContentControl Grid.Column="2" prism:RegionManager.RegionName="Region_CorrChart"/>
+        </Grid>
     </Grid>
 </UserControl>

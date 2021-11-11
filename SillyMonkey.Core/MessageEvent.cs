@@ -51,4 +51,9 @@ namespace SillyMonkey.Core
     }
     public class Event_MergeFiles : PubSubEvent<List<string>> {}
 
+    public class Event_CorrData : PubSubEvent<IEnumerable<SubData>> { }
+
+    public class Event_CorrItemSelected : PubSubEvent<Tuple<string, IEnumerable<SubData>>> {}
+
+    public delegate void SubWindowReturnHandler(object obj);
 }

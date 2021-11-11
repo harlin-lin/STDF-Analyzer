@@ -1,0 +1,75 @@
+﻿<Window x:Class="UI_DataList.Views.CorrDataSelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI_DataList.Views"
+        xmlns:prism="http://prismlibrary.com/"             
+        mc:Ignorable="d"
+        Title="CorrDataSelectWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ListBox x:Name="lbAllData" Grid.Column="0" 
+                                     ItemsSource="{Binding DataList}" SelectionMode="Extended">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding  StringFormat="Filter:{0:X8} File: {1}">
+                                    <Binding Path="FilterId"/>
+                                    <Binding Path="StdFilePath"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick" >
+                        <prism:InvokeCommandAction Command="{Binding AddData}" CommandParameter="{Binding ElementName=lbAllData}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Vertical">
+                <Button Content=">>" Margin="0,0,0,10" Command="{Binding AddAllData}"/>
+                <Button Content=">" Margin="0,0,0,10" Command="{Binding AddData}" CommandParameter="{Binding ElementName=lbAllData}"/>
+                <Button Content="&lt;" Margin="0,0,0,10" Command="{Binding RemoveData}" CommandParameter="{Binding ElementName=lbEnabledData}"/>
+                <Button Content="&lt;&lt;" Margin="0,0,0,10" Command="{Binding RemoveAllData}"/>
+            </StackPanel>
+            <ListBox x:Name="lbEnabledData" Grid.Column="2" 
+                                     ItemsSource="{Binding EnableDataList}" SelectionMode="Extended">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding  StringFormat="Filter:{0:X8} File: {1}">
+                                    <Binding Path="FilterId"/>
+                                    <Binding Path="StdFilePath"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick" >
+                        <prism:InvokeCommandAction Command="{Binding RemoveData}" CommandParameter="{Binding ElementName=lbEnabledData}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+        </Grid>
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Vertical">
+            <Button Content="Apply" Width="100" Command="{Binding Apply}"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -11,24 +11,10 @@ namespace SillyMonkey.Core {
         RawDataTab,
         RawDataCorTab
     }
-    public struct SubData : IEquatable<SubData> {
-        public string StdFilePath { get; }
-        public int FilterId { get; }
-
-        public SubData(string filePath, int filterId) {
-            StdFilePath = filePath;
-            FilterId = filterId;
-        }
-
-        public bool Equals(SubData other) {
-            return StdFilePath == other.StdFilePath && FilterId == other.FilterId;
-        }
-
-
-    }
 
     public interface IDataView {
-        SubData CurrentData{ get; }
+        SubData? CurrentData{ get; }
+        TabType CurrentTabType { get; }
     }
 
     

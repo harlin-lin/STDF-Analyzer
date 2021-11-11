@@ -140,9 +140,9 @@ namespace DataContainer{
         IEnumerable<float> GetFilteredItemData(string testID, int filterId);
         IEnumerable<float> GetFilteredItemData(string testID, int startIndex, int count, int filterId);
         IEnumerable<Item> GetFilteredItems(int filterId);
+        IEnumerable<string> GetFilteredTestId(int filterId);
         IEnumerable<int> GetFilteredPartIndex(int filterId);
 
-        ConcurrentDictionary<string, ItemStatistic> GetFilteredStatistic(int filterId);
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);

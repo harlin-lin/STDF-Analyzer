@@ -7,7 +7,22 @@ using System.Threading.Tasks;
 
 namespace DataContainer
 {
+    public struct SubData : IEquatable<SubData> {
+        public string StdFilePath { get; }
+        public int FilterId { get; }
+
+        public SubData(string filePath, int filterId) {
+            StdFilePath = filePath;
+            FilterId = filterId;
+        }
+
+        public bool Equals(SubData other) {
+            return StdFilePath == other.StdFilePath && FilterId == other.FilterId;
+        }
+    }
+
     public static class StdDB{
+
         public static bool IfCmpTextInUid = false;
 
         private static ConcurrentDictionary<string, SubContainer> _subContainers = new ConcurrentDictionary<string, SubContainer>();
@@ -18,6 +33,17 @@ namespace DataContainer
 
         public static List<IDataAcquire> GetAllDataAcquires() {
             return (from r in _subContainers select (IDataAcquire)r.Value).ToList();
+        }
+
+        public static List<SubData> GetAllSubData() {
+            List<SubData> rst = new List<SubData>();
+            foreach(var v in _subContainers) {
+                foreach(var f in v.Value.GetAllFilterId()) {
+                    rst.Add(new SubData(v.Key, f));
+                }
+            }
+
+            return rst;
         }
 
 

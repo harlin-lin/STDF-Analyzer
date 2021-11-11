@@ -6,7 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
-             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="UI_Chart.Views.Trend"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="UI_Chart.Views.CorrChart"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
              prism:ViewModelLocator.AutoWireViewModel="True"
@@ -15,68 +15,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="3"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
-                </Button.Background>
-            </Button>
-            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <TextBox Width="100" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
-            <TextBox Width="100" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
-            <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
-                </Button.Background>
-            </Button>
-        </StackPanel>
-        <s:SciChartSurface x:Name="sciChart" Background="White"
-                           Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}" BorderBrush="#FF111111">
-            <s:SciChartSurface.ChartModifier>
-                <s:ModifierGroup>
-                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
-                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
-                    <s:MouseWheelZoomModifier XyDirection="XDirection" IsEnabled="True" />
-                </s:ModifierGroup>
-            </s:SciChartSurface.ChartModifier>
-            <s:SciChartSurface.Annotations>
-                <s:HorizontalLineAnnotation Y1="{Binding LowLimit}" Stroke="Red"/>
-                <s:HorizontalLineAnnotation Y1="{Binding HighLimit}" Stroke="Red"/>
-            </s:SciChartSurface.Annotations>
-        </s:SciChartSurface>
-        <GridSplitter Grid.Row="2"/>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save Histo Chart" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
@@ -119,7 +61,7 @@
             </Button>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
-                           Grid.Row="4" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  BorderBrush="#FF111111">
+                           Grid.Row="1" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  BorderBrush="#FF111111">
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
@@ -133,5 +75,17 @@
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
 
+        <GridSplitter Grid.Row="2"/>
+
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+
+        </Grid>
     </Grid>
 </UserControl>
