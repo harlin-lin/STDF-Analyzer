@@ -31,6 +31,11 @@
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
                     </Button.Background>
                 </Button>
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/raw.png"/>
+                    </Button.Background>
+                </Button>
                 <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/box_plot.png"/>

@@ -89,5 +89,22 @@
   <ItemGroup>
     <Resource Include="Resource\icon\check.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\download.png" />
+    <Resource Include="Resource\icon\left.png" />
+    <Resource Include="Resource\icon\leftend.png" />
+    <Resource Include="Resource\icon\load1.png" />
+    <Resource Include="Resource\icon\load2.png" />
+    <Resource Include="Resource\icon\load3.png" />
+    <Resource Include="Resource\icon\Pie.png" />
+    <Resource Include="Resource\icon\raw.png" />
+    <Resource Include="Resource\icon\report.png" />
+    <Resource Include="Resource\icon\report1.png" />
+    <Resource Include="Resource\icon\right.png" />
+    <Resource Include="Resource\icon\rightend.png" />
+    <Resource Include="Resource\icon\save.png" />
+    <Resource Include="Resource\icon\save2.png" />
+    <Resource Include="Resource\icon\save3.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

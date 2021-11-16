@@ -14,7 +14,7 @@ namespace DataContainer {
         public string Unit { get; private set; }
         public int PassCnt { get; private set; }
         public int FailCnt { get; private set; }
-        public double FailPer { get; private set; }
+        public string FailPer { get; private set; }
         public float? MeanValue { get; private set; }
         public float? MinValue { get; private set; }
         public float? MaxValue { get; private set; }
@@ -37,7 +37,7 @@ namespace DataContainer {
             Sigma = statistic.Sigma;
             PassCnt = statistic.PassCount;
             FailCnt = statistic.FailCount;
-            FailPer = FailCnt * 100.0 / (FailCnt + PassCnt);
+            FailPer = (FailCnt * 100.0 / (FailCnt + PassCnt)).ToString("f2")+"%";
         }
 
     }

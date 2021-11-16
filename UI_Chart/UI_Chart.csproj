@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="ViewModels\BoxViewModel.cs" />
     <Compile Include="ViewModels\PieViewModel.cs" />
+    <Compile Include="ViewModels\RawViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CorrChartViewModel.cs" />
     <Compile Include="ViewModels\TrendViewModel.cs" />
@@ -82,6 +83,9 @@
     </Compile>
     <Compile Include="Views\Pie.xaml.cs">
       <DependentUpon>Pie.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Raw.xaml.cs">
+      <DependentUpon>Raw.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Summary.xaml.cs">
       <DependentUpon>Summary.xaml</DependentUpon>
@@ -121,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pie.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Raw.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -314,6 +314,16 @@ namespace UI_Data.ViewModels {
 
         }
 
+        private DelegateCommand _showRawCommand;
+        public DelegateCommand ShowRawCommand =>
+            _showRawCommand ?? (_showRawCommand = new DelegateCommand(ExecuteShowRawCommand));
+
+        void ExecuteShowRawCommand() {
+            var parameters = new NavigationParameters();
+            parameters.Add("subData", _subData);
+            _regionManager.RequestNavigate(RegionName, "Raw", parameters);
+        }
+
 
 
     }
