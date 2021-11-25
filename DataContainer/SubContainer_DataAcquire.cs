@@ -178,7 +178,5 @@ namespace DataContainer {
             return _filterContainer[filterId].FilterPartStatistic;
         }
 
-
-
     }
 }

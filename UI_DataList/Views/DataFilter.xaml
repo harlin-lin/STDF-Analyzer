@@ -38,7 +38,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ListBox x:Name="lbAllSites" FontSize="8" Grid.Column="0" 
-                                 ItemsSource="{Binding AllSites}">
+                                 ItemsSource="{Binding AllSites}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding AddSite}" CommandParameter="{Binding ElementName=lbAllSites}"/>
@@ -52,7 +52,7 @@
                             <Button Content="&lt;&lt;" Margin="0,0,0,10" Command="{Binding RemoveAllSites}"/>
                         </StackPanel>
                         <ListBox x:Name="lbEnabledSites" FontSize="8" Grid.Column="2" 
-                                 ItemsSource="{Binding EnabledSites}">
+                                 ItemsSource="{Binding EnabledSites}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding RemoveSite}" CommandParameter="{Binding ElementName=lbEnabledSites}"/>
@@ -74,7 +74,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ListBox x:Name="lbAllItems" FontSize="8" Grid.Column="0" 
-                                 ItemsSource="{Binding AllItems}" >
+                                 ItemsSource="{Binding AllItems}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding AddItem}" CommandParameter="{Binding ElementName=lbAllItems}"/>
@@ -88,7 +88,7 @@
                             <Button Content="&lt;&lt;" Margin="0,0,0,10" Command="{Binding RemoveAllItems}"/>
                         </StackPanel>
                         <ListBox x:Name="lbEnabledItems" FontSize="8" Grid.Column="2" 
-                                 ItemsSource="{Binding EnabledItems}">
+                                 ItemsSource="{Binding EnabledItems}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding RemoveItem}" CommandParameter="{Binding ElementName=lbEnabledItems}"/>
@@ -110,7 +110,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ListBox x:Name="lbAllHBins" FontSize="8" Grid.Column="0" 
-                                 ItemsSource="{Binding AllHBins}" >
+                                 ItemsSource="{Binding AllHBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding AddHBin}" CommandParameter="{Binding ElementName=lbAllHBins}"/>
@@ -124,7 +124,7 @@
                             <Button Content="&lt;&lt;" Margin="0,0,0,10" Command="{Binding RemoveAllHBins}"/>
                         </StackPanel>
                         <ListBox x:Name="lbEnabledHBins" FontSize="8" Grid.Column="2" 
-                                 ItemsSource="{Binding EnabledHBins}" >
+                                 ItemsSource="{Binding EnabledHBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding RemoveHBin}" CommandParameter="{Binding ElementName=lbEnabledHBins}"/>
@@ -146,7 +146,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <ListBox x:Name="lbAllSBins" FontSize="8" Grid.Column="0" 
-                                 ItemsSource="{Binding AllSBins}" >
+                                 ItemsSource="{Binding AllSBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding AddSBin}" CommandParameter="{Binding ElementName=lbAllSBins}"/>
@@ -160,7 +160,7 @@
                             <Button Content="&lt;&lt;" Margin="0,0,0,10" Command="{Binding RemoveAllSBins}"/>
                         </StackPanel>
                         <ListBox x:Name="lbEnabledSBins" FontSize="8" Grid.Column="2" 
-                                 ItemsSource="{Binding EnabledSBins}" >
+                                 ItemsSource="{Binding EnabledSBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
                                     <prism:InvokeCommandAction Command="{Binding RemoveSBin}" CommandParameter="{Binding ElementName=lbEnabledSBins}"/>

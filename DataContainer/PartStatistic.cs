@@ -27,6 +27,8 @@ namespace DataContainer {
         public int FreshCnt;
         public int RtByIdCnt;
         public int RtByCordCnt;
+        public UInt32 AverageTestTime;
+        public UInt32 AverageTestTimePassOnly;
 
         public PartStatistic(IEnumerable<byte> sites) {
             SiteCnt = new Dictionary<byte, int>();
@@ -76,6 +78,8 @@ namespace DataContainer {
             FreshCnt = copy.FreshCnt;
             RtByIdCnt = copy.RtByIdCnt;
             RtByCordCnt = copy.RtByCordCnt;
+            AverageTestTime = copy.AverageTestTime;
+            AverageTestTimePassOnly = copy.AverageTestTimePassOnly;
         }
 
     }

@@ -67,6 +67,12 @@
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
                     <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
                     <s:MouseWheelZoomModifier XyDirection="YDirection" IsEnabled="True" />
+                    <s:LegendModifier Margin="10"
+                                      VerticalAlignment="Top"
+                                      HorizontalAlignment="Right"
+                                      GetLegendDataFor="AllSeries"
+                                      ShowLegend="True"
+                                      ShowVisibilityCheckboxes="True" />
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>

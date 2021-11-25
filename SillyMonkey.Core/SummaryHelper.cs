@@ -89,11 +89,21 @@ namespace SillyMonkey.Core {
             AppendQtyField(ref sb, "Retest QTY", partStatistic.RtByIdCnt, partStatistic.TotalCnt);
 
             AppendLine(ref sb, "");
+            AppendField(ref sb, "Average Test Time", $"{partStatistic.AverageTestTime} ms", false);
+            AppendField(ref sb, "Average Test Time(Pass Only)", $"{partStatistic.AverageTestTimePassOnly} ms", false);
+
+
+            AppendLine(ref sb, "");
         }
 
 
         public static void AppendCounters(ref StringBuilder sb, PartStatistic partStatistic) {
             AppendTitle(ref sb, "Qty Statistic");
+
+
+            AppendField(ref sb, "Average Test Time", $"{partStatistic.AverageTestTime} ms", false);
+            AppendField(ref sb, "Average Test Time(Pass Only)", $"{partStatistic.AverageTestTimePassOnly} ms", false);
+            AppendLine(ref sb, "");
 
 
             var total = partStatistic.SiteCnt;

@@ -31,7 +31,7 @@
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/raw.png"/>
                     </Button.Background>
@@ -52,13 +52,12 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="1">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="1" ClipboardCopyMode="IncludeHeader">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
                     </i:EventTrigger> 
                 </i:Interaction.Triggers>
-
             </DataGrid>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>

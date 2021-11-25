@@ -146,7 +146,11 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _ifHistoLimitByUser, value); }
         }
 
-
+        private bool _ifShowLegendCheckBox = false;
+        public bool IfShowLegendCheckBox {
+            get { return _ifShowLegendCheckBox; }
+            set { SetProperty(ref _ifShowLegendCheckBox, value); }
+        }
         #endregion
 
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -170,6 +174,12 @@ namespace UI_Chart.ViewModels {
         void UpdateData() {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+            if (_selectedIds.Count > 1) {
+                IfShowLegendCheckBox = true;
+            } else {
+                IfShowLegendCheckBox = false;
+            }
 
             #region trendChart
             var xs = da.GetFilteredPartIndex(_subData.FilterId);
@@ -205,6 +215,7 @@ namespace UI_Chart.ViewModels {
 
                 var series = new XyDataSeries<int, float>();
                 series.Append(xs, data);
+                series.SeriesName = _selectedIds[i];
 
                 TrendSeries.Add(new LineRenderableSeriesViewModel {
                     DataSeries = series,
@@ -225,7 +236,7 @@ namespace UI_Chart.ViewModels {
                 ExecuteCmdSelectAxisUserTrend();
             }
 
-            XAxisTrend.VisibleRange.SetMinMax(1, xs.Count());
+            XAxisTrend.VisibleRange.SetMinMax(1, xs.Last());
             RaisePropertyChanged("XAxisTrend");
             #endregion
 
@@ -313,6 +324,7 @@ namespace UI_Chart.ViewModels {
                 var histo = GetHistogramData(start, stop, data);
                 var series = new XyDataSeries<float, int>();
                 series.Append(histo.Item1, histo.Item2);
+                series.SeriesName = _selectedIds[i];
 
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,

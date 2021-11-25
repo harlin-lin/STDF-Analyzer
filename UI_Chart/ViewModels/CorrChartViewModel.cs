@@ -225,6 +225,7 @@ namespace UI_Chart.ViewModels {
                 var histo = GetHistogramData(start, stop, data);
                 var series = new XyDataSeries<float, int>();
                 series.Append(histo.Item1, histo.Item2);
+                series.SeriesName = $"F_{i}:{_subDataList[i].FilterId:X8}";
 
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,

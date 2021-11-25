@@ -263,8 +263,8 @@ namespace UI_DataList.ViewModels {
         }
 
         private void CloseAllFiles() {
-            foreach(var f in _files) {
-                CloseFile(f);
+            for (int i = _files.Count - 1; i >= 0; i--) {
+                CloseFile(_files[i]);
             }
         }
 

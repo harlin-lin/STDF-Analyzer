@@ -51,10 +51,13 @@ namespace DataContainer {
 
             if (_site_PartContainer.Count - 1 != _partIdx) throw new Exception("Error");
 
-            for(int i=0; i <= _partIdx; i++) {
+            UInt32 totalTime = 0;
+            UInt32 totalTimePassOnly = 0;
+
+            for (int i=0; i <= _partIdx; i++) {
                 var sn = _site_PartContainer[i];
                 _partStatistic.SiteCnt[sn] += 1;
-                
+
                 if (_partStatistic.HardBinBySite[sn].ContainsKey(_hardBin_PartContainer[i])) {
                     _partStatistic.HardBinBySite[sn][_hardBin_PartContainer[i]] += 1;
                 }else {
@@ -82,6 +85,7 @@ namespace DataContainer {
                 switch (_resultType_PartContainer[i]) {
                     case ResultType.Pass:
                         _partStatistic.PassCntBySite[sn] += 1;
+                        totalTimePassOnly += _testTime_PartContainer[i].HasValue ? _testTime_PartContainer[i].Value : 0;
                         break;
                     case ResultType.Fail:
                         _partStatistic.FailCntBySite[sn] += 1;
@@ -93,6 +97,9 @@ namespace DataContainer {
                         _partStatistic.NullCntBySite[sn] += 1;
                         break;
                 }
+
+                totalTime += _testTime_PartContainer[i].HasValue ? _testTime_PartContainer[i].Value : 0;
+
             }
 
             _partStatistic.TotalCnt = (from r in _partStatistic.SiteCnt select r.Value).Sum();
@@ -125,6 +132,8 @@ namespace DataContainer {
             _partStatistic.RtByIdCnt = (from r in _partStatistic.RtByIdCntBySite select r.Value).Sum();
             _partStatistic.RtByCordCnt = (from r in _partStatistic.RtByCordCntBySite select r.Value).Sum();
 
+            _partStatistic.AverageTestTime = (uint)(totalTime / _partStatistic.TotalCnt);
+            _partStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / _partStatistic.PassCnt);
         }
 
 
@@ -152,9 +161,12 @@ namespace DataContainer {
                 filter.FilterPartStatistic.RtByIdCntBySite.Add(s.Key, 0);
                 filter.FilterPartStatistic.RtByCordCntBySite.Add(s.Key, 0);
             }
-            
+
+            UInt32 totalTime = 0;
+            UInt32 totalTimePassOnly = 0;
+
             //for (int i = 0; i <= _partIdx; i++) {
-            foreach(var i in filter.FilteredPartIdx) { 
+            foreach (var i in filter.FilteredPartIdx) { 
                 var sn = _site_PartContainer[i];
                 filter.FilterPartStatistic.SiteCnt[sn] += 1;
 
@@ -185,6 +197,7 @@ namespace DataContainer {
                 switch (_resultType_PartContainer[i]) {
                     case ResultType.Pass:
                         filter.FilterPartStatistic.PassCntBySite[sn] += 1;
+                        totalTimePassOnly += _testTime_PartContainer[i].HasValue ? _testTime_PartContainer[i].Value : 0;
                         break;
                     case ResultType.Fail:
                         filter.FilterPartStatistic.FailCntBySite[sn] += 1;
@@ -196,6 +209,9 @@ namespace DataContainer {
                         filter.FilterPartStatistic.NullCntBySite[sn] += 1;
                         break;
                 }
+
+                totalTime += _testTime_PartContainer[i].HasValue ? _testTime_PartContainer[i].Value : 0;
+
             }
 
             filter.FilterPartStatistic.TotalCnt = (from r in filter.FilterPartStatistic.SiteCnt select r.Value).Sum();
@@ -227,6 +243,8 @@ namespace DataContainer {
             filter.FilterPartStatistic.FreshCnt = (from r in filter.FilterPartStatistic.FreshCntBySite select r.Value).Sum();
             filter.FilterPartStatistic.RtByIdCnt = (from r in filter.FilterPartStatistic.RtByIdCntBySite select r.Value).Sum();
             filter.FilterPartStatistic.RtByCordCnt = (from r in filter.FilterPartStatistic.RtByCordCntBySite select r.Value).Sum();
+            filter.FilterPartStatistic.AverageTestTime = (uint)(totalTime / filter.FilterPartStatistic.TotalCnt);
+            filter.FilterPartStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / filter.FilterPartStatistic.PassCnt);
 
         }
 

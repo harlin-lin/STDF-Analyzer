@@ -278,9 +278,11 @@ namespace UI_DataList.ViewModels {
                 EnabledItems.Clear();
             });
             RemoveItems = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0)
-                    foreach (var v in e.SelectedItems)
-                        EnabledItems.Remove((string)v);
+                if (e.SelectedItems.Count >= 0) {
+                    for(int i= EnabledItems.Count-1; i>=0; i--) {
+                        if (e.SelectedItems.Contains(EnabledItems[i])) EnabledItems.RemoveAt(i);
+                    }
+                }
             });
 
             RemoveSite = new DelegateCommand<ListBox>((e) => {
@@ -313,9 +315,11 @@ namespace UI_DataList.ViewModels {
                 EnabledSites.Clear();
             });
             RemoveSites = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0)
-                    foreach (var v in e.SelectedItems)
-                        EnabledSites.Remove((byte)v);
+                if (e.SelectedItems.Count >= 0) {
+                    for(int i= EnabledSites.Count-1; i>=0; i--) {
+                        if (e.SelectedItems.Contains(EnabledSites[i])) EnabledSites.RemoveAt(i);
+                    }
+                }
             });
 
             RemoveHBin = new DelegateCommand<ListBox>((e) => {
@@ -348,9 +352,11 @@ namespace UI_DataList.ViewModels {
                 EnabledHBins.Clear();
             });
             RemoveHBins = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0)
-                    foreach (var v in e.SelectedItems)
-                        EnabledHBins.Remove((ushort)v);
+                if (e.SelectedItems.Count >= 0) {
+                    for (int i = EnabledHBins.Count - 1; i >= 0; i--) {
+                        if (e.SelectedItems.Contains(EnabledHBins[i])) EnabledHBins.RemoveAt(i);
+                    }
+                }
             });
 
             RemoveSBin = new DelegateCommand<ListBox>((e) => {
@@ -383,9 +389,11 @@ namespace UI_DataList.ViewModels {
                 EnabledSBins.Clear();
             });
             RemoveSBins = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0)
-                    foreach (var v in e.SelectedItems)
-                        EnabledSBins.Remove((ushort)v);
+                if (e.SelectedItems.Count >= 0) {
+                    for (int i = EnabledSBins.Count - 1; i >= 0; i--) {
+                        if (e.SelectedItems.Contains(EnabledSBins[i])) EnabledSBins.RemoveAt(i);
+                    }
+                }
             });
 
             ClearIds = new DelegateCommand(() => {

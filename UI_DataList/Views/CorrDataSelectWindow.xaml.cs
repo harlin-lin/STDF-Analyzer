@@ -62,9 +62,11 @@ namespace UI_DataList.Views {
             _removeData ?? (_removeData = new DelegateCommand<ListBox>(ExecuteRemoveData));
 
         void ExecuteRemoveData(ListBox parameter) {
-            if (parameter.SelectedItems.Count >= 0)
-                foreach (var v in parameter.SelectedItems)
-                    EnableDataList.Remove((SubData)v);
+            if (parameter.SelectedItems.Count >= 0) {
+                for (int i = EnableDataList.Count - 1; i >= 0; i--) {
+                    if (parameter.SelectedItems.Contains(EnableDataList[i])) EnableDataList.RemoveAt(i);
+                }
+            }
         }
 
         private DelegateCommand _removeAllData;
