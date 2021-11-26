@@ -14,18 +14,6 @@ namespace UI_DataList.ViewModels {
     public class DataFilterViewModel : BindableBase {
         IEventAggregator _ea;
 
-        private ObservableCollection<string> _allItems;
-        public ObservableCollection<string> AllItems {
-            get { return _allItems; }
-            set { SetProperty(ref _allItems, value); }
-        }
-
-        private ObservableCollection<string> _enabledItems;
-        public ObservableCollection<string> EnabledItems {
-            get { return _enabledItems; }
-            set { SetProperty(ref _enabledItems, value); }
-        }
-
         private ObservableCollection<byte> _allSites;
         public ObservableCollection<byte> AllSites {
             get { return _allSites; }
@@ -129,13 +117,7 @@ namespace UI_DataList.ViewModels {
                             let v = r.Key + "<>" + r.Value.TestText
                             orderby v
                             select v);
-            var enabledItems = (from r in items.Keys.Except(_filter.MaskTestIDs)
-                                let v = r + "<>" + items[r].TestText
-                                orderby v
-                                select v);
 
-            AllItems = new ObservableCollection<string>(allItems);
-            EnabledItems = new ObservableCollection<string>(enabledItems);
             AllSites = new ObservableCollection<byte>(dataAcquire.GetSites().OrderBy(x => x));
             EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.MaskSites).OrderBy(x => x));
             AllHBins = new ObservableCollection<ushort>(dataAcquire.GetHardBins().OrderBy(x => x));
@@ -178,8 +160,6 @@ namespace UI_DataList.ViewModels {
             _filterId = null;
             _filter = null;
 
-            AllItems = null;
-            EnabledItems = null;
             AllSites = null;
             EnabledSites = null;
             AllHBins = null;
@@ -200,12 +180,6 @@ namespace UI_DataList.ViewModels {
 
         #region UI
         public DelegateCommand ApplyFilter { get; private set; }
-        public DelegateCommand<ListBox> RemoveItem { get; private set; }
-        public DelegateCommand<ListBox> AddItem { get; private set; }
-        public DelegateCommand AddAllItems { get; private set; }
-        public DelegateCommand<ListBox> AddItems { get; private set; }
-        public DelegateCommand RemoveAllItems { get; private set; }
-        public DelegateCommand<ListBox> RemoveItems { get; private set; }
         public DelegateCommand<ListBox> RemoveSite { get; private set; }
         public DelegateCommand<ListBox> AddSite { get; private set; }
         public DelegateCommand AddAllSites { get; private set; }
@@ -248,42 +222,6 @@ namespace UI_DataList.ViewModels {
                 _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId.Value));
             });
 
-            RemoveItem = new DelegateCommand<ListBox>((e) => {
-                var v = ((ListBox)(e));
-                if (v.Items.Count > 0 && v.SelectedIndex >= 0)
-                    EnabledItems.RemoveAt(v.SelectedIndex);
-            });
-            AddItem = new DelegateCommand<ListBox>((e) => {
-                var v = ((ListBox)(e));
-                if (v.SelectedIndex >= 0 && !AllItems.Contains((string)v.SelectedItem))
-                    EnabledItems.Add((string)v.SelectedItem);
-
-                EnabledItems.OrderBy(x => x);
-            });
-            AddAllItems = new DelegateCommand(() => {
-                EnabledItems.Clear();
-                foreach (var v in AllItems)
-                    EnabledItems.Add(v);
-            });
-            AddItems = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0) {
-                    foreach (var v in e.SelectedItems)
-                        if (!EnabledItems.Contains((string)v))
-                            EnabledItems.Add((string)v);
-                }
-
-                EnabledItems.OrderBy(x => x);
-            });
-            RemoveAllItems = new DelegateCommand(() => {
-                EnabledItems.Clear();
-            });
-            RemoveItems = new DelegateCommand<ListBox>((e) => {
-                if (e.SelectedItems.Count >= 0) {
-                    for(int i= EnabledItems.Count-1; i>=0; i--) {
-                        if (e.SelectedItems.Contains(EnabledItems[i])) EnabledItems.RemoveAt(i);
-                    }
-                }
-            });
 
             RemoveSite = new DelegateCommand<ListBox>((e) => {
                 var v = ((ListBox)(e));

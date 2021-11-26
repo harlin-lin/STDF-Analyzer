@@ -55,7 +55,7 @@ namespace UI_Data.ViewModels {
         private void UpdateView(SubData data) {
             if(data.Equals(_subData)) {
                 var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
-                TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItems(data.FilterId));
+                TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(data.FilterId));
                 RaisePropertyChanged("TestItems");
             }
         }
@@ -79,7 +79,7 @@ namespace UI_Data.ViewModels {
 
                 var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItems(_subData.FilterId));
+                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(_subData.FilterId));
 
                 Header = $"File_{_fileIdx}|Filter_{_filterIdx}";
 
@@ -199,7 +199,7 @@ namespace UI_Data.ViewModels {
 
                     //write raw data
                     var ws2 = p.Workbook.Worksheets.Add("Raw");
-                    var testItems = dataAcquire.GetFilteredItems(_subData.FilterId);
+                    var testItems = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
                     var chips = dataAcquire.GetFilteredPartIndex(_subData.FilterId);
 
 

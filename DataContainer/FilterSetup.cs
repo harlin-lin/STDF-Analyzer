@@ -36,13 +36,10 @@ namespace DataContainer {
         /// </summary>
         public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
 
-        public List<string> MaskTestIDs { get; set; }
-
         public FilterSetup(string comment) {
             MaskSites = new List<byte>();
             MaskSoftBins = new List<ushort>();
             MaskHardBins = new List<ushort>();
-            MaskTestIDs = new List<string>();
             MaskChips = new List<string>();
             MaskCords = new List<Tuple<ushort, ushort>>();
             IfmaskDuplicateChips = false;
@@ -63,7 +60,6 @@ namespace DataContainer {
 
             MaskSoftBins = new List<ushort>();
             MaskHardBins = new List<ushort>();
-            MaskTestIDs = new List<string>();
             MaskChips = new List<string>();
             MaskCords = new List<Tuple<ushort, ushort>>();
             IfmaskDuplicateChips = false;
@@ -88,7 +84,6 @@ namespace DataContainer {
             MaskSites.Clear();
             MaskSoftBins.Clear();
             MaskHardBins.Clear();
-            MaskTestIDs.Clear();
             MaskChips.Clear();
             MaskCords.Clear();
             IfmaskDuplicateChips = false;

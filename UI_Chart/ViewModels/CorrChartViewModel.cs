@@ -113,7 +113,7 @@ namespace UI_Chart.ViewModels {
 
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
-                if (!da.IfFilterContainsTestId(_subDataList[i].FilterId, _selectedId)) continue;
+                if (!da.IfContainsTestId(_selectedId)) continue;
 
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 
@@ -218,7 +218,7 @@ namespace UI_Chart.ViewModels {
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
 
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
-                if (!da.IfFilterContainsTestId(_subDataList[i].FilterId, _selectedId)) continue;
+                if (!da.IfContainsTestId(_selectedId)) continue;
 
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 

@@ -62,7 +62,7 @@ namespace UI_Chart.ViewModels {
             }
             dt.Rows.Add(r);
 
-            foreach (var uid in da.GetFilteredTestId(_subData.FilterId)) {
+            foreach (var uid in da.GetTestIDs()) {
                 r = dt.NewRow();
                 r[0] = uid;
                 i = 1;

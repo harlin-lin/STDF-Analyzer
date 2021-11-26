@@ -63,40 +63,11 @@ namespace DataContainer{
         /// <returns>return test info</returns>
         ItemInfo GetTestInfo(string id);
 
-        ///// <summary>
-        ///// Get the test items Info by ID
-        ///// </summary>
-        ///// <returns>return test info</returns>
-        //TestItem GetTestItem(TestID id);
-
         /// <summary>
         /// Get all of the test ids and the corresponding item info
         /// </summary>
         /// <returns>return a dictionary of the id and th item info</returns>
         Dictionary<string, ItemInfo> GetTestIDs_Info();
-
-        ///// <summary>
-        ///// Get all of the chip indexes in the stdf file
-        ///// </summary>
-        ///// <returns>return a list of all of the indexes</returns>
-        //IEnumerable<int> GetChipsIndexes();
-
-        //IEnumerable<IChipInfo> GetChipsInfo();
-
-
-        ///// <summary>
-        ///// get the full file summary by site
-        ///// </summary>
-        ///// <returns>key is site</returns>
-        //Dictionary<byte, IChipSummary> GetChipSummaryBySite();
-
-        ///// <summary>
-        ///// get the full file summary info
-        ///// </summary>
-        ///// <returns></returns>
-        //IChipSummary GetChipSummary();
-
-        //string GetSummary();
 
         /// <summary>
         /// get the soft bin names defined in the file, item1 is Pass/fail, item2 is bin name
@@ -111,8 +82,6 @@ namespace DataContainer{
         Dictionary<ushort, Tuple<string, string>> GetHBinInfo();
 
 
-        ConcurrentDictionary<string, ItemStatistic> GetStatistic();
-
         PartStatistic GetPartStatistic();
 
 
@@ -125,6 +94,8 @@ namespace DataContainer{
         ushort GetSoftBin(int partIndex);
 
         byte GetSite(int partIndex);
+
+        bool IfContainsTestId(string uid);
 
         int ChipsCount { get; }
         string FilePath { get; }
@@ -139,14 +110,12 @@ namespace DataContainer{
 
         IEnumerable<float> GetFilteredItemData(string testID, int filterId);
         IEnumerable<float> GetFilteredItemData(string testID, int startIndex, int count, int filterId);
-        IEnumerable<Item> GetFilteredItems(int filterId);
-        IEnumerable<string> GetFilteredTestId(int filterId);
+        IEnumerable<Item> GetFilteredItemStatistic(int filterId);
         IEnumerable<int> GetFilteredPartIndex(int filterId);
 
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
-        bool IfFilterContainsTestId(int filterId, string uid);
         #endregion
 
 

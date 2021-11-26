@@ -62,10 +62,6 @@ namespace DataContainer {
         public Dictionary<ushort, Tuple<string, string>> GetHBinInfo() {
             return _hardBinNames;
         }
-        //
-        public ConcurrentDictionary<string, ItemStatistic> GetStatistic() {
-            return _itemStatistics;
-        }
 
         public PartStatistic GetPartStatistic() {
             return _partStatistic;
@@ -117,28 +113,16 @@ namespace DataContainer {
             return GetItemVal(testID, startIndex, count, _filterContainer[filterId]);
         }
 
-        public IEnumerable<Item> GetFilteredItems(int filterId) {
+        public IEnumerable<Item> GetFilteredItemStatistic(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
 
-            //return from r in _filterContainer[filterId].FilterItemStatistics
-            //        let item = new Item(r.Key, _itemContainer[r.Key], r.Value)
-            //        select item;
-            return from r in _filterContainer[filterId].FilteredUid
-                   let item = new Item(r, _itemContainer[r], _filterContainer[filterId].FilterItemStatistics[r])
+            return from r in _itemContainer
+                   let item = new Item(r.Key, r.Value, _filterContainer[filterId].FilterItemStatistics[r.Key])
                    select item;
-
         }
 
-        public bool IfFilterContainsTestId(int filterId, string uid) {
-            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
-            return _filterContainer[filterId].FilteredUid.Contains(uid);
-        }
-
-        public IEnumerable<string> GetFilteredTestId(int filterId) {
-            if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
-
-            return from r in _filterContainer[filterId].FilteredUid
-                   select r;
+        public bool IfContainsTestId(string uid) {
+            return _itemContainer.ContainsKey(uid);
         }
 
         public IEnumerable<int> GetFilteredPartIndex(int filterId) {

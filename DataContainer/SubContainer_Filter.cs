@@ -45,7 +45,7 @@ namespace DataContainer {
                     where _site_PartContainer[i] != enSite
                     select i;
 
-            UpdateFilter(key, maskIds, new int[0]);
+            UpdateFilter(key, maskIds);
             return key;
         }
 
@@ -60,7 +60,6 @@ namespace DataContainer {
             _filterContainer[filterId].FilterPartStatistic = new PartStatistic(_partStatistic);
             _filterContainer[filterId].FilterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>(_itemStatistics);
             _filterContainer[filterId].FilteredPartIdx = _allIndex;
-            _filterContainer[filterId].FilteredUid = _itemContainer.Keys;
         }
 
         void UpdateFilterStatistic(int filterId) {
@@ -71,9 +70,6 @@ namespace DataContainer {
             _filterContainer[filterId].FilteredPartIdx = from i in Enumerable.Range(0, _partIdx + 1)
                                                          where !_filterContainer[filterId].FilterIdxFlag[i]
                                                          select i;
-            _filterContainer[filterId].FilteredUid = from i in Enumerable.Range(0, _itemContainer.Count)
-                                                     where !_filterContainer[filterId].FilterItemFlag[i]
-                                                     select _itemContainer.ElementAt(i).Key;
 
             Task[] asyncTask = new Task[2];
             asyncTask[0] = Task.Run(() => {
@@ -96,17 +92,14 @@ namespace DataContainer {
 
         }
 
-        public void UpdateFilter(int filterId, IEnumerable<int> maskIds, IEnumerable<int> maskItemIds) {
+        public void UpdateFilter(int filterId, IEnumerable<int> maskIds) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
             try {
                 _filterContainer[filterId].IfNoChanged = false;
                 foreach (var id in maskIds) {
                     _filterContainer[filterId].FilterIdxFlag[id]=true;
                 }
-                foreach (var id in maskItemIds) {
-                    _filterContainer[filterId].FilterItemFlag[id] = true;
-                }
-                
+
                 UpdateFilterStatistic(filterId);
             }
             catch {
@@ -131,10 +124,6 @@ namespace DataContainer {
                 _filterContainer[filterId].IfNoChanged = false;
                 foreach (var id in maskIds) {
                     _filterContainer[filterId].FilterIdxFlag[id] = true;
-                }
-                foreach (var id in externalFilter.MaskTestIDs) {
-                    var i = _itemContainer.Keys.ToList().FindIndex(x => x==id);
-                    _filterContainer[filterId].FilterItemFlag[i] = true;
                 }
     
                 UpdateFilterStatistic(filterId);

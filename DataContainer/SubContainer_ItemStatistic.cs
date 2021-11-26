@@ -29,7 +29,6 @@ namespace DataContainer {
 
         private void AnalyseItems_Filtered(Filter filter) {
             filter.FilterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>(from i in Enumerable.Range(0, _itemContainer.Count)
-                                                                                          where !filter.FilterItemFlag[i]
                                                                                           let v = new KeyValuePair<string, ItemStatistic>(_itemContainer.ElementAt(i).Key, null)
                                                                                           select v);
 

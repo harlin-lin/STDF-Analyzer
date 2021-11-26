@@ -119,8 +119,8 @@ namespace UI_Data.ViewModels {
             int cnt = _subDataList.Count;
 
             allDa.Add(StdDB.GetDataAcquire(_subDataList[0].StdFilePath));
-            List<string> allId = new List<string>(allDa[0].GetFilteredTestId(_subDataList[0].FilterId));
-            var baseItem = allDa[0].GetFilteredItems(_subDataList[0].FilterId);
+            List<string> allId = new List<string>(allDa[0].GetTestIDs());
+            var baseItem = allDa[0].GetFilteredItemStatistic(_subDataList[0].FilterId);
 
             for (int i = 1; i < cnt; i++) {
                 allDa.Add(StdDB.GetDataAcquire(_subDataList[i].StdFilePath));
@@ -136,7 +136,7 @@ namespace UI_Data.ViewModels {
                 r[3] = v.HiLimit;
                 r[4] = v.Unit;
                 for (int i = 0; i < cnt; i++) {
-                    if (!allDa[i].IfFilterContainsTestId(_subDataList[i].FilterId, v.TestNumber)) continue;
+                    if (!allDa[i].IfContainsTestId(v.TestNumber)) continue;
                     var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
                     r[5 + i] = s.MeanValue;
                     r[5 + 1 * cnt + i] = s.MinValue;
@@ -149,7 +149,7 @@ namespace UI_Data.ViewModels {
             }
 
             for (int i = 1; i < cnt; i++) {
-                var appendId = allDa[i].GetFilteredTestId(_subDataList[i].FilterId).Except(allId);
+                var appendId = allDa[i].GetTestIDs().Except(allId);
                 foreach(var uid in appendId) {
                     DataRow r = dt.NewRow();
                     var  s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, uid);
