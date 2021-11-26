@@ -49,7 +49,11 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding SubDataList}">
                     <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
-                        <Image  Source="load.png" Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}"/>
+                        <Image Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}">
+                            <Image.Source>
+                                <BitmapImage UriSource="/SillyMonkey.Core;component/Resource/icon/load2.png"/>
+                            </Image.Source>
+                        </Image>
                         <TextBlock Text="{Binding NodeName}"/>
                         <StackPanel.ContextMenu>
                             <ContextMenu  Visibility="{Binding EnableContextMenu}">

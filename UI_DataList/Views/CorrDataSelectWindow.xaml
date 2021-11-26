@@ -4,10 +4,14 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UI_DataList="clr-namespace:UI_DataList"
         xmlns:local="clr-namespace:UI_DataList.Views"
         xmlns:prism="http://prismlibrary.com/"             
         mc:Ignorable="d"
         Title="CorrDataSelectWindow" Height="450" Width="800">
+    <Window.Resources>
+        <UI_DataList:SubDataCvtStr x:Key="subDataCvtStr"/>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -24,14 +28,7 @@
                                      ItemsSource="{Binding DataList}" SelectionMode="Extended">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding  StringFormat="Filter:{0:X8} File: {1}">
-                                    <Binding Path="FilterId"/>
-                                    <Binding Path="StdFilePath"/>
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
+                        <TextBlock Text="{Binding Converter={StaticResource subDataCvtStr}}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <i:Interaction.Triggers>
@@ -50,14 +47,7 @@
                                      ItemsSource="{Binding EnableDataList}" SelectionMode="Extended">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock>
-                            <TextBlock.Text>
-                                <MultiBinding  StringFormat="Filter:{0:X8} File: {1}">
-                                    <Binding Path="FilterId"/>
-                                    <Binding Path="StdFilePath"/>
-                                </MultiBinding>
-                            </TextBlock.Text>
-                        </TextBlock>
+                        <TextBlock Text="{Binding Converter={StaticResource subDataCvtStr}}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 
