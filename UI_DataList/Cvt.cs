@@ -18,10 +18,17 @@ namespace UI_DataList {
                     return true;
             }
 
-            return false;
+            throw new NotSupportedException();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+            if (value.GetType().Name == "Boolean") {
+                if ((bool)value)
+                    return false;
+                else
+                    return true;
+            }
+
             throw new NotSupportedException();
         }
     }

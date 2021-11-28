@@ -16,7 +16,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Harlin\Documents\SillyMonkey\Build\SillyMonkey_20211119_V2p11\</PublishUrl>
+    <PublishUrl>C:\Users\Harlin\Documents\SillyMonkey\Build\SillyMonkey_20211126_V2p12\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
