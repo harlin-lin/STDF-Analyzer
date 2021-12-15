@@ -16,6 +16,11 @@ namespace SillyMonkey.Core
 
     }
 
+    public class Event_SubDataTabSelected : PubSubEvent<SubData> {
+
+    }
+
+
     public class Event_FilterUpdated : PubSubEvent<SubData> {
 
     }

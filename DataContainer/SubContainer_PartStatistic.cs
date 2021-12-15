@@ -132,8 +132,18 @@ namespace DataContainer {
             _partStatistic.RtByIdCnt = (from r in _partStatistic.RtByIdCntBySite select r.Value).Sum();
             _partStatistic.RtByCordCnt = (from r in _partStatistic.RtByCordCntBySite select r.Value).Sum();
 
-            _partStatistic.AverageTestTime = (uint)(totalTime / _partStatistic.TotalCnt);
-            _partStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / _partStatistic.PassCnt);
+            try {
+                _partStatistic.AverageTestTime = (uint)(totalTime / _partStatistic.TotalCnt);
+            }
+            catch {
+                _partStatistic.AverageTestTime = 0;
+            }
+            try {
+                _partStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / _partStatistic.PassCnt);
+            }
+            catch {
+                _partStatistic.AverageTestTimePassOnly = 0;
+            }
         }
 
 
@@ -243,8 +253,18 @@ namespace DataContainer {
             filter.FilterPartStatistic.FreshCnt = (from r in filter.FilterPartStatistic.FreshCntBySite select r.Value).Sum();
             filter.FilterPartStatistic.RtByIdCnt = (from r in filter.FilterPartStatistic.RtByIdCntBySite select r.Value).Sum();
             filter.FilterPartStatistic.RtByCordCnt = (from r in filter.FilterPartStatistic.RtByCordCntBySite select r.Value).Sum();
-            filter.FilterPartStatistic.AverageTestTime = (uint)(totalTime / filter.FilterPartStatistic.TotalCnt);
-            filter.FilterPartStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / filter.FilterPartStatistic.PassCnt);
+            try {
+                filter.FilterPartStatistic.AverageTestTime = (uint)(totalTime / filter.FilterPartStatistic.TotalCnt);
+            }
+            catch {
+                filter.FilterPartStatistic.AverageTestTime = 0;
+            }
+            try {
+                filter.FilterPartStatistic.AverageTestTimePassOnly = (uint)(totalTimePassOnly / filter.FilterPartStatistic.PassCnt);
+            }
+            catch {
+                filter.FilterPartStatistic.AverageTestTimePassOnly = 0;
+            }
 
         }
 

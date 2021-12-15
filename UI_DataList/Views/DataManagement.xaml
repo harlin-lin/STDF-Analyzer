@@ -41,6 +41,9 @@
                     <prism:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+            <i:Interaction.Behaviors>
+                <local:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+            </i:Interaction.Behaviors>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="True" />

@@ -25,8 +25,8 @@ namespace DataContainer {
         public ItemInfo(string testText, float? ll, float? hl, string unit, sbyte? llScale, sbyte? hlScale, sbyte? rstScale) {
             TestText = testText;
             string u = unit;
-            _hlScale = (float)Math.Pow(10, (llScale ?? 0));
-            _llScale = (float)Math.Pow(10, (llScale ?? 0));
+            _hlScale = (float)Math.Pow(10, (rstScale ?? 0));
+            _llScale = (float)Math.Pow(10, (rstScale ?? 0));
             _rstScale = (float)Math.Pow(10, (rstScale ?? 0));
 
             LoLimit = _llScale * ll;

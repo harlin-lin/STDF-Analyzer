@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataContainer {
     public class Item{
+        public int Idx { get; private set; }
         public string TestNumber { get; private set; }
 
         public string TestText { get; private set; }
@@ -22,7 +23,8 @@ namespace DataContainer {
         public float? Cpk { get; private set; }
         public float? Sigma { get; private set; }
 
-        public Item(string uid, ItemInfo info, ItemStatistic statistic) {
+        public Item(int idx, string uid, ItemInfo info, ItemStatistic statistic) {
+            Idx = idx;
             TestNumber = uid;
 
             TestText = info.TestText;

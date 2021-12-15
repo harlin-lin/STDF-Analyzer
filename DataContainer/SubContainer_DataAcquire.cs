@@ -116,9 +116,12 @@ namespace DataContainer {
         public IEnumerable<Item> GetFilteredItemStatistic(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
 
-            return from r in _itemContainer
-                   let item = new Item(r.Key, r.Value, _filterContainer[filterId].FilterItemStatistics[r.Key])
-                   select item;
+            //return from r in _itemContainer
+            //       let item = new Item(r.Key, r.Value, _filterContainer[filterId].FilterItemStatistics[r.Key])
+            //       select item;
+            return from i in Enumerable.Range(0, _itemContainer.Count)
+                   let item = _itemContainer.ElementAt(i)
+                   select new Item(i, item.Key, item.Value, _filterContainer[filterId].FilterItemStatistics[item.Key]);
         }
 
         public bool IfContainsTestId(string uid) {

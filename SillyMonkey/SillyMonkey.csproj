@@ -16,7 +16,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Harlin\Documents\SillyMonkey\Build\SillyMonkey_20211126_V2p12\</PublishUrl>
+    <PublishUrl>C:\Users\Harlin\Documents\SillyMonkey\Build\SillyMonkey_20211206_V2p15\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>13</ApplicationRevision>
+    <ApplicationRevision>16</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -147,6 +147,10 @@
     <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataContainer\DataContainer.csproj">
+      <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
+      <Name>DataContainer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
       <Name>SillyMonkey.Core</Name>

@@ -134,6 +134,12 @@ namespace UI_DataList.ViewModels {
             private set { SetProperty(ref _files, value); } 
         }
 
+        private ISubNode selectedItem;
+        public ISubNode SelectedItem {
+            get { return selectedItem; }
+            set { SetProperty(ref selectedItem, value); }
+        }
+
         public DataManagementViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
@@ -142,6 +148,21 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_MergeFiles>().Subscribe(MergeFiles);
             _ea.GetEvent<Event_CorrData>().Subscribe(RequestCorrTab);
             _ea.GetEvent<Event_CloseAllFiles>().Subscribe(CloseAllFiles);
+            _ea.GetEvent<Event_SubDataTabSelected>().Subscribe(SubDataTabSelected);
+        }
+
+        private void SubDataTabSelected(SubData data) {
+            //change the selected treeview sub data
+            foreach(var f in _files) {
+                foreach(var sn in f.SubDataList) {
+                    if(sn is FilterNode) {
+                        if((sn as FilterNode).SubData.Equals(data)){
+                            SelectedItem = sn;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         private void RequestCorrTab(IEnumerable<SubData> data) {

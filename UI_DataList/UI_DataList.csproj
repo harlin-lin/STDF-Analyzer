@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cvt.cs" />
+    <Compile Include="ViewModels\BindableSelectedItemBehavior.cs" />
     <Compile Include="ViewModels\BottomStripViewModel.cs" />
     <Compile Include="ViewModels\DataFilterViewModel.cs" />
     <Compile Include="ViewModels\DataManagementViewModel.cs" />
