@@ -50,6 +50,36 @@ namespace UI_DataList.ViewModels {
             set { SetProperty(ref _enabledSBins, value); }
         }
 
+        private IEnumerable<Item> _items;
+        public IEnumerable<Item> Items {
+            get { return _items; }
+            set { SetProperty(ref _items, value); }
+        }
+
+        private string _partFilterLowLimit;
+        public string PartFilterLowLimit {
+            get { return _partFilterLowLimit; }
+            set { SetProperty(ref _partFilterLowLimit, value); }
+        }
+
+        private string _partFilterHighLimit;
+        public string PartFilterHighLimit {
+            get { return _partFilterHighLimit; }
+            set { SetProperty(ref _partFilterHighLimit, value); }
+        }
+
+        private string _syncItemInfo;
+        public string SyncItemInfo {
+            get { return _syncItemInfo; }
+            set { SetProperty(ref _syncItemInfo, value); }
+        }
+
+        private ObservableCollection<ItemFilter> _itemFilters = new ObservableCollection<ItemFilter>();
+        public ObservableCollection<ItemFilter> ItemFilters {
+            get { return _itemFilters; }
+            set { SetProperty(ref _itemFilters, value); }
+        }
+
         private string _maskEnableChips;
         public string MaskEnableChips {
             get { return _maskEnableChips; }
@@ -93,7 +123,7 @@ namespace UI_DataList.ViewModels {
         }
 
         string _filePath;
-        int? _filterId;
+        int _filterId;
         FilterSetup _filter;
 
         public DataFilterViewModel(IEventAggregator ea) {
@@ -112,11 +142,10 @@ namespace UI_DataList.ViewModels {
 
             _filter = dataAcquire.GetFilterSetup(selectedData.FilterId);
 
-            var items = dataAcquire.GetTestIDs_Info();
-            var allItems = (from r in items
-                            let v = r.Key + "<>" + r.Value.TestText
-                            orderby v
-                            select v);
+            Items = dataAcquire.GetFilteredItemStatistic(selectedData.FilterId);
+            PartFilterLowLimit = "";
+            PartFilterHighLimit = "";
+            SyncItemInfo = "";
 
             AllSites = new ObservableCollection<byte>(dataAcquire.GetSites().OrderBy(x => x));
             EnabledSites = new ObservableCollection<byte>(AllSites.Except(_filter.MaskSites).OrderBy(x => x));
@@ -157,7 +186,6 @@ namespace UI_DataList.ViewModels {
 
         public void UpdateFilter() {
             _filePath = null;
-            _filterId = null;
             _filter = null;
 
             AllSites = null;
@@ -178,7 +206,150 @@ namespace UI_DataList.ViewModels {
             MaskOrEnableCords = false;
         }
 
+        private string TestItemStatistic(float loRange, float hiRange, IEnumerable<float> data) {
+            int loFail = 0;
+            int hiFail = 0;
+            int naFail = 0;
+            int negInf = 0;
+            int posInf = 0;
+            int pass = 0;
+            int validatedCnt = 0;
+            foreach(var v in data) {
+                if (float.IsNaN(v)) {
+                    naFail++;
+                    continue;
+                }
+                if (float.IsPositiveInfinity(v)) {
+                    posInf++;
+                    continue;
+                }
+                if (float.IsNegativeInfinity(v)) {
+                    negInf++;
+                    continue;
+                }
+                validatedCnt++;
+                if (v < loRange) {
+                    loFail++;
+                    continue;
+                }
+                if (v > hiRange) {
+                    hiFail++;
+                    continue;
+                }
+                pass++;
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"Total:{data.Count()}");
+            sb.AppendLine($"Valid:{validatedCnt} NaN:{naFail} -∞:{negInf} +∞:{posInf}");
+            if (validatedCnt > 0) {
+                sb.AppendLine($"Pass:{pass} {(pass * 1.0 / validatedCnt).ToString("f3")}%");
+                sb.AppendLine($"Lo Fail:{loFail} {(loFail*1.0/validatedCnt).ToString("f3")}%");
+                sb.AppendLine($"Hi Fail:{hiFail} {(hiFail * 1.0 / validatedCnt).ToString("f3")}%");
+            }
+
+            return sb.ToString();
+        }
+
+        private string GetItemInfoString(string uid, ItemInfo info, ItemStatistic statistic) {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"Lo Limt:{info.LoLimit} {info.Unit}  Hi Limt:{info.HiLimit} {info.Unit}");
+            sb.AppendLine($"");
+
+            return sb.ToString();
+        }
+
         #region UI
+        private string _curSelectedTN = null;
+
+        private DelegateCommand<Item> cmdSelectItem;
+        public DelegateCommand<Item> CmdSelectItem =>
+            cmdSelectItem ?? (cmdSelectItem = new DelegateCommand<Item>(ExecuteCmdSelectItem));
+
+        void ExecuteCmdSelectItem(Item parameter) {
+            _curSelectedTN = parameter.TestNumber;
+
+            PartFilterLowLimit = float.NegativeInfinity.ToString();
+            PartFilterHighLimit = float.PositiveInfinity.ToString();
+
+            var da = StdDB.GetDataAcquire(_filePath);
+            var statistic = da.GetFilteredStatistic(_filterId, _curSelectedTN);
+            var info = da.GetTestInfo(_curSelectedTN);
+
+            SyncItemInfo = GetItemInfoString(_curSelectedTN, info, statistic);
+        }
+
+        private DelegateCommand partFilterApplyNegInfty;
+        public DelegateCommand PartFilterApplyNegInfty =>
+            partFilterApplyNegInfty ?? (partFilterApplyNegInfty = new DelegateCommand(ExecutePartFilterApplyNegInfty));
+
+        void ExecutePartFilterApplyNegInfty() {
+            PartFilterLowLimit = float.NegativeInfinity.ToString();
+        }
+
+        private DelegateCommand partFilterApplyPosInfty;
+        public DelegateCommand PartFilterApplyPosInfty =>
+            partFilterApplyPosInfty ?? (partFilterApplyPosInfty = new DelegateCommand(ExecutePartFilterApplyPosInfty));
+
+        void ExecutePartFilterApplyPosInfty() {
+            PartFilterHighLimit = float.PositiveInfinity.ToString();
+        }
+
+        private DelegateCommand partFilterTryLimit;
+        public DelegateCommand PartFilterTryLimit =>
+            partFilterTryLimit ?? (partFilterTryLimit = new DelegateCommand(ExecutePartFilterTryLimit));
+
+        void ExecutePartFilterTryLimit() {
+            try {
+                var lr = float.Parse(PartFilterLowLimit);
+                var hr = float.Parse(PartFilterHighLimit);
+                if (lr > hr || _curSelectedTN == "") throw new Exception();
+
+                var da = StdDB.GetDataAcquire(_filePath);
+                var statistic = da.GetFilteredStatistic(_filterId, _curSelectedTN);
+                var info = da.GetTestInfo(_curSelectedTN);
+
+                SyncItemInfo = GetItemInfoString(_curSelectedTN, info, statistic) + TestItemStatistic(lr, hr,da.GetFilteredItemData(_curSelectedTN, _filterId));
+            }
+            catch {
+                System.Windows.Forms.MessageBox.Show("Error Range or Exsist the item!");
+                return;
+            }
+
+        }
+
+        private DelegateCommand partFilterAddFilter;
+        public DelegateCommand PartFilterAddFilter =>
+            partFilterAddFilter ?? (partFilterAddFilter = new DelegateCommand(ExecutePartFilterAddFilter));
+
+        void ExecutePartFilterAddFilter() {
+            try {
+                var lr = float.Parse(PartFilterLowLimit);
+                var hr = float.Parse(PartFilterHighLimit);
+                if (lr > hr || _curSelectedTN=="") throw new Exception();
+                foreach(var v in ItemFilters){
+                    if (v.TestNumber == _curSelectedTN) throw new Exception();
+                }
+                ItemFilters.Add(new ItemFilter(_curSelectedTN, lr, hr));
+            }
+            catch {
+                System.Windows.Forms.MessageBox.Show("Error Range or Exsist the item!");
+                return;
+            }
+        }
+
+        private DelegateCommand<object> removeItemLimitFilter;
+        public DelegateCommand<object> RemoveItemLimitFilter =>
+            removeItemLimitFilter ?? (removeItemLimitFilter = new DelegateCommand<object>(ExecuteRemoveItemLimitFilter));
+
+        void ExecuteRemoveItemLimitFilter(object e) {
+            if(e is ItemFilter) {
+                ItemFilters.Remove((ItemFilter)e);
+            }
+        }
+
         public DelegateCommand ApplyFilter { get; private set; }
         public DelegateCommand<ListBox> RemoveSite { get; private set; }
         public DelegateCommand<ListBox> AddSite { get; private set; }
@@ -217,9 +388,13 @@ namespace UI_DataList.ViewModels {
                 _filter.MaskSoftBins = AllSBins.Except(EnabledSBins).ToList();
                 _filter.MaskChips = ParseMaskEnableIds();
                 _filter.MaskCords = ParseMaskEnableCords();
+
+                _filter.ItemFilters.Clear();
+                _filter.ItemFilters.AddRange(ItemFilters);
+
                 var dataAcquire = StdDB.GetDataAcquire(_filePath);
-                dataAcquire.UpdateFilter(_filterId.Value, _filter);
-                _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId.Value));
+                dataAcquire.UpdateFilter(_filterId, _filter);
+                _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId));
             });
 
 

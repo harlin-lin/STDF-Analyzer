@@ -229,7 +229,7 @@ namespace DataContainer {
             //    dupSelected = Enumerable.Range(0, _testChips.Count).ToList();
             //}
 
-            for (int i = 0; i <= _partIdx; i++) {
+            partLoop:for (int i = 0; i <= _partIdx; i++) {
                 //foreach (int i in dupSelected) {
 
                 //site
@@ -274,6 +274,17 @@ namespace DataContainer {
                         }
                     }
                 }
+
+                if (filter.ItemFilters.Count > 0) {
+                    foreach(var itemFilter in filter.ItemFilters) {
+                        var rst = GetItemVal(itemFilter.TestNumber, i);
+                        if(rst<itemFilter.LowRange || rst > itemFilter.HighRange) {
+                            chipsFilter.Add(i);
+                            break;
+                        }
+                    }
+                }
+
             }
 
             return chipsFilter;

@@ -6,6 +6,10 @@
              xmlns:local="clr-namespace:UI_DataList"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:en="clr-namespace:DataContainer;assembly=DataContainer"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="400"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
         <local:BooleanNegationConverter x:Key="negbool"/>
@@ -179,6 +183,53 @@
                         <ComboBox Name="judgeMode" FontSize="8" Width="60" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource judgeM}}" SelectedValue="{Binding JudgeMode, Mode=TwoWay}"/>
                         <ComboBox Name="maskMode" FontSize="8" Width="80" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource dupliM}}" SelectedValue="{Binding DuplicateSelectMode}"/>
                     </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="ItemParts">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="1.5*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <ComboBox Grid.Row="0" x:Name="cbItems" ItemsSource="{Binding Items}" Margin="0,1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock>
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="{}{0}_TN:{1}_{2}">
+                                            <Binding Path="Idx"/>
+                                            <Binding Path="TestNumber"/>
+                                            <Binding Path="TestText"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged" >
+                                <prism:InvokeCommandAction Command="{Binding CmdSelectItem}" CommandParameter="{Binding ElementName=cbItems, Path=SelectedItem}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                        <Button Content="-∞" Margin="3,0,0,0" Command="{Binding PartFilterApplyNegInfty}"/>
+                        <TextBox Width="50" Margin="3,0,0,0" Text="{Binding PartFilterLowLimit}"/>
+                        <Label Content="=&lt; Value &lt;=" Margin="3,0,0,0"/>
+                        <TextBox Width="50" Margin="3,0,0,0" Text="{Binding PartFilterHighLimit}"/>
+                        <Button Content="+∞" Margin="3,0,0,0" Command="{Binding PartFilterApplyPosInfty}"/>
+                        <Button Content="Test" Margin="3,0,0,0" Command="{Binding PartFilterTryLimit}"/>
+                        <Button Content="Add" Margin="3,0,0,0" Command="{Binding PartFilterAddFilter}"/>
+                    </StackPanel>
+                    <TextBox Grid.Row="2" Text="{Binding SyncItemInfo}" IsReadOnly="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+                    <ListBox Grid.Row="3" x:Name="lbItemFilters" ItemsSource="{Binding ItemFilters}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick" >
+                                <prism:InvokeCommandAction Command="{Binding RemoveItemLimitFilter}" CommandParameter="{Binding ElementName=lbItemFilters, Path=SelectedItem}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
                 </Grid>
             </TabItem>
         </TabControl>

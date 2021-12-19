@@ -15,6 +15,23 @@ namespace DataContainer {
         Cord
     }
 
+    [Serializable]
+    public struct ItemFilter {
+        public string TestNumber;
+        public float LowRange;
+        public float HighRange;
+
+        public ItemFilter(string uid, float lowRange, float highRange) {
+            TestNumber = uid;
+            LowRange = lowRange;
+            HighRange = highRange;
+        }
+
+        public override string ToString() {
+            return $"TN:{TestNumber}|L:{LowRange.ToString("f4")}|H:{HighRange.ToString("f4")}";
+        }
+    }
+
     /// <summary>
     /// just for datahelper to define the filter content
     /// </summary>
@@ -36,6 +53,9 @@ namespace DataContainer {
         /// </summary>
         public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
 
+        public List<ItemFilter> ItemFilters { get; set; }
+
+
         public FilterSetup(string comment) {
             MaskSites = new List<byte>();
             MaskSoftBins = new List<ushort>();
@@ -47,6 +67,8 @@ namespace DataContainer {
             IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
+
+            ItemFilters = new List<ItemFilter>();
 
             Comment = comment;
         }
@@ -67,6 +89,8 @@ namespace DataContainer {
             IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
+
+            ItemFilters = new List<ItemFilter>();
 
             Comment = comment;
         }
@@ -91,6 +115,8 @@ namespace DataContainer {
             IfMaskOrEnableCords = false;
             DuplicateSelectMode = DuplicateSelectMode.First;
             DuplicateJudgeMode = DuplicateJudgeMode.ID;
+
+            ItemFilters.Clear();
         }
 
     }
