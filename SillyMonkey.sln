@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContainer", "DataContai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileReader", "FileReader\FileReader.csproj", "{55776D52-9E3D-4509-925F-695FC9D8EA54}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{B69A72A9-9546-4787-9EC1-9B4850A7207B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{55776D52-9E3D-4509-925F-695FC9D8EA54}.Release|Any CPU.Build.0 = Release|Any CPU
 		{55776D52-9E3D-4509-925F-695FC9D8EA54}.Release|x64.ActiveCfg = Release|x64
 		{55776D52-9E3D-4509-925F-695FC9D8EA54}.Release|x64.Build.0 = Release|x64
+		{B69A72A9-9546-4787-9EC1-9B4850A7207B}.Debug|Any CPU.ActiveCfg = Debug
+		{B69A72A9-9546-4787-9EC1-9B4850A7207B}.Debug|x64.ActiveCfg = Debug
+		{B69A72A9-9546-4787-9EC1-9B4850A7207B}.Release|Any CPU.ActiveCfg = Release
+		{B69A72A9-9546-4787-9EC1-9B4850A7207B}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
