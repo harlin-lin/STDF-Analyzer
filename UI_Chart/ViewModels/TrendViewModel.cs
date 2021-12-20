@@ -254,6 +254,8 @@ namespace UI_Chart.ViewModels {
 
             #endregion
 
+            _ea.GetEvent<Event_Log>().Publish("Updated Basic Chart");
+
         }
 
         void UpdateChart(SubData subData) {

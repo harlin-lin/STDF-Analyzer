@@ -95,7 +95,7 @@
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CorrChartViewModel.cs" />
     <Compile Include="ViewModels\TrendViewModel.cs" />
-    <Compile Include="ViewModels\WaferMapViewModel.cs" />
+    <Compile Include="ViewModels\ItemCorrViewModel.cs" />
     <Compile Include="Views\Box.xaml.cs">
       <DependentUpon>Box.xaml</DependentUpon>
     </Compile>
@@ -114,8 +114,8 @@
     <Compile Include="Views\Trend.xaml.cs">
       <DependentUpon>Trend.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WaferMap.xaml.cs">
-      <DependentUpon>WaferMap.xaml</DependentUpon>
+    <Compile Include="Views\ItemCorr.xaml.cs">
+      <DependentUpon>ItemCorr.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -162,7 +162,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WaferMap.xaml">
+    <Page Include="Views\ItemCorr.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

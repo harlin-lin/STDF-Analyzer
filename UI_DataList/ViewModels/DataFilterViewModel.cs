@@ -377,6 +377,8 @@ namespace UI_DataList.ViewModels {
                 if (_filter is null) {
                     return;
                 }
+                _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>("Updating Filter", 50));
+
                 _filter.DuplicateSelectMode = DuplicateSelectMode;
                 _filter.DuplicateJudgeMode = JudgeMode;
                 _filter.IfmaskDuplicateChips = IfmaskDuplicateChips;
@@ -395,6 +397,7 @@ namespace UI_DataList.ViewModels {
                 var dataAcquire = StdDB.GetDataAcquire(_filePath);
                 dataAcquire.UpdateFilter(_filterId, _filter);
                 _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId));
+                _ea.GetEvent<Event_Log>().Publish("Updated Filter");
             });
 
 

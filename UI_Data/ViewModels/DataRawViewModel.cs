@@ -106,6 +106,13 @@ namespace UI_Data.ViewModels {
         }
         private void ShowWaferMap() {
 
+            var parameters = new NavigationParameters();
+            parameters.Add("itemList", _selectedItemList);
+            parameters.Add("subData", _subData);
+
+            _regionManager.RequestNavigate(RegionName, "ItemCorr", parameters);
+
+
         }
         private async void ExportToExcelAsync() {
             string path;

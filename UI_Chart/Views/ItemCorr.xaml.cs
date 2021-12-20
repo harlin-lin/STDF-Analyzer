@@ -2,10 +2,10 @@
 
 namespace UI_Chart.Views {
     /// <summary>
-    /// Interaction logic for WaferMap
+    /// Interaction logic for ItemCorr
     /// </summary>
-    public partial class WaferMap : UserControl {
-        public WaferMap() {
+    public partial class ItemCorr : UserControl {
+        public ItemCorr() {
             InitializeComponent();
         }
     }

@@ -43,7 +43,7 @@
                 </Button>
                 <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map" BorderThickness="0">
                     <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/wafer_binning.png"/>
+                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/corr.png"/>
                     </Button.Background>
                 </Button>
                 <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">

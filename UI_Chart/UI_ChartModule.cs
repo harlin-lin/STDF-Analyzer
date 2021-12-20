@@ -20,6 +20,7 @@ namespace UI_Chart
             containerRegistry.RegisterForNavigation<Trend>();
             containerRegistry.RegisterForNavigation<Summary>();
             containerRegistry.RegisterForNavigation<Raw>();
+            containerRegistry.RegisterForNavigation<ItemCorr>();
 
         }
     }
