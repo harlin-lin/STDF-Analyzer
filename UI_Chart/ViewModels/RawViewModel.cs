@@ -4,8 +4,6 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using SillyMonkey.Core;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows;
@@ -25,7 +23,7 @@ namespace UI_Chart.ViewModels {
         public RawViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(x=> {
+            _ea.GetEvent<Event_FilterUpdated>().Subscribe(x => {
                 if (_subData.Equals(x)) {
                     currPage = 0;
                     UpdateTable();
@@ -36,7 +34,7 @@ namespace UI_Chart.ViewModels {
 
         private void InitUI() {
             dt.Columns.Add("TestNumber");
-            for(int i =0; i< CNT_PER_PAGE; i++) {
+            for (int i = 0; i < CNT_PER_PAGE; i++) {
                 dt.Columns.Add($"{i}");
             }
         }
@@ -48,7 +46,7 @@ namespace UI_Chart.ViewModels {
 
             totalPartCnt = da.GetFilteredChipsCount(_subData.FilterId);
             totalPages = (totalPartCnt / CNT_PER_PAGE) + ((totalPartCnt % CNT_PER_PAGE) > 0 ? 1 : 0);
-            PageCnt = $"{currPage} / {totalPages-1}";
+            PageCnt = $"{currPage} / {totalPages - 1}";
             JumpPage = $"{currPage}";
 
             //add column
@@ -66,7 +64,7 @@ namespace UI_Chart.ViewModels {
                 r = dt.NewRow();
                 r[0] = uid;
                 i = 1;
-                foreach(var v in da.GetFilteredItemData(uid, _subData.FilterId).Skip(offset).Take(viewCnt)) {
+                foreach (var v in da.GetFilteredItemData(uid, _subData.FilterId).Skip(offset).Take(viewCnt)) {
                     r[i++] = v;
                 }
                 dt.Rows.Add(r);
@@ -127,7 +125,7 @@ namespace UI_Chart.ViewModels {
             jumpPreviousPage ?? (jumpPreviousPage = new DelegateCommand(ExecuteJumpPreviousPage));
 
         void ExecuteJumpPreviousPage() {
-            if(currPage > 0) {
+            if (currPage > 0) {
                 currPage--;
                 UpdateTable();
             }
@@ -138,7 +136,7 @@ namespace UI_Chart.ViewModels {
             jumpNextPage ?? (jumpNextPage = new DelegateCommand(ExecuteJumpNextPage));
 
         void ExecuteJumpNextPage() {
-            if (currPage < (totalPages-1)) {
+            if (currPage < (totalPages - 1)) {
                 currPage++;
                 UpdateTable();
             }
@@ -159,8 +157,8 @@ namespace UI_Chart.ViewModels {
 
         void ExecuteJumpSelectedPage() {
             int targetPage = 0;
-            if(int.TryParse(JumpPage, out targetPage)) {
-                if (targetPage <= (totalPages - 1) && targetPage>=0) {
+            if (int.TryParse(JumpPage, out targetPage)) {
+                if (targetPage <= (totalPages - 1) && targetPage >= 0) {
                     currPage = targetPage;
                     UpdateTable();
                 }

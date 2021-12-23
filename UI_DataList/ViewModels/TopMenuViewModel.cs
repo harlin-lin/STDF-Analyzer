@@ -46,7 +46,7 @@ namespace UI_DataList.ViewModels {
                 if (ext == ".stdf" || ext == ".std") {
                     _ea.GetEvent<Event_OpenFile>().Publish(path);
                 } else {
-                    //log message not supported
+                    System.Windows.Forms.MessageBox.Show("Invalid File");
                 }
             }
 

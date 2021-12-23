@@ -1,12 +1,8 @@
 ﻿using DataContainer;
-using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using SillyMonkey.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace UI_Chart.ViewModels {

@@ -8,14 +8,11 @@ using SciChart.Charting.Model.ChartSeries;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Charting.Visuals;
 using SciChart.Charting.Visuals.Axes;
-using SciChart.Charting.Visuals.PointMarkers;
 using SciChart.Data.Model;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Windows.Media;
 
 namespace UI_Chart.ViewModels {
@@ -69,13 +66,13 @@ namespace UI_Chart.ViewModels {
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-            var xs = da.GetFilteredItemData(_selectedX,_subData.FilterId);
+            var xs = da.GetFilteredItemData(_selectedX, _subData.FilterId);
             var ys = da.GetFilteredItemData(_selectedY, _subData.FilterId);
 
 
             CorrSeries = new XyDataSeries<float, float>();
             CorrSeries.AcceptsUnsortedData = true;
-            CorrSeries.Append(xs,ys);
+            CorrSeries.Append(xs, ys);
             RaisePropertyChanged("CorrSeries");
 
         }
@@ -119,7 +116,7 @@ namespace UI_Chart.ViewModels {
             get { return _items; }
             set { SetProperty(ref _items, value); }
         }
-        public DataSeries<float,float> _corrSeries;
+        public DataSeries<float, float> _corrSeries;
         public DataSeries<float, float> CorrSeries {
             get { return _corrSeries; }
             set { SetProperty(ref _corrSeries, value); }
@@ -244,7 +241,7 @@ namespace UI_Chart.ViewModels {
 
         private DelegateCommand<object> _CmdSave;
         public DelegateCommand<object> CmdSave =>
-            _CmdSave?? (_CmdSave = new DelegateCommand<object>(ExecuteCmdSave));
+            _CmdSave ?? (_CmdSave = new DelegateCommand<object>(ExecuteCmdSave));
 
         void ExecuteCmdSave(object e) {
             string filePath;

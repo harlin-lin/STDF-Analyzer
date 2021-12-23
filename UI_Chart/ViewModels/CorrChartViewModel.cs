@@ -1,21 +1,21 @@
-﻿using Prism.Commands;
+﻿using DataContainer;
+using Microsoft.Win32;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
+using SciChart.Charting.Model.ChartSeries;
+using SciChart.Charting.Model.DataSeries;
+using SciChart.Charting.Visuals;
+using SciChart.Charting.Visuals.Axes;
+using SciChart.Data.Model;
+using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Media;
-using SillyMonkey.Core;
-using Prism.Regions;
-using Prism.Events;
-using DataContainer;
-using SciChart.Charting.Model.DataSeries;
-using SciChart.Data.Model;
-using SciChart.Charting.Visuals.Axes;
-using SciChart.Charting.Model.ChartSeries;
 using System.Collections.ObjectModel;
 using System.IO;
-using Microsoft.Win32;
-using SciChart.Charting.Visuals;
+using System.Linq;
+using System.Windows.Media;
 
 namespace UI_Chart.ViewModels {
     public class CorrChartViewModel : BindableBase {
@@ -26,7 +26,7 @@ namespace UI_Chart.ViewModels {
         List<SubData> _subDataList;
 
 
-        private float _sigmaLow,_sigmaHigh, _min, _max;
+        private float _sigmaLow, _sigmaHigh, _min, _max;
 
         #region Binding_prop
         public ObservableCollection<IRenderableSeriesViewModel> _histoSeries = new ObservableCollection<IRenderableSeriesViewModel>();
@@ -192,18 +192,18 @@ namespace UI_Chart.ViewModels {
             var actStop = stop + step * 5;
 
             for (int i = 0; i < 113; i++) {
-                range[i] = start + (i-6) * step;
+                range[i] = start + (i - 6) * step;
             }
             int[] rangeCnt = new int[113];
 
-            foreach(var f in data) {
+            foreach (var f in data) {
                 if (float.IsNaN(f) || float.IsInfinity(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
                 } else if (f >= actStop) {
                     rangeCnt[112]++;
                 } else {
-                    var idx = (int)Math.Round((f-actStart) / step) + 1;
+                    var idx = (int)Math.Round((f - actStart) / step) + 1;
                     rangeCnt[idx]++;
                 }
             }
@@ -213,7 +213,7 @@ namespace UI_Chart.ViewModels {
 
         void UpdateHistoSeries(float start, float stop) {
             if (_selectedId == null || _subDataList.Count == 0) return;
-            var maxCnt=0;
+            var maxCnt = 0;
             HistoSeries.Clear();
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
 

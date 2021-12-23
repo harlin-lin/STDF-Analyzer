@@ -3,6 +3,8 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using SillyMonkey.Core;
+using System;
+using System.Linq;
 using UI_Data.ViewModels;
 
 namespace SillyMonkey.ViewModels
@@ -31,10 +33,42 @@ namespace SillyMonkey.ViewModels
             selectSubdata ?? (selectSubdata = new DelegateCommand<object>(ExecuteSelectSubData));
 
         void ExecuteSelectSubData(object parameter) {
-            if(parameter is UI_Data.Views.DataRaw) {
-                var data = ((parameter as UI_Data.Views.DataRaw).DataContext as DataRawViewModel).CurrentData;
-                if(data.HasValue)   _ea.GetEvent<Event_SubDataTabSelected>().Publish(data.Value);
+            if (parameter is int && (int)parameter >= 0) {
+                _ea.GetEvent<Event_SubDataTabSelected>().Publish((int)parameter);
             }
         }
+
+        private DelegateCommand mainWindowLoaded;
+
+        public DelegateCommand MainWindowLoaded => 
+            mainWindowLoaded ?? (mainWindowLoaded = new DelegateCommand(MainWindow_LoadExecute));
+
+        private void MainWindow_LoadExecute() {
+            string[] commandLineArgs = Environment.GetCommandLineArgs(); // [a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*([a-zA-Z0-9]+.*)
+
+            //string s="";
+            //foreach(var v in commandLineArgs) {
+            //    s += v;
+            //    s += "\n";
+            //}
+
+            //System.IO.File.WriteAllText(@"C:\Users\Harlin\Documents\temp\123.txt", s);
+
+            commandLineArgs = commandLineArgs.Skip(1).ToArray(); 
+            if (commandLineArgs.Length < 1) {
+
+            } else {
+                var path = commandLineArgs[0];
+                var ext = System.IO.Path.GetExtension(path).ToLower();
+                if (ext == ".stdf" || ext == ".std") {
+                    _ea.GetEvent<Event_OpenFile>().Publish(path);
+                } else {
+                    //System.Windows.Forms.MessageBox.Show("Invalid File");
+                }
+
+            }
+        }
+
+
     }
 }

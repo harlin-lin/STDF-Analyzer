@@ -264,21 +264,23 @@ namespace UI_DataList.ViewModels {
         #region UI
         private string _curSelectedTN = null;
 
-        private DelegateCommand<Item> cmdSelectItem;
-        public DelegateCommand<Item> CmdSelectItem =>
-            cmdSelectItem ?? (cmdSelectItem = new DelegateCommand<Item>(ExecuteCmdSelectItem));
+        private DelegateCommand<object> cmdSelectItem;
+        public DelegateCommand<object> CmdSelectItem =>
+            cmdSelectItem ?? (cmdSelectItem = new DelegateCommand<object>(ExecuteCmdSelectItem));
 
-        void ExecuteCmdSelectItem(Item parameter) {
-            _curSelectedTN = parameter.TestNumber;
+        void ExecuteCmdSelectItem(object parameter) {
+            if(parameter is Item) {
+                _curSelectedTN = ((Item)parameter).TestNumber;
 
-            PartFilterLowLimit = float.NegativeInfinity.ToString();
-            PartFilterHighLimit = float.PositiveInfinity.ToString();
+                PartFilterLowLimit = float.NegativeInfinity.ToString();
+                PartFilterHighLimit = float.PositiveInfinity.ToString();
 
-            var da = StdDB.GetDataAcquire(_filePath);
-            var statistic = da.GetFilteredStatistic(_filterId, _curSelectedTN);
-            var info = da.GetTestInfo(_curSelectedTN);
+                var da = StdDB.GetDataAcquire(_filePath);
+                var statistic = da.GetFilteredStatistic(_filterId, _curSelectedTN);
+                var info = da.GetTestInfo(_curSelectedTN);
 
-            SyncItemInfo = GetItemInfoString(_curSelectedTN, info, statistic);
+                SyncItemInfo = GetItemInfoString(_curSelectedTN, info, statistic);
+            }
         }
 
         private DelegateCommand partFilterApplyNegInfty;

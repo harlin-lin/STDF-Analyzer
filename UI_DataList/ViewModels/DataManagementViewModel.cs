@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using DataContainer;
 using FileReader;
 using System.Windows;
+using UI_Data.Views;
 
 namespace UI_DataList.ViewModels {
 
@@ -151,18 +152,28 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_SubDataTabSelected>().Subscribe(SubDataTabSelected);
         }
 
-        private void SubDataTabSelected(SubData data) {
-            //change the selected treeview sub data
-            foreach(var f in _files) {
-                foreach(var sn in f.SubDataList) {
-                    if(sn is FilterNode) {
-                        if((sn as FilterNode).SubData.Equals(data)){
-                            SelectedItem = sn;
-                            break;
+        private void SubDataTabSelected(int tabIdx) {
+            try {
+                var data = _regionManager.Regions["Region_DataView"].Views.ElementAt(tabIdx);
+                if(data is DataRaw) {
+                    var subData = ((data as DataRaw).DataContext as UI_Data.ViewModels.DataRawViewModel).CurrentData;
+                    //change the selected treeview sub data
+                    foreach (var f in _files) {
+                        foreach (var sn in f.SubDataList) {
+                            if (sn is FilterNode) {
+                                if ((sn as FilterNode).SubData.Equals(subData)) {
+                                    SelectedItem = sn;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
+            catch (Exception e){
+                System.Windows.Forms.MessageBox.Show(e.Message);
+            }
+
         }
 
         private void RequestCorrTab(IEnumerable<SubData> data) {
@@ -209,7 +220,7 @@ namespace UI_DataList.ViewModels {
             }catch (Exception e) {
                 Files.Remove(f);
                 StdDB.RemoveFile(path);
-                Log("File Open Failed:" + e);
+                System.Windows.Forms.MessageBox.Show("File Open Failed:" + e);
                 return;
             }
 

@@ -383,6 +383,9 @@ namespace FileReader {
                 _lastUidBySite[sn] = id;
             } else {
                 id = new TestID(_lastUidBySite[sn]);
+                if(_dc.IfContainItemInfo(id.GetUID()) == null) {
+                    _dc.UpdateItemInfo(id.GetUID(), _dc.IfContainItemInfo(_lastUidBySite[sn].GetUID()));
+                }
                 _lastUidBySite[sn] = id;
             }
             var info = _dc.IfContainItemInfo(id.GetUID());

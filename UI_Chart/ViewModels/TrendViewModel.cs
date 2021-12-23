@@ -1,21 +1,21 @@
-﻿using Prism.Commands;
+﻿using DataContainer;
+using Microsoft.Win32;
+using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
+using Prism.Regions;
+using SciChart.Charting.Model.ChartSeries;
+using SciChart.Charting.Model.DataSeries;
+using SciChart.Charting.Visuals;
+using SciChart.Charting.Visuals.Axes;
+using SciChart.Data.Model;
+using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Media;
-using SillyMonkey.Core;
-using Prism.Regions;
-using Prism.Events;
-using DataContainer;
-using SciChart.Charting.Model.DataSeries;
-using SciChart.Data.Model;
-using SciChart.Charting.Visuals.Axes;
-using SciChart.Charting.Model.ChartSeries;
 using System.Collections.ObjectModel;
 using System.IO;
-using Microsoft.Win32;
-using SciChart.Charting.Visuals;
+using System.Linq;
+using System.Windows.Media;
 
 namespace UI_Chart.ViewModels {
     public class TrendViewModel : BindableBase, INavigationAware {
@@ -25,11 +25,11 @@ namespace UI_Chart.ViewModels {
         SubData _subData;
         List<string> _selectedIds;
 
-        private float _sigmaLow,_sigmaHigh, _min, _max;
+        private float _sigmaLow, _sigmaHigh, _min, _max;
 
         #region Binding_prop
-        public ObservableCollection<IRenderableSeriesViewModel> _trendSeries= new ObservableCollection<IRenderableSeriesViewModel>();
-        public ObservableCollection<IRenderableSeriesViewModel> TrendSeries { 
+        public ObservableCollection<IRenderableSeriesViewModel> _trendSeries = new ObservableCollection<IRenderableSeriesViewModel>();
+        public ObservableCollection<IRenderableSeriesViewModel> TrendSeries {
             get { return _trendSeries; }
             set { SetProperty(ref _trendSeries, value); }
         }
@@ -159,7 +159,7 @@ namespace UI_Chart.ViewModels {
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
             _ea.GetEvent<Event_ItemsSelected>().Subscribe(UpdateItems);
 
-            
+
             InitUi();
         }
         void UpdateItems(Tuple<SubData, List<string>> para) {
@@ -184,7 +184,7 @@ namespace UI_Chart.ViewModels {
             #region trendChart
             var xs = da.GetFilteredPartIndex(_subData.FilterId);
             TrendSeries.Clear();
-            for(int i=0; i< (_selectedIds.Count>16 ? 16: _selectedIds.Count); i++) {
+            for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
                 var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
 
                 var statistic = da.GetFilteredStatistic(_subData.FilterId, _selectedIds[i]);
@@ -192,18 +192,18 @@ namespace UI_Chart.ViewModels {
                     _min = statistic.MinValue ?? 0;
                     _max = statistic.MaxValue ?? 1;
 
-                    _sigmaLow = (statistic.MeanValue ?? 0) - (statistic.Sigma?? 1) * 6;
+                    _sigmaLow = (statistic.MeanValue ?? 0) - (statistic.Sigma ?? 1) * 6;
                     _sigmaHigh = (statistic.MeanValue ?? 0) + (statistic.Sigma ?? 1) * 6;
 
                     var idInfo = da.GetTestInfo(_selectedIds[0]);
                     LowLimit = idInfo.LoLimit ?? _min;
                     HighLimit = idInfo.HiLimit ?? _max;
                 } else {
-                    if (statistic.MinValue.HasValue) { 
-                        _min = statistic.MinValue.Value<_min ? statistic.MinValue.Value : _min;
+                    if (statistic.MinValue.HasValue) {
+                        _min = statistic.MinValue.Value < _min ? statistic.MinValue.Value : _min;
                     }
                     if (statistic.MaxValue.HasValue) {
-                        _max = statistic.MaxValue.Value>_max ? statistic.MaxValue.Value :_max;
+                        _max = statistic.MaxValue.Value > _max ? statistic.MaxValue.Value : _max;
                     }
 
                     var sigmaLow = (statistic.MeanValue ?? 0) - (statistic.Sigma ?? 1) * 6;
@@ -228,11 +228,11 @@ namespace UI_Chart.ViewModels {
             //set the y axix
             if (IfTrendLimitBySigma) {
                 ExecuteCmdSelectAxisSigmaTrend();
-            }else if (IfTrendLimitByMinMax) {
+            } else if (IfTrendLimitByMinMax) {
                 ExecuteCmdSelectAxisMinMaxTrend();
-            }else if (IfTrendLimitByLimit) {
+            } else if (IfTrendLimitByLimit) {
                 ExecuteCmdSelectAxisLimitTrend();
-            }else {
+            } else {
                 ExecuteCmdSelectAxisUserTrend();
             }
 
@@ -295,18 +295,18 @@ namespace UI_Chart.ViewModels {
             var actStop = stop + step * 5;
 
             for (int i = 0; i < 113; i++) {
-                range[i] = start + (i-6) * step;
+                range[i] = start + (i - 6) * step;
             }
             int[] rangeCnt = new int[113];
 
-            foreach(var f in data) {
+            foreach (var f in data) {
                 if (float.IsNaN(f) || float.IsInfinity(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
                 } else if (f >= actStop) {
                     rangeCnt[112]++;
                 } else {
-                    var idx = (int)Math.Round((f-actStart) / step) + 1;
+                    var idx = (int)Math.Round((f - actStart) / step) + 1;
                     rangeCnt[idx]++;
                 }
             }
@@ -318,7 +318,7 @@ namespace UI_Chart.ViewModels {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
-            var maxCnt=0;
+            var maxCnt = 0;
             HistoSeries.Clear();
             for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
                 var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
@@ -367,7 +367,7 @@ namespace UI_Chart.ViewModels {
                 VisibleRange = new DoubleRange(1, 1),
             };
             YAxisTrend = new NumericAxisViewModel {
-                AxisAlignment= AxisAlignment.Right,
+                AxisAlignment = AxisAlignment.Right,
                 //AxisTitle = "YAxis",
                 DrawMinorGridLines = false,
                 DrawMajorBands = false,
@@ -415,7 +415,7 @@ namespace UI_Chart.ViewModels {
                 _subData = data;
 
                 _selectedIds = new List<string>((List<string>)navigationContext.Parameters["itemList"]);
-                
+
                 UpdateData();
             }
         }
@@ -427,7 +427,7 @@ namespace UI_Chart.ViewModels {
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-            
+
         }
         ///<summary>
         /// Check if file is Good for writing
@@ -507,7 +507,7 @@ namespace UI_Chart.ViewModels {
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
             }
-            
+
         }
 
         private DelegateCommand _CmdSelectAxisSigmaTrend;
@@ -527,7 +527,7 @@ namespace UI_Chart.ViewModels {
 
         void ExecuteCmdSelectAxisMinMaxTrend() {
             var ov = 0.05 * (_max - _min);
-            YAxisTrend.VisibleRange.SetMinMax(_min-ov, _max+ov);
+            YAxisTrend.VisibleRange.SetMinMax(_min - ov, _max + ov);
             RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = _min.ToString();
             UserTrendHighRange = _max.ToString();
@@ -539,7 +539,7 @@ namespace UI_Chart.ViewModels {
 
         void ExecuteCmdSelectAxisLimitTrend() {
             var ov = 0.1 * (HighLimit - LowLimit);
-            YAxisTrend.VisibleRange.SetMinMax(LowLimit-ov, HighLimit+ov);
+            YAxisTrend.VisibleRange.SetMinMax(LowLimit - ov, HighLimit + ov);
             RaisePropertyChanged("YAxisTrend");
             UserTrendLowRange = LowLimit.ToString();
             UserTrendHighRange = HighLimit.ToString();
