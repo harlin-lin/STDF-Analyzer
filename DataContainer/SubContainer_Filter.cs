@@ -229,7 +229,7 @@ namespace DataContainer {
             //    dupSelected = Enumerable.Range(0, _testChips.Count).ToList();
             //}
 
-            partLoop:for (int i = 0; i <= _partIdx; i++) {
+            for (int i = 0; i <= _partIdx; i++) {
                 //foreach (int i in dupSelected) {
 
                 //site

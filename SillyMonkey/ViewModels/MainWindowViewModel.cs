@@ -5,6 +5,7 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Linq;
+using System.Windows;
 using UI_Data.ViewModels;
 
 namespace SillyMonkey.ViewModels
@@ -37,6 +38,24 @@ namespace SillyMonkey.ViewModels
                 _ea.GetEvent<Event_SubDataTabSelected>().Publish((int)parameter);
             }
         }
+
+        private DelegateCommand<DragEventArgs> mainWindowDropped;
+        public DelegateCommand<DragEventArgs> MainWindowDropped =>
+            mainWindowDropped ?? (mainWindowDropped = new DelegateCommand<DragEventArgs>(ExecuteMainWindowDropped));
+
+        void ExecuteMainWindowDropped(DragEventArgs parameter) {
+            var paths = ((System.Array)parameter.Data.GetData(DataFormats.FileDrop));
+            foreach (string path in paths) {
+                var ext = System.IO.Path.GetExtension(path).ToLower();
+                if (ext == ".stdf" || ext == ".std") {
+                    _ea.GetEvent<Event_OpenFile>().Publish(path);
+                } else {
+                    //System.Windows.Forms.MessageBox.Show("Invalid File");
+                }
+            }
+
+        }
+
 
         private DelegateCommand mainWindowLoaded;
 

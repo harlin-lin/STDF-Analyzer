@@ -146,7 +146,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="20"/>
                         <RowDefinition/>
-                        <RowDefinition Height="30"/>
+                        <!--<RowDefinition Height="30"/>-->
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
                         <TextBlock Text="Index" VerticalAlignment="Center" FontSize="8" Margin="2,0,0,0"/>
@@ -178,11 +178,11 @@
                             </ContextMenu>
                         </TextBox.ContextMenu>
                     </TextBox>
-                    <StackPanel Grid.Row="4" Orientation="Horizontal" >
+                    <!--<StackPanel Grid.Row="4" Orientation="Horizontal" >
                         <CheckBox Content="Duplicate" FontSize="8" Margin="10,0,0,0" IsChecked="{Binding IfmaskDuplicateChips, Mode=TwoWay}" VerticalContentAlignment="Center"/>
                         <ComboBox Name="judgeMode" FontSize="8" Width="60" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource judgeM}}" SelectedValue="{Binding JudgeMode, Mode=TwoWay}"/>
                         <ComboBox Name="maskMode" FontSize="8" Width="80" Margin="10,0,0,0" ItemsSource="{Binding Source={StaticResource dupliM}}" SelectedValue="{Binding DuplicateSelectMode}"/>
-                    </StackPanel>
+                    </StackPanel>-->
                 </Grid>
             </TabItem>
             <TabItem Header="ItemParts">
@@ -233,6 +233,7 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button Grid.Row="1" Content="ApplyFilter" FontSize="8" Height="25" Width="80" Command="{Binding ApplyFilter}" />
+        <Button Grid.Row="1" Content="Reset" FontSize="8" Height="20" Width="80" Command="{Binding ResetFilter}" HorizontalAlignment="Left" Margin="20,0,0,0" />
+        <Button Grid.Row="1" Content="ApplyFilter" FontSize="8" Height="20" Width="80" Command="{Binding ApplyFilter}" HorizontalAlignment="Right" Margin="0,0,20,0" />
     </Grid>
 </UserControl>

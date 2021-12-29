@@ -94,10 +94,10 @@
         </TreeView>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch"/>
         <TabControl Grid.Row="2" >
-            <TabItem Header="数据汇总">
+            <TabItem Header="File Sumary">
                 <ContentControl prism:RegionManager.RegionName="Region_Summary" />
             </TabItem>
-            <TabItem Header="过滤器">
+            <TabItem Header="Filter Setup">
                 <ContentControl prism:RegionManager.RegionName="Region_Filter" />
             </TabItem>
         </TabControl>

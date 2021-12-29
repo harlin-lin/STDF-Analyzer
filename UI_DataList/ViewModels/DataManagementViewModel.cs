@@ -24,13 +24,17 @@ namespace UI_DataList.ViewModels {
         Visibility EnableContextMenu { get; }
     }
 
-    public class SiteNode {
+    public class SiteNode : ISubNode {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
         public bool IsSelected { get; set; }
         public byte Site { get; private set; }
 
         public FileNode ParentNode { get; private set; }
+
+        public IEnumerable<SiteNode> SiteList { get { return null; } }
+
+        public Visibility EnableContextMenu { get { return Visibility.Hidden; } }
 
         public SiteNode(FileNode file, byte site, int cnt) {
             ParentNode = file;
@@ -92,13 +96,19 @@ namespace UI_DataList.ViewModels {
         }
     }
 
-    public class FileNode : BindableBase {
+    public class FileNode : BindableBase, ISubNode {
         public string NodeName { get; private set; }
         public string FilePath { get; private set; }
         public int FileIdx { get; }
         public bool ExtractedDone { get; private set; }
         public Visibility EnableContextMenu { get { return ExtractedDone? Visibility.Visible :Visibility.Hidden; } }
         public ObservableCollection<ISubNode> SubDataList { get; private set; }
+        
+        public bool IsSelected { get; set; }
+
+        public FileNode ParentNode { get { return null; } }
+
+        public IEnumerable<SiteNode> SiteList { get { return null; } }
 
         public FileNode(string path, int idx) {
             SubDataList = new ObservableCollection<ISubNode>();

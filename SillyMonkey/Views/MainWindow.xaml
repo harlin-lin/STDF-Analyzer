@@ -5,11 +5,14 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="800" Width="1400"
-        Icon="/SillyMonkey.Core;component/Resource/icon/AppIcon.ico">
+        Icon="/SillyMonkey.Core;component/Resource/icon/AppIcon.ico" DragEnter="Window_DragEnter" AllowDrop="True">
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <prism:InvokeCommandAction Command="{Binding MainWindowLoaded}"></prism:InvokeCommandAction>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Drop">
+            <prism:InvokeCommandAction Command="{Binding MainWindowDropped}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>

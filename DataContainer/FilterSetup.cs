@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataContainer {
-    public enum DuplicateSelectMode {
-        First,
-        Last,
-        OnlyDuplicated
-    }
-    public enum DuplicateJudgeMode {
-        ID,
-        Cord
-    }
+    //public enum DuplicateSelectMode {
+    //    First,
+    //    Last,
+    //    OnlyDuplicated
+    //}
+    //public enum DuplicateJudgeMode {
+    //    ID,
+    //    Cord
+    //}
 
     [Serializable]
     public struct ItemFilter {
@@ -45,13 +45,13 @@ namespace DataContainer {
         public bool IfmaskDuplicateChips { get; set; }
         public bool IfMaskOrEnableIds { get; set; }
         public bool IfMaskOrEnableCords { get; set; }
-        public DuplicateSelectMode DuplicateSelectMode{ get; set; }
+        //public DuplicateSelectMode DuplicateSelectMode{ get; set; }
 
         public string Comment { get; private set; }
         /// <summary>
         /// true is Part ID, defult
         /// </summary>
-        public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
+        //public DuplicateJudgeMode DuplicateJudgeMode { get; set; }
 
         public List<ItemFilter> ItemFilters { get; set; }
 
@@ -65,8 +65,8 @@ namespace DataContainer {
             IfmaskDuplicateChips = false;
             IfMaskOrEnableIds = false;
             IfMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.First;
-            DuplicateJudgeMode = DuplicateJudgeMode.ID;
+            //DuplicateSelectMode = DuplicateSelectMode.First;
+            //DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             ItemFilters = new List<ItemFilter>();
 
@@ -87,8 +87,8 @@ namespace DataContainer {
             IfmaskDuplicateChips = false;
             IfMaskOrEnableIds = false;
             IfMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.First;
-            DuplicateJudgeMode = DuplicateJudgeMode.ID;
+            //DuplicateSelectMode = DuplicateSelectMode.First;
+            //DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             ItemFilters = new List<ItemFilter>();
 
@@ -113,8 +113,8 @@ namespace DataContainer {
             IfmaskDuplicateChips = false;
             IfMaskOrEnableIds = false;
             IfMaskOrEnableCords = false;
-            DuplicateSelectMode = DuplicateSelectMode.First;
-            DuplicateJudgeMode = DuplicateJudgeMode.ID;
+            //DuplicateSelectMode = DuplicateSelectMode.First;
+            //DuplicateJudgeMode = DuplicateJudgeMode.ID;
 
             ItemFilters.Clear();
         }
