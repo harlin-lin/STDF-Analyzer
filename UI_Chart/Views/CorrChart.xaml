@@ -13,10 +13,10 @@
              x:Name="chart">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="180"/>
             <RowDefinition Height="5"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save Histo Chart" BorderThickness="0">
@@ -24,7 +24,7 @@
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
                 </Button.Background>
             </Button>
-            <RadioButton Width="60" Height="23" Content="Sigma" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
+            <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
@@ -52,8 +52,8 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <TextBox Width="100" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
-            <TextBox Width="100" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="50" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
@@ -83,7 +83,7 @@
 
         <GridSplitter Grid.Row="1"/>
 
-        <TextBlock Grid.Row="0" Text="Show something??"/>
+        <TextBox Grid.Row="0" IsReadOnly="True" Text="{Binding CorrelationSummary}" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
     </Grid>
 </UserControl>

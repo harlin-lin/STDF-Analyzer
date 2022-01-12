@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Media;
 
 namespace UI_Chart.ViewModels {
@@ -95,6 +96,11 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _ifHistoLimitByUser, value); }
         }
 
+        private string _correlationSummary = "";
+        public string CorrelationSummary {
+            get { return _correlationSummary; }
+            set { SetProperty(ref _correlationSummary, value); }
+        }
 
         #endregion
 
@@ -102,14 +108,32 @@ namespace UI_Chart.ViewModels {
             _regionManager = regionManager;
             _ea = ea;
             _ea.GetEvent<Event_CorrItemSelected>().Subscribe(UpdateItems);
+            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
 
             InitUi();
         }
-        void UpdateItems(Tuple<string, IEnumerable<SubData>> para) {
-            _subDataList = new List<SubData>(para.Item2);
-            _selectedId = para.Item1;
 
-            bool axisFlg = false;
+        private void UpdateView(SubData data) {
+            if (_subDataList.Contains(data)) {
+                UpdateView();
+            }
+        }
+
+        private void UpdateView() {
+            StringBuilder sb = new StringBuilder();
+            StringBuilder sb_mean = new StringBuilder();
+            StringBuilder sb_min = new StringBuilder();
+            StringBuilder sb_max = new StringBuilder();
+            StringBuilder sb_cp = new StringBuilder();
+            StringBuilder sb_cpk = new StringBuilder();
+            StringBuilder sb_sigma = new StringBuilder();
+
+            sb_mean.Append($"{"Mean:", -13}");
+            sb_min.Append($"{"Min:",-13}");
+            sb_max.Append($"{"Max:",-13}");
+            sb_cp.Append($"{"CP:",-13}");
+            sb_cpk.Append($"{"CPK:",-13}");
+            sb_sigma.Append($"{"Sigma:",-13}");
 
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
@@ -118,7 +142,15 @@ namespace UI_Chart.ViewModels {
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 
                 var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
-                if (axisFlg == false) {
+
+                sb_mean.Append($"{statistic.MeanValue,-13}");
+                sb_min.Append($"{statistic.MinValue,-13}");
+                sb_max.Append($"{statistic.MaxValue,-13}");
+                sb_cp.Append($"{statistic.Cp,-13}");
+                sb_cpk.Append($"{statistic.Cpk,-13}");
+                sb_sigma.Append($"{statistic.Sigma,-13}");
+
+                if (i == 0) {
                     _min = statistic.MinValue ?? 0;
                     _max = statistic.MaxValue ?? 1;
 
@@ -128,7 +160,12 @@ namespace UI_Chart.ViewModels {
                     var idInfo = da.GetTestInfo(_selectedId);
                     LowLimit = idInfo.LoLimit ?? _min;
                     HighLimit = idInfo.HiLimit ?? _max;
-                    axisFlg = true;
+
+                    var item = da.GetTestInfo(_selectedId);
+                    sb.Append($"{_selectedId,-13}");
+                    sb.Append($"{item.TestText}\r\n");
+                    sb.Append($"{"Lo Limit:", -13}{item.LoLimit, -13}{item.Unit,-13}\r\n");
+                    sb.Append($"{"Hi Limit:",-13}{item.HiLimit,-13}{item.Unit,-13}\r\n");
                 } else {
                     if (statistic.MinValue.HasValue) {
                         _min = statistic.MinValue.Value < _min ? statistic.MinValue.Value : _min;
@@ -144,8 +181,22 @@ namespace UI_Chart.ViewModels {
                     if (sigmaHigh > _sigmaHigh) _sigmaHigh = sigmaHigh;
                 }
 
+
             }
 
+            sb.Append(sb_mean);
+            sb.AppendLine();
+            sb.Append(sb_min);
+            sb.AppendLine();
+            sb.Append(sb_max);
+            sb.AppendLine();
+            sb.Append(sb_cp);
+            sb.AppendLine();
+            sb.Append(sb_cpk);
+            sb.AppendLine();
+            sb.Append(sb_sigma);
+
+            CorrelationSummary = sb.ToString();
 
             #region histogramChart
             //set the y axix
@@ -160,6 +211,15 @@ namespace UI_Chart.ViewModels {
             }
 
             #endregion
+        }
+
+
+
+        void UpdateItems(Tuple<string, IEnumerable<SubData>> para) {
+            _subDataList = new List<SubData>(para.Item2);
+            _selectedId = para.Item1;
+
+            UpdateView();
         }
 
         Color GetColor(int idx) {

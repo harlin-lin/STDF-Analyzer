@@ -11,7 +11,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+            <ColumnDefinition Width="0.3*" MinWidth="50"/>
             <ColumnDefinition Width="5"/>
             <ColumnDefinition Width="0.5*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
@@ -24,15 +24,6 @@
                 <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
-                    </Button.Background>
-                </Button>
-                <TextBlock Text="Error Limit" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <TextBox Text="{Binding CorrErrorLimit}" Width="30"/>
-                <TextBlock Text="Warning Limit" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                <TextBox Text="{Binding CorrWarnLimit}" Width="30"/>
-                <Button  Width="23" Height="23" Margin="20,0,0,0" Command="{Binding ApplyLimitCommand, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
                     </Button.Background>
                 </Button>
             </StackPanel>

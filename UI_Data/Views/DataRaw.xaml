@@ -8,11 +8,32 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              prism:ViewModelLocator.AutoWireViewModel="True">
+    <UserControl.Resources>
+        <Style x:Key="MyButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.4*" MinWidth="50"/>
+            <ColumnDefinition Width="450" MinWidth="50"/>
             <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="0.6*" MinWidth="50"/>
+            <ColumnDefinition Width="*" MinWidth="50"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -20,33 +41,33 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/summary.png"/>
                     </Button.Background>
                 </Button>
 
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/raw.png"/>
                     </Button.Background>
                 </Button>
-                <!--<Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart" BorderThickness="0">
+                <!--<Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowBoxCommand, Mode=OneWay}" ToolTip="Show Box Chart" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/box_plot.png"/>
                     </Button.Background>
                 </Button>-->
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Item Correlation" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Item Correlation" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/corr.png"/>
                     </Button.Background>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0" Style="{StaticResource MyButton}">
                     <Button.Background>
                         <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
                     </Button.Background>

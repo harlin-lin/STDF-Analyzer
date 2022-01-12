@@ -1,4 +1,5 @@
 ﻿using DataContainer;
+using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -8,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace UI_Data.ViewModels {
     public class CorrItem {
@@ -180,34 +183,74 @@ namespace UI_Data.ViewModels {
             }
         }
 
-        private string corrErrorLimit;
-        public string CorrErrorLimit {
-            get { return corrErrorLimit; }
-            set { SetProperty(ref corrErrorLimit, value); }
-        }
+        //private string corrErrorLimit;
+        //public string CorrErrorLimit {
+        //    get { return corrErrorLimit; }
+        //    set { SetProperty(ref corrErrorLimit, value); }
+        //}
 
-        private string corrWarnLimit;
-        public string CorrWarnLimit {
-            get { return corrWarnLimit; }
-            set { SetProperty(ref corrWarnLimit, value); }
-        }
+        //private string corrWarnLimit;
+        //public string CorrWarnLimit {
+        //    get { return corrWarnLimit; }
+        //    set { SetProperty(ref corrWarnLimit, value); }
+        //}
+
+        //private DelegateCommand _applyLimt;
+        //public DelegateCommand ApplyLimitCommand =>
+        //    _applyLimt ?? (_applyLimt = new DelegateCommand(ExecuteApplyLimitCommand));
+
+        //void ExecuteApplyLimitCommand() {
+
+        //}
 
         private DelegateCommand _exportToExcel;
         public DelegateCommand ExportToExcelCommand =>
             _exportToExcel ?? (_exportToExcel = new DelegateCommand(ExecuteExportToExcelCommand));
 
         void ExecuteExportToExcelCommand() {
-
+            ExportToExcelAsync();
         }
 
-        private DelegateCommand _applyLimt;
-        public DelegateCommand ApplyLimitCommand =>
-            _applyLimt ?? (_applyLimt = new DelegateCommand(ExecuteApplyLimitCommand));
+        private async void ExportToExcelAsync() {
+            string path;
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Filter = "Excel Files | *.xlsx";
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.FileName = "Correlation_xxx";
+                saveFileDialog.ValidateNames = true;
+                if (saveFileDialog.ShowDialog() != DialogResult.OK) {
+                    return;
+                }
+                path = saveFileDialog.FileName;
+            };
 
-        void ExecuteApplyLimitCommand() {
+            await System.Threading.Tasks.Task.Run(() => {
+                //get file path
 
+                //write data
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (var p = new ExcelPackage()) {
+                    var ws1 = p.Workbook.Worksheets.Add("FileList");
+                    for(int i=0; i< _subDataList.Count; i++) {
+                        ws1.Cells[i+1, 1].Value = _subDataList[i].StdFilePath;
+                    }
+
+                    //write raw data
+                    var ws2 = p.Workbook.Worksheets.Add("Correlation");
+                    ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
+
+                    p.SaveAs(new System.IO.FileInfo(path));
+                    File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+
+                }
+            });
+            _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
         }
 
+        private void SetProgress(string log, int percent) {
+            _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>(log, percent));
+        }
 
         private string _selectedItem;
 
@@ -217,6 +260,7 @@ namespace UI_Data.ViewModels {
 
         void ExecuteOnSelectionChanged(object parameter) {
             var grid = parameter as System.Windows.Controls.DataGrid;
+            if (grid.SelectedItem is null) return;
             _selectedItem = (grid.SelectedItem as DataRowView).Row[0].ToString();
             _ea.GetEvent<Event_CorrItemSelected>().Publish(new Tuple<string, IEnumerable<SubData>>(_selectedItem, _subDataList));
         }

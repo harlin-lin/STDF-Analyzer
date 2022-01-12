@@ -52,7 +52,7 @@ namespace UI_DataList {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value.GetType().Name == "SubData") {
                 var d = (SubData)value;
-                return $"Data:{System.IO.Path.GetFileName(d.StdFilePath)}  F:{d.FilterId:X8}";
+                return $"F:{d.FilterId:X8}  Data:{System.IO.Path.GetFileName(d.StdFilePath)}";
             }
 
             throw new NotSupportedException();
