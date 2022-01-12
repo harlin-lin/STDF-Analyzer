@@ -52,13 +52,34 @@ namespace UI_Chart.ViewModels {
             //add column
             var offset = currPage * CNT_PER_PAGE;
             var viewCnt = totalPartCnt > (offset + CNT_PER_PAGE) ? CNT_PER_PAGE : totalPartCnt - offset;
-            DataRow r = dt.NewRow();
+            DataRow r, r_cord, r_time, r_hbin, r_sbin;
+
+            r = dt.NewRow();
+            r_cord = dt.NewRow();
+            r_time = dt.NewRow();
+            r_hbin = dt.NewRow();
+            r_sbin = dt.NewRow();
+
             r[0] = "PartIdx";
+            r_cord[0] = "Cord";
+            r_time[0] = "Time";
+            r_hbin[0] = "HBin";
+            r_sbin[0] = "SBin";
+
             int i = 1;
             foreach (var c in da.GetFilteredPartIndex(_subData.FilterId).Skip(offset).Take(viewCnt)) {
-                r[i++] = c;
+                r[i] = c;
+                r_cord[i] = da.GetWaferCord(c);
+                r_time[i] = da.GetTestTime(c);
+                r_hbin[i] = da.GetHardBin(c);
+                r_sbin[i] = da.GetSoftBin(c);
+                i++;
             }
             dt.Rows.Add(r);
+            dt.Rows.Add(r_cord);
+            dt.Rows.Add(r_time);
+            dt.Rows.Add(r_hbin);
+            dt.Rows.Add(r_sbin);
 
             foreach (var uid in da.GetTestIDs()) {
                 r = dt.NewRow();

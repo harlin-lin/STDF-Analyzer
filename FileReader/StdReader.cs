@@ -40,7 +40,7 @@ namespace FileReader {
             var s = new System.Diagnostics.Stopwatch();
             using(StdV4Reader _v4Reader = new StdV4Reader(FilePath)) {
                 var dc = StdDB.GetDataCollect(FilePath);
-                try {
+                //try {
                     s.Start();
                     _v4Reader.ReadRaw(dc);
                     s.Stop();
@@ -49,11 +49,11 @@ namespace FileReader {
                     dc.AnalyseData();
                     s.Stop();
                     Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
-                }
-                catch {
-                    //release table in data base
-                    throw;
-                }
+                //}
+                //catch {
+                //    //release table in data base
+                //    throw;
+                //}
             }
 
         }

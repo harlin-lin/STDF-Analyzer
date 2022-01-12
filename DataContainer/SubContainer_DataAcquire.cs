@@ -102,6 +102,10 @@ namespace DataContainer {
             return _softBin_PartContainer[partIndex];
         }
 
+        public uint? GetTestTime(int partIndex) {
+            return _testTime_PartContainer[partIndex];
+        }
+
         public byte GetSite(int partIndex) {
             return _site_PartContainer[partIndex];
         }

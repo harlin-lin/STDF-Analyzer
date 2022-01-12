@@ -95,6 +95,8 @@ namespace DataContainer{
 
         byte GetSite(int partIndex);
 
+        uint? GetTestTime(int partIndex);
+
         bool IfContainsTestId(string uid);
 
         int ChipsCount { get; }

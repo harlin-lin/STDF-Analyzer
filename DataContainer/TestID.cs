@@ -73,6 +73,7 @@ namespace DataContainer{
             }
         }
         public bool IfSubTest(uint testNumber, string text) {
+            if (TestName is null) return false;
             if (!IfCmpTextInUid) {
                 return testNumber == TestNumber;
             } else {
