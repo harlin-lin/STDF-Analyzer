@@ -177,6 +177,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_66CD13472C0E4BA580ABDE48C4FCA575"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_75B48FEF864987905FB9AA25CB7B19A0"
         "OwnerKey" = "8:_E7B5C59C3CC545D58F4F59F302A98901"
         "MsmSig" = "8:_UNDEFINED"
@@ -227,6 +233,30 @@
         {
         "MsmKey" = "8:_A2995D3BB012B622E56290C8028E1054"
         "OwnerKey" = "8:_75B48FEF864987905FB9AA25CB7B19A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A37D52AE9D3528AFF427C2C659F1014C"
+        "OwnerKey" = "8:_E7B5C59C3CC545D58F4F59F302A98901"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A37D52AE9D3528AFF427C2C659F1014C"
+        "OwnerKey" = "8:_AD13DCBDD83782C3AA1A5C7088DDC677"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A37D52AE9D3528AFF427C2C659F1014C"
+        "OwnerKey" = "8:_75B48FEF864987905FB9AA25CB7B19A0"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A37D52AE9D3528AFF427C2C659F1014C"
+        "OwnerKey" = "8:_525172FD5185CF073A5A0F968CFE60D9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -329,12 +359,6 @@
         {
         "MsmKey" = "8:_C509272E5BFCAAD1913D9ADFF0BFC028"
         "OwnerKey" = "8:_E7B5C59C3CC545D58F4F59F302A98901"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C5A4198BE5D4499792F908EEE4CB2949"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -461,6 +485,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E7B5C59C3CC545D58F4F59F302A98901"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A37D52AE9D3528AFF427C2C659F1014C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -883,7 +913,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -914,7 +944,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -1040,6 +1070,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_66CD13472C0E4BA580ABDE48C4FCA575"
+            {
+            "SourcePath" = "8:..\\SillyMonkey\\bin\\x64\\Release\\SillyMonkey.exe.config"
+            "TargetName" = "8:SillyMonkey.exe.config"
+            "Tag" = "8:"
+            "Folder" = "8:_567A57CEA86D40ADA7AF8DD23FFFC716"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_75B48FEF864987905FB9AA25CB7B19A0"
@@ -1180,6 +1230,37 @@
                     }
                 }
             "SourcePath" = "8:FileReader.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_567A57CEA86D40ADA7AF8DD23FFFC716"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A37D52AE9D3528AFF427C2C659F1014C"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_A37D52AE9D3528AFF427C2C659F1014C"
+                    {
+                    "Name" = "8:Utils.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Utils.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_567A57CEA86D40ADA7AF8DD23FFFC716"
@@ -1443,26 +1524,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5A4198BE5D4499792F908EEE4CB2949"
-            {
-            "SourcePath" = "8:..\\SillyMonkey\\bin\\x64\\Release\\SillyMonkey.exe.config"
-            "TargetName" = "8:SillyMonkey.exe.config"
-            "Tag" = "8:"
-            "Folder" = "8:_567A57CEA86D40ADA7AF8DD23FFFC716"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_CC10793A78B7DBCE36133DDEDEA66BB7"
@@ -1836,7 +1897,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SillyMonkey_STDF_Analyzer_V3p1"
         "ProductCode" = "8:{D080CE78-0A0E-47BB-9F0D-71E216166477}"
-        "PackageCode" = "8:{8CD4869F-82FB-4BFE-8FA8-9DA3DD06893D}"
+        "PackageCode" = "8:{D087EE6F-1D2E-4805-B132-B5D67B0A996A}"
         "UpgradeCode" = "8:{F574023F-79D0-4013-81AC-95307261E525}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1958,7 +2019,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_0009E3320E674962A616CB4B1CCDEF09"
             {
-            "Name" = "8:SillyMonkey STDF Analyser"
+            "Name" = "8:SillyMonkey STDF Analyzer"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -1972,7 +2033,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_E3294E213A1441978F118A5061DD0406"
             {
-            "Name" = "8:SillyMonkey STDF Analyser"
+            "Name" = "8:SillyMonkey STDF Analyzer"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
