@@ -108,6 +108,9 @@
     <Compile Include="Views\FileMergeWindow.xaml.cs">
       <DependentUpon>FileMergeWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SetupWindow.xaml.cs">
+      <DependentUpon>SetupWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TopMenu.xaml.cs">
       <DependentUpon>TopMenu.xaml</DependentUpon>
     </Compile>
@@ -146,6 +149,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\SetupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TopMenu.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -179,6 +186,10 @@
     <ProjectReference Include="..\UI_Data\UI_Data.csproj">
       <Project>{8DCE4CE3-E4E2-4667-BD60-DCF9DD413426}</Project>
       <Name>UI_Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{F07F0021-C221-4B7A-BF16-9381A80417BD}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

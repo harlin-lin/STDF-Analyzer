@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using Utils;
 
 namespace UI_Chart.ViewModels {
     public class CorrChartViewModel : BindableBase {
@@ -222,28 +223,6 @@ namespace UI_Chart.ViewModels {
             UpdateView();
         }
 
-        Color GetColor(int idx) {
-            switch (idx) {
-                case 0: return Color.FromRgb(0, 0, 255);
-                case 1: return Color.FromRgb(255, 182, 193);
-                case 2: return Color.FromRgb(220, 20, 60);
-                case 3: return Color.FromRgb(255, 20, 147);
-                case 4: return Color.FromRgb(255, 0, 255);
-                case 5: return Color.FromRgb(148, 0, 211);
-                case 6: return Color.FromRgb(72, 61, 139);
-                case 7: return Color.FromRgb(100, 149, 237);
-                case 8: return Color.FromRgb(70, 130, 180);
-                case 9: return Color.FromRgb(95, 158, 160);
-                case 10: return Color.FromRgb(0, 255, 255);
-                case 11: return Color.FromRgb(47, 79, 79);
-                case 12: return Color.FromRgb(46, 139, 87);
-                case 13: return Color.FromRgb(85, 107, 47);
-                case 14: return Color.FromRgb(255, 255, 0);
-                case 15: return Color.FromRgb(255, 165, 0);
-                default: return Color.FromRgb(255, 69, 0);
-            }
-        }
-
         //default 100 bins, and enable outliers count, total 112bins
         (float[], int[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
             var step = (stop - start) / 100;
@@ -290,7 +269,7 @@ namespace UI_Chart.ViewModels {
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,
                     Stroke = Colors.DarkBlue,
-                    Fill = new SolidColorBrush(GetColor(i)),
+                    Fill = new SolidColorBrush(SillyMonkeySetup.GetColor(i)),
                     DataPointWidth = 1
                 });
 

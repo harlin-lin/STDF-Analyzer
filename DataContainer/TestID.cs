@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace DataContainer{
     public struct TempID /*: IComparer */{
-        public static bool IfCmpTextInUid = false;
-
         public uint TestNumber { get; }
         public string TestName { get; }
         private int _hashCode;
@@ -17,7 +16,7 @@ namespace DataContainer{
         public TempID(uint tn, string name) {
             TestNumber = tn;
             TestName = name;
-            if (IfCmpTextInUid)
+            if (SillyMonkeySetup.IfCmpTextInUid)
                 _hashCode = $"{TestNumber}_{TestName}".GetHashCode();
             else
                 _hashCode = "TestNumber".GetHashCode();
@@ -38,8 +37,6 @@ namespace DataContainer{
     /// </summary>
     [Serializable]
     public struct TestID:IEquatable<TestID> {
-        public static bool IfCmpTextInUid = false;
-
         public uint TestNumber { get; }
         public int SubID{ get; }
         public string TestName { get; }
@@ -58,7 +55,7 @@ namespace DataContainer{
             TestNumber = testNumber;
             SubID = subNumber;
             TestName = text;
-            if(IfCmpTextInUid)
+            if(SillyMonkeySetup.IfCmpTextInUid)
                 UID = $"{testNumber}_{subNumber}_{text}";
             else
                 UID = $"{testNumber}_{subNumber}";
@@ -66,18 +63,18 @@ namespace DataContainer{
         }
 
         public bool IfSubTest(TempID id) {
-            if (!IfCmpTextInUid) {
-                return id.TestNumber == TestNumber;
-            } else {
+            if (SillyMonkeySetup.IfCmpTextInUid) {
                 return id.TestNumber == TestNumber && id.TestName == TestName;
+            } else {
+                return id.TestNumber == TestNumber;
             }
         }
         public bool IfSubTest(uint testNumber, string text) {
             if (TestName is null) return false;
-            if (!IfCmpTextInUid) {
-                return testNumber == TestNumber;
-            } else {
+            if (SillyMonkeySetup.IfCmpTextInUid) {
                 return testNumber == TestNumber && text == TestName;
+            } else {
+                return testNumber == TestNumber;
             }
         }
         public string GetUID() {

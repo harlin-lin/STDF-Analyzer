@@ -105,6 +105,16 @@ namespace UI_DataList.ViewModels {
             corrWindow.ShowDialog();
         }
 
+        private DelegateCommand _openSetupDiag;
+        public DelegateCommand OpenSetupDiag =>
+            _openSetupDiag ?? (_openSetupDiag = new DelegateCommand(ExecuteOpenSetupDiag));
+
+        void ExecuteOpenSetupDiag() {
+            var setupWindow = new SetupWindow();
+            setupWindow.ShowDialog();
+        }
+
+
         private DelegateCommand _cmdExit;
         public DelegateCommand CmdExit =>
             _cmdExit ?? (_cmdExit = new DelegateCommand(ExecuteCmdExit));
@@ -118,7 +128,7 @@ namespace UI_DataList.ViewModels {
             _cmdAbout ?? (_cmdAbout = new DelegateCommand(ExecuteCmdAbout));
 
         void ExecuteCmdAbout() {
-            System.Windows.MessageBox.Show("SillyMonkey V2.0\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com");
+            System.Windows.MessageBox.Show("SillyMonkey V3.1\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com");
         }
 
         private DelegateCommand _cmdHelp;

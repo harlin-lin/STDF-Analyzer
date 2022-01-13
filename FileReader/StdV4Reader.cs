@@ -25,7 +25,6 @@ namespace FileReader {
     }
 
     public class StdV4Reader : IDisposable {
-        public static bool IfCmpTextInUid = false;
         const int BufferSize = 409600;
         public static int ExpectItemCounts = 500;
 

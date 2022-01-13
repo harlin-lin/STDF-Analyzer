@@ -137,6 +137,10 @@
       <Project>{0649EF81-84CA-4882-BB22-C0599BE5D3D1}</Project>
       <Name>SillyMonkey.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{F07F0021-C221-4B7A-BF16-9381A80417BD}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Box.xaml">

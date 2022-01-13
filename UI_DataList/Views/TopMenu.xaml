@@ -13,6 +13,9 @@
             <MenuItem Header="Correlation">
                 <MenuItem Header="Select Data" Command="{Binding Path=OpenCorrelationDiag}"/>
             </MenuItem>
+            <MenuItem Header="Tool">
+                <MenuItem Header="Setup" Command="{Binding Path=OpenSetupDiag}"/>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Command="{Binding Path=CmdAbout}"/>
                 <MenuItem Header="Help" Command="{Binding Path=CmdHelp}"/>

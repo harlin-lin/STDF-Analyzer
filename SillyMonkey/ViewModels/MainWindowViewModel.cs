@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using UI_Data.ViewModels;
+using Utils;
 
 namespace SillyMonkey.ViewModels
 {
@@ -63,6 +64,8 @@ namespace SillyMonkey.ViewModels
             mainWindowLoaded ?? (mainWindowLoaded = new DelegateCommand(MainWindow_LoadExecute));
 
         private void MainWindow_LoadExecute() {
+            SillyMonkeySetup.Init();
+
             string[] commandLineArgs = Environment.GetCommandLineArgs(); // [a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*([a-zA-Z0-9]+.*)
 
             //string s="";
