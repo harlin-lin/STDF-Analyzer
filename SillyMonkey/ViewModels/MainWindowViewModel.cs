@@ -16,7 +16,7 @@ namespace SillyMonkey.ViewModels
         IEventAggregator _ea;
         IRegionManager _regionManager;
         
-        private string _title = "SillyMonkey";
+        private string _title = "SillyMonkey STDF Analyzer";
         public string Title
         {
             get { return _title; }
