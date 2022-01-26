@@ -14,8 +14,6 @@ namespace MapBase {
             Colors.Red,
             Colors.Orchid,
             Colors.Orange,
-            Colors.OliveDrab,
-            Colors.Olive,
             Colors.Navy,
             Colors.MediumVioletRed,
             Colors.MediumTurquoise,

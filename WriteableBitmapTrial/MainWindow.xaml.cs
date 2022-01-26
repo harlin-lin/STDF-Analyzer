@@ -20,47 +20,27 @@ namespace WriteableBitmapTrial {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged {
+    public partial class MainWindow : Window {
         public MainWindow() {
             this.DataContext = this;
             InitializeComponent();
             InitData();
         }
 
-
-
-
         private void InitData() {
-            Random r = new Random();
+            var waferData = new WaferData();
+            OnDataSourceChanged(waferData);
 
-            int i = 0;
-            WaferColor = new Color[50, 70]; //y: row, x: col
-            for (int x = 0; x < WaferColor.GetLength(0); x++) {
-                for (int y = 0; y < WaferColor.GetLength(1); y++) {
-                    WaferColor[x, y] = Color.FromRgb((byte)r.Next(0, 255), (byte)r.Next(0, 255), (byte)r.Next(0, 255));
-                    //WaferColor[x, y] = BinColor.GetFailBinColor(i++);
-                }
-            }
-            //WaferColor[1, 2] = BinColor.GetFailBinColor(1);
-            OnPropertyChanged("WaferColor");
-        }
-
-        void OnPropertyChanged(string propertyName) {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public Color[,] WaferColor { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
 
-
-        public bool IfContainRt { 
-            get { return false; } 
-        }
-
-        private Dictionary<short?, Color[,]> _waferMaps= new Dictionary<short?, Color[,]>();
-        private Dictionary<short?, Color[,]> _rtMaps = new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, Color[,]> _sBinMaps= new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, Color[,]> _hBinMaps = new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, Color[,]> _freshSBinMaps = new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, Color[,]> _freshHBinMaps = new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, bool> _containRtFlg = new Dictionary<short?, bool>();
 
         private MapViewMode _mapViewMode = MapViewMode.Single;
         private MapBinMode _mapBinMode = MapBinMode.SBin;
@@ -77,45 +57,176 @@ namespace WriteableBitmapTrial {
 
         private int _xCnt, _yCnt;
 
-        private void OnDataSourceChanged(IWaferData waferData) {
-            _waferData = waferData;
+        private Dictionary<short?, MapBaseControl> _mapControlList= new Dictionary<short?, MapBaseControl>();
+        private MapBaseControl _mapControlStack;
 
+        private void SwitchSingleView(MapBaseControl mapBaseControl) {
+            viewGrid.RowDefinitions.Clear();
+            viewGrid.ColumnDefinitions.Clear();
+            mapBaseControl.CordChanged += MapBaseControl_CordChanged;
+            viewGrid.Children.Add(mapBaseControl);
+        }
+
+        private void MapBaseControl_CordChanged(int x, int y) {
+            if(x==int.MinValue || y == int.MinValue) {
+                infoBlock.Text = "";
+                infoBlock.Visibility = Visibility.Hidden;
+            } else {
+                infoBlock.Text = $"X:{x} Y:{y}";
+                infoBlock.Visibility = Visibility.Visible;
+                var pt = Mouse.GetPosition(viewGrid);
+                infoBlock.Margin = new Thickness {
+                    Left = pt.X + 12,
+                    Top = pt.Y
+                };
+            }
+        }
+
+        private void SwitchSplitView(int splitColCnt, List<MapBaseControl> mapBaseControls) {
+
+            viewGrid.RowDefinitions.Clear();
+            viewGrid.ColumnDefinitions.Clear();
+            viewGrid.ShowGridLines = true;
+
+            int rowCnt = mapBaseControls.Count / splitColCnt + (mapBaseControls.Count % splitColCnt == 0 ? 0 : 1);
+
+            for (int i=0; i< splitColCnt; i++) {
+                viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+            for (int i = 0; i < rowCnt; i++) {
+                viewGrid.RowDefinitions.Add(new RowDefinition());
+            }
+
+            for (int i = 0; i < mapBaseControls.Count; i++) {                
+                viewGrid.Children.Add(mapBaseControls[i]);
+                Grid.SetRow(mapBaseControls[i], i / splitColCnt);
+                Grid.SetColumn(mapBaseControls[i], i % splitColCnt);
+            }
+
+        }
+
+        
+
+        private void UpdateView() {
+            if (_sBinMaps.Count == 0) return;
+
+            Dictionary<short?, Color[,]> maps;
+
+            if (_mapBinMode == MapBinMode.HBin) {
+                if(_mapRtDataMode == MapRtDataMode.FirstOnly) {
+                    maps = _freshHBinMaps;
+                } else {
+                    maps = _hBinMaps;
+                }
+            } else {
+                if (_mapRtDataMode == MapRtDataMode.FirstOnly) {
+                    maps = _freshSBinMaps;
+                } else {
+                    maps = _sBinMaps;
+                }
+            }
+
+            //gen stack map
+            Color[,] stack = new Color[_xCnt, _yCnt];
+            int?[,] stackCnt = new int?[_xCnt, _yCnt];
+
+            foreach (var wafer in maps) {
+                for(int x=0; x < _xCnt; x++) {
+                    for(int y=0; y<_yCnt; y++) {
+                        if(wafer.Value[x,y] != BinColor.GetPassBinColor() && wafer.Value[x, y] != new Color()) {
+                            if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
+                            stackCnt[x, y]++;
+                        }else if(wafer.Value[x, y] == BinColor.GetPassBinColor()) {
+                            if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
+                        }
+                    }
+                }
+            }
+            for (int x = 0; x < _xCnt; x++) {
+                for (int y = 0; y < _yCnt; y++) {
+                    if(stackCnt[x, y].HasValue) {
+                        stack[x, y] = BinColor.GetStackWaferBinColor(stackCnt[x, y].Value, maps.Count);
+                    } else {
+                        stack[x, y] = Colors.White;
+                    }
+                }
+            }
+
+            _mapControlList.Clear();
+            foreach (var wafer in maps) {
+                var map = new MapBaseControl();
+                map.MapDataSource = wafer.Value;
+                _mapControlList.Add(wafer.Key, map);
+            }
+            _mapControlStack = new MapBaseControl();
+            _mapControlStack.MapDataSource = stack;
+
+            SwitchSingleView(_mapControlList[1]);
+            //SwitchSingleView(_mapControlStack);
+        }
+
+        private void UpdateData() {
             _logList.Clear();
 
             _hBinIdx = new Dictionary<ushort, int>();
             _sBinIdx = new Dictionary<ushort, int>();
 
-            _xCnt = waferData.XUbound - waferData.XLbound + 1;
-            _yCnt = waferData.YUbound -waferData.YLbound + 1;
+            _xCnt = _waferData.XUbound - _waferData.XLbound + 1;
+            _yCnt = _waferData.YUbound - _waferData.YLbound + 1;
 
-            foreach (var die in waferData.DieInfoList) {
-                if (!_hBinIdx.ContainsKey(die.SBin)) _hBinIdx.Add(die.SBin, _hBinIdx.Count - 1);
-                if (!_sBinIdx.ContainsKey(die.HBin)) _sBinIdx.Add(die.HBin, _hBinIdx.Count - 1);
+            foreach (var die in _waferData.DieInfoList) {
+                if (!_sBinIdx.ContainsKey(die.SBin) && !die.PassOrFail) _sBinIdx.Add(die.SBin, _sBinIdx.Count);
+                if (!_hBinIdx.ContainsKey(die.HBin) && !die.PassOrFail) _hBinIdx.Add(die.HBin, _hBinIdx.Count);
 
-                if (!_waferMaps.ContainsKey(die.WaferId)) {
-                    _waferMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
-                    _rtMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
+                if (!_sBinMaps.ContainsKey(die.WaferId)) {
+                    _sBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
+                    _hBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
+                    _freshSBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
+                    _freshHBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
+                    _containRtFlg.Add(die.WaferId, false);
                 }
-                if (die.X> waferData.XUbound || die.X < waferData.XLbound || die.Y> waferData.YUbound || die.Y < waferData.XLbound) {
+                //ignore the unreasonable point
+                if (die.X > _waferData.XUbound || die.X < _waferData.XLbound || die.Y > _waferData.YUbound || die.Y < _waferData.XLbound) {
                     _logList.Add($"Cord X:{die.X} Y:{die.Y} out of wafer");
                     continue;
                 }
-                if(_mapRtDataMode == MapRtDataMode.OverWrite || _waferMaps[die.WaferId][die.X, die.Y] == new Color()) {
-                    if(_mapBinMode == MapBinMode.HBin) {
-                        _waferMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_hBinIdx[die.HBin]);
+                
+                if (_sBinMaps[die.WaferId][die.X, die.Y] == new Color()) {
+                    if (die.PassOrFail) {
+                        _sBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+                        _hBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+                        _freshSBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+                        _freshHBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+
                     } else {
-                        _waferMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_sBinIdx[die.SBin]);
+                        _sBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_sBinIdx[die.SBin]);
+                        _hBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_hBinIdx[die.HBin]);
+                        _freshSBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_sBinIdx[die.SBin]);
+                        _freshHBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_hBinIdx[die.HBin]);
                     }
                 } else {
-                    if (_mapBinMode == MapBinMode.HBin) {
-                        _rtMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_hBinIdx[die.HBin]);
+                    _containRtFlg[die.WaferId] = true;
+                    if (die.PassOrFail) {
+                        _freshSBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+                        _freshHBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetPassBinColor();
+
                     } else {
-                        _rtMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_sBinIdx[die.SBin]);
+                        _freshSBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_sBinIdx[die.SBin]);
+                        _freshHBinMaps[die.WaferId][die.X, die.Y] = BinColor.GetFailBinColor(_hBinIdx[die.HBin]);
                     }
                 }
 
             }
-            
+
+            UpdateView();
+        }
+
+
+        private void OnDataSourceChanged(IWaferData waferData) {
+            _waferData = waferData;
+
+            UpdateData();
+            //Task.Run(() => { UpdateData(); });
         }
 
 

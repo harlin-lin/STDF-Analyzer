@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace MapBase {
+    public delegate void CordChangedHandler(int x, int y);
     /// <summary>
     /// MapBaseControl.xaml 的交互逻辑
     /// </summary>
@@ -33,6 +34,9 @@ namespace MapBase {
 
         const int MIN_DIE_PIXELS = 3;
         const double DEFAULT_WAFER_DIAMETER = 50;
+
+        public Tuple<int, int> FocusedCord { get; private set; }
+        public event CordChangedHandler CordChanged;
 
         private bool ValidateWaferDiameter() {
             var longerRank = _waferColor.GetLength(0) > _waferColor.GetLength(1) ? _waferColor.GetLength(0) : _waferColor.GetLength(1);
@@ -67,29 +71,35 @@ namespace MapBase {
 
         //    Render();
         //}
+        private int _colLen;
+        private int _rowLen;
+        private int _dieWidth;
+        private int _dieHeight;
 
+        //private int _lastCordX = -1;
+        //private int _lastCordY = -1;
 
         private void Render() {
             if (_drawBuffer is null || _waferColor is null) return;
             using (_drawBuffer.GetBitmapContext()) {
-                _drawBuffer.Clear(Colors.Red);
-                int colLen = _waferColor.GetLength(0);
-                int rowLen = _waferColor.GetLength(1);
+                _drawBuffer.Clear(Colors.White);
+                _colLen = _waferColor.GetLength(0);
+                _rowLen = _waferColor.GetLength(1);
 
                 ValidateWaferDiameter();
 
-                int dieWidth = (int)Math.Floor(_waferDiameter / colLen);
-                int dieHeight = (int)Math.Floor(_waferDiameter / rowLen);
+                _dieWidth = (int)Math.Floor(_waferDiameter / _colLen);
+                _dieHeight = (int)Math.Floor(_waferDiameter / _rowLen);
 
 
                 int x = 0, y = 0;
-                for (int cPixel = 0; cPixel < _drawBuffer.PixelWidth + _zoomShiftX; cPixel += dieWidth) {
-                    for (int rPixel = 0; rPixel < _drawBuffer.PixelHeight + _zoomShiftY; rPixel += dieHeight) {
-                        _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + dieWidth - _zoomShiftX, rPixel + dieHeight - _zoomShiftY, Colors.Black);
-                        _drawBuffer.FillRectangle(cPixel + 1 - _zoomShiftX, rPixel + 1 - _zoomShiftY, cPixel + dieWidth - _zoomShiftX, rPixel + dieHeight - _zoomShiftY, _waferColor[x, y]);
-                        if ((++y) >= rowLen) break;
+                for (int cPixel = 0; cPixel < _drawBuffer.PixelWidth + _zoomShiftX; cPixel += _dieWidth) {
+                    for (int rPixel = 0; rPixel < _drawBuffer.PixelHeight + _zoomShiftY; rPixel += _dieHeight) {
+                        _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, Colors.Black);
+                        _drawBuffer.FillRectangle(cPixel + 1 - _zoomShiftX, rPixel + 1 - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, _waferColor[x, y]);
+                        if ((++y) >= _rowLen) break;
                     }
-                    if ((++x) >= colLen) break;
+                    if ((++x) >= _colLen) break;
                     y = 0;
                 }
 
@@ -208,14 +218,27 @@ namespace MapBase {
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e) {
             //Debug.WriteLine("----->OnMouseMove Enter");
             base.OnMouseMove(e);
+            var pt = e.GetPosition(image);
 
             if (_dragFlg) {
-                var pt = e.GetPosition(image);
-
                 _zoomShiftX = (int)Math.Floor(_dragStartPoint.X- pt.X);
                 _zoomShiftY = (int)Math.Floor(_dragStartPoint.Y - pt.Y);
 
                 Render();
+            } else {
+                var actPt = new Point(pt.X - _zoomShiftX, pt.Y - _zoomShiftY);
+                int x, y;
+
+                x = (int)Math.Floor(actPt.X / _dieWidth);
+                y = (int)Math.Floor(actPt.Y / _dieHeight);
+
+                if (x>=0 && x<_colLen && y>=0 && y<_rowLen /*&& x!= _lastCordX && y!= _lastCordY*/) {
+                    //_lastCordX = x;
+                    //_lastCordY = y;
+                    CordChanged?.Invoke(x, y);
+                } else {
+                    CordChanged?.Invoke(int.MinValue, int.MinValue);
+                }
             }
 
         }

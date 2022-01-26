@@ -11,10 +11,11 @@ namespace WriteableBitmapTrial {
         public short? WaferId { get; }
         public ushort HBin { get; }
         public ushort SBin { get; }
+        public bool PassOrFail { get; }
         public byte Site { get; }
         public int Idx { get; }
 
-        public DieInfo(short x, short y, short? waferId,ushort hbin, ushort sbin, byte site, int idx) {
+        public DieInfo(int idx, short x, short y, ushort hbin, ushort sbin, byte site, bool passOrFail, short? waferId) {
             X = x;
             Y = y;
             WaferId = waferId;
@@ -22,6 +23,7 @@ namespace WriteableBitmapTrial {
             SBin = sbin;
             Site = site;
             Idx = idx;
+            PassOrFail = passOrFail;
         }
     }
 

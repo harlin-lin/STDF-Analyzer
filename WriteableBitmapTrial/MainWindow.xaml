@@ -6,8 +6,16 @@
         xmlns:local="clr-namespace:WriteableBitmapTrial"
         xmlns:m="clr-namespace:MapBase;assembly=MapBase"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="600">
     <Grid>
-        <m:MapBaseControl MapDataSource="{Binding WaferColor}" EnableZoom="True"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Name="viewGrid">
+            <!--<m:MapBaseControl MapDataSource="{Binding WaferColor}" EnableZoom="True"/>-->
+        </Grid>
+        <TextBox Grid.Row="0" Name="infoBlock" Visibility="Hidden"  Height="18" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBlock Grid.Row="1"/>
     </Grid>
 </Window>
