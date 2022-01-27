@@ -10,9 +10,9 @@ namespace WriteableBitmapTrial {
 
         public IEnumerable<DieInfo> DieInfoList { get { return _dieInfoList; }}
 
-        public Dictionary<ushort, string> HBinInfo { get; private set; }
+        public Dictionary<ushort, Tuple<string, string>> HBinInfo { get; private set; }
 
-        public Dictionary<ushort, string> SBinInfo { get; private set; }
+        public Dictionary<ushort, Tuple<string, string>> SBinInfo { get; private set; }
 
         public short XUbound { get; private set; }
 

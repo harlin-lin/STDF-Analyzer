@@ -45,8 +45,8 @@ namespace WriteableBitmapTrial {
 
     public interface IWaferData {
         IEnumerable<DieInfo> DieInfoList { get; }
-        Dictionary<ushort, string> HBinInfo { get; }
-        Dictionary<ushort, string> SBinInfo { get; }
+        Dictionary<ushort, Tuple<string, string>> HBinInfo { get; }
+        Dictionary<ushort, Tuple<string, string>> SBinInfo { get; }
         short XUbound { get; }
         short YUbound { get; }
         short XLbound { get; }

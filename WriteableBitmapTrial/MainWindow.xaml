@@ -6,16 +6,20 @@
         xmlns:local="clr-namespace:WriteableBitmapTrial"
         xmlns:m="clr-namespace:MapBase;assembly=MapBase"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="600">
+        Title="MainWindow" Height="600" Width="600">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="5*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Name="viewGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*" MaxWidth="233"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" Name="viewGrid">
             <!--<m:MapBaseControl MapDataSource="{Binding WaferColor}" EnableZoom="True"/>-->
         </Grid>
-        <TextBox Grid.Row="0" Name="infoBlock" Visibility="Hidden"  Height="18" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-        <TextBlock Grid.Row="1"/>
+        <TextBox Grid.Column="0" Name="infoBlock" Visibility="Hidden"  Height="32" Width="60" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <GridSplitter  Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <ListBox Grid.Column="2" Name="binInfo" SelectionMode="Single" FontFamily="Courier New">
+            
+        </ListBox>
     </Grid>
 </Window>

@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace MapBase {
-    public delegate void CordChangedHandler(int x, int y);
+    public delegate void CordChangedHandler(int x, int y, Color color);
     /// <summary>
     /// MapBaseControl.xaml 的交互逻辑
     /// </summary>
@@ -226,7 +226,7 @@ namespace MapBase {
 
                 Render();
             } else {
-                var actPt = new Point(pt.X - _zoomShiftX, pt.Y - _zoomShiftY);
+                var actPt = new Point(pt.X + _zoomShiftX, pt.Y + _zoomShiftY);
                 int x, y;
 
                 x = (int)Math.Floor(actPt.X / _dieWidth);
@@ -235,9 +235,9 @@ namespace MapBase {
                 if (x>=0 && x<_colLen && y>=0 && y<_rowLen /*&& x!= _lastCordX && y!= _lastCordY*/) {
                     //_lastCordX = x;
                     //_lastCordY = y;
-                    CordChanged?.Invoke(x, y);
+                    CordChanged?.Invoke(x, y, _waferColor[x,y]);
                 } else {
-                    CordChanged?.Invoke(int.MinValue, int.MinValue);
+                    CordChanged?.Invoke(int.MinValue, int.MinValue, Colors.White);
                 }
             }
 
