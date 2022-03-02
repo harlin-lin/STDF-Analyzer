@@ -89,11 +89,15 @@ namespace DataContainer{
 
         string GetWaferCord(int partIndex);
 
+        Tuple<short?,short?> GetWaferCordTuple(int partIndex);
+
         ushort GetHardBin(int partIndex);
 
         ushort GetSoftBin(int partIndex);
 
         byte GetSite(int partIndex);
+
+        bool GetPassFail(int partIndex);
 
         uint? GetTestTime(int partIndex);
 

@@ -50,14 +50,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinColor.cs" />
+    <Compile Include="IWaferData.cs" />
     <Compile Include="MapBaseControl.xaml.cs">
       <DependentUpon>MapBaseControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MapBaseControl_DependencyProps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WaferMapControl.xaml.cs">
+      <DependentUpon>WaferMapControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WaferMapControl_DependencyProps.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="MapBaseControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WaferMapControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

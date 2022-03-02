@@ -27,10 +27,9 @@ namespace MapBase {
         private double _waferDiameter = DEFAULT_WAFER_DIAMETER;
         private double _initWaferDiameter = DEFAULT_WAFER_DIAMETER;
         private Color[,] _waferColor;
-        //private Point _zoomBasePoint;
+
         private int _zoomShiftX = -5;
         private int _zoomShiftY = -5;
-        private bool _enableZoom = true;
 
         const int MIN_DIE_PIXELS = 3;
         const double DEFAULT_WAFER_DIAMETER = 50;
@@ -52,32 +51,10 @@ namespace MapBase {
             Render();
         }
 
-        //private void ZoomMap(int stepPixel, Point basePoint) {
-        //    _waferDiameter += stepPixel;
-        //    _zoomBasePoint = basePoint;
-
-        //    //if (_zoomBasePoint.X > _lastWaferDiameter - _zoomShiftX) _zoomBasePoint.X = _lastWaferDiameter - _zoomShiftX;
-        //    //if (_zoomBasePoint.Y > _lastWaferDiameter - _zoomShiftY) _zoomBasePoint.Y = _lastWaferDiameter - _zoomShiftY;
-
-        //    //if (_zoomBasePoint.X < _zoomShiftX) _zoomBasePoint.X = _zoomShiftX;
-        //    //if (_zoomBasePoint.Y < _zoomShiftY) _zoomBasePoint.Y = _zoomShiftY;
-
-
-        //    double incPer = (_waferDiameter - _initWaferDiameter) / _initWaferDiameter;
-
-        //    _zoomShiftX = (int)Math.Floor(_zoomBasePoint.X * incPer);
-        //    _zoomShiftY = (int)Math.Floor(_zoomBasePoint.Y * incPer);
-
-
-        //    Render();
-        //}
         private int _colLen;
         private int _rowLen;
         private int _dieWidth;
         private int _dieHeight;
-
-        //private int _lastCordX = -1;
-        //private int _lastCordY = -1;
 
         private void Render() {
             if (_drawBuffer is null || _waferColor is null) return;
@@ -163,10 +140,6 @@ namespace MapBase {
             }
         }
 
-        //public Tuple<int,int> GetCordFromPosition(Point point) {
-
-        //}
-
         private static double? _dpiXKoef;
 
         public static double DpiXKoef {
@@ -199,7 +172,7 @@ namespace MapBase {
         }
 
         private void imageMouseWheel(object sender, MouseWheelEventArgs e) {
-            if (_enableZoom) {
+            if (EnableZoom) {
                 Point imagePoint = e.GetPosition(imageGrid);
                 ZoomMap(e.Delta);
             }
@@ -207,7 +180,7 @@ namespace MapBase {
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
             base.OnMouseDoubleClick(e);
-            if (_enableZoom) {
+            if (EnableZoom || EnableDrag) {
                 InitWaferDiameter();
                 Render();
             }
@@ -232,11 +205,13 @@ namespace MapBase {
                 x = (int)Math.Floor(actPt.X / _dieWidth);
                 y = (int)Math.Floor(actPt.Y / _dieHeight);
 
-                if (x>=0 && x<_colLen && y>=0 && y<_rowLen /*&& x!= _lastCordX && y!= _lastCordY*/) {
+                if (x>=0 && x<_colLen && y>=0 && y<_rowLen && _waferColor[x, y] != new Color()) {
                     //_lastCordX = x;
                     //_lastCordY = y;
+                    FocusedCord = new Tuple<int, int>(x, y);
                     CordChanged?.Invoke(x, y, _waferColor[x,y]);
                 } else {
+                    FocusedCord = new Tuple<int, int>(int.MinValue, int.MinValue);
                     CordChanged?.Invoke(int.MinValue, int.MinValue, Colors.White);
                 }
             }
@@ -245,20 +220,23 @@ namespace MapBase {
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonDown(e);
-            Cursor = Cursors.SizeAll;
+            if (EnableDrag) {
+                Cursor = Cursors.SizeAll;
 
-            _dragFlg = true;
-            _dragStartPoint = e.GetPosition(image);
-            _dragStartPoint.X -= -_zoomShiftX;
-            _dragStartPoint.Y -= -_zoomShiftY;
-
+                _dragFlg = true;
+                _dragStartPoint = e.GetPosition(image);
+                _dragStartPoint.X -= -_zoomShiftX;
+                _dragStartPoint.Y -= -_zoomShiftY;
+            }
         }
 
         protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonUp(e);
 
-            Cursor = Cursors.Arrow;
-            _dragFlg = false;
+            //if (EnableDrag) {
+                Cursor = Cursors.Arrow;
+                _dragFlg = false;
+            //}
 
         }
 

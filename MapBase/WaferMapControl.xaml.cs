@@ -1,8 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using MapBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,37 +13,25 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WriteableBitmapTrial {
+namespace MapBase {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// WaferMapControl.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window {
-        public MainWindow() {
-            this.DataContext = this;
+    public partial class WaferMapControl : UserControl {
+        public WaferMapControl() {
             InitializeComponent();
-            InitData();
-        }
-
-        private void InitData() {
-            var waferData = new WaferData();
-            OnDataSourceChanged(waferData);
-
         }
 
         public Color[,] WaferColor { get; set; }
 
 
-        private Dictionary<short?, Color[,]> _sBinMaps= new Dictionary<short?, Color[,]>();
+        private Dictionary<short?, Color[,]> _sBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, Color[,]> _hBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, Color[,]> _freshSBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, Color[,]> _freshHBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, bool> _containRtFlg = new Dictionary<short?, bool>();
 
-        private MapViewMode _mapViewMode = MapViewMode.Split;
-        private MapBinMode _mapBinMode = MapBinMode.SBin;
-        private MapRtDataMode _mapRtDataMode = MapRtDataMode.OverWrite;
-
-        private Dictionary<ushort, Color> _sBinColors= new Dictionary<ushort, Color>();
+        private Dictionary<ushort, Color> _sBinColors = new Dictionary<ushort, Color>();
         private Dictionary<ushort, Color> _hBinColors = new Dictionary<ushort, Color>();
 
         private Dictionary<ushort, int> _sBinDieCnt = new Dictionary<ushort, int>();
@@ -59,33 +44,24 @@ namespace WriteableBitmapTrial {
 
         private List<string> _logList = new List<string>();
 
-        private short? _selectedSingleWafer=null;
 
         private IWaferData _waferData;
 
         private int _xCnt, _yCnt;
 
-        private Dictionary<short?, MapBaseControl> _mapControlList= new Dictionary<short?, MapBaseControl>();
+        private Dictionary<short?, MapBaseControl> _mapControlList = new Dictionary<short?, MapBaseControl>();
         private MapBaseControl _mapControlStack;
-
-        private void SwitchSingleView(MapBaseControl mapBaseControl) {
-            viewGrid.RowDefinitions.Clear();
-            viewGrid.ColumnDefinitions.Clear();
-            mapBaseControl.CordChanged += MapBaseControl_CordChanged;
-            viewGrid.Children.Add(mapBaseControl);
-
-            UpdateBinInfo();
-        }
+        private MapBaseControl _selectedMap = null;
 
         private void MapBaseControl_CordChanged(int x, int y, Color color) {
-            if(x==int.MinValue || y == int.MinValue) {
+            if (x == int.MinValue || y == int.MinValue) {
                 infoBlock.Text = "";
                 infoBlock.Visibility = Visibility.Hidden;
             } else {
-                string append="";
-                if(_mapViewMode != MapViewMode.Stack) {
-                    if(_mapBinMode == MapBinMode.HBin) {
-                        var bin = _hBinColors.FirstOrDefault(a => a.Value == color ).Key;
+                string append = "";
+                if (ViewMode != MapViewMode.Stack) {
+                    if (BinMode == MapBinMode.HBin) {
+                        var bin = _hBinColors.FirstOrDefault(a => a.Value == color).Key;
                         append = $"HBIN {bin}";
 
                         if (_waferData.HBinInfo != null) {
@@ -105,7 +81,7 @@ namespace WriteableBitmapTrial {
                             }
                         }
                     }
-                } 
+                }
 
                 infoBlock.Text = $"XY[{x},{y}]\n{append}";
                 infoBlock.Visibility = Visibility.Visible;
@@ -117,46 +93,61 @@ namespace WriteableBitmapTrial {
             }
         }
 
-        private void SwitchSplitView(int splitColCnt, List<MapBaseControl> mapBaseControls) {
+        private void SwitchSingleView() {
+            if (_selectedMap is null) return;
+
+            viewGrid.RowDefinitions.Clear();
+            viewGrid.ColumnDefinitions.Clear();
+            _selectedMap.CordChanged += MapBaseControl_CordChanged;
+            viewGrid.Children.Add(_selectedMap);
+
+            UpdateBinInfo();
+        }
+
+        private void SwitchSplitView() {
+            int splitColCnt = 3;
 
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
             viewGrid.ShowGridLines = true;
 
-            int rowCnt = mapBaseControls.Count / splitColCnt + (mapBaseControls.Count % splitColCnt == 0 ? 0 : 1);
+            int rowCnt = _mapControlList.Count / splitColCnt + (_mapControlList.Count % splitColCnt == 0 ? 0 : 1);
 
-            for (int i=0; i< splitColCnt; i++) {
+            for (int i = 0; i < splitColCnt; i++) {
                 viewGrid.ColumnDefinitions.Add(new ColumnDefinition());
             }
             for (int i = 0; i < rowCnt; i++) {
                 viewGrid.RowDefinitions.Add(new RowDefinition());
             }
 
-            for (int i = 0; i < mapBaseControls.Count; i++) {
-                mapBaseControls[i].CordChanged -= MapBaseControl_CordChanged;
-                viewGrid.Children.Add(mapBaseControls[i]);
-                Grid.SetRow(mapBaseControls[i], i / splitColCnt);
-                Grid.SetColumn(mapBaseControls[i], i % splitColCnt);
+            for (int i = 0; i < _mapControlList.Count; i++) {
+                _mapControlList.ElementAt(i).Value.CordChanged -= MapBaseControl_CordChanged;
+                _mapControlList.ElementAt(i).Value.EnableDrag = false;
+                _mapControlList.ElementAt(i).Value.EnableZoom = false;
+
+                viewGrid.Children.Add(_mapControlList.ElementAt(i).Value);
+                Grid.SetRow(_mapControlList.ElementAt(i).Value, i / splitColCnt);
+                Grid.SetColumn(_mapControlList.ElementAt(i).Value, i % splitColCnt);
             }
 
             UpdateBinInfo();
         }
 
-        
+
 
         private void UpdateView() {
             if (_sBinMaps.Count == 0) return;
 
             Dictionary<short?, Color[,]> maps;
 
-            if (_mapBinMode == MapBinMode.HBin) {
-                if(_mapRtDataMode == MapRtDataMode.FirstOnly) {
+            if (BinMode == MapBinMode.HBin) {
+                if (RtDataMode == MapRtDataMode.FirstOnly) {
                     maps = _freshHBinMaps;
                 } else {
                     maps = _hBinMaps;
                 }
             } else {
-                if (_mapRtDataMode == MapRtDataMode.FirstOnly) {
+                if (RtDataMode == MapRtDataMode.FirstOnly) {
                     maps = _freshSBinMaps;
                 } else {
                     maps = _sBinMaps;
@@ -168,12 +159,12 @@ namespace WriteableBitmapTrial {
             int?[,] stackCnt = new int?[_xCnt, _yCnt];
 
             foreach (var wafer in maps) {
-                for(int x=0; x < _xCnt; x++) {
-                    for(int y=0; y<_yCnt; y++) {
-                        if(wafer.Value[x,y] != BinColor.GetPassBinColor() && wafer.Value[x, y] != new Color()) {
+                for (int x = 0; x < _xCnt; x++) {
+                    for (int y = 0; y < _yCnt; y++) {
+                        if (wafer.Value[x, y] != BinColor.GetPassBinColor() && wafer.Value[x, y] != new Color()) {
                             if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
                             stackCnt[x, y]++;
-                        }else if(wafer.Value[x, y] == BinColor.GetPassBinColor()) {
+                        } else if (wafer.Value[x, y] == BinColor.GetPassBinColor()) {
                             if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
                         }
                     }
@@ -181,7 +172,7 @@ namespace WriteableBitmapTrial {
             }
             for (int x = 0; x < _xCnt; x++) {
                 for (int y = 0; y < _yCnt; y++) {
-                    if(stackCnt[x, y].HasValue) {
+                    if (stackCnt[x, y].HasValue) {
                         stack[x, y] = BinColor.GetStackWaferBinColor(stackCnt[x, y].Value, maps.Count);
                     } else {
                         stack[x, y] = Colors.White;
@@ -198,16 +189,14 @@ namespace WriteableBitmapTrial {
             _mapControlStack = new MapBaseControl();
             _mapControlStack.MapDataSource = stack;
 
-            SwitchSingleView(_mapControlList[1]);
-            //SwitchSplitView(1, _mapControlList.Values.ToList());
-            //SwitchSingleView(_mapControlStack);
+            UpdateViewMode();
         }
 
         private void UpdateBinInfo() {
 
             binInfo.Children.Clear();
 
-            if (_mapBinMode == MapBinMode.HBin) {
+            if (BinMode == MapBinMode.HBin) {
                 foreach (var b in _hBinColors) {
                     TextBox textBlock = new TextBox();
                     textBlock.Text = $"BIN{b.Key,-2} {(_hBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_sBinDieCnt[b.Key],-7}";
@@ -225,7 +214,7 @@ namespace WriteableBitmapTrial {
             } else {
                 foreach (var b in _sBinColors) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key, -5} {(_sBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2")+ "%",-6} {_sBinDieCnt[b.Key],-7}";
+                    textBlock.Text = $"BIN{b.Key,-5} {(_sBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_sBinDieCnt[b.Key],-7}";
                     textBlock.Background = new SolidColorBrush(b.Value);
                     textBlock.BorderThickness = new Thickness(0);
                     textBlock.Height = 18;
@@ -233,7 +222,7 @@ namespace WriteableBitmapTrial {
                     textBlock.Foreground = new SolidColorBrush(Colors.White);
 
                     if (_waferData.SBinInfo != null) {
-                        textBlock.ToolTip = _waferData.HBinInfo[b.Key].Item2;
+                        textBlock.ToolTip = _waferData.SBinInfo[b.Key].Item2;
                     }
                     binInfo.Children.Add(textBlock);
                 }
@@ -256,7 +245,7 @@ namespace WriteableBitmapTrial {
 
             bool hbFlg = false;
             bool sbFlg = false;
-            if(_waferData.HBinInfo != null) {
+            if (_waferData.HBinInfo != null) {
                 int i = 0;
                 foreach (var hb in _waferData.HBinInfo) {
                     _hBinDieCnt.Add(hb.Key, 0);
@@ -287,19 +276,19 @@ namespace WriteableBitmapTrial {
                 if (!sbFlg && !_sBinColors.ContainsKey(die.SBin)) {
                     if (die.PassOrFail) {
                         _sBinColors.Add(die.SBin, BinColor.GetPassBinColor());
-                    } else { 
+                    } else {
                         _sBinColors.Add(die.SBin, BinColor.GetFailBinColor(fsbCnt++));
                     }
                     _sBinDieCnt.Add(die.SBin, 0);
                 }
-                if (!hbFlg && !_hBinColors.ContainsKey(die.HBin)) { 
+                if (!hbFlg && !_hBinColors.ContainsKey(die.HBin)) {
                     if (die.PassOrFail) {
                         _hBinColors.Add(die.HBin, BinColor.GetPassBinColor());
                     } else {
                         _hBinColors.Add(die.HBin, BinColor.GetFailBinColor(fhbCnt++));
                     }
                     _hBinDieCnt.Add(die.HBin, 0);
-                } 
+                }
 
 
                 _totalDieCnt++;
@@ -322,7 +311,7 @@ namespace WriteableBitmapTrial {
                     _logList.Add($"Cord X:{die.X} Y:{die.Y} out of wafer");
                     continue;
                 }
-                
+
                 if (_sBinMaps[die.WaferId][die.X, die.Y] == new Color()) {
                     _sBinMaps[die.WaferId][die.X, die.Y] = _sBinColors[die.SBin];
                     _hBinMaps[die.WaferId][die.X, die.Y] = _hBinColors[die.HBin];
@@ -343,11 +332,48 @@ namespace WriteableBitmapTrial {
         private void OnDataSourceChanged(IWaferData waferData) {
             _waferData = waferData;
 
+            if (_waferData.DieInfoList is null || _waferData.DieInfoList.Count() == 0 || _waferData.XUbound==0 || _waferData.YUbound==0) return;
+
             UpdateData();
             //Task.Run(() => { UpdateData(); });
         }
 
+        private void UpdateBinMode() {
+            UpdateView();
+        }
 
+        private void UpdateViewMode() {
+            switch (ViewMode) {
+                case MapViewMode.Split:
+                    SwitchSplitView();
+                    break;
+                case MapViewMode.Single:
+                    if (_selectedMap is null && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
+                    SwitchSingleView();
+                    break;
+                case MapViewMode.Stack:
+                    _selectedMap = _mapControlStack;
+                    SwitchSingleView();
+                    break;
+                default: break;
+            }
+        }
+
+        private void UpdateRtDataMode() {
+            UpdateView();
+        }
+
+        protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
+            base.OnMouseDoubleClick(e);
+
+            if (ViewMode != MapViewMode.Split) return;
+            foreach(var v in _mapControlList) {
+                if (v.Value.IsFocused) {
+                    _selectedMap = v.Value;
+                    SwitchSingleView();
+                }
+            }
+        }
 
     }
 }

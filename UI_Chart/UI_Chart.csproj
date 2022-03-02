@@ -97,6 +97,7 @@
     <Compile Include="ViewModels\CorrChartViewModel.cs" />
     <Compile Include="ViewModels\TrendViewModel.cs" />
     <Compile Include="ViewModels\ItemCorrViewModel.cs" />
+    <Compile Include="ViewModels\WaferMapViewModel.cs" />
     <Compile Include="Views\Box.xaml.cs">
       <DependentUpon>Box.xaml</DependentUpon>
     </Compile>
@@ -118,6 +119,9 @@
     <Compile Include="Views\ItemCorr.xaml.cs">
       <DependentUpon>ItemCorr.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\WaferMap.xaml.cs">
+      <DependentUpon>WaferMap.xaml</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -132,6 +136,10 @@
     <ProjectReference Include="..\DataContainer\DataContainer.csproj">
       <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
       <Name>DataContainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MapBase\MapBase.csproj">
+      <Project>{d51805d7-6133-4db3-9f5c-0fc506165d59}</Project>
+      <Name>MapBase</Name>
     </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649EF81-84CA-4882-BB22-C0599BE5D3D1}</Project>
@@ -168,6 +176,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ItemCorr.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WaferMap.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

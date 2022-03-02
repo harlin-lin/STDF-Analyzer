@@ -94,6 +94,10 @@ namespace DataContainer {
             return $"{_xCord_PartContainer[partIndex]}_{_yCord_PartContainer[partIndex]}";
         }
 
+        public Tuple<short?, short?> GetWaferCordTuple(int partIndex) {
+            return new Tuple<short?, short?>(_xCord_PartContainer[partIndex], _yCord_PartContainer[partIndex]);
+        }
+
         public ushort GetHardBin(int partIndex) {
             return _hardBin_PartContainer[partIndex];
         }
@@ -108,6 +112,10 @@ namespace DataContainer {
 
         public byte GetSite(int partIndex) {
             return _site_PartContainer[partIndex];
+        }
+
+        public bool GetPassFail(int partIndex) {
+            return _resultType_PartContainer[partIndex] == ResultType.Pass ? true : false;
         }
 
         public IEnumerable<float> GetFilteredItemData(string testID, int filterId) {

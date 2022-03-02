@@ -36,14 +36,18 @@ namespace MapBase {
 
         // Using a DependencyProperty as the backing store for EnableZoom.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty EnableZoomProperty =
-            DependencyProperty.Register("EnableZoom", typeof(bool), typeof(MapBaseControl), new PropertyMetadata(true, OnEnableZoomPropertyChanged));
+            DependencyProperty.Register("EnableZoom", typeof(bool), typeof(MapBaseControl), new PropertyMetadata(true));
 
-        private static void OnEnableZoomPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e) {
-            ((MapBaseControl)dependencyObject).OnEnableZoomPropertyChanged();
+
+        public bool EnableDrag {
+            get { return (bool)GetValue(EnableDragProperty); }
+            set { SetValue(EnableDragProperty, value); }
         }
 
-        private void OnEnableZoomPropertyChanged() {
-            _enableZoom = EnableZoom;
-        }
+        // Using a DependencyProperty as the backing store for EnableDrag.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EnableDragProperty =
+            DependencyProperty.Register("EnableDrag", typeof(bool), typeof(MapBaseControl), new PropertyMetadata(true));
+
+
     }
 }

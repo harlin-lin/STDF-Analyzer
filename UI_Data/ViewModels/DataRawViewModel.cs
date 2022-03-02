@@ -107,6 +107,15 @@ namespace UI_Data.ViewModels {
         private void ShowWaferMap() {
 
             var parameters = new NavigationParameters();
+            parameters.Add("subData", _subData);
+
+            _regionManager.RequestNavigate(RegionName, "WaferMap", parameters);
+
+        }
+
+        private void ShowCorr() {
+
+            var parameters = new NavigationParameters();
             parameters.Add("itemList", _selectedItemList);
             parameters.Add("subData", _subData);
 
@@ -114,6 +123,7 @@ namespace UI_Data.ViewModels {
 
 
         }
+
         private async void ExportToExcelAsync() {
             string path;
             using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
@@ -283,6 +293,7 @@ namespace UI_Data.ViewModels {
         public DelegateCommand ShowTrendCommand { get; private set; }
         public DelegateCommand ShowBoxCommand { get; private set; }
         public DelegateCommand ShowWaferMapCommand { get; private set; }
+        public DelegateCommand ShowCorrCommand { get; private set; }
         public DelegateCommand ExportToExcelCommand { get; private set; }
         private DelegateCommand openSummary;
         public DelegateCommand OpenSummaryCommand =>
@@ -305,6 +316,7 @@ namespace UI_Data.ViewModels {
             ShowTrendCommand = new DelegateCommand(ShowTrend);
             ShowBoxCommand = new DelegateCommand(ShowBox);
             ShowWaferMapCommand = new DelegateCommand(ShowWaferMap);
+            ShowCorrCommand = new DelegateCommand(ShowCorr);
             ExportToExcelCommand = new DelegateCommand(ExportToExcelAsync);
 
             OnSelectionChanged = new DelegateCommand<object>((x) => {

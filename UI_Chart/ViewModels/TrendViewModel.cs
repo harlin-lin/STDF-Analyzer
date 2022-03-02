@@ -237,7 +237,7 @@ namespace UI_Chart.ViewModels {
                 ExecuteCmdSelectAxisUserTrend();
             }
 
-            XAxisTrend.VisibleRange.SetMinMax(1, xs.Last());
+            XAxisTrend.VisibleRange.SetMinMax(1, xs.Last()+1);
             RaisePropertyChanged("XAxisTrend");
             #endregion
 

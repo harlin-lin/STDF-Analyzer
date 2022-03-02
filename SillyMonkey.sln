@@ -23,6 +23,10 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{F07F0021-C221-4B7A-BF16-9381A80417BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapBase", "MapBase\MapBase.csproj", "{D51805D7-6133-4DB3-9F5C-0FC506165D59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteableBitmapTrial", "WriteableBitmapTrial\WriteableBitmapTrial.csproj", "{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +103,22 @@ Global
 		{F07F0021-C221-4B7A-BF16-9381A80417BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F07F0021-C221-4B7A-BF16-9381A80417BD}.Release|x64.ActiveCfg = Release|Any CPU
 		{F07F0021-C221-4B7A-BF16-9381A80417BD}.Release|x64.Build.0 = Release|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Debug|x64.Build.0 = Debug|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Release|x64.ActiveCfg = Release|Any CPU
+		{D51805D7-6133-4DB3-9F5C-0FC506165D59}.Release|x64.Build.0 = Release|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Debug|x64.Build.0 = Debug|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Release|x64.ActiveCfg = Release|Any CPU
+		{AC4F195B-F900-4F99-AE5B-7FBC2E1731A2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
