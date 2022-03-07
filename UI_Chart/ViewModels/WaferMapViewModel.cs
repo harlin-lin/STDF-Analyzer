@@ -47,8 +47,8 @@ namespace UI_Chart.ViewModels {
 
             XUbound = xs.Max();
             XLbound = xs.Min();
-            YUbound = xs.Max();
-            YLbound = xs.Min();
+            YUbound = ys.Max();
+            YLbound = ys.Min();
 
 
         }

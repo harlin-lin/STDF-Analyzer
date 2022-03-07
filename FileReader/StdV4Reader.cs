@@ -379,14 +379,10 @@ namespace FileReader {
             TestID id;
             if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {
                 id = new TestID(tn, txt);
-                _lastUidBySite[sn] = id;
             } else {
                 id = new TestID(_lastUidBySite[sn]);
-                if(_dc.IfContainItemInfo(id.GetUID()) == null) {
-                    _dc.UpdateItemInfo(id.GetUID(), _dc.IfContainItemInfo(_lastUidBySite[sn].GetUID()));
-                }
-                _lastUidBySite[sn] = id;
             }
+
             var info = _dc.IfContainItemInfo(id.GetUID());
 
             if (info==null && i < len) {
@@ -423,12 +419,20 @@ namespace FileReader {
                 i += (ushort)(1 + unit.Length);
                 _dc.UpdateItemInfo(id.GetUID(), new ItemInfo(txt, ll, hl, unit, llScal, hlScal, resScal));
                 result = _dc.IfContainItemInfo(id.GetUID()).GetScaledRst(result);
-            } else {
-                result = info.GetScaledRst(result);
             }
 
-            _dc.AddTestData(sn, id.GetUID(), result);
+            //means use last test limt
+            if (_dc.GetTestInfo(id.GetUID()) == null) {
+                var tmpInfo = new ItemInfo(_dc.GetTestInfo(_lastUidBySite[sn].GetUID()));
+                tmpInfo.TestText = txt;
+                _dc.UpdateItemInfo(id.GetUID(), tmpInfo);
+            } 
+            
+            info = _dc.GetTestInfo(id.GetUID());
+            result = info.GetScaledRst(result);
 
+            _dc.AddTestData(sn, id.GetUID(), result);
+            _lastUidBySite[sn] = id;
         }
         private void AddMpr(byte[] record, ushort len) {
             ushort i = 0;
@@ -454,10 +458,8 @@ namespace FileReader {
                 TestID id;
                 if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {
                     id = new TestID(tn, txt);
-                    _lastUidBySite[sn] = id;
                 } else {
                     id = new TestID(_lastUidBySite[sn]);
-                    _lastUidBySite[sn] = id;
                 }
 
 
@@ -474,10 +476,11 @@ namespace FileReader {
                 if (info == null && i < len) {
 
                     var alarm = rdCn(record, i, len); i += (ushort)(1 + alarm.Length);
-                    if (i >= len) return;
 
-                    var oFg = rdB1(record, i, len); i += 1;
-                    if (i >= len) return;
+                    byte oFg = 0;
+                    if (i < len) {
+                        oFg = rdB1(record, i, len); i += 1;
+                    } 
 
                     sbyte? resScal = null, llScal = null, hlScal = null;
                     float? ll = null, hl = null;
@@ -505,26 +508,39 @@ namespace FileReader {
                     i += 4;
 
                     i += 8; //skip start in and incr in
-                    if (i >= len) return;
-                    var idxs = rdKxU2(record, i, len, rtnCnt); i += (ushort)(rtnCnt * 2);
-
                     if (i < len) {
-                        unit = rdCn(record, i, len);
-                    }
-                    i += (ushort)(1 + unit.Length);
+                        var idxs = rdKxU2(record, i, len, rtnCnt); i += (ushort)(rtnCnt * 2);
 
-                    for (uint j = 0; j < idxs.Length; j++) {
-                        var pin = listPinMaps.Find(x => x.PinIndex == idxs[j]).ChanName;
-                        _dc.UpdateItemInfo(uids[j].GetUID(), new ItemInfo(txt + "_" + pin, ll, hl, unit, llScal, hlScal, resScal));
-                        rsts[j] = _dc.IfContainItemInfo(uids[0].GetUID()).GetScaledRst(rsts[j]);
+                        if (i < len) {
+                            unit = rdCn(record, i, len);
+                        }
+                        i += (ushort)(1 + unit.Length);
+                    
+                        for (uint j = 0; j < idxs.Length; j++) {
+                            var pin = listPinMaps.Find(x => x.PinIndex == idxs[j]).ChanName;
+                            var tmpInfo = new ItemInfo(txt + "_" + pin, ll, hl, unit, llScal, hlScal, resScal);
+                            _dc.UpdateItemInfo(uids[j].GetUID(), tmpInfo);
+                        }
                     }
-                } else {
+
+                } 
+
+                //means use last test limt
+                if(_dc.GetTestInfo(uids[0].GetUID()) == null) {
+                    var refInfo = _dc.GetTestInfo(_lastUidBySite[sn].GetUID());
                     for (uint j = 0; j < rtnCnt; j++) {
-                        rsts[j] = info.GetScaledRst(rsts[j]);
+                        var tmpInfo = new ItemInfo(refInfo);
+                        tmpInfo.TestText = txt;
+                        _dc.UpdateItemInfo(uids[j].GetUID(), tmpInfo);
                     }
+
                 }
+
+                info = _dc.GetTestInfo(uids[0].GetUID());
                 for (uint j = 0; j < rtnCnt; j++) {
+                    rsts[j] = info.GetScaledRst(rsts[j]);
                     _dc.AddTestData(sn, uids[j].GetUID(), rsts[j]);
+                    _lastUidBySite[sn] = uids[j];
                 }
             }
             catch {

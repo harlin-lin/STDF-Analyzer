@@ -18,6 +18,7 @@ namespace DataContainer{
         //TestID GetUid(TempID id, byte siteNum);
         //TestID GetUid_AutoIncSubId(TestID uid);
         ItemInfo IfContainItemInfo(string uid);
+        ItemInfo GetTestInfo(string uid);
         void SetReadingPercent(int percent);
         void AnalyseData();
     }

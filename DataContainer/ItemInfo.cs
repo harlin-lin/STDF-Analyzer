@@ -2,7 +2,7 @@
 
 namespace DataContainer {
     public class ItemInfo  {
-        public string TestText { get; private set; }
+        public string TestText { get; set; }
         public float? LoLimit { get; private set; }
         public float? HiLimit { get; private set; }
         public string Unit { get; private set; }

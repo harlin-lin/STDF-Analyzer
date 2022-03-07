@@ -22,9 +22,6 @@ namespace MapBase {
             InitializeComponent();
         }
 
-        public Color[,] WaferColor { get; set; }
-
-
         private Dictionary<short?, Color[,]> _sBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, Color[,]> _hBinMaps = new Dictionary<short?, Color[,]>();
         private Dictionary<short?, Color[,]> _freshSBinMaps = new Dictionary<short?, Color[,]>();
@@ -36,8 +33,8 @@ namespace MapBase {
 
         private Dictionary<ushort, int> _sBinDieCnt = new Dictionary<ushort, int>();
         private Dictionary<ushort, int> _hBinDieCnt = new Dictionary<ushort, int>();
-        private Dictionary<short?, Dictionary<ushort, int>> _perWaferSBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
-        private Dictionary<short?, Dictionary<ushort, int>> _perWaferHBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
+        //private Dictionary<short?, Dictionary<ushort, int>> _perWaferSBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
+        //private Dictionary<short?, Dictionary<ushort, int>> _perWaferHBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
 
         private int _totalDieCnt = 0;
         private Dictionary<short?, int> _perWaferTotalDieCnt = new Dictionary<short?, int>();
@@ -83,7 +80,7 @@ namespace MapBase {
                     }
                 }
 
-                infoBlock.Text = $"XY[{x},{y}]\n{append}";
+                infoBlock.Text = $"XY[{x + _waferData.YLbound},{y + _waferData.YLbound}]\n{append}";
                 infoBlock.Visibility = Visibility.Visible;
                 var pt = Mouse.GetPosition(viewGrid);
                 infoBlock.Margin = new Thickness {
@@ -96,6 +93,7 @@ namespace MapBase {
         private void SwitchSingleView() {
             if (_selectedMap is null) return;
 
+            viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
             _selectedMap.CordChanged += MapBaseControl_CordChanged;
@@ -107,6 +105,7 @@ namespace MapBase {
         private void SwitchSplitView() {
             int splitColCnt = 3;
 
+            viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
             viewGrid.ShowGridLines = true;
@@ -137,6 +136,8 @@ namespace MapBase {
 
         private void UpdateView() {
             if (_sBinMaps.Count == 0) return;
+
+            _selectedMap = null; 
 
             Dictionary<short?, Color[,]> maps;
 
@@ -237,8 +238,16 @@ namespace MapBase {
             _hBinColors.Clear();
             _sBinDieCnt.Clear();
             _hBinDieCnt.Clear();
+
             _perWaferTotalDieCnt.Clear();
             _totalDieCnt = 0;
+            
+            _sBinMaps.Clear();
+            _hBinMaps.Clear();
+            
+            _freshSBinMaps.Clear();
+            _freshHBinMaps.Clear();
+            _containRtFlg.Clear();
 
             _xCnt = _waferData.XUbound - _waferData.XLbound + 1;
             _yCnt = _waferData.YUbound - _waferData.YLbound + 1;
@@ -307,20 +316,20 @@ namespace MapBase {
                 _perWaferTotalDieCnt[die.WaferId]++;
 
                 //ignore the unreasonable point
-                if (die.X > _waferData.XUbound || die.X < _waferData.XLbound || die.Y > _waferData.YUbound || die.Y < _waferData.XLbound) {
+                if (die.X > _waferData.XUbound || die.X < _waferData.XLbound || die.Y > _waferData.YUbound || die.Y < _waferData.YLbound) {
                     _logList.Add($"Cord X:{die.X} Y:{die.Y} out of wafer");
                     continue;
                 }
 
-                if (_sBinMaps[die.WaferId][die.X, die.Y] == new Color()) {
-                    _sBinMaps[die.WaferId][die.X, die.Y] = _sBinColors[die.SBin];
-                    _hBinMaps[die.WaferId][die.X, die.Y] = _hBinColors[die.HBin];
-                    _freshSBinMaps[die.WaferId][die.X, die.Y] = _sBinColors[die.SBin];
-                    _freshHBinMaps[die.WaferId][die.X, die.Y] = _hBinColors[die.HBin];
+                if (_sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] == new Color()) {
+                    _sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
+                    _hBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
+                    _freshSBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
+                    _freshHBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
                 } else {
                     _containRtFlg[die.WaferId] = true;
-                    _freshSBinMaps[die.WaferId][die.X, die.Y] = _sBinColors[die.SBin];
-                    _freshHBinMaps[die.WaferId][die.X, die.Y] = _hBinColors[die.HBin];
+                    _freshSBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
+                    _freshHBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
                 }
 
             }
