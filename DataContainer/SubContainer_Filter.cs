@@ -278,7 +278,7 @@ namespace DataContainer {
                 if (filter.ItemFilters.Count > 0) {
                     foreach(var itemFilter in filter.ItemFilters) {
                         var rst = GetItemVal(itemFilter.TestNumber, i);
-                        if(rst<itemFilter.LowRange || rst > itemFilter.HighRange) {
+                        if(rst<itemFilter.LowRange || rst > itemFilter.HighRange || float.IsNaN(rst) || float.IsInfinity(rst)) {
                             chipsFilter.Add(i);
                             break;
                         }
