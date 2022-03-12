@@ -132,5 +132,8 @@
   <ItemGroup>
     <Resource Include="Resource\icon\corr.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\copy.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

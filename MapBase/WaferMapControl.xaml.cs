@@ -96,7 +96,11 @@ namespace MapBase {
             viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
-            _selectedMap.CordChanged += MapBaseControl_CordChanged;
+            if(_selectedMap == _mapControlStack) {
+                _selectedMap.CordChanged -= MapBaseControl_CordChanged;
+            } else {
+                _selectedMap.CordChanged += MapBaseControl_CordChanged;
+            }
             viewGrid.Children.Add(_selectedMap);
 
             UpdateBinInfo();
@@ -200,7 +204,7 @@ namespace MapBase {
             if (BinMode == MapBinMode.HBin) {
                 foreach (var b in _hBinColors) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key,-2} {(_hBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_sBinDieCnt[b.Key],-7}";
+                    textBlock.Text = $"BIN{b.Key,-2} {(_hBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_hBinDieCnt[b.Key],-7}";
                     textBlock.Background = new SolidColorBrush(b.Value);
                     textBlock.BorderThickness = new Thickness(0);
                     textBlock.Height = 18;
@@ -357,7 +361,7 @@ namespace MapBase {
                     SwitchSplitView();
                     break;
                 case MapViewMode.Single:
-                    if (_selectedMap is null && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
+                    if ((_selectedMap is null || _selectedMap == _mapControlStack) && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
                     SwitchSingleView();
                     break;
                 case MapViewMode.Stack:

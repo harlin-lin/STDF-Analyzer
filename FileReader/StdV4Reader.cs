@@ -123,7 +123,7 @@ namespace FileReader {
         //public Dictionary<ushort, Tuple<string, string>> _softBinNames;
         //public Dictionary<ushort, Tuple<string, string>> _hardBinNames;
         List<PinMapRecord> listPinMaps;
-        List<PinGroupRecord> listPinGroups;
+        //List<PinGroupRecord> listPinGroups;
         Dictionary<byte, TestID> _lastUidBySite;
 
         private void InitBuffer() {
@@ -134,7 +134,7 @@ namespace FileReader {
             //_softBinNames = new Dictionary<ushort, Tuple<string, string>>();
             //_hardBinNames = new Dictionary<ushort, Tuple<string, string>>();
             listPinMaps = new List<PinMapRecord>();
-            listPinGroups = new List<PinGroupRecord>();
+            //listPinGroups = new List<PinGroupRecord>();
 
             _lastUidBySite = new Dictionary<byte, TestID>();
         }
@@ -288,14 +288,15 @@ namespace FileReader {
             listPinMaps.Add(new PinMapRecord(pinIdx, chanName, phyName, logicName));
         }
         private void AddPgr(byte[] record, ushort len) {
-            ushort i = 0;
-            var grpIdx = rdU2(record, i, len); i += 2;
-            var grpName = rdCn(record, i, len); i += (ushort)(1 + grpName.Length);
-            var cn = rdU2(record, i, len); i += 2;
-            if (cn == 0) return;
-            var idxes = rdKxU2(record, i, len, cn);
+            //2022/03/09 comment PGR record
+            //ushort i = 0;
+            //var grpIdx = rdU2(record, i, len); i += 2;
+            //var grpName = rdCn(record, i, len); i += (ushort)(1 + grpName.Length);
+            //var cn = rdU2(record, i, len); i += 2;
+            //if (cn == 0) return;
+            //var idxes = rdKxU2(record, i, len, cn);
 
-            listPinGroups.Add(new PinGroupRecord(grpIdx, grpName, idxes, listPinMaps));
+            //listPinGroups.Add(new PinGroupRecord(grpIdx, grpName, idxes, listPinMaps));
         }
         private void AddPlr(byte[] record, ushort len) {
             //ignore

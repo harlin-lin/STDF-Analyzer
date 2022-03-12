@@ -6,31 +6,90 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save Trend Chart" BorderThickness="0">
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save Wafer Map" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
                 </Button.Background>
             </Button>
-            <ComboBox>
-                <ComboBoxItem Content="SBin" Selector.IsSelected="True"/>
-                <ComboBoxItem Content="HBin"/>
-            </ComboBox>
-            <ComboBox>
-                <ComboBoxItem Content="SBin" Selector.IsSelected="True"/>
-                <ComboBoxItem Content="HBin"/>
-            </ComboBox>
-            <CheckBox IsChecked="False" Content="FreshOnly"/>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Copy Wafer Map" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
+                </Button.Background>
+            </Button>
+            <ComboBox ItemsSource="{Binding MapBinModeList}" SelectedItem="{Binding SelectedMapBinMode}" Width="60" Margin="0,0,10,0" />
+            <ComboBox ItemsSource="{Binding MapViewModeList}" SelectedItem="{Binding SelectedMapViewMode}" Width="70" Margin="0,0,10,0" />
+            <ComboBox ItemsSource="{Binding MapRtDataModeList}" SelectedItem="{Binding SelectedMapRtDataMode}" Width="90" Margin="0,0,10,0" />
+            <CheckBox x:Name="cbUserCord" Content="UserCord" IsChecked="False" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" Command="{Binding CmdChangeUserCord}" CommandParameter="{Binding ElementName=cbUserCord, Path=IsChecked}"/>
         </StackPanel>
-        <m:WaferMapControl Grid.Row="1" Name="waferMap" WaferData="{Binding WaferData}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
+            <Label Content="X:"/>
+            <ComboBox x:Name="cbItemX" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordX}" Margin="3,1,20,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}_TN:{1}_{2}">
+                                    <Binding Path="Idx"/>
+                                    <Binding Path="TestNumber"/>
+                                    <Binding Path="TestText"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Label Content="Y:"/>
+            <ComboBox x:Name="cbItemY" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordY}" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}_TN:{1}_{2}">
+                                    <Binding Path="Idx"/>
+                                    <Binding Path="TestNumber"/>
+                                    <Binding Path="TestText"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Label Content="WaferNO:"/>
+            <ComboBox x:Name="cbItemWaferNO" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedWaferNO}" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}_TN:{1}_{2}">
+                                    <Binding Path="Idx"/>
+                                    <Binding Path="TestNumber"/>
+                                    <Binding Path="TestText"/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApply, Mode=OneWay}" ToolTip="Apply the user cord"  BorderThickness="0" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
+                </Button.Background>
+            </Button>
+
+        </StackPanel>
+        <m:WaferMapControl Grid.Row="2" Name="waferMap" WaferData="{Binding WaferData}" BinMode="{Binding SelectedMapBinMode}" ViewMode="{Binding SelectedMapViewMode}" RtDataMode="{Binding SelectedMapRtDataMode}"/>
     </Grid>
 </UserControl>

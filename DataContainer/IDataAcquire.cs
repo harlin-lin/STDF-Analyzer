@@ -91,6 +91,8 @@ namespace DataContainer{
 
         Tuple<short?,short?> GetWaferCordTuple(int partIndex);
 
+        float GetItemData(string uid, int partIndex);
+
         ushort GetHardBin(int partIndex);
 
         ushort GetSoftBin(int partIndex);

@@ -98,6 +98,10 @@ namespace DataContainer {
             return new Tuple<short?, short?>(_xCord_PartContainer[partIndex], _yCord_PartContainer[partIndex]);
         }
 
+        public float GetItemData(string uid, int partIndex) {
+            return GetItemVal(uid, partIndex);
+        }
+
         public ushort GetHardBin(int partIndex) {
             return _hardBin_PartContainer[partIndex];
         }

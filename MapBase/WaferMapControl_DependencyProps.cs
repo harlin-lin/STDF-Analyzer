@@ -13,6 +13,22 @@ namespace MapBase {
             set { SetValue(WaferDataProperty, value); }
         }
 
+        public static DependencyObject GetTarget(IWaferData waferData) {
+            if (waferData == null)
+                throw new ArgumentNullException("waferData");
+
+            //waferData.GetValue(WaferDataProperty)
+            return null as DependencyObject;
+        }
+
+        public static void SetTarget(IWaferData waferData, DependencyObject value) {
+            if (waferData == null)
+                throw new ArgumentNullException("waferData");
+
+            //waferData.SetValue(WaferDataProperty, value);
+        }
+
+
         // Using a DependencyProperty as the backing store for WaferData.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty WaferDataProperty =
             DependencyProperty.Register("WaferData", typeof(IWaferData), typeof(WaferMapControl), new PropertyMetadata(null, OnDataSourceChanged));

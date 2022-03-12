@@ -35,13 +35,20 @@ namespace UI_Chart.ViewModels {
             HBinInfo = da.GetHBinInfo();
             SBinInfo = da.GetSBinInfo();
 
-            foreach (var v in da.GetFilteredPartIndex(subData.FilterId)) {
+            UpdateData();
+        }
+
+        public void UpdateData() {
+            _dieInfoList.Clear();
+
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+            foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
                 var cord = da.GetWaferCordTuple(v);
                 _dieInfoList.Add(new DieInfo(v, cord.Item1.Value, cord.Item2.Value, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
             }
 
             var xs = from r in _dieInfoList
-                    select r.X;
+                     select r.X;
             var ys = from r in _dieInfoList
                      select r.Y;
 
@@ -50,9 +57,40 @@ namespace UI_Chart.ViewModels {
             YUbound = ys.Max();
             YLbound = ys.Min();
 
+        }
+
+        public void EnableUserCord(Item x, Item y, Item w) {
+            _dieInfoList.Clear();
+
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+            foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
+                var cordX = da.GetItemData(x.TestNumber, v);
+                if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
+
+                var cordY = da.GetItemData(y.TestNumber, v);
+                if (float.IsNaN(cordY) || float.IsInfinity(cordY)) continue;
+
+                var waferNO = da.GetItemData(w.TestNumber, v);
+                if (float.IsNaN(waferNO) || float.IsInfinity(waferNO)) continue;
+
+                _dieInfoList.Add(new DieInfo(v, (short)cordX, (short)cordY, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), (short)waferNO));
+            }
+
+            var xs = from r in _dieInfoList
+                     select r.X;
+            var ys = from r in _dieInfoList
+                     select r.Y;
+
+            XUbound = xs.Max();
+            XLbound = xs.Min();
+            YUbound = ys.Max();
+            YLbound = ys.Min();
 
         }
 
+        public void DisableUserCord() {
+            UpdateData();
+        }
     }
 
     public class WaferMapViewModel : BindableBase, INavigationAware {
@@ -65,6 +103,66 @@ namespace UI_Chart.ViewModels {
         public WaferDataModel WaferData {
             get { return _waferData; }
             set { SetProperty(ref _waferData, value); }
+        }
+
+        private IEnumerable<MapBinMode> _mapBinModeList = Enum.GetValues(typeof(MapBinMode)).OfType<MapBinMode>();
+        public IEnumerable<MapBinMode> MapBinModeList {
+            get { return _mapBinModeList; }
+            set { SetProperty(ref _mapBinModeList, value); }
+        }
+
+        private MapBinMode _selectedMapBinMode = MapBinMode.SBin;
+        public MapBinMode SelectedMapBinMode {
+            get { return _selectedMapBinMode; }
+            set { SetProperty(ref _selectedMapBinMode, value); }
+        }
+
+        private IEnumerable<MapRtDataMode> _mapRtDataModeList = Enum.GetValues(typeof(MapRtDataMode)).OfType<MapRtDataMode>();
+        public IEnumerable<MapRtDataMode> MapRtDataModeList {
+            get { return _mapRtDataModeList; }
+            set { SetProperty(ref _mapRtDataModeList, value); }
+        }
+
+        private MapRtDataMode _selectedMapRtDataMode = MapRtDataMode.OverWrite;
+        public MapRtDataMode SelectedMapRtDataMode {
+            get { return _selectedMapRtDataMode; }
+            set { SetProperty(ref _selectedMapRtDataMode, value); }
+        }
+
+        private IEnumerable<MapViewMode> _mapViewModeList = Enum.GetValues(typeof(MapViewMode)).OfType<MapViewMode>();
+        public IEnumerable<MapViewMode> MapViewModeList {
+            get { return _mapViewModeList; }
+            set { SetProperty(ref _mapViewModeList, value); }
+        }
+
+        private MapViewMode _selectedMapViewMode = MapViewMode.Single;
+        public MapViewMode SelectedMapViewMode {
+            get { return _selectedMapViewMode; }
+            set { SetProperty(ref _selectedMapViewMode, value); }
+        }
+
+        private IEnumerable<Item> _items;
+        public IEnumerable<Item> AllItems {
+            get { return _items; }
+            set { SetProperty(ref _items, value); }
+        }
+
+        private Item _selectedCordX;
+        public Item SelectedCordX {
+            get { return _selectedCordX; }
+            set { SetProperty(ref _selectedCordX, value); }
+        }
+
+        private Item _selectedCordY;
+        public Item SelectedCordY {
+            get { return _selectedCordY; }
+            set { SetProperty(ref _selectedCordY, value); }
+        }
+
+        private Item _selectedWaferNO;
+        public Item SelectedWaferNO {
+            get { return _selectedWaferNO; }
+            set { SetProperty(ref _selectedWaferNO, value); }
         }
 
         public WaferMapViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -89,6 +187,9 @@ namespace UI_Chart.ViewModels {
             if (!_subData.Equals(data)) {
                 _subData = data;
 
+                var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+                AllItems = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
+
                 WaferData = new WaferDataModel(_subData);
             }
         }
@@ -96,8 +197,34 @@ namespace UI_Chart.ViewModels {
 
         void UpdateChart(SubData subData) {
             if (subData.Equals(_subData)) {
-                WaferData = new WaferDataModel(_subData);
+                WaferData.UpdateData();
+                RaisePropertyChanged("WaferData");
             }
         }
+
+        private DelegateCommand cmdApply;
+        public DelegateCommand CmdApply =>
+            cmdApply ?? (cmdApply = new DelegateCommand(ExecuteCmdApply));
+
+        void ExecuteCmdApply() {
+            WaferData.EnableUserCord(SelectedCordX, SelectedCordY, SelectedWaferNO);
+            RaisePropertyChanged("WaferData");
+        }
+
+        private DelegateCommand<object> cmdDisableUserCord;
+        public DelegateCommand<object> CmdChangeUserCord =>
+            cmdDisableUserCord ?? (cmdDisableUserCord = new DelegateCommand<object>(ExecuteCmdChangeUserCord));
+
+        void ExecuteCmdChangeUserCord(object ifChecked) {
+
+            if (!(bool)ifChecked) {
+                WaferData.DisableUserCord();
+                RaisePropertyChanged("WaferData");
+            } else {
+                if(_selectedWaferNO!= null && _selectedCordX!=null && _selectedCordY != null)
+                    ExecuteCmdApply();
+            }
+        }
+
     }
 }
