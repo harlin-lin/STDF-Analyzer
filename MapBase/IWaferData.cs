@@ -29,8 +29,7 @@ namespace MapBase {
 
     public enum MapViewMode{
         Single,
-        Split,
-        Stack
+        Split
     }
 
     public enum MapBinMode {

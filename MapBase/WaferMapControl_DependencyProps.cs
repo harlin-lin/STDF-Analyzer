@@ -59,7 +59,7 @@ namespace MapBase {
 
         // Using a DependencyProperty as the backing store for ViewMode.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ViewModeProperty =
-            DependencyProperty.Register("ViewMode", typeof(MapViewMode), typeof(WaferMapControl), new PropertyMetadata(MapViewMode.Single, OnMapViewModeChanged));
+            DependencyProperty.Register("ViewMode", typeof(MapViewMode), typeof(WaferMapControl), new PropertyMetadata(MapViewMode.Split, OnMapViewModeChanged));
 
         private static void OnMapViewModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             ((WaferMapControl)d).UpdateViewMode();

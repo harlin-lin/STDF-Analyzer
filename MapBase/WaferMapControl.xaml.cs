@@ -47,7 +47,6 @@ namespace MapBase {
         private int _xCnt, _yCnt;
 
         private Dictionary<short?, MapBaseControl> _mapControlList = new Dictionary<short?, MapBaseControl>();
-        private MapBaseControl _mapControlStack;
         private MapBaseControl _selectedMap = null;
 
         private void MapBaseControl_CordChanged(int x, int y, Color color) {
@@ -56,26 +55,24 @@ namespace MapBase {
                 infoBlock.Visibility = Visibility.Hidden;
             } else {
                 string append = "";
-                if (ViewMode != MapViewMode.Stack) {
-                    if (BinMode == MapBinMode.HBin) {
-                        var bin = _hBinColors.FirstOrDefault(a => a.Value == color).Key;
-                        append = $"HBIN {bin}";
+                if (BinMode == MapBinMode.HBin) {
+                    var bin = _hBinColors.FirstOrDefault(a => a.Value == color).Key;
+                    append = $"HBIN {bin}";
 
-                        if (_waferData.HBinInfo != null) {
-                            var binName = _waferData.HBinInfo[bin].Item2;
-                            if (binName.Length > 0) {
-                                append += $" {binName}";
-                            }
+                    if (_waferData.HBinInfo != null) {
+                        var binName = _waferData.HBinInfo[bin].Item2;
+                        if (binName.Length > 0) {
+                            append += $" {binName}";
                         }
-                    } else {
-                        var bin = _sBinColors.FirstOrDefault(a => a.Value == color).Key;
-                        append = $"SBIN {bin}";
+                    }
+                } else {
+                    var bin = _sBinColors.FirstOrDefault(a => a.Value == color).Key;
+                    append = $"SBIN {bin}";
 
-                        if (_waferData.SBinInfo != null) {
-                            var binName = _waferData.SBinInfo[bin].Item2;
-                            if (binName.Length > 0) {
-                                append += $" {binName}";
-                            }
+                    if (_waferData.SBinInfo != null) {
+                        var binName = _waferData.SBinInfo[bin].Item2;
+                        if (binName.Length > 0) {
+                            append += $" {binName}";
                         }
                     }
                 }
@@ -96,11 +93,7 @@ namespace MapBase {
             viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
-            if(_selectedMap == _mapControlStack) {
-                _selectedMap.CordChanged -= MapBaseControl_CordChanged;
-            } else {
-                _selectedMap.CordChanged += MapBaseControl_CordChanged;
-            }
+            _selectedMap.CordChanged += MapBaseControl_CordChanged;
             viewGrid.Children.Add(_selectedMap);
 
             UpdateBinInfo();
@@ -159,40 +152,12 @@ namespace MapBase {
                 }
             }
 
-            //gen stack map
-            Color[,] stack = new Color[_xCnt, _yCnt];
-            int?[,] stackCnt = new int?[_xCnt, _yCnt];
-
-            foreach (var wafer in maps) {
-                for (int x = 0; x < _xCnt; x++) {
-                    for (int y = 0; y < _yCnt; y++) {
-                        if (wafer.Value[x, y] != BinColor.GetPassBinColor() && wafer.Value[x, y] != new Color()) {
-                            if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
-                            stackCnt[x, y]++;
-                        } else if (wafer.Value[x, y] == BinColor.GetPassBinColor()) {
-                            if (stackCnt[x, y] is null) stackCnt[x, y] = 0;
-                        }
-                    }
-                }
-            }
-            for (int x = 0; x < _xCnt; x++) {
-                for (int y = 0; y < _yCnt; y++) {
-                    if (stackCnt[x, y].HasValue) {
-                        stack[x, y] = BinColor.GetStackWaferBinColor(stackCnt[x, y].Value, maps.Count);
-                    } else {
-                        stack[x, y] = Colors.White;
-                    }
-                }
-            }
-
             _mapControlList.Clear();
             foreach (var wafer in maps) {
                 var map = new MapBaseControl();
                 map.MapDataSource = wafer.Value;
                 _mapControlList.Add(wafer.Key, map);
             }
-            _mapControlStack = new MapBaseControl();
-            _mapControlStack.MapDataSource = stack;
 
             UpdateViewMode();
         }
@@ -332,8 +297,8 @@ namespace MapBase {
                     _freshHBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
                 } else {
                     _containRtFlg[die.WaferId] = true;
-                    _freshSBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
-                    _freshHBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
+                    _sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
+                    _hBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
                 }
 
             }
@@ -361,11 +326,7 @@ namespace MapBase {
                     SwitchSplitView();
                     break;
                 case MapViewMode.Single:
-                    if ((_selectedMap is null || _selectedMap == _mapControlStack) && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
-                    SwitchSingleView();
-                    break;
-                case MapViewMode.Stack:
-                    _selectedMap = _mapControlStack;
+                    if (_selectedMap is null && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
                     SwitchSingleView();
                     break;
                 default: break;
