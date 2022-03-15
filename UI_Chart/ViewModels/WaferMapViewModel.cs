@@ -7,6 +7,7 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace UI_Chart.ViewModels {
@@ -35,13 +36,8 @@ namespace UI_Chart.ViewModels {
             HBinInfo = da.GetHBinInfo();
             SBinInfo = da.GetSBinInfo();
 
-            UpdateData();
-        }
-
-        public void UpdateData() {
             _dieInfoList.Clear();
 
-            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
             foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
                 var cord = da.GetWaferCordTuple(v);
                 _dieInfoList.Add(new DieInfo(v, cord.Item1.Value, cord.Item2.Value, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
@@ -56,13 +52,17 @@ namespace UI_Chart.ViewModels {
             XLbound = xs.Min();
             YUbound = ys.Max();
             YLbound = ys.Min();
-
         }
 
-        public void EnableUserCord(Item x, Item y, Item w) {
+        public WaferDataModel(SubData subData, Item x, Item y, Item w) {
+            _subData = subData;
+
+            var da = StdDB.GetDataAcquire(subData.StdFilePath);
+            HBinInfo = da.GetHBinInfo();
+            SBinInfo = da.GetSBinInfo();
+
             _dieInfoList.Clear();
 
-            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
             foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
                 var cordX = da.GetItemData(x.TestNumber, v);
                 if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
@@ -85,12 +85,61 @@ namespace UI_Chart.ViewModels {
             XLbound = xs.Min();
             YUbound = ys.Max();
             YLbound = ys.Min();
-
         }
 
-        public void DisableUserCord() {
-            UpdateData();
-        }
+        //public void UpdateData() {
+        //    _dieInfoList.Clear();
+
+        //    var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+        //    foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
+        //        var cord = da.GetWaferCordTuple(v);
+        //        _dieInfoList.Add(new DieInfo(v, cord.Item1.Value, cord.Item2.Value, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
+        //    }
+
+        //    var xs = from r in _dieInfoList
+        //             select r.X;
+        //    var ys = from r in _dieInfoList
+        //             select r.Y;
+
+        //    XUbound = xs.Max();
+        //    XLbound = xs.Min();
+        //    YUbound = ys.Max();
+        //    YLbound = ys.Min();
+
+        //}
+
+        //public void EnableUserCord(Item x, Item y, Item w) {
+        //    _dieInfoList.Clear();
+
+        //    var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+        //    foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
+        //        var cordX = da.GetItemData(x.TestNumber, v);
+        //        if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
+
+        //        var cordY = da.GetItemData(y.TestNumber, v);
+        //        if (float.IsNaN(cordY) || float.IsInfinity(cordY)) continue;
+
+        //        var waferNO = da.GetItemData(w.TestNumber, v);
+        //        if (float.IsNaN(waferNO) || float.IsInfinity(waferNO)) continue;
+
+        //        _dieInfoList.Add(new DieInfo(v, (short)cordX, (short)cordY, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), (short)waferNO));
+        //    }
+
+        //    var xs = from r in _dieInfoList
+        //             select r.X;
+        //    var ys = from r in _dieInfoList
+        //             select r.Y;
+
+        //    XUbound = xs.Max();
+        //    XLbound = xs.Min();
+        //    YUbound = ys.Max();
+        //    YLbound = ys.Min();
+
+        //}
+
+        //public void DisableUserCord() {
+        //    UpdateData();
+        //}
     }
 
     public class WaferMapViewModel : BindableBase, INavigationAware {
@@ -197,8 +246,7 @@ namespace UI_Chart.ViewModels {
 
         void UpdateChart(SubData subData) {
             if (subData.Equals(_subData)) {
-                WaferData.UpdateData();
-                RaisePropertyChanged("WaferData");
+                WaferData = new WaferDataModel(_subData);
             }
         }
 
@@ -207,8 +255,7 @@ namespace UI_Chart.ViewModels {
             cmdApply ?? (cmdApply = new DelegateCommand(ExecuteCmdApply));
 
         void ExecuteCmdApply() {
-            WaferData.EnableUserCord(SelectedCordX, SelectedCordY, SelectedWaferNO);
-            RaisePropertyChanged("WaferData");
+            WaferData = new WaferDataModel(_subData, SelectedCordX, SelectedCordY, SelectedWaferNO);
         }
 
         private DelegateCommand<object> cmdDisableUserCord;
@@ -216,12 +263,10 @@ namespace UI_Chart.ViewModels {
             cmdDisableUserCord ?? (cmdDisableUserCord = new DelegateCommand<object>(ExecuteCmdChangeUserCord));
 
         void ExecuteCmdChangeUserCord(object ifChecked) {
-
             if (!(bool)ifChecked) {
-                WaferData.DisableUserCord();
-                RaisePropertyChanged("WaferData");
+                WaferData = new WaferDataModel(_subData);
             } else {
-                if(_selectedWaferNO!= null && _selectedCordX!=null && _selectedCordY != null)
+                if (_selectedWaferNO != null && _selectedCordX != null && _selectedCordY != null)
                     ExecuteCmdApply();
             }
         }

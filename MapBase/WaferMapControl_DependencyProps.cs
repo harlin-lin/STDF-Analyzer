@@ -8,30 +8,32 @@ using System.Windows;
 namespace MapBase {
     partial class WaferMapControl {
 
-        public IWaferData WaferData {
+        public IWaferData WaferDataSource {
             get { return (IWaferData)GetValue(WaferDataProperty); }
-            set { SetValue(WaferDataProperty, value); }
+            set { 
+                SetValue(WaferDataProperty, value); 
+            }
         }
 
-        public static DependencyObject GetTarget(IWaferData waferData) {
-            if (waferData == null)
-                throw new ArgumentNullException("waferData");
+        //public static DependencyObject GetTarget(IWaferData waferData) {
+        //    if (waferData == null)
+        //        throw new ArgumentNullException("waferData");
 
-            //waferData.GetValue(WaferDataProperty)
-            return null as DependencyObject;
-        }
+        //    //waferData.GetValue(WaferDataProperty)
+        //    return null as DependencyObject;
+        //}
 
-        public static void SetTarget(IWaferData waferData, DependencyObject value) {
-            if (waferData == null)
-                throw new ArgumentNullException("waferData");
+        //public static void SetTarget(IWaferData waferData, DependencyObject value) {
+        //    if (waferData == null)
+        //        throw new ArgumentNullException("waferData");
 
-            //waferData.SetValue(WaferDataProperty, value);
-        }
+        //    //waferData.SetValue(WaferDataProperty, value);
+        //}
 
 
         // Using a DependencyProperty as the backing store for WaferData.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty WaferDataProperty =
-            DependencyProperty.Register("WaferData", typeof(IWaferData), typeof(WaferMapControl), new PropertyMetadata(null, OnDataSourceChanged));
+            DependencyProperty.Register(nameof(WaferDataSource), typeof(IWaferData), typeof(WaferMapControl), new PropertyMetadata(null, OnDataSourceChanged)); //FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal, 
 
         private static void OnDataSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             ((WaferMapControl)d).OnDataSourceChanged((IWaferData)e.NewValue);

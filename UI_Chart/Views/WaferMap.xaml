@@ -90,6 +90,6 @@
             </Button>
 
         </StackPanel>
-        <m:WaferMapControl Grid.Row="2" Name="waferMap" WaferData="{Binding WaferData}" BinMode="{Binding SelectedMapBinMode}" ViewMode="{Binding SelectedMapViewMode}" RtDataMode="{Binding SelectedMapRtDataMode}"/>
+        <m:WaferMapControl Grid.Row="2" Name="waferMap" WaferDataSource="{Binding WaferData}" BinMode="{Binding SelectedMapBinMode}" ViewMode="{Binding SelectedMapViewMode}" RtDataMode="{Binding SelectedMapRtDataMode}"/>
     </Grid>
 </UserControl>
