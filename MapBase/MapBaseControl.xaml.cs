@@ -72,7 +72,7 @@ namespace MapBase {
                 int x = 0, y = 0;
                 for (int cPixel = 0; cPixel < _drawBuffer.PixelWidth + _zoomShiftX; cPixel += _dieWidth) {
                     for (int rPixel = 0; rPixel < _drawBuffer.PixelHeight + _zoomShiftY; rPixel += _dieHeight) {
-                        _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, Colors.Black);
+                        _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, Colors.White);
                         _drawBuffer.FillRectangle(cPixel + 1 - _zoomShiftX, rPixel + 1 - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, _waferColor[x, y]);
                         if ((++y) >= _rowLen) break;
                     }
