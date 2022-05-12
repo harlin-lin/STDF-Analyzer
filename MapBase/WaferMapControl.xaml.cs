@@ -118,8 +118,8 @@ namespace MapBase {
 
             for (int i = 0; i < _mapControlList.Count; i++) {
                 _mapControlList.ElementAt(i).Value.CordChanged -= MapBaseControl_CordChanged;
-                _mapControlList.ElementAt(i).Value.EnableDrag = false;
-                _mapControlList.ElementAt(i).Value.EnableZoom = false;
+                _mapControlList.ElementAt(i).Value.EnableDrag = true;
+                _mapControlList.ElementAt(i).Value.EnableZoom = true;
 
                 viewGrid.Children.Add(_mapControlList.ElementAt(i).Value);
                 Grid.SetRow(_mapControlList.ElementAt(i).Value, i / splitColCnt);

@@ -244,9 +244,9 @@ namespace UI_DataList.ViewModels {
             sb.AppendLine($"Total:{data.Count()}");
             sb.AppendLine($"Valid:{validatedCnt} NaN:{naFail} -∞:{negInf} +∞:{posInf}");
             if (validatedCnt > 0) {
-                sb.AppendLine($"Pass:{pass} {(pass * 1.0 / validatedCnt).ToString("f3")}%");
-                sb.AppendLine($"Lo Fail:{loFail} {(loFail*1.0/validatedCnt).ToString("f3")}%");
-                sb.AppendLine($"Hi Fail:{hiFail} {(hiFail * 1.0 / validatedCnt).ToString("f3")}%");
+                sb.AppendLine($"Pass:{pass} {(pass * 100.0 / validatedCnt).ToString("f3")}%");
+                sb.AppendLine($"Lo Fail:{loFail} {(loFail*100.0/validatedCnt).ToString("f3")}%");
+                sb.AppendLine($"Hi Fail:{hiFail} {(hiFail * 100.0 / validatedCnt).ToString("f3")}%");
             }
 
             return sb.ToString();

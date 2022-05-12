@@ -25,14 +25,14 @@ namespace MapBase {
 
         private WriteableBitmap _drawBuffer;
         private double _waferDiameter = DEFAULT_WAFER_DIAMETER;
-        private double _initWaferDiameter = DEFAULT_WAFER_DIAMETER;
+        //private double _initWaferDiameter = DEFAULT_WAFER_DIAMETER;
         private Color[,] _waferColor;
 
         private int _zoomShiftX = -5;
         private int _zoomShiftY = -5;
 
-        const int MIN_DIE_PIXELS = 3;
-        const double DEFAULT_WAFER_DIAMETER = 50;
+        const int MIN_DIE_PIXELS = 2;
+        const double DEFAULT_WAFER_DIAMETER = 300;
 
         public Tuple<int, int> FocusedCord { get; private set; }
         public event CordChangedHandler CordChanged;
@@ -41,14 +41,29 @@ namespace MapBase {
             var longerRank = _waferColor.GetLength(0) > _waferColor.GetLength(1) ? _waferColor.GetLength(0) : _waferColor.GetLength(1);
             if (_waferDiameter / longerRank < MIN_DIE_PIXELS) {
                 _waferDiameter = longerRank * MIN_DIE_PIXELS;
-                _initWaferDiameter = _waferDiameter;
+                //_initWaferDiameter = _waferDiameter;
                 return false;
             }
             return true;
         }
         private void ZoomMap(int stepPixel) {
-            _waferDiameter += stepPixel;
-            Render();
+            var tgtDiameter = _waferDiameter + stepPixel;
+
+            int width = (int)imageGrid.ActualWidth - 0;
+            int height = (int)imageGrid.ActualHeight - 0;
+
+            int pixelWidth = (int)Math.Ceiling(width * DpiXKoef);
+            int pixelHeight = (int)Math.Ceiling(height * DpiYKoef);
+
+            var min = GetMinDiameter(pixelWidth, pixelHeight);
+            if (tgtDiameter < min) {
+                tgtDiameter = min;
+            }
+
+            if(tgtDiameter != _waferDiameter) {
+                _waferDiameter = tgtDiameter;
+                Render();
+            }
         }
 
         private int _colLen;
@@ -72,8 +87,12 @@ namespace MapBase {
                 int x = 0, y = 0;
                 for (int cPixel = 0; cPixel < _drawBuffer.PixelWidth + _zoomShiftX; cPixel += _dieWidth) {
                     for (int rPixel = 0; rPixel < _drawBuffer.PixelHeight + _zoomShiftY; rPixel += _dieHeight) {
-                        _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, Colors.White);
-                        _drawBuffer.FillRectangle(cPixel + 1 - _zoomShiftX, rPixel + 1 - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, _waferColor[x, y]);
+                        if(_dieWidth > 4 && _dieHeight > 4) {
+                            _drawBuffer.DrawRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, Colors.White);
+                            _drawBuffer.FillRectangle(cPixel + 1 - _zoomShiftX, rPixel + 1 - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, _waferColor[x, y]);
+                        } else {
+                            _drawBuffer.FillRectangle(cPixel - _zoomShiftX, rPixel - _zoomShiftY, cPixel + _dieWidth - _zoomShiftX, rPixel + _dieHeight - _zoomShiftY, _waferColor[x, y]);
+                        }
                         if ((++y) >= _rowLen) break;
                     }
                     if ((++x) >= _colLen) break;
@@ -83,35 +102,46 @@ namespace MapBase {
             }
         }
 
-        private void InitWaferDiameter() {
-            if (imageGrid.ActualWidth > 50 && imageGrid.ActualHeight > 50) {
-                _waferDiameter = imageGrid.ActualWidth > imageGrid.ActualHeight ? imageGrid.ActualHeight : imageGrid.ActualWidth;
-                _initWaferDiameter = _waferDiameter;
+        private int GetMinDiameter(int ctrWidth, int ctrHeight) {
+            if (ctrWidth > DEFAULT_WAFER_DIAMETER && ctrHeight > DEFAULT_WAFER_DIAMETER) {
+                return (ctrWidth > ctrHeight ? ctrHeight : ctrWidth);
             } else {
-                _waferDiameter = _initWaferDiameter;
+                return (int)DEFAULT_WAFER_DIAMETER;
+            }
+        }
+
+        private void InitWaferDiameter(int ctrWidth, int ctrHeight) {
+            if (ctrWidth > DEFAULT_WAFER_DIAMETER && ctrHeight > DEFAULT_WAFER_DIAMETER) {
+                _waferDiameter = ctrWidth > ctrHeight ? ctrHeight : ctrWidth;
+                //_initWaferDiameter = _waferDiameter;
+            } else {
+                _waferDiameter = DEFAULT_WAFER_DIAMETER;
             }
             _zoomShiftX = -5;
             _zoomShiftY = -5;
         }
 
         private void imageGridResized(object sender, SizeChangedEventArgs e) {
-            bool renderNeeded = false;
-            int width = (int)imageGrid.ActualWidth - 2;
-            int height = (int)imageGrid.ActualHeight - 2;
+            //bool renderNeeded = false;
+            int width = (int)imageGrid.ActualWidth - 0;
+            int height = (int)imageGrid.ActualHeight - 0;
             if (width > 0 && height > 0) {
                 //To avoid flicker (blank image) while resizing, crop the current buffer and set it as the image source instead of using a new one.
                 //This will be shown during the refresh.
                 int pixelWidth = (int)Math.Ceiling(width * DpiXKoef);
                 int pixelHeight = (int)Math.Ceiling(height * DpiYKoef);
+                InitWaferDiameter(pixelWidth, pixelHeight);
+
                 if (_drawBuffer == null) {
                     _drawBuffer = BitmapFactory.New(pixelWidth, pixelHeight);
 
-                    InitWaferDiameter();
+                    Render();
 
-                    renderNeeded = true;
+                    //renderNeeded = true;
                 } else if (_drawBuffer.Width >= width && _drawBuffer.Height >= height) {
                     var oldBuffer = _drawBuffer;
                     _drawBuffer = oldBuffer.Crop(0, 0, pixelWidth, pixelHeight);
+                    Render();
 
                     //The unmanaged memory when crating new WritableBitmaps doesn't reliably garbage collect and can still cause out of memory exceptions
                     //Profiling revealed handles on the object that aren't able to be collected.
@@ -120,7 +150,8 @@ namespace MapBase {
                 } else {
                     var oldBuffer = _drawBuffer;
                     _drawBuffer = oldBuffer.Resize(pixelWidth, pixelHeight, WriteableBitmapExtensions.Interpolation.Bilinear);
-                    renderNeeded = true;
+                    //renderNeeded = true;
+                    Render();
 
                     //The unmanaged memory when crating new WritableBitmaps doesn't reliably garbage collect and can still cause out of memory exceptions
                     //Profiling revealed handles on the object that aren't able to be collected.
@@ -135,40 +166,9 @@ namespace MapBase {
             image.Width = Math.Max(0, width);
             image.Height = Math.Max(0, height);
 
-            if (renderNeeded) {
-                Render();
-            }
-        }
-
-        private static double? _dpiXKoef;
-
-        public static double DpiXKoef {
-            get {
-                if (_dpiXKoef == null) {
-                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
-                        _dpiXKoef = graphics.DpiX / 96.0;
-                    }
-                }
-                return _dpiXKoef ?? 1;
-            }
-        }
-
-        private static double? _dpiYKoef;
-
-        public static double DpiYKoef {
-            get {
-                if (_dpiYKoef == null) {
-                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
-                        _dpiYKoef = graphics.DpiY / 96.0;
-                    }
-                }
-                return _dpiYKoef ?? 1;
-
-                //return Screen.PrimaryScreen.WorkingArea.Width / SystemParameters.WorkArea.Width;
-                //WantGlobalTransformMatrix();
-                //if (_globalTransformPatrix.HasValue) return _globalTransformPatrix.Value.M22;
-                //return 1;
-            }
+            //if (renderNeeded) {
+            //    Render();
+            //}
         }
 
         private void imageMouseWheel(object sender, MouseWheelEventArgs e) {
@@ -181,7 +181,13 @@ namespace MapBase {
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
             base.OnMouseDoubleClick(e);
             if (EnableZoom || EnableDrag) {
-                InitWaferDiameter();
+                int width = (int)imageGrid.ActualWidth - 0;
+                int height = (int)imageGrid.ActualHeight - 0;
+
+                int pixelWidth = (int)Math.Ceiling(width * DpiXKoef);
+                int pixelHeight = (int)Math.Ceiling(height * DpiYKoef);
+                InitWaferDiameter(pixelWidth, pixelHeight);
+
                 Render();
             }
         }
@@ -240,6 +246,39 @@ namespace MapBase {
 
         }
 
+
+
+
+        private static double? _dpiXKoef;
+
+        public static double DpiXKoef {
+            get {
+                if (_dpiXKoef == null) {
+                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
+                        _dpiXKoef = graphics.DpiX / 96.0;
+                    }
+                }
+                return _dpiXKoef ?? 1;
+            }
+        }
+
+        private static double? _dpiYKoef;
+
+        public static double DpiYKoef {
+            get {
+                if (_dpiYKoef == null) {
+                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
+                        _dpiYKoef = graphics.DpiY / 96.0;
+                    }
+                }
+                return _dpiYKoef ?? 1;
+
+                //return Screen.PrimaryScreen.WorkingArea.Width / SystemParameters.WorkArea.Width;
+                //WantGlobalTransformMatrix();
+                //if (_globalTransformPatrix.HasValue) return _globalTransformPatrix.Value.M22;
+                //return 1;
+            }
+        }
 
     }
 }
