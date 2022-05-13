@@ -93,19 +93,29 @@ namespace MapBase {
             viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
+            viewGrid.ShowGridLines = false;
+            scrollBar.VerticalScrollBarVisibility =  ScrollBarVisibility.Disabled;
+
+            _selectedMap.Width = viewGrid.ActualWidth;
+            _selectedMap.Height = viewGrid.ActualHeight;
             _selectedMap.CordChanged += MapBaseControl_CordChanged;
+            _selectedMap.EnableZoom = true;
             viewGrid.Children.Add(_selectedMap);
+
 
             UpdateBinInfo();
         }
 
         private void SwitchSplitView() {
-            int splitColCnt = 3;
+            int splitColCnt = 2;
+
+            infoBlock.Visibility = Visibility.Hidden;
 
             viewGrid.Children.Clear();
             viewGrid.RowDefinitions.Clear();
             viewGrid.ColumnDefinitions.Clear();
             viewGrid.ShowGridLines = true;
+            scrollBar.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 
             int rowCnt = _mapControlList.Count / splitColCnt + (_mapControlList.Count % splitColCnt == 0 ? 0 : 1);
 
@@ -116,10 +126,15 @@ namespace MapBase {
                 viewGrid.RowDefinitions.Add(new RowDefinition());
             }
 
+            var width = viewGrid.ActualWidth / splitColCnt;
+
             for (int i = 0; i < _mapControlList.Count; i++) {
                 _mapControlList.ElementAt(i).Value.CordChanged -= MapBaseControl_CordChanged;
-                _mapControlList.ElementAt(i).Value.EnableDrag = true;
-                _mapControlList.ElementAt(i).Value.EnableZoom = true;
+                _mapControlList.ElementAt(i).Value.MapSelected += SplitView_MapSelected;
+                _mapControlList.ElementAt(i).Value.EnableZoom = false;
+
+                _mapControlList.ElementAt(i).Value.Width = width;
+                _mapControlList.ElementAt(i).Value.Height = width;
 
                 viewGrid.Children.Add(_mapControlList.ElementAt(i).Value);
                 Grid.SetRow(_mapControlList.ElementAt(i).Value, i / splitColCnt);
@@ -129,7 +144,11 @@ namespace MapBase {
             UpdateBinInfo();
         }
 
+        private void SplitView_MapSelected(MapBaseControl map) {
+            _selectedMap = map;
 
+            ViewMode = MapViewMode.Single;
+        }
 
         private void UpdateView() {
             if (_sBinMaps.Count == 0) return;
@@ -155,6 +174,7 @@ namespace MapBase {
             _mapControlList.Clear();
             foreach (var wafer in maps) {
                 var map = new MapBaseControl();
+                map.WaferNo = $"NO:{wafer.Key.ToString()}";
                 map.MapDataSource = wafer.Value;
                 _mapControlList.Add(wafer.Key, map);
             }
@@ -313,7 +333,6 @@ namespace MapBase {
             if (_waferData.DieInfoList is null || _waferData.DieInfoList.Count() == 0 || _waferData.XUbound==0 || _waferData.YUbound==0) return;
 
             UpdateData();
-            //Task.Run(() => { UpdateData(); });
         }
 
         private void UpdateBinMode() {
@@ -337,16 +356,25 @@ namespace MapBase {
             UpdateView();
         }
 
-        protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
-            base.OnMouseDoubleClick(e);
+        private void viewGrid_SizeChanged(object sender, SizeChangedEventArgs e) {
+            var width = viewGrid.ActualWidth / 2;
 
-            if (ViewMode != MapViewMode.Split) return;
-            foreach(var v in _mapControlList) {
-                if (v.Value.IsFocused) {
-                    _selectedMap = v.Value;
-                    SwitchSingleView();
+            if (ViewMode== MapViewMode.Split) {
+                for (int i = 0; i < _mapControlList.Count; i++) {
+                    _mapControlList.ElementAt(i).Value.Width = width;
+                    _mapControlList.ElementAt(i).Value.Height = width;
                 }
+
+            } else {
+                _selectedMap.Width = viewGrid.ActualWidth;
+                _selectedMap.Height = viewGrid.ActualHeight;
             }
+        }
+
+        public BitmapSource GetWaferMap() {
+            if (_selectedMap is null) return null;
+
+            return _selectedMap.GetBitmapSource();
         }
 
     }

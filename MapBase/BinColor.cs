@@ -9,7 +9,7 @@ namespace MapBase {
     public static class BinColor {
         const int _gradientCnt = 25;
         static Color GradientBaseColor = Color.FromRgb(0xf0, 0x80, 0x90);
-        static Color _passColor = Colors.Green;
+        static Color _passColor = Color.FromRgb(0,238,0);
         static Color[] _failColors = {
             Colors.Red,
             Colors.Orchid,

@@ -6,13 +6,12 @@
              xmlns:local="clr-namespace:MapBase"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid x:Name="imageGrid" SizeChanged="imageGridResized">
+    <Grid x:Name="imageGrid" SizeChanged="imageGridResized" MouseWheel="imageMouseWheel" Background="White" >
         <Image 
                 x:Name="image" SnapsToDevicePixels="True" Focusable="True" 
-                RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="None"
-                MouseWheel="imageMouseWheel" 
-                
+                RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="None"  
+                MouseLeave="image_MouseLeave"
             />
-
+        <TextBlock Name="waferIdTag" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Symbol"/>
     </Grid>
 </UserControl>

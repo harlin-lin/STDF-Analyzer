@@ -1,5 +1,6 @@
 ﻿using DataContainer;
 using MapBase;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -8,6 +9,7 @@ using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 
 namespace UI_Chart.ViewModels {
@@ -63,28 +65,34 @@ namespace UI_Chart.ViewModels {
 
             _dieInfoList.Clear();
 
-            foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
-                var cordX = da.GetItemData(x.TestNumber, v);
-                if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
+            try {
+                foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
+                    var cordX = da.GetItemData(x.TestNumber, v);
+                    if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
 
-                var cordY = da.GetItemData(y.TestNumber, v);
-                if (float.IsNaN(cordY) || float.IsInfinity(cordY)) continue;
+                    var cordY = da.GetItemData(y.TestNumber, v);
+                    if (float.IsNaN(cordY) || float.IsInfinity(cordY)) continue;
 
-                var waferNO = da.GetItemData(w.TestNumber, v);
-                if (float.IsNaN(waferNO) || float.IsInfinity(waferNO)) continue;
+                    var waferNO = da.GetItemData(w.TestNumber, v);
+                    if (float.IsNaN(waferNO) || float.IsInfinity(waferNO)) continue;
 
-                _dieInfoList.Add(new DieInfo(v, (short)cordX, (short)cordY, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), (short)waferNO));
+                    _dieInfoList.Add(new DieInfo(v, (short)cordX, (short)cordY, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), (short)waferNO));
+                }
+
+                var xs = from r in _dieInfoList
+                         select r.X;
+                var ys = from r in _dieInfoList
+                         select r.Y;
+
+                XUbound = xs.Max();
+                XLbound = xs.Min();
+                YUbound = ys.Max();
+                YLbound = ys.Min();
+            }
+            catch {
+                
             }
 
-            var xs = from r in _dieInfoList
-                     select r.X;
-            var ys = from r in _dieInfoList
-                     select r.Y;
-
-            XUbound = xs.Max();
-            XLbound = xs.Min();
-            YUbound = ys.Max();
-            YLbound = ys.Min();
         }
 
         //public void UpdateData() {
@@ -268,6 +276,104 @@ namespace UI_Chart.ViewModels {
             } else {
                 if (_selectedWaferNO != null && _selectedCordX != null && _selectedCordY != null)
                     ExecuteCmdApply();
+            }
+        }
+
+
+        ///<summary>
+        /// Check if file is Good for writing
+        ///</summary>
+        ///<param name="filePath">File path</param>
+        ///<returns></returns>
+        public static bool IsFileGoodForWriting(string filePath) {
+            FileStream stream = null;
+            FileInfo file = new FileInfo(filePath);
+
+            try {
+                stream = file.Open(FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+            }
+            catch (Exception) {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return false;
+            } finally {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            //file is not locked
+            return true;
+        }
+
+        public SaveFileDialog CreateFileDialog(string filter) {
+            var saveFileDialog = new SaveFileDialog {
+                Filter = filter,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
+
+            return saveFileDialog;
+        }
+
+        private bool GetAndCheckPath(string filter, string dftName, out string path) {
+            var ret = false;
+            var isGoodPath = false;
+            var saveFileDialog = CreateFileDialog(filter);
+            saveFileDialog.FileName = dftName;
+            path = null;
+
+            while (!isGoodPath) {
+                if (saveFileDialog.ShowDialog() == true) {
+                    if (IsFileGoodForWriting(saveFileDialog.FileName)) {
+                        path = saveFileDialog.FileName;
+                        isGoodPath = true;
+                        ret = true;
+                    } else {
+                        System.Windows.MessageBox.Show(
+                            "File is inaccesible for writing or you can not create file in this location, please choose another one.");
+                    }
+                } else {
+                    isGoodPath = true;
+                }
+            }
+
+            return ret;
+        }
+
+        private DelegateCommand<object> _CmdSave;
+        public DelegateCommand<object> CmdSave =>
+            _CmdSave ?? (_CmdSave = new DelegateCommand<object>(ExecuteCmdSave));
+
+        void ExecuteCmdSave(object e) {
+            string filePath;
+
+            string dftName = Path.GetFileNameWithoutExtension(_subData.StdFilePath);
+            if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
+                var image = (e as WaferMapControl).GetWaferMap();
+                if(image is null) {
+                    System.Windows.MessageBox.Show("Select single map first");
+                } else {
+                    using (var fileStream = new FileStream(filePath, FileMode.Create)) {
+                        System.Windows.Media.Imaging.BitmapEncoder encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(image));
+                        encoder.Save(fileStream);
+                    }
+                }
+            }
+
+        }
+
+        private DelegateCommand<object> _CmdCopy;
+        public DelegateCommand<object> CmdCopy =>
+            _CmdCopy ?? (_CmdCopy = new DelegateCommand<object>(ExecuteCmdCopy));
+
+        void ExecuteCmdCopy(object e) {
+            var image = (e as WaferMapControl).GetWaferMap();
+            if (image is null) {
+                System.Windows.MessageBox.Show("Select single map first");
+            } else {
+                System.Windows.Clipboard.SetImage(image);
             }
         }
 

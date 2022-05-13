@@ -25,7 +25,7 @@ namespace MapBase {
         private void OnWaferDataSourcePropertyChanged() {
             if (MapDataSource is null) return;
             _waferColor = MapDataSource;
-            Render();
+            CreateRawBuffer();
         }
 
 
@@ -39,15 +39,7 @@ namespace MapBase {
             DependencyProperty.Register("EnableZoom", typeof(bool), typeof(MapBaseControl), new PropertyMetadata(true));
 
 
-        public bool EnableDrag {
-            get { return (bool)GetValue(EnableDragProperty); }
-            set { SetValue(EnableDragProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for EnableDrag.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty EnableDragProperty =
-            DependencyProperty.Register("EnableDrag", typeof(bool), typeof(MapBaseControl), new PropertyMetadata(true));
-
+        public string WaferNo;
 
     }
 }

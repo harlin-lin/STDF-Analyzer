@@ -19,9 +19,9 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*" MinHeight="40"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Name="viewGrid">
-            <!--<m:MapBaseControl MapDataSource="{Binding WaferColor}" EnableZoom="True"/>-->
-        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Name="scrollBar">
+            <Grid Grid.Row="0" Name="viewGrid"  SizeChanged="viewGrid_SizeChanged" />
+        </ScrollViewer>
         <TextBox Grid.Row="0" Name="infoBlock" Visibility="Hidden"  Height="32"  HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <GridSplitter  Grid.Row="1" HorizontalAlignment="Stretch"/>
         <ScrollViewer Grid.Row="2">
