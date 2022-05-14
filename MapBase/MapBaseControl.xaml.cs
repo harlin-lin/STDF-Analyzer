@@ -164,6 +164,9 @@ namespace MapBase {
                 _dragFlg = true;
                 _dragStartPoint.X -= _zoomShiftX;
                 _dragStartPoint.Y -= _zoomShiftY;
+
+                CordChanged?.Invoke(int.MinValue, int.MinValue, Colors.White);
+
             } else {
                 ModeChangeFlg = false;
             }
@@ -181,8 +184,12 @@ namespace MapBase {
 
         private void image_MouseLeave(object sender, MouseEventArgs e) {
             if (_dragFlg) {
-                Cursor = Cursors.Arrow;
-                _dragFlg = false;
+                //var pt = e.GetPosition(image);
+                ////System.Diagnostics.Debug.WriteLine($"LEAVE SX:{pt.X} SY:{pt.Y}");
+                //if (pt.X < 0 || pt.X > image.ActualWidth || pt.Y<0 || pt.Y > image.ActualHeight) {
+                    Cursor = Cursors.Arrow;
+                    _dragFlg = false;
+                //}
             }
         }
 
@@ -207,12 +214,15 @@ namespace MapBase {
                 _zoomShiftX = 0;
                 _zoomShiftY = 0;
 
-
+                Color die;
                 int x = 0, y = 0;
                 for (int cPixel = 0; cPixel < _rawBuffer.PixelWidth + _zoomShiftX; cPixel += dieWidth) {
                     for (int rPixel = 0; rPixel < _rawBuffer.PixelHeight + _zoomShiftY; rPixel += dieHeight) {
+                        die = _waferColor[x, y];
+                        if (die == new Color()) die = Colors.White;
+
                         _rawBuffer.DrawRectangle(cPixel, rPixel, cPixel + dieWidth, rPixel + dieHeight, Colors.White);
-                        _rawBuffer.FillRectangle(cPixel + 1, rPixel + 1, cPixel + dieWidth, rPixel + dieHeight, _waferColor[x, y]);
+                        _rawBuffer.FillRectangle(cPixel + 1, rPixel + 1, cPixel + dieWidth, rPixel + dieHeight, die);
                         if ((++y) >= _rowLen) break;
                     }
                     if ((++x) >= _colLen) break;
