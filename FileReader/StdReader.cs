@@ -44,11 +44,11 @@ namespace FileReader {
                     s.Start();
                     _v4Reader.ReadRaw(dc);
                     s.Stop();
-                    Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
+                    //Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
                     s.Restart();
                     dc.AnalyseData();
                     s.Stop();
-                    Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
+                    //Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
                 }
                 catch {
                     //release table in data base

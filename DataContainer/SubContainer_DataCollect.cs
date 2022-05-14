@@ -75,7 +75,7 @@ namespace DataContainer {
             }
             OnPropertyChanged("CurrentLoadingProgress");
 
-            Console.WriteLine("Percent:" + percent);
+            //Console.WriteLine("Percent:" + percent);
         }
 
         public void AnalyseData() {
@@ -92,14 +92,14 @@ namespace DataContainer {
                 CurrentLoadingProgress += 50;
                 OnPropertyChanged("CurrentLoadingProgress");
 
-                Console.WriteLine("Parts Done");
+                //Console.WriteLine("Parts Done");
             });
             asyncTask[1] = Task.Run(() => {
                 AnalyseItems();
                 CurrentLoadingProgress += 50;
                 OnPropertyChanged("CurrentLoadingProgress");
 
-                Console.WriteLine("Items Done");
+                //Console.WriteLine("Items Done");
             });
 
             Task.WaitAll(asyncTask);

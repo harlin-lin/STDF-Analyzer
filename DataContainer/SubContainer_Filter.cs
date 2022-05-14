@@ -77,14 +77,14 @@ namespace DataContainer {
                 CurrentLoadingProgress += 50;
                 OnPropertyChanged("CurrentLoadingProgress");
 
-                Console.WriteLine("Parts Done");
+                //Console.WriteLine("Parts Done");
             });
             asyncTask[1] = Task.Run(() => {
                 AnalyseItems_Filtered(_filterContainer[filterId]);
                 CurrentLoadingProgress += 50;
                 OnPropertyChanged("CurrentLoadingProgress");
 
-                Console.WriteLine("Items Done");
+                //Console.WriteLine("Items Done");
             });
 
             Task.WaitAll(asyncTask);
