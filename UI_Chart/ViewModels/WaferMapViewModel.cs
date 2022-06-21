@@ -374,6 +374,7 @@ namespace UI_Chart.ViewModels {
                 System.Windows.MessageBox.Show("Select single map first");
             } else {
                 System.Windows.Clipboard.SetImage(image);
+                _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
             }
         }
 
