@@ -12,6 +12,24 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Name="chart">
     <Grid>
+        <Grid.Resources>
+            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style x:Key="MajorGridLineStyle" TargetType="Line">
+                <Setter Property="StrokeThickness" Value="0.5"/>
+                <Setter Property="Stroke" Value="LightGray"/>
+                <Setter Property="StrokeDashArray" Value="1,3"/>
+            </Style>
+            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
+                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
+            </Style>
+        </Grid.Resources>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
@@ -23,6 +41,11 @@
             <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
+                </Button.Background>
+            </Button>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy Wafer Map" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
                 </Button.Background>
             </Button>
             <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
@@ -61,8 +84,9 @@
                 </Button.Background>
             </Button>
         </StackPanel>
-        <s:SciChartSurface x:Name="sciChart" Background="White"
-                           Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}" BorderBrush="#FF111111">
+        <s:SciChartSurface x:Name="sciChart" Background="White" 
+                           ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
+                           Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}">
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
@@ -72,14 +96,14 @@
                                       VerticalAlignment="Top"
                                       HorizontalAlignment="Right"
                                       GetLegendDataFor="AllSeries"
-                                      ShowLegend="True"
-                                      ShowVisibilityCheckboxes="{Binding IfShowLegendCheckBox}" />
+                                      ShowLegend="{Binding IfShowLegendCheckBox}"
+                                      ShowVisibilityCheckboxes="True" />
                     <s:TooltipModifier />
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>
-                <s:HorizontalLineAnnotation Y1="{Binding LowLimit}" Stroke="Red"/>
-                <s:HorizontalLineAnnotation Y1="{Binding HighLimit}" Stroke="Red"/>
+                <s:HorizontalLineAnnotation Y1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
+                <s:HorizontalLineAnnotation Y1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
         <GridSplitter Grid.Row="2"/>
@@ -87,6 +111,11 @@
             <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save Histo Chart" BorderThickness="0">
                 <Button.Background>
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
+                </Button.Background>
+            </Button>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy Wafer Map" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
                 </Button.Background>
             </Button>
             <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
@@ -126,7 +155,10 @@
             </Button>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
-                           Grid.Row="4" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  BorderBrush="#FF111111">
+                           Grid.Row="4" Margin="2,2,2,2" Grid.RowSpan="3" 
+                           XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  
+                           ChartTitle="{Binding ItemTitle}" ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
+                           BorderBrush="#FF111111" ShowLicensingWarnings="False">
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
@@ -136,13 +168,13 @@
                                       VerticalAlignment="Top"
                                       HorizontalAlignment="Right"
                                       GetLegendDataFor="AllSeries"
-                                      ShowLegend="True"
-                                      ShowVisibilityCheckboxes="{Binding IfShowLegendCheckBox}" />
+                                      ShowLegend="{Binding IfShowLegendCheckBox}"
+                                      ShowVisibilityCheckboxes="True" />
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>
-                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red"/>
-                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red"/>
+                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
+                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
 

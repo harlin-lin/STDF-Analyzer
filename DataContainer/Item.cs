@@ -17,6 +17,7 @@ namespace DataContainer {
         public int FailCnt { get; private set; }
         public string FailPer { get; private set; }
         public float? MeanValue { get; private set; }
+        public float? MedianValue { get; private set; }
         public float? MinValue { get; private set; }
         public float? MaxValue { get; private set; }
         public float? Cp { get; private set; }
@@ -32,6 +33,7 @@ namespace DataContainer {
             HiLimit = info.HiLimit;
             Unit = info.Unit;
             MeanValue = statistic.MeanValue;
+            MedianValue = statistic.MedianValue;
             MinValue = statistic.MinValue;
             MaxValue = statistic.MaxValue;
             Cp = statistic.Cp;

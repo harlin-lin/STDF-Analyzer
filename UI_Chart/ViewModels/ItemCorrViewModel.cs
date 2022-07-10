@@ -75,6 +75,7 @@ namespace UI_Chart.ViewModels {
             CorrSeries.Append(xs, ys);
             RaisePropertyChanged("CorrSeries");
 
+            _ea.GetEvent<Event_Log>().Publish("");
         }
 
 
@@ -233,6 +234,19 @@ namespace UI_Chart.ViewModels {
 
         }
 
+        private DelegateCommand<object> _CmdCopy;
+        public DelegateCommand<object> CmdCopy =>
+            _CmdCopy ?? (_CmdCopy = new DelegateCommand<object>(ExecuteCmdCopy));
+
+        void ExecuteCmdCopy(object e) {
+            if (_selectedX == null || _selectedY == null) {
+                System.Windows.MessageBox.Show("Select at list one item");
+                return;
+            }
+            var image = (e as SciChartSurface).ExportToBitmapSource();
+            System.Windows.Clipboard.SetImage(image);
+            _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
+        }
 
     }
 }

@@ -152,6 +152,13 @@ namespace UI_Chart.ViewModels {
             get { return _ifShowLegendCheckBox; }
             set { SetProperty(ref _ifShowLegendCheckBox, value); }
         }
+
+        private string _itemTitle;
+        public string ItemTitle {
+            get { return _itemTitle; }
+            set { SetProperty(ref _itemTitle, value); }
+        }
+
         #endregion
 
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -178,8 +185,17 @@ namespace UI_Chart.ViewModels {
 
             if (_selectedIds.Count > 1) {
                 IfShowLegendCheckBox = true;
+
+                ItemTitle = "";
+
             } else {
                 IfShowLegendCheckBox = false;
+
+                var info = da.GetTestInfo(_selectedIds[0]);
+                var statistic = da.GetFilteredStatistic(_subData.FilterId, _selectedIds[0]);
+                var failRate = (statistic.FailCount * 100.0 / (statistic.FailCount + statistic.PassCount)).ToString("f2") + "%";
+
+                ItemTitle = $"{_selectedIds[0]}:{info.TestText}\nmean|{statistic.MeanValue?.ToString("f2")}  median|{statistic.MedianValue?.ToString("f2")}  failRate|{failRate}  cpk|{statistic.Cpk?.ToString("f2")}";
             }
 
             #region trendChart
@@ -254,8 +270,6 @@ namespace UI_Chart.ViewModels {
             }
 
             #endregion
-
-            _ea.GetEvent<Event_Log>().Publish("Updated Basic Chart");
 
         }
 
@@ -342,8 +356,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "#",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(1, 1),
+                StyleKey= "GridLineStyle",
             };
             YAxisTrend = new NumericAxisViewModel {
                 AxisAlignment = AxisAlignment.Right,
@@ -354,8 +369,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "f3",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(0, 1),
+                StyleKey = "GridLineStyle",
             };
 
             IfTrendLimitBySigma = true;
@@ -368,8 +384,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "f3",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(1, 1),
+                StyleKey = "GridLineStyle",
             };
             YAxisHisto = new NumericAxisViewModel {
                 AxisAlignment = AxisAlignment.Right,
@@ -380,8 +397,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "#",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(0, 1),
+                StyleKey = "GridLineStyle",
             };
 
             IfHistoLimitBySigma = true;
@@ -572,6 +590,21 @@ namespace UI_Chart.ViewModels {
             }
 
         }
+
+        private DelegateCommand<object> _CmdCopy;
+        public DelegateCommand<object> CmdCopy =>
+            _CmdCopy ?? (_CmdCopy = new DelegateCommand<object>(ExecuteCmdCopy));
+
+        void ExecuteCmdCopy(object e) {
+            if (_selectedIds == null || _selectedIds.Count == 0) {
+                System.Windows.MessageBox.Show("Select at list one item");
+                return;
+            }
+            var image = (e as SciChartSurface).ExportToBitmapSource();
+            System.Windows.Clipboard.SetImage(image);
+            _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
+        }
+
 
         private DelegateCommand _CmdSelectAxisSigmaHisto;
         public DelegateCommand CmdSelectAxisSigmaHisto =>

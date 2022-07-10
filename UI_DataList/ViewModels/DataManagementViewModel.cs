@@ -214,6 +214,18 @@ namespace UI_DataList.ViewModels {
         }
 
         private async void OpenStdFile(string path) {
+            try {
+                var info = new System.IO.FileInfo(path);
+                if (!info.Exists) {
+                    System.Windows.Forms.MessageBox.Show("File Invalid:" + path);
+                    return;
+                }
+            }
+            catch {
+                System.Windows.Forms.MessageBox.Show("File Invalid:" + path);
+                return;
+            }
+
             if (StdDB.IfExsistFile(path)) {
                 Log("Already Exist:" + path);
                 return;

@@ -9,6 +9,7 @@ namespace DataContainer {
     [Serializable]
     public class ItemStatistic {
         public float? MeanValue { get; private set; }
+        public float? MedianValue { get; private set; }
         public float? MinValue { get; private set; }
         public float? MaxValue { get; private set; }
         public float? Cp { get; private set; }
@@ -22,24 +23,14 @@ namespace DataContainer {
             List<double> listUnNullItems = (from r in data
                                            where !float.IsNaN(r) && !float.IsInfinity(r)
                                            select (double)r).ToList();
-            var aa = Statistics.Median(listUnNullItems);
             if (listUnNullItems.Count != 0) {
 
                 var statistics = new DescriptiveStatistics(listUnNullItems);
                 MeanValue = (float)statistics.Mean;
                 MinValue = (float)statistics.Minimum;
                 MaxValue = (float)statistics.Maximum;
-
                 Sigma = (float)statistics.StandardDeviation;
-
-                //MeanValue = listUnNullItems.Average();
-                //MinValue = listUnNullItems.Min();
-                //MaxValue = listUnNullItems.Max();
-
-                ////(sum((Xi-Mean)^2)/count)^0.5
-                //Sigma = (float)Math.Sqrt((from r in listUnNullItems
-                //                   let a = Math.Pow((double)(r - MeanValue), 2)
-                //                   select a).Sum() / listUnNullItems.Count);
+                MedianValue = (float)Statistics.Median(listUnNullItems);
 
                 float? T = null;
                 float? U = null;

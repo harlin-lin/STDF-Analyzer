@@ -25,7 +25,7 @@ namespace UI_Chart.ViewModels {
         IEventAggregator _ea;
 
         string _selectedId;
-        List<SubData> _subDataList;
+        List<SubData> _subDataList = new List<SubData>();
 
 
         private float _sigmaLow, _sigmaHigh, _min, _max;
@@ -122,6 +122,7 @@ namespace UI_Chart.ViewModels {
 
         private void UpdateView() {
             StringBuilder sb = new StringBuilder();
+            StringBuilder sb_subData = new StringBuilder();
             StringBuilder sb_mean = new StringBuilder();
             StringBuilder sb_min = new StringBuilder();
             StringBuilder sb_max = new StringBuilder();
@@ -129,6 +130,7 @@ namespace UI_Chart.ViewModels {
             StringBuilder sb_cpk = new StringBuilder();
             StringBuilder sb_sigma = new StringBuilder();
 
+            sb_subData.Append($"{"SubData:",-13}");
             sb_mean.Append($"{"Mean:", -13}");
             sb_min.Append($"{"Min:",-13}");
             sb_max.Append($"{"Max:",-13}");
@@ -144,6 +146,7 @@ namespace UI_Chart.ViewModels {
 
                 var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
+                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-13}");
                 sb_mean.Append($"{statistic.MeanValue,-13}");
                 sb_min.Append($"{statistic.MinValue,-13}");
                 sb_max.Append($"{statistic.MaxValue,-13}");
@@ -185,6 +188,8 @@ namespace UI_Chart.ViewModels {
 
             }
 
+            sb.Append(sb_subData);
+            sb.AppendLine();
             sb.Append(sb_mean);
             sb.AppendLine();
             sb.Append(sb_min);
@@ -217,7 +222,8 @@ namespace UI_Chart.ViewModels {
 
 
         void UpdateItems(Tuple<string, IEnumerable<SubData>> para) {
-            _subDataList = new List<SubData>(para.Item2);
+            _subDataList.Clear();
+            _subDataList.AddRange(para.Item2);
             _selectedId = para.Item1;
 
             UpdateView();
@@ -398,6 +404,20 @@ namespace UI_Chart.ViewModels {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
             }
 
+        }
+
+        private DelegateCommand<object> _CmdCopy;
+        public DelegateCommand<object> CmdCopy =>
+            _CmdCopy ?? (_CmdCopy = new DelegateCommand<object>(ExecuteCmdCopy));
+
+        void ExecuteCmdCopy(object e) {
+            if (_selectedId == null || _subDataList.Count == 0) {
+                System.Windows.MessageBox.Show("Select at list one item");
+                return;
+            }
+            var image = (e as SciChartSurface).ExportToBitmapSource();
+            System.Windows.Clipboard.SetImage(image);
+            _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
         }
 
         private DelegateCommand _CmdSelectAxisSigmaHisto;

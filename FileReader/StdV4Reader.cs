@@ -419,18 +419,20 @@ namespace FileReader {
                 }
                 i += (ushort)(1 + unit.Length);
                 _dc.UpdateItemInfo(id.GetUID(), new ItemInfo(txt, ll, hl, unit, llScal, hlScal, resScal));
-                result = _dc.IfContainItemInfo(id.GetUID()).GetScaledRst(result);
             }
 
+            info = _dc.GetTestInfo(id.GetUID());
+
             //means use last test limt
-            if (_dc.GetTestInfo(id.GetUID()) == null) {
+            if (info == null) {
                 var tmpInfo = new ItemInfo(_dc.GetTestInfo(_lastUidBySite[sn].GetUID()));
                 tmpInfo.TestText = txt;
                 _dc.UpdateItemInfo(id.GetUID(), tmpInfo);
+                result = tmpInfo.GetScaledRst(result);
+            } else {
+                result = info.GetScaledRst(result);
             } 
             
-            info = _dc.GetTestInfo(id.GetUID());
-            result = info.GetScaledRst(result);
 
             _dc.AddTestData(sn, id.GetUID(), result);
             _lastUidBySite[sn] = id;

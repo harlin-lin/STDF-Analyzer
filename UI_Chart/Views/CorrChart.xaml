@@ -24,6 +24,11 @@
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
                 </Button.Background>
             </Button>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy Wafer Map" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
+                </Button.Background>
+            </Button>
             <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >

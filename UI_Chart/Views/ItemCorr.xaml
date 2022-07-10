@@ -21,6 +21,11 @@
                     <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
                 </Button.Background>
             </Button>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy Wafer Map" BorderThickness="0">
+                <Button.Background>
+                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
+                </Button.Background>
+            </Button>
             <Label Content="X:"/>
             <ComboBox Width="200" x:Name="cbItemX" ItemsSource="{Binding ItemX}" Margin="3,1,20,1">
                 <ComboBox.ItemTemplate>
