@@ -5,12 +5,10 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0" Text="  :-)  ->harlin_zhang@outlook.com" HorizontalAlignment="Left"/>
-        <TextBlock Grid.Column="1" Text="{Binding Info}" HorizontalAlignment="Right" Margin="20,0"/>
-        <ProgressBar Grid.Column="2" Value="{Binding Progress}" Width="200" Height="16"/>
+        <TextBlock Grid.Column="0" Text="{Binding Info}" HorizontalAlignment="Right" Margin="20,0" TextAlignment="Right" VerticalAlignment="Center"/>
+        <ProgressBar Grid.Column="1" Value="{Binding Progress}" Width="200" Height="16"/>
     </Grid>
 </UserControl>

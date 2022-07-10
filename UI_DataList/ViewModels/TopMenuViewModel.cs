@@ -128,7 +128,7 @@ namespace UI_DataList.ViewModels {
             _cmdAbout ?? (_cmdAbout = new DelegateCommand(ExecuteCmdAbout));
 
         void ExecuteCmdAbout() {
-            System.Windows.MessageBox.Show("SillyMonkey V3.1\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com");
+            System.Windows.MessageBox.Show("StdfAnalyzer V3.3\nAuthor: Harlin Zhang\nMail:harlin_zhang@outlook.com\nIt's free~~ Please contact with me for bug or new feature you need!");
         }
 
         private DelegateCommand _cmdHelp;

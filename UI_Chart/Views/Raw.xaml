@@ -43,6 +43,6 @@
             </Button>
 
         </StackPanel>
-        <DataGrid Grid.Row="1" FrozenColumnCount="1"  ItemsSource="{Binding TestItems}" IsReadOnly="True"/>
+        <DataGrid Grid.Row="1" FrozenColumnCount="2"  ItemsSource="{Binding TestItems}" IsReadOnly="True" ClipboardCopyMode="IncludeHeader"/>
     </Grid>
 </UserControl>

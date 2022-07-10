@@ -50,10 +50,12 @@ namespace UI_Chart.ViewModels {
             var ys = from r in _dieInfoList
                      select r.Y;
 
-            XUbound = xs.Max();
-            XLbound = xs.Min();
-            YUbound = ys.Max();
-            YLbound = ys.Min();
+            if (xs.Count() > 0 && ys.Count() > 0) {
+                XUbound = xs.Max();
+                XLbound = xs.Min();
+                YUbound = ys.Max();
+                YLbound = ys.Min();
+            }
         }
 
         public WaferDataModel(SubData subData, Item x, Item y, Item w) {
@@ -84,10 +86,12 @@ namespace UI_Chart.ViewModels {
                 var ys = from r in _dieInfoList
                          select r.Y;
 
-                XUbound = xs.Max();
-                XLbound = xs.Min();
-                YUbound = ys.Max();
-                YLbound = ys.Min();
+                if(xs.Count()>0 && ys.Count() > 0) {
+                    XUbound = xs.Max();
+                    XLbound = xs.Min();
+                    YUbound = ys.Max();
+                    YLbound = ys.Min();
+                }
             }
             catch {
                 

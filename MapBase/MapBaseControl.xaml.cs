@@ -310,12 +310,13 @@ namespace MapBase {
 
         public static double DpiXKoef {
             get {
-                if (_dpiXKoef == null) {
-                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
-                        _dpiXKoef = graphics.DpiX / 96.0;
-                    }
-                }
-                return _dpiXKoef ?? 1;
+                //if (_dpiXKoef == null) {
+                //    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
+                //        _dpiXKoef = graphics.DpiX / 96.0;
+                //    }
+                //}
+                //return _dpiXKoef ?? 1;
+                return 1;
             }
         }
 
@@ -323,13 +324,13 @@ namespace MapBase {
 
         public static double DpiYKoef {
             get {
-                if (_dpiYKoef == null) {
-                    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
-                        _dpiYKoef = graphics.DpiY / 96.0;
-                    }
-                }
-                return _dpiYKoef ?? 1;
-
+                //if (_dpiYKoef == null) {
+                //    using (var graphics = System.Drawing.Graphics.FromHwnd(IntPtr.Zero)) {
+                //        _dpiYKoef = graphics.DpiY / 96.0;
+                //    }
+                //}
+                //return _dpiYKoef ?? 1;
+                return 1;
             }
         }
 

@@ -27,7 +27,7 @@
                     </Button.Background>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="1" ClipboardCopyMode="IncludeHeader">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>

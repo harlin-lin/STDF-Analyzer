@@ -83,7 +83,7 @@
 
         <GridSplitter Grid.Row="1"/>
 
-        <TextBox Grid.Row="0" IsReadOnly="True" Text="{Binding CorrelationSummary}" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <TextBox Grid.Row="0" IsReadOnly="True" Text="{Binding CorrelationSummary}" FontFamily="Consolas" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
     </Grid>
 </UserControl>

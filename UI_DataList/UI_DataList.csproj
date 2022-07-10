@@ -160,12 +160,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Core">
-      <Version>8.0.0.1909</Version>
+      <Version>8.1.97</Version>
     </PackageReference>
     <PackageReference Include="Prism.Unity">
-      <Version>8.0.0.1909</Version>
+      <Version>8.1.97</Version>
     </PackageReference>
-    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>6.0.0</Version>
     </PackageReference>

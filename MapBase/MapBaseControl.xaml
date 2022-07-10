@@ -12,6 +12,6 @@
                 RenderOptions.BitmapScalingMode="NearestNeighbor" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="None"  
                 MouseLeave="image_MouseLeave"
             />
-        <TextBlock Name="waferIdTag" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Symbol"/>
+        <TextBlock Name="waferIdTag" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

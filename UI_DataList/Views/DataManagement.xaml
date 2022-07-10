@@ -95,10 +95,10 @@
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch"/>
         <TabControl Grid.Row="2" >
             <TabItem Header="File Sumary">
-                <ContentControl prism:RegionManager.RegionName="Region_Summary" />
+                <ContentControl prism:RegionManager.RegionName="Region_Summary" Margin="-3" />
             </TabItem>
             <TabItem Header="Filter Setup">
-                <ContentControl prism:RegionManager.RegionName="Region_Filter" />
+                <ContentControl prism:RegionManager.RegionName="Region_Filter" Margin="-3"/>
             </TabItem>
         </TabControl>
     </Grid>

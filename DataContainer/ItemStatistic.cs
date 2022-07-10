@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics.Statistics;
 
 namespace DataContainer {
     [Serializable]
@@ -18,20 +19,27 @@ namespace DataContainer {
         public int ValidCount { get; private set; }
 
         public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {
-            List<float> listUnNullItems = (from r in data
+            List<double> listUnNullItems = (from r in data
                                            where !float.IsNaN(r) && !float.IsInfinity(r)
-                                           select r).ToList();
-
+                                           select (double)r).ToList();
+            var aa = Statistics.Median(listUnNullItems);
             if (listUnNullItems.Count != 0) {
 
-                MeanValue = listUnNullItems.Average();
-                MinValue = listUnNullItems.Min();
-                MaxValue = listUnNullItems.Max();
+                var statistics = new DescriptiveStatistics(listUnNullItems);
+                MeanValue = (float)statistics.Mean;
+                MinValue = (float)statistics.Minimum;
+                MaxValue = (float)statistics.Maximum;
 
-                //(sum((Xi-Mean)^2)/count)^0.5
-                Sigma = (float)Math.Sqrt((from r in listUnNullItems
-                                   let a = Math.Pow((double)(r - MeanValue), 2)
-                                   select a).Sum() / listUnNullItems.Count);
+                Sigma = (float)statistics.StandardDeviation;
+
+                //MeanValue = listUnNullItems.Average();
+                //MinValue = listUnNullItems.Min();
+                //MaxValue = listUnNullItems.Max();
+
+                ////(sum((Xi-Mean)^2)/count)^0.5
+                //Sigma = (float)Math.Sqrt((from r in listUnNullItems
+                //                   let a = Math.Pow((double)(r - MeanValue), 2)
+                //                   select a).Sum() / listUnNullItems.Count);
 
                 float? T = null;
                 float? U = null;

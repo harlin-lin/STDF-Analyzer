@@ -33,6 +33,8 @@ namespace UI_Chart.ViewModels {
         }
 
         private void InitUI() {
+            dt.Columns.Add("Idx");
+            dt.Columns[0].DataType = typeof(int);
             dt.Columns.Add("TestNumber");
             for (int i = 0; i < CNT_PER_PAGE; i++) {
                 dt.Columns.Add($"{i}");
@@ -52,27 +54,37 @@ namespace UI_Chart.ViewModels {
             //add column
             var offset = currPage * CNT_PER_PAGE;
             var viewCnt = totalPartCnt > (offset + CNT_PER_PAGE) ? CNT_PER_PAGE : totalPartCnt - offset;
-            DataRow r, r_cord, r_time, r_hbin, r_sbin;
+            DataRow r, r_cord, r_time, r_hbin, r_sbin, r_site;
 
             r = dt.NewRow();
             r_cord = dt.NewRow();
             r_time = dt.NewRow();
             r_hbin = dt.NewRow();
             r_sbin = dt.NewRow();
+            r_site = dt.NewRow();
 
-            r[0] = "PartIdx";
-            r_cord[0] = "Cord";
-            r_time[0] = "Time";
-            r_hbin[0] = "HBin";
-            r_sbin[0] = "SBin";
+            r[0] = 0;
+            r_cord[0] = 0;
+            r_time[0] = 0;
+            r_hbin[0] = 0;
+            r_sbin[0] = 0;
+            r_site[0] = 0;
 
-            int i = 1;
+            r[1] = "PartIdx";
+            r_cord[1] = "Cord";
+            r_time[1] = "Time";
+            r_hbin[1] = "HBin";
+            r_sbin[1] = "SBin";
+            r_site[1] = "Site";
+
+            int i = 2;
             foreach (var c in da.GetFilteredPartIndex(_subData.FilterId).Skip(offset).Take(viewCnt)) {
                 r[i] = c;
                 r_cord[i] = da.GetWaferCord(c);
                 r_time[i] = da.GetTestTime(c);
                 r_hbin[i] = da.GetHardBin(c);
                 r_sbin[i] = da.GetSoftBin(c);
+                r_site[i] = da.GetSite(c);
                 i++;
             }
             dt.Rows.Add(r);
@@ -80,11 +92,14 @@ namespace UI_Chart.ViewModels {
             dt.Rows.Add(r_time);
             dt.Rows.Add(r_hbin);
             dt.Rows.Add(r_sbin);
+            dt.Rows.Add(r_site);
 
+            int idx = 1;
             foreach (var uid in da.GetTestIDs()) {
                 r = dt.NewRow();
-                r[0] = uid;
-                i = 1;
+                r[0] = idx++;
+                r[1] = uid;
+                i = 2;
                 foreach (var v in da.GetFilteredItemData(uid, _subData.FilterId).Skip(offset).Take(viewCnt)) {
                     r[i++] = v;
                 }

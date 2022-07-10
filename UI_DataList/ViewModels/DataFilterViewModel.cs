@@ -178,6 +178,8 @@ namespace UI_DataList.ViewModels {
             MaskOrEnableIds = _filter.IfMaskOrEnableIds;
             MaskOrEnableCords = _filter.IfMaskOrEnableCords;
 
+            ItemFilters.Clear();
+            ItemFilters.AddRange(_filter.ItemFilters);
         }
 
         public void UpdateFilter(string path) {
@@ -204,6 +206,13 @@ namespace UI_DataList.ViewModels {
 
             MaskOrEnableIds = false;
             MaskOrEnableCords = false;
+
+            Items = Enumerable.Empty<Item>();
+            PartFilterLowLimit = "";
+            PartFilterHighLimit = "";
+            SyncItemInfo = "";
+
+            ItemFilters.Clear();
         }
 
         private string TestItemStatistic(float loRange, float hiRange, IEnumerable<float> data) {
@@ -262,7 +271,7 @@ namespace UI_DataList.ViewModels {
         }
 
         #region UI
-        private string _curSelectedTN = null;
+        private string _curSelectedTN = "";
 
         private DelegateCommand<object> cmdSelectItem;
         public DelegateCommand<object> CmdSelectItem =>
@@ -330,7 +339,7 @@ namespace UI_DataList.ViewModels {
             try {
                 var lr = float.Parse(PartFilterLowLimit);
                 var hr = float.Parse(PartFilterHighLimit);
-                if (lr > hr || _curSelectedTN=="") throw new Exception();
+                if (lr > hr || _curSelectedTN == "") throw new Exception();
                 foreach(var v in ItemFilters){
                     if (v.TestNumber == _curSelectedTN) throw new Exception();
                 }
@@ -385,6 +394,7 @@ namespace UI_DataList.ViewModels {
             MaskOrEnableIds = false;
             MaskOrEnableCords = false;
 
+            ItemFilters.Clear();
 
             ExecuteApplyFilter();
         }

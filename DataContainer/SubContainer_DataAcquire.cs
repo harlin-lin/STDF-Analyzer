@@ -135,8 +135,8 @@ namespace DataContainer {
             //return from r in _itemContainer
             //       let item = new Item(r.Key, r.Value, _filterContainer[filterId].FilterItemStatistics[r.Key])
             //       select item;
-            return from i in Enumerable.Range(0, _itemContainer.Count)
-                   let item = _itemContainer.ElementAt(i)
+            return from i in Enumerable.Range(1, _itemContainer.Count)
+                   let item = _itemContainer.ElementAt(i-1)
                    select new Item(i, item.Key, item.Value, _filterContainer[filterId].FilterItemStatistics[item.Key]);
         }
 

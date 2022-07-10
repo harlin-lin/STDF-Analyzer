@@ -54,6 +54,8 @@ namespace SillyMonkey.Core
     public class Event_Log : PubSubEvent<string> {
 
     }
+    public class Event_FileInfo : PubSubEvent<string> {}
+
     public class Event_MergeFiles : PubSubEvent<List<string>> {}
 
     public class Event_CorrData : PubSubEvent<IEnumerable<SubData>> { }

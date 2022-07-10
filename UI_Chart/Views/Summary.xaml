@@ -5,7 +5,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
         <TextBox Text="{Binding Summary, Mode=OneWay}"
-                     IsReadOnly="True" FontFamily="Courier New" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                     IsReadOnly="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
     </Grid>
 </UserControl>

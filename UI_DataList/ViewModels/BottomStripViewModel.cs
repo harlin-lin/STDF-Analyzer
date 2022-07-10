@@ -28,6 +28,13 @@ namespace UI_DataList.ViewModels {
                 }
             }
         }
+
+        private string _currentFileInfo;
+        public string CurrentFileInfo {
+            get { return _currentFileInfo; }
+            set { SetProperty(ref _currentFileInfo, value); }
+        }
+
         public BottomStripViewModel(IEventAggregator ea) {
             _ea = ea;
 
@@ -41,6 +48,10 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_Log>().Subscribe(x => {
                 Info = x;
                 Progress = 0;
+            });
+
+            _ea.GetEvent<Event_FileInfo>().Subscribe(x => {
+                CurrentFileInfo = x;
             });
 
         }

@@ -9,7 +9,7 @@
     <Grid>
         <Grid.Resources>
             <Style TargetType="{x:Type TextBox}">
-                <Setter Property="FontFamily" Value="Courier New" />
+                <Setter Property="FontFamily" Value="Consolas" />
                 <Setter Property="Margin" Value="1"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>

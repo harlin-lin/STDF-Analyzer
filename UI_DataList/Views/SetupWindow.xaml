@@ -16,7 +16,7 @@
             <CheckBox Content="Use Test Text In Item Uid" IsChecked="{Binding IfCmpTextInUid}" Margin="10,10,0,0"/>
         </Grid>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Vertical">
-            <Button Content="Apply And Close" Width="100" Command="{Binding Apply}"/>
+            <Button Content="Apply" Width="100" Command="{Binding Apply}"/>
         </StackPanel>
     </Grid>
 </Window>

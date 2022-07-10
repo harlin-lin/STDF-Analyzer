@@ -16,7 +16,7 @@ namespace SillyMonkey.ViewModels
         IEventAggregator _ea;
         IRegionManager _regionManager;
         
-        private string _title = "SillyMonkey STDF Analyzer";
+        private string _title = "StdfAnalyzer";
         public string Title
         {
             get { return _title; }
@@ -51,7 +51,7 @@ namespace SillyMonkey.ViewModels
                 if (ext == ".stdf" || ext == ".std") {
                     _ea.GetEvent<Event_OpenFile>().Publish(path);
                 } else {
-                    //System.Windows.Forms.MessageBox.Show("Invalid File");
+                    MessageBox.Show("Only support stdf or std file");
                 }
             }
 
