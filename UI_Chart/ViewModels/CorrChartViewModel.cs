@@ -103,6 +103,11 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _correlationSummary, value); }
         }
 
+        private string _itemTitle;
+        public string ItemTitle {
+            get { return _itemTitle; }
+            set { SetProperty(ref _itemTitle, value); }
+        }
         #endregion
 
         public CorrChartViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -124,6 +129,7 @@ namespace UI_Chart.ViewModels {
             StringBuilder sb = new StringBuilder();
             StringBuilder sb_subData = new StringBuilder();
             StringBuilder sb_mean = new StringBuilder();
+            StringBuilder sb_median = new StringBuilder();
             StringBuilder sb_min = new StringBuilder();
             StringBuilder sb_max = new StringBuilder();
             StringBuilder sb_cp = new StringBuilder();
@@ -132,6 +138,7 @@ namespace UI_Chart.ViewModels {
 
             sb_subData.Append($"{"SubData:",-13}");
             sb_mean.Append($"{"Mean:", -13}");
+            sb_median.Append($"{"Mean:",-13}");
             sb_min.Append($"{"Min:",-13}");
             sb_max.Append($"{"Max:",-13}");
             sb_cp.Append($"{"CP:",-13}");
@@ -142,12 +149,13 @@ namespace UI_Chart.ViewModels {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
                 if (!da.IfContainsTestId(_selectedId)) continue;
 
-                var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
+                //var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 
                 var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
                 sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-13}");
                 sb_mean.Append($"{statistic.MeanValue,-13}");
+                sb_median.Append($"{statistic.MedianValue,-13}");
                 sb_min.Append($"{statistic.MinValue,-13}");
                 sb_max.Append($"{statistic.MaxValue,-13}");
                 sb_cp.Append($"{statistic.Cp,-13}");
@@ -155,6 +163,10 @@ namespace UI_Chart.ViewModels {
                 sb_sigma.Append($"{statistic.Sigma,-13}");
 
                 if (i == 0) {
+                    var info = da.GetTestInfo(_selectedId);
+                    _itemTitle = $"{_selectedId}:{info.TestText}\n";
+
+
                     _min = statistic.MinValue ?? 0;
                     _max = statistic.MaxValue ?? 1;
 
@@ -192,6 +204,8 @@ namespace UI_Chart.ViewModels {
             sb.AppendLine();
             sb.Append(sb_mean);
             sb.AppendLine();
+            sb.Append(sb_median);
+            sb.AppendLine();
             sb.Append(sb_min);
             sb.AppendLine();
             sb.Append(sb_max);
@@ -203,6 +217,9 @@ namespace UI_Chart.ViewModels {
             sb.Append(sb_sigma);
 
             CorrelationSummary = sb.ToString();
+
+            _itemTitle += sb_mean;
+            RaisePropertyChanged("ItemTitle");
 
             #region histogramChart
             //set the y axix
@@ -307,8 +324,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "f3",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(1, 1),
+                StyleKey = "GridLineStyle",
             };
             YAxisHisto = new NumericAxisViewModel {
                 AxisAlignment = AxisAlignment.Right,
@@ -319,8 +337,9 @@ namespace UI_Chart.ViewModels {
                 TextFormatting = "#",
                 FontSize = 10,
                 TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
                 VisibleRange = new DoubleRange(0, 1),
+                StyleKey = "GridLineStyle",
             };
 
             IfHistoLimitBySigma = true;

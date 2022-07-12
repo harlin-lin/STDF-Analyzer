@@ -135,5 +135,10 @@
   <ItemGroup>
     <Resource Include="Resource\icon\copy.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\SA_128x128.ico" />
+    <Resource Include="Resource\icon\SA_48x48.ico" />
+    <Resource Include="Resource\icon\SA_64x64.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

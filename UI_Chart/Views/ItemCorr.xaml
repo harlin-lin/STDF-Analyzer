@@ -11,6 +11,24 @@
              d:DesignHeight="700" d:DesignWidth="600"
     >
     <Grid>
+        <Grid.Resources>
+            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style x:Key="MajorGridLineStyle" TargetType="Line">
+                <Setter Property="StrokeThickness" Value="0.5"/>
+                <Setter Property="Stroke" Value="LightGray"/>
+                <Setter Property="StrokeDashArray" Value="1,3"/>
+            </Style>
+            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
+                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
+            </Style>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
@@ -72,7 +90,8 @@
 
         </StackPanel>
         <s:SciChartSurface x:Name="sciChart" Background="White"
-                           Grid.Row="1" Margin="2,2,2,2" BorderBrush="#FF111111">
+                           ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
+                           Grid.Row="1" Margin="2,2,2,2">
             <!-- Declare RenderableSeries -->
             <s:SciChartSurface.RenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="scatterRenderSeries" DataSeries="{Binding CorrSeries}">

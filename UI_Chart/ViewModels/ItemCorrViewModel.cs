@@ -69,6 +69,10 @@ namespace UI_Chart.ViewModels {
             var xs = da.GetFilteredItemData(_selectedX, _subData.FilterId);
             var ys = da.GetFilteredItemData(_selectedY, _subData.FilterId);
 
+            var infoX = da.GetTestInfo(_selectedX);
+            var infoY = da.GetTestInfo(_selectedY);
+
+            ItemTitle = $"{_selectedX}:{infoX.TestText}\n{_selectedY}:{infoY.TestText}\n";
 
             CorrSeries = new XyDataSeries<float, float>();
             CorrSeries.AcceptsUnsortedData = true;
@@ -112,6 +116,11 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _yAxis, value); }
         }
 
+        private string _itemTitle;
+        public string ItemTitle {
+            get { return _itemTitle; }
+            set { SetProperty(ref _itemTitle, value); }
+        }
 
         void InitUi() {
             XAxis = new NumericAxisViewModel {

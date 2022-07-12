@@ -12,6 +12,24 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Name="chart">
     <Grid>
+        <Grid.Resources>
+            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontFamily" Value="Consolas"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+            </Style>
+            <Style x:Key="MajorGridLineStyle" TargetType="Line">
+                <Setter Property="StrokeThickness" Value="0.5"/>
+                <Setter Property="Stroke" Value="LightGray"/>
+                <Setter Property="StrokeDashArray" Value="1,3"/>
+            </Style>
+            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
+                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
+            </Style>
+        </Grid.Resources>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="180"/>
             <RowDefinition Height="5"/>
@@ -66,7 +84,8 @@
             </Button>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
-                           Grid.Row="3" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  BorderBrush="#FF111111">
+                           ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
+                           Grid.Row="3" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}">
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
@@ -81,8 +100,8 @@
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>
-                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red"/>
-                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red"/>
+                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
+                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
 
