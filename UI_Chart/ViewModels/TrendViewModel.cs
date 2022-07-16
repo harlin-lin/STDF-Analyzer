@@ -186,8 +186,11 @@ namespace UI_Chart.ViewModels {
             if (_selectedIds.Count > 1) {
                 IfShowLegendCheckBox = true;
 
-                ItemTitle = "";
-
+                _itemTitle = _selectedIds[0];
+                for(int i =1; i<  _selectedIds.Count; i++) {
+                    _itemTitle += " & " + _selectedIds[i]; 
+                }
+                RaisePropertyChanged("ItemTitle");
             } else {
                 IfShowLegendCheckBox = false;
 
