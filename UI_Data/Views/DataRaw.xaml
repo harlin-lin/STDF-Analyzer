@@ -4,31 +4,10 @@
              xmlns:prism="http://prismlibrary.com/"         
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl.Resources>
-        <Style x:Key="MyButton" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.8" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="450" MinWidth="50"/>
@@ -41,36 +20,30 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/summary.png"/>
-                    </Button.Background>
+                <Button Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="FileChartOutline" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconFontAwesome Kind="FileAltRegular" Width="21" Height="21"/>
                 </Button>
 
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/histogram.png"/>
-                    </Button.Background>
+                <Button Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="ChartBar" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconMaterialLight Kind="ChartHistogram" Width="21" Height="21"/>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/raw.png"/>
-                    </Button.Background>
+                <Button Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="DatabaseSearch" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconCodicons Kind="Table" Width="21" Height="21"/>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowCorrCommand, Mode=OneWay}" ToolTip="Show Item Correlation" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/corr.png"/>
-                    </Button.Background>
+                <Button Margin="0,0,10,0" Command="{Binding ShowCorrCommand, Mode=OneWay}" ToolTip="Show Item Correlation" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="ChartScatterPlot" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconVaadinIcons Kind="ScatterChart" Width="21" Height="21"/>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/wafer_binning.png"/>
-                    </Button.Background>
+                <Button Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="ChartPie" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconModern Kind="Grid"  Width="21" Height="21"/>
                 </Button>
-                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0" Style="{StaticResource MyButton}">
-                    <Button.Background>
-                        <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/database.png"/>
-                    </Button.Background>
+                <Button Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="DatabaseExport" Width="21" Height="21"/>-->
+                    <iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>
                 </Button>
             </StackPanel>
             <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">

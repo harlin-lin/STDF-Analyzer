@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
@@ -13,21 +14,25 @@
              x:Name="chart">
     <Grid>
         <Grid.Resources>
-            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="FontFamily" Value="Consolas"/>
-                <Setter Property="FontWeight" Value="Normal"/>
-            </Style>
-            <Style x:Key="MajorGridLineStyle" TargetType="Line">
-                <Setter Property="StrokeThickness" Value="0.5"/>
-                <Setter Property="Stroke" Value="LightGray"/>
-                <Setter Property="StrokeDashArray" Value="1,3"/>
-            </Style>
-            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
-                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
-            </Style>
+            <ResourceDictionary>
+
+                <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="FontSize" Value="12"/>
+                    <Setter Property="FontFamily" Value="Consolas"/>
+                    <Setter Property="FontWeight" Value="Normal"/>
+                </Style>
+                <Style x:Key="MajorGridLineStyle" TargetType="Line">
+                    <Setter Property="StrokeThickness" Value="0.5"/>
+                    <Setter Property="Stroke" Value="LightGray"/>
+                    <Setter Property="StrokeDashArray" Value="1,3"/>
+                </Style>
+                <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
+                    <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
+                </Style>
+            </ResourceDictionary>
+
         </Grid.Resources>
         
         <Grid.RowDefinitions>
@@ -37,52 +42,52 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
-                </Button.Background>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" >
+            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
+                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy Wafer Map" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0" >
+                <iconPacks:PackIconMaterial Kind="ContentCopy" />
             </Button>
-            <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
+            <RadioButton  Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
+            <RadioButton Content="MinMax" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
+            <RadioButton Content="Limit" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
+            <RadioButton Content="User" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <TextBox Width="70" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="70" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" FontSize="10" Margin="4,0,10,0" />
             <TextBox Width="70" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
-                </Button.Background>
+                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
             </Button>
+            <!--<iconPacks:PopupBox 
+                StaysOpen="True"  HorizontalAlignment="Right">
+                <Grid  Width="300" Margin="8,8,8,8" >
+
+                </Grid>
+            </iconPacks:PopupBox>-->
         </StackPanel>
         <s:SciChartSurface x:Name="sciChart" Background="White" 
                            ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
@@ -108,50 +113,44 @@
         </s:SciChartSurface>
         <GridSplitter Grid.Row="2"/>
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save Histo Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
+                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy Wafer Map" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
+                <iconPacks:PackIconMaterial Kind="ContentCopy" />
             </Button>
-            <RadioButton Width="40" Height="23" Content="6σ" Margin="0,6,0,0"  GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
+            <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="70" Height="23" Content="MinMax" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
+            <RadioButton Content="MinMax" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="Limit" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
+            <RadioButton Content="Limit" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Width="60" Height="23" Content="User" Margin="0,6,0,0" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
+            <RadioButton Content="User" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <TextBox Width="70" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <TextBox Width="70" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="4,0,10,0" />
             <TextBox Width="70" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
-                </Button.Background>
+                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
             </Button>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"

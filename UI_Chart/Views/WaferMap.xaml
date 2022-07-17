@@ -5,7 +5,7 @@
              xmlns:m="clr-namespace:MapBase;assembly=MapBase"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -16,20 +16,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save Wafer Map" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save" BorderThickness="0">
+                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Copy Wafer Map" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Copy" BorderThickness="0">
+                <iconPacks:PackIconMaterial Kind="ContentCopy" />
             </Button>
             <ComboBox ItemsSource="{Binding MapBinModeList}" SelectedItem="{Binding SelectedMapBinMode}" Width="60" Margin="0,0,10,0" />
             <ComboBox ItemsSource="{Binding MapViewModeList}" SelectedItem="{Binding SelectedMapViewMode}" Width="70" Margin="0,0,10,0" />
             <ComboBox ItemsSource="{Binding MapRtDataModeList}" SelectedItem="{Binding SelectedMapRtDataMode}" Width="90" Margin="0,0,10,0" />
-            <CheckBox x:Name="cbUserCord" Content="UserCord" IsChecked="False" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" Command="{Binding CmdChangeUserCord}" CommandParameter="{Binding ElementName=cbUserCord, Path=IsChecked}"/>
+            <CheckBox x:Name="cbUserCord" Content="UserCord" VerticalContentAlignment="Bottom" IsChecked="False" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" Command="{Binding CmdChangeUserCord}" CommandParameter="{Binding ElementName=cbUserCord, Path=IsChecked}"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>
@@ -84,9 +80,7 @@
             </ComboBox>
 
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApply, Mode=OneWay}" ToolTip="Apply the user cord"  BorderThickness="0" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
-                </Button.Background>
+                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
             </Button>
 
         </StackPanel>

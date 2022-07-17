@@ -84,61 +84,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\icon\AppIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\box_plot.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\histogram.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\wafer_binning.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\database.png" />
-    <Resource Include="Resource\icon\delete.png" />
-    <Resource Include="Resource\icon\load.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\trend.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\save.jfif" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\summary.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\check.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\download.png" />
-    <Resource Include="Resource\icon\left.png" />
-    <Resource Include="Resource\icon\leftend.png" />
-    <Resource Include="Resource\icon\load1.png" />
-    <Resource Include="Resource\icon\load2.png" />
-    <Resource Include="Resource\icon\load3.png" />
-    <Resource Include="Resource\icon\Pie.png" />
-    <Resource Include="Resource\icon\raw.png" />
-    <Resource Include="Resource\icon\report.png" />
-    <Resource Include="Resource\icon\report1.png" />
-    <Resource Include="Resource\icon\right.png" />
-    <Resource Include="Resource\icon\rightend.png" />
-    <Resource Include="Resource\icon\save.png" />
-    <Resource Include="Resource\icon\save2.png" />
-    <Resource Include="Resource\icon\save3.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\corr.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resource\icon\copy.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resource\icon\SA_128x128.ico" />
     <Resource Include="Resource\icon\SA_48x48.ico" />
     <Resource Include="Resource\icon\SA_64x64.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\load2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

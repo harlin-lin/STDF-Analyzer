@@ -4,7 +4,7 @@
              xmlns:prism="http://prismlibrary.com/"  
              prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid>
-        <TextBox Text="{Binding Summary, Mode=OneWay}"
+        <TextBox Text="{Binding Summary, Mode=OneWay}" VerticalContentAlignment="Top"
                      IsReadOnly="True" FontFamily="Consolas" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
     </Grid>
 </UserControl>

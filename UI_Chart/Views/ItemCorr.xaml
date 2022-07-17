@@ -6,7 +6,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
+             xmlns:s="http://schemas.abtsoftware.co.uk/scichart" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
     >
@@ -34,15 +34,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/save.jfif"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
+                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy Wafer Map" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/copy.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0">
+                <iconPacks:PackIconMaterial Kind="ContentCopy" />
             </Button>
             <Label Content="X:"/>
             <ComboBox Width="200" x:Name="cbItemX" ItemsSource="{Binding ItemX}" Margin="3,1,20,1">

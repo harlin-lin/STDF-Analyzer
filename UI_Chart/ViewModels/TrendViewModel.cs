@@ -495,7 +495,6 @@ namespace UI_Chart.ViewModels {
             _CmdSaveTrend ?? (_CmdSaveTrend = new DelegateCommand<object>(ExecuteCmdSaveTrend));
 
         void ExecuteCmdSaveTrend(object e) {
-            string filePath;
             if (_selectedIds == null || _selectedIds.Count == 0) {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
@@ -504,7 +503,7 @@ namespace UI_Chart.ViewModels {
 
             string dftName = $"{_selectedIds[0]}_{txt}_Trend";
             if (_selectedIds.Count > 1) dftName += "_cmp";
-            if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
+            if (GetAndCheckPath("PNG | *.png", dftName, out string filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
             }
 
@@ -550,10 +549,9 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisUserTrend ?? (_CmdSelectAxisUserTrend = new DelegateCommand(ExecuteCmdSelectAxisUserTrend));
 
         void ExecuteCmdSelectAxisUserTrend() {
-            float l, h;
             try {
-                float.TryParse(UserTrendLowRange, out l);
-                float.TryParse(UserTrendHighRange, out h);
+                float.TryParse(UserTrendLowRange, out float l);
+                float.TryParse(UserTrendHighRange, out float h);
                 YAxisTrend.VisibleRange.SetMinMax(l, h);
                 RaisePropertyChanged("YAxisTrend");
             }

@@ -1,14 +1,73 @@
 ﻿<prism:PrismApplication x:Class="SillyMonkey.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	         xmlns:prism="http://prismlibrary.com/"
+	         xmlns:prism="http://prismlibrary.com/"             
              xmlns:local="clr-namespace:SillyMonkey">
     <Application.Resources>
-        <Style TargetType="{x:Type TextElement}">
-            <Setter Property="FontFamily" Value="Consolas"/>
-        </Style>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="FontFamily" Value="Consolas"/>
-        </Style>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type RadioButton}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Green"/>
+                <Setter Property="Foreground" Value="Gray"/>
+                <Setter Property="Padding" Value="4"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Height" Value="auto"/>
+                <Setter Property="SnapsToDevicePixels" Value="true"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type RadioButton}">
+                            <Grid x:Name="grid"  VerticalAlignment="Center" HorizontalAlignment="Stretch"  ClipToBounds="True" >
+                                <Border x:Name="ButtonStock" BorderBrush="Gray" BorderThickness="0"/>
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Grid>
+                            <!--触发器：设置选中状态符号-->
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="ButtonStock" Property="BorderBrush" Value="Black"/>
+                                    <Setter TargetName="ButtonStock" Property="BorderThickness" Value="0,0,0,2"/>
+
+                                    <!--<Setter TargetName="ButtonStock" Property="Stroke" Value="Black"/>
+                                    <Setter TargetName="ButtonStock" Property="StrokeThickness" Value="2"/>-->
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+            <Style TargetType="{x:Type TextElement}">
+                <Setter Property="FontFamily" Value="Consolas"/>
+            </Style>
+            <Style TargetType="{x:Type TextBlock}">
+                <Setter Property="FontFamily" Value="Consolas"/>
+            </Style>
+            <Style TargetType="{x:Type Control}">
+                <Setter Property="FontFamily" Value="Consolas"/>
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="ComboBox">
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="Window">
+                <Setter Property="Icon" Value="/SillyMonkey.Core;component/Resource/icon/SA_48x48.ico"/>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </prism:PrismApplication>

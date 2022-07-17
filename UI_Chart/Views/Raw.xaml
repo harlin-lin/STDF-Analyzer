@@ -4,7 +4,7 @@
              xmlns:prism="http://prismlibrary.com/"             
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -14,32 +14,26 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="{Binding PageCnt}" Width="40" Margin="10,0,10,0"/>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpFirstPage, Mode=OneWay}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/leftend.png"/>
-                </Button.Background>
+            <TextBlock Text="{Binding PageCnt}" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpFirstPage, Mode=OneWay}" ToolTip="To Fisrt Page" BorderThickness="0">
+                <!--<iconPacks:PackIconMaterial Kind="ChevronDoubleLeft" />-->
+                <iconPacks:PackIconBootstrapIcons Kind="ChevronDoubleLeft" />
             </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpPreviousPage, Mode=OneWay}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/left.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpPreviousPage, Mode=OneWay}" ToolTip="To Previous Page" BorderThickness="0">
+                <!--<iconPacks:PackIconMaterial Kind="ChevronLeft" />-->
+                <iconPacks:PackIconBootstrapIcons Kind="ChevronLeft" />
             </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpNextPage, Mode=OneWay}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/right.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpNextPage, Mode=OneWay}" ToolTip="To Next Page" BorderThickness="0">
+                <!--<iconPacks:PackIconMaterial Kind="ChevronRight" />-->
+                <iconPacks:PackIconBootstrapIcons Kind="ChevronRight" />
             </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpLastPage, Mode=OneWay}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/rightend.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpLastPage, Mode=OneWay}" ToolTip="To Last Page" BorderThickness="0">
+                <!--<iconPacks:PackIconMaterial Kind="ChevronDoubleRight" />-->
+                <iconPacks:PackIconBootstrapIcons Kind="ChevronDoubleRight" />
             </Button>
             <TextBox Text="{Binding JumpPage}" Margin="10,0,10,0" Width="40"/>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpSelectedPage, Mode=OneWay}" ToolTip="Save Trend Chart" BorderThickness="0">
-                <Button.Background>
-                    <ImageBrush ImageSource="/SillyMonkey.Core;component/Resource/icon/check.png"/>
-                </Button.Background>
+            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpSelectedPage, Mode=OneWay}" ToolTip="Jump" BorderThickness="0">
+                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
             </Button>
 
         </StackPanel>

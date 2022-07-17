@@ -101,7 +101,7 @@ namespace UI_DataList.ViewModels {
         }
 
         private static Action<int> GetBringIndexIntoView(Panel itemsHostPanel) {
-            var virtualizingPanel = itemsHostPanel as VirtualizingStackPanel;
+            VirtualizingStackPanel virtualizingPanel = itemsHostPanel as VirtualizingStackPanel;
             if (virtualizingPanel == null) {
                 return null;
             }
