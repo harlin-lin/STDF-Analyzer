@@ -138,7 +138,7 @@ namespace UI_Chart.ViewModels {
 
             sb_subData.Append($"{"SubData:",-13}");
             sb_mean.Append($"{"Mean:", -13}");
-            sb_median.Append($"{"Mean:",-13}");
+            sb_median.Append($"{"Median:",-13}");
             sb_min.Append($"{"Min:",-13}");
             sb_max.Append($"{"Max:",-13}");
             sb_cp.Append($"{"CP:",-13}");

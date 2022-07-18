@@ -42,28 +42,36 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" >
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
                 <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
             </Button>
             <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0" >
                 <iconPacks:PackIconMaterial Kind="ContentCopy" />
             </Button>
-            <RadioButton  Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
+            <RadioButton x:Name="radioSigma" Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Content="MinMax" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}">
+            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="0" IsEnabled="{Binding ElementName=radioSigma, Path=IsChecked}" Margin="0,0,5,0">
+                <ComboBoxItem Content="6σ"/>
+                <ComboBoxItem Content="5σ"/>
+                <ComboBoxItem Content="4σ"/>
+                <ComboBoxItem Content="3σ"/>
+                <ComboBoxItem Content="2σ"/>
+                <ComboBoxItem Content="1σ"/>
+            </ComboBox>
+            <RadioButton Content="MinMax" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}" Margin="0,0,5,0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <RadioButton Content="Limit" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}">
+            <RadioButton Content="Limit" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}" Margin="0,0,5,0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
                         <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
@@ -82,12 +90,7 @@
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
                 <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
             </Button>
-            <!--<iconPacks:PopupBox 
-                StaysOpen="True"  HorizontalAlignment="Right">
-                <Grid  Width="300" Margin="8,8,8,8" >
 
-                </Grid>
-            </iconPacks:PopupBox>-->
         </StackPanel>
         <s:SciChartSurface x:Name="sciChart" Background="White" 
                            ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"

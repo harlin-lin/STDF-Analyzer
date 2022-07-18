@@ -46,6 +46,7 @@ namespace SillyMonkey.ViewModels
 
         void ExecuteMainWindowDropped(DragEventArgs parameter) {
             var paths = ((System.Array)parameter.Data.GetData(DataFormats.FileDrop));
+            if (paths is null) return;
             foreach (string path in paths) {
                 var ext = System.IO.Path.GetExtension(path).ToLower();
                 if (ext == ".stdf" || ext == ".std") {

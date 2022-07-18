@@ -200,9 +200,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="AppIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="SA_48x48.ico" />
   </ItemGroup>
   <ItemGroup>
