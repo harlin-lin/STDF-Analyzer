@@ -122,6 +122,7 @@ namespace DataContainer{
         IEnumerable<int> GetFilteredPartIndex(int filterId);
 
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
+        ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma);
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
         #endregion

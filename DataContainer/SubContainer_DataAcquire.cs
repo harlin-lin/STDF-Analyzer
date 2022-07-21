@@ -175,6 +175,18 @@ namespace DataContainer {
         public ItemStatistic GetFilteredStatistic(int filterId, string uid) {
             return _filterContainer[filterId].FilterItemStatistics[uid];
         }
+        public ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma) {
+            var raw = GetItemVal(uid, _filterContainer[filterId]);
+            var st = _filterContainer[filterId].FilterItemStatistics[uid];
+            var l = st.GetSigmaRangeLow(rangeBySigma);
+            var h = st.GetSigmaRangeHigh(rangeBySigma);
+            var data = from r in raw
+                       where r >= l && r <= h
+                       select r;
+            var item = _itemContainer[uid];
+
+            return new ItemStatistic(data, item.LoLimit, item.HiLimit);
+        }
 
         public PartStatistic GetFilteredPartStatistic(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");

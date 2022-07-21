@@ -8,16 +8,24 @@ using MathNet.Numerics.Statistics;
 namespace DataContainer {
     [Serializable]
     public class ItemStatistic {
-        public float? MeanValue { get; private set; }
-        public float? MedianValue { get; private set; }
-        public float? MinValue { get; private set; }
-        public float? MaxValue { get; private set; }
-        public float? Cp { get; private set; }
-        public float? Cpk { get; private set; }
-        public float? Sigma { get; private set; }
+        public float MeanValue { get; private set; }
+        public float MedianValue { get; private set; }
+        public float MinValue { get; private set; }
+        public float MaxValue { get; private set; }
+        public float Cp { get; private set; }
+        public float Cpk { get; private set; }
+        public float Sigma { get; private set; }
         public int PassCount { get; private set; }
         public int FailCount { get; private set; }
         public int ValidCount { get; private set; }
+
+        public float GetSigmaRangeLow(int times) {
+            return MeanValue - Sigma * times;
+        }
+
+        public float GetSigmaRangeHigh(int times) {
+            return MeanValue + Sigma * times;
+        }
 
         public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {
             List<double> listUnNullItems = (from r in data
@@ -32,18 +40,26 @@ namespace DataContainer {
                 Sigma = (float)statistics.StandardDeviation;
                 MedianValue = (float)Statistics.Median(listUnNullItems);
 
-                float? T = null;
-                float? U = null;
-                float? Ca = null;
                 if (hl != null && ll != null) {
-                    T = ((float)hl - (float)ll);
-                    U = ((float)hl + (float)ll) / 2;
-                    Ca = (MeanValue - U) / (T / 2);
+                    var T = ((float)hl - (float)ll);
+                    var U = ((float)hl + (float)ll) / 2;
+                    var Ca = (MeanValue - U) / (T / 2);
                     //Cp= (Hlimit-Llimit)/(6*Sigma)
                     Cp = (float)(T / (Sigma * 6));
                     //Cpk = Cp*(1-|Ca|)
                     Cpk = Cp * (1 - Math.Abs((float)Ca));
+                } else {
+                    Cp = float.NaN;
+                    Cpk = float.NaN;
                 }
+            } else {
+                MeanValue = float.NaN;
+                MinValue = float.NaN;
+                MaxValue = float.NaN;
+                Sigma = float.NaN;
+                MedianValue = float.NaN;
+                Cp = float.NaN;
+                Cpk = float.NaN;
             }
 
             ValidCount = listUnNullItems.Count;

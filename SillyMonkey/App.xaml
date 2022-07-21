@@ -68,6 +68,9 @@
                                     <!--<Setter TargetName="Back" Property="Background" Value="#00CA4F"></Setter>
                             <Setter TargetName="Back" Property="BorderBrush" Value="#59CA4F"></Setter>-->
                                 </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="PathFill" Property="Fill" Value="LightGray"/>
+                                </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
@@ -112,12 +115,12 @@
                                     <ColumnDefinition Width="0.3*" MaxWidth="30"/>
                                 </Grid.ColumnDefinitions>
                                 <!--文字区域背景和边线样式-->
-                                <TextBox Background="Transparent"  Grid.Column="0" FontSize="12" BorderThickness="0" FontWeight="SemiBold" Padding="4,4,2,2" IsReadOnly="True" Text="{TemplateBinding Text}"></TextBox>
+                                <TextBox x:Name="selectedText" Background="Transparent"  Grid.Column="0" FontSize="12" BorderThickness="0" FontWeight="SemiBold" Padding="4,4,2,2" IsReadOnly="True" Text="{TemplateBinding Text}"></TextBox>
                                 <!--<Border  Grid.Column="0" BorderThickness="1" BorderBrush="#5A5A5A" CornerRadius="1,0,0,1">
                                 </Border>-->
                                 <!--右侧下拉button设置-->
                                 <Border Grid.Column="1" BorderBrush="#5A5A5A" CornerRadius="0,1,1,0">
-                                    <ToggleButton BorderThickness="3" BorderBrush="#5A5A5A" Style="{StaticResource ComboxStyleBtn}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"></ToggleButton>
+                                    <ToggleButton x:Name="tgBt" BorderThickness="3" BorderBrush="#5A5A5A" Style="{StaticResource ComboxStyleBtn}" IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"></ToggleButton>
                                 </Border>
                                 <!--弹出popup整体设置-->
                                 <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="False" PopupAnimation="Slide" >
@@ -134,6 +137,15 @@
                                     </Border>
                                 </Popup>
                             </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="selectedText" Property="Background" Value="LightGray"/>
+                                    <Setter TargetName="tgBt" Property="BorderBrush" Value="LightGray"/>
+                                    <Setter TargetName="tgBt" Property="IsEnabled" Value="False"/>
+                                    <Setter TargetName="tgBt" Property="IsChecked" Value="False"/>
+                                    <Setter TargetName="Popup" Property="IsOpen" Value="False"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

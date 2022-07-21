@@ -167,11 +167,11 @@ namespace UI_Chart.ViewModels {
                     _itemTitle = $"{_selectedId}:{info.TestText}\n";
 
 
-                    _min = statistic.MinValue ?? 0;
-                    _max = statistic.MaxValue ?? 1;
+                    _min = statistic.MinValue;
+                    _max = statistic.MaxValue;
 
-                    _sigmaLow = (statistic.MeanValue ?? 0) - (statistic.Sigma ?? 1) * 6;
-                    _sigmaHigh = (statistic.MeanValue ?? 0) + (statistic.Sigma ?? 1) * 6;
+                    _sigmaLow = statistic.GetSigmaRangeLow(6);
+                    _sigmaHigh = statistic.GetSigmaRangeHigh(6);
 
                     var idInfo = da.GetTestInfo(_selectedId);
                     LowLimit = idInfo.LoLimit ?? _min;
@@ -183,15 +183,11 @@ namespace UI_Chart.ViewModels {
                     sb.Append($"{"Lo Limit:", -13}{item.LoLimit, -13}{item.Unit,-13}\r\n");
                     sb.Append($"{"Hi Limit:",-13}{item.HiLimit,-13}{item.Unit,-13}\r\n");
                 } else {
-                    if (statistic.MinValue.HasValue) {
-                        _min = statistic.MinValue.Value < _min ? statistic.MinValue.Value : _min;
-                    }
-                    if (statistic.MaxValue.HasValue) {
-                        _max = statistic.MaxValue.Value > _max ? statistic.MaxValue.Value : _max;
-                    }
+                    _min = statistic.MinValue < _min ? statistic.MinValue : _min;
+                    _max = statistic.MaxValue > _max ? statistic.MaxValue : _max;
 
-                    var sigmaLow = (statistic.MeanValue ?? 0) - (statistic.Sigma ?? 1) * 6;
-                    var sigmaHigh = (statistic.MeanValue ?? 0) + (statistic.Sigma ?? 1) * 6;
+                    var sigmaLow = statistic.GetSigmaRangeLow(6);
+                    var sigmaHigh = statistic.GetSigmaRangeHigh(6);
 
                     if (sigmaLow < _sigmaLow) _sigmaLow = sigmaLow;
                     if (sigmaHigh > _sigmaHigh) _sigmaHigh = sigmaHigh;

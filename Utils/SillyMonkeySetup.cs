@@ -7,6 +7,12 @@ using System.Windows.Media;
 
 
 namespace Utils {
+    public enum ChartAxis {
+        Sigma,
+        MinMax,
+        Limit,
+        User
+    }
     public static class SillyMonkeySetup {
         private static bool _ifCmpTextInUid = false;
 
