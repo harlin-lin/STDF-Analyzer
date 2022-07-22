@@ -73,8 +73,12 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
-            <TextBox Width="70" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="4,0,10,0" />
-            <TextBox Width="70" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
+            <Label Content="L:" Margin="4,0,0,0"/>
+            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" 
+                     FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+            <Label Content="H:"/>
+            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" 
+                     FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
                 <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
