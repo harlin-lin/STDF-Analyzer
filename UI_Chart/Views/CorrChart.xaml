@@ -38,10 +38,12 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
-                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
+                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
-                <iconPacks:PackIconMaterial Kind="ContentCopy" />
+                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
@@ -74,7 +76,8 @@
             <TextBox Width="70" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" FontSize="10" Margin="4,0,10,0" />
             <TextBox Width="70" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" FontSize="10" Margin="0,0,10,0" />
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
+                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"

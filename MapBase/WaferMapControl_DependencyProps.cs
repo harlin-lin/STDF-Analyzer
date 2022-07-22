@@ -9,9 +9,9 @@ namespace MapBase {
     partial class WaferMapControl {
 
         public IWaferData WaferDataSource {
-            get { return (IWaferData)GetValue(WaferDataProperty); }
+            get { return (IWaferData)GetValue(WaferDataSourceProperty); }
             set { 
-                SetValue(WaferDataProperty, value); 
+                SetValue(WaferDataSourceProperty, value); 
             }
         }
 
@@ -32,7 +32,7 @@ namespace MapBase {
 
 
         // Using a DependencyProperty as the backing store for WaferData.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty WaferDataProperty =
+        public static readonly DependencyProperty WaferDataSourceProperty =
             DependencyProperty.Register(nameof(WaferDataSource), typeof(IWaferData), typeof(WaferMapControl), new PropertyMetadata(null, OnDataSourceChanged)); //FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal, 
 
         private static void OnDataSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {

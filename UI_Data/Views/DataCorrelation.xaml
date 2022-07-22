@@ -22,7 +22,8 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
-                    <iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>
+                    <!--<iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
                 </Button>
             </StackPanel>
             <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">

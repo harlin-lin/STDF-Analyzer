@@ -91,5 +91,21 @@
   <ItemGroup>
     <Resource Include="Resource\icon\load2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\BootstrapIcons-CheckSquare.png" />
+    <Resource Include="Resource\icon\BootstrapIcons-ChevronDoubleLeft.png" />
+    <Resource Include="Resource\icon\BootstrapIcons-ChevronDoubleRight.png" />
+    <Resource Include="Resource\icon\BootstrapIcons-ChevronLeft.png" />
+    <Resource Include="Resource\icon\BootstrapIcons-ChevronRight.png" />
+    <Resource Include="Resource\icon\Codicons-Table.png" />
+    <Resource Include="Resource\icon\FontAwesome-FileAltRegular.png" />
+    <Resource Include="Resource\icon\ForkAwesome-FloppyOutline.png" />
+    <Resource Include="Resource\icon\Material-AutoFix.png" />
+    <Resource Include="Resource\icon\Material-ContentCopy.png" />
+    <Resource Include="Resource\icon\Material-DatabaseExportOutline.png" />
+    <Resource Include="Resource\icon\MaterialLight-ChartHistogram.png" />
+    <Resource Include="Resource\icon\Modern-Grid.png" />
+    <Resource Include="Resource\icon\VaadinIcons-ScatterChart.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

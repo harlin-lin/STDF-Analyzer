@@ -44,10 +44,12 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
-                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
+                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0" >
-                <iconPacks:PackIconMaterial Kind="ContentCopy" />
+                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <RadioButton x:Name="radioSigma" Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
@@ -97,12 +99,14 @@
             <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" 
                      FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
             <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
-                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
+                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
             <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierTrend, Mode=TwoWay}"
                           Command="{Binding CmdToggleOutlierTrend}"
                           Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <iconPacks:PackIconMaterial Kind="AutoFix" />
+                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
             </ToggleButton>
             <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxTrend, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierTrend, Mode=TwoWay}" Margin="0,0,0,0">
                 <ComboBoxItem Content="6σ" IsSelected="True"/>
@@ -143,10 +147,12 @@
         <GridSplitter Grid.Row="2"/>
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
-                <iconPacks:PackIconForkAwesome Kind="FloppyOutline" />
+                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
-                <iconPacks:PackIconMaterial Kind="ContentCopy" />
+                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
@@ -196,12 +202,14 @@
             <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" 
                      FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
             <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                <iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />
+                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
             <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierHisto, Mode=TwoWay}"
                   Command="{Binding CmdToggleOutlierHisto}"
                   Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <iconPacks:PackIconMaterial Kind="AutoFix" />
+                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
             </ToggleButton>
             <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxHisto, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierHisto, Mode=TwoWay}" Margin="0,0,0,0">
                 <ComboBoxItem Content="6σ" IsSelected="True"/>
