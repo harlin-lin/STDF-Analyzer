@@ -69,6 +69,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cvt.cs" />
     <Compile Include="DataViewItem.cs" />
     <Compile Include="MessageEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,6 +107,9 @@
     <Resource Include="Resource\icon\MaterialLight-ChartHistogram.png" />
     <Resource Include="Resource\icon\Modern-Grid.png" />
     <Resource Include="Resource\icon\VaadinIcons-ScatterChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\VaadinIcons-EllipsisDotsV.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

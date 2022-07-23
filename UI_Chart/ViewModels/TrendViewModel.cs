@@ -28,11 +28,8 @@ namespace UI_Chart.ViewModels {
 
         private int _deviceCount;
 
-        private float _sigmaLowTrend, _sigmaHighTrend, _minTrend, _maxTrend;
-        private float _sigmaLowHisto, _sigmaHighHisto, _minHisto, _maxHisto;
-
-        ChartAxis _trendAxisMode = ChartAxis.Sigma;
-        ChartAxis _histoAxisMode = ChartAxis.Sigma;
+        private float _allsigmaLowTrend, _allsigmaHighTrend, _allminTrend, _allmaxTrend;
+        private float _allsigmaLowHisto, _allsigmaHighHisto, _allminHisto, _allmaxHisto;
 
         #region Binding_prop
         public ObservableCollection<IRenderableSeriesViewModel> _trendSeries = new ObservableCollection<IRenderableSeriesViewModel>();
@@ -68,30 +65,6 @@ namespace UI_Chart.ViewModels {
         public float HighLimit {
             get { return _highLimit; }
             set { SetProperty(ref _highLimit, value); }
-        }
-
-        private float _meanTrend;
-        public float MeanTrend {
-            get { return _meanTrend; }
-            set { SetProperty(ref _meanTrend, value); }
-        }
-
-        private float _meadianTrend;
-        public float MedianTrend {
-            get { return _meadianTrend; }
-            set { SetProperty(ref _meadianTrend, value); }
-        }
-
-        private float _lowSigmaTrend;
-        public float LowSigmaTrend {
-            get { return _lowSigmaTrend; }
-            set { SetProperty(ref _lowSigmaTrend, value); }
-        }
-
-        private float _highSigmaTrend;
-        public float HighSigmaTrend {
-            get { return _highSigmaTrend; }
-            set { SetProperty(ref _highSigmaTrend, value); }
         }
 
         private string _userTrendLowRange;
@@ -235,6 +208,170 @@ namespace UI_Chart.ViewModels {
         int SigmaByIdx(int idx) {
             return 6 - idx;
         }
+
+        private bool _enAxisLimitTrend=true;
+        public bool EnAxisLimitTrend {
+            get { return _enAxisLimitTrend; }
+            set { SetProperty(ref _enAxisLimitTrend, value); }
+        }
+
+        private bool _enAxisMinMaxTrend=false;
+        public bool EnAxisMinMaxTrend {
+            get { return _enAxisMinMaxTrend; }
+            set { SetProperty(ref _enAxisMinMaxTrend, value); }
+        }
+
+        private bool _enAxisMeanTrend = false;
+        public bool EnAxisMeanTrend {
+            get { return _enAxisMeanTrend; }
+            set { SetProperty(ref _enAxisMeanTrend, value); }
+        }
+
+        private bool _enAxisMedianTrend = false;
+        public bool EnAxisMedianTrend {
+            get { return _enAxisMedianTrend; }
+            set { SetProperty(ref _enAxisMedianTrend, value); }
+        }
+
+        private bool _enAxisSigma6Trend = true;
+        public bool EnAxisSigma6Trend {
+            get { return _enAxisSigma6Trend; }
+            set { SetProperty(ref _enAxisSigma6Trend, value); }
+        }
+
+        private bool _enAxisSigma3Trend = false;
+        public bool EnAxisSigma3Trend {
+            get { return _enAxisSigma3Trend; }
+            set { SetProperty(ref _enAxisSigma3Trend, value); }
+        }
+
+        private float _minTrend;
+        public float MinTrend {
+            get { return _minTrend; }
+            set { SetProperty(ref _minTrend, value); }
+        }
+
+        private float _maxTrend;
+        public float MaxTrend {
+            get { return _maxTrend; }
+            set { SetProperty(ref _maxTrend, value); }
+        }
+
+        private float _meanTrend;
+        public float MeanTrend {
+            get { return _meanTrend; }
+            set { SetProperty(ref _meanTrend, value); }
+        }
+
+        private float _meadianTrend;
+        public float MedianTrend {
+            get { return _meadianTrend; }
+            set { SetProperty(ref _meadianTrend, value); }
+        }
+
+        private float _sigma6LTrend;
+        public float Sigma6LTrend {
+            get { return _sigma6LTrend; }
+            set { SetProperty(ref _sigma6LTrend, value); }
+        }
+        private float _sigma6HTrend;
+        public float Sigma6HTrend {
+            get { return _sigma6HTrend; }
+            set { SetProperty(ref _sigma6HTrend, value); }
+        }
+        private float _sigma3LTrend;
+        public float Sigma3LTrend {
+            get { return _sigma3LTrend; }
+            set { SetProperty(ref _sigma3LTrend, value); }
+        }
+        private float _sigma3HTrend;
+        public float Sigma3HTrend {
+            get { return _sigma3HTrend; }
+            set { SetProperty(ref _sigma3HTrend, value); }
+        }
+
+
+        private bool _enAxisLimitHisto = true;
+        public bool EnAxisLimitHisto {
+            get { return _enAxisLimitHisto; }
+            set { SetProperty(ref _enAxisLimitHisto, value); }
+        }
+
+        private bool _enAxisMinMaxHisto = false;
+        public bool EnAxisMinMaxHisto {
+            get { return _enAxisMinMaxHisto; }
+            set { SetProperty(ref _enAxisMinMaxHisto, value); }
+        }
+
+        private bool _enAxisMeanHisto = false;
+        public bool EnAxisMeanHisto {
+            get { return _enAxisMeanHisto; }
+            set { SetProperty(ref _enAxisMeanHisto, value); }
+        }
+
+        private bool _enAxisMedianHisto = false;
+        public bool EnAxisMedianHisto {
+            get { return _enAxisMedianHisto; }
+            set { SetProperty(ref _enAxisMedianHisto, value); }
+        }
+
+        private bool _enAxisSigma6Histo = true;
+        public bool EnAxisSigma6Histo {
+            get { return _enAxisSigma6Histo; }
+            set { SetProperty(ref _enAxisSigma6Histo, value); }
+        }
+
+        private bool _enAxisSigma3Histo = false;
+        public bool EnAxisSigma3Histo {
+            get { return _enAxisSigma3Histo; }
+            set { SetProperty(ref _enAxisSigma3Histo, value); }
+        }
+
+        private float _minHisto;
+        public float MinHisto {
+            get { return _minHisto; }
+            set { SetProperty(ref _minHisto, value); }
+        }
+
+        private float _maxHisto;
+        public float MaxHisto {
+            get { return _maxHisto; }
+            set { SetProperty(ref _maxHisto, value); }
+        }
+
+        private float _meanHisto;
+        public float MeanHisto {
+            get { return _meanHisto; }
+            set { SetProperty(ref _meanHisto, value); }
+        }
+
+        private float _meadianHisto;
+        public float MedianHisto {
+            get { return _meadianHisto; }
+            set { SetProperty(ref _meadianHisto, value); }
+        }
+
+        private float _sigma6LHisto;
+        public float Sigma6LHisto {
+            get { return _sigma6LHisto; }
+            set { SetProperty(ref _sigma6LHisto, value); }
+        }
+        private float _sigma6HHisto;
+        public float Sigma6HHisto {
+            get { return _sigma6HHisto; }
+            set { SetProperty(ref _sigma6HHisto, value); }
+        }
+        private float _sigma3LHisto;
+        public float Sigma3LHisto {
+            get { return _sigma3LHisto; }
+            set { SetProperty(ref _sigma3LHisto, value); }
+        }
+        private float _sigma3HHisto;
+        public float Sigma3HHisto {
+            get { return _sigma3HHisto; }
+            set { SetProperty(ref _sigma3HHisto, value); }
+        }
+
         #endregion
 
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -323,30 +460,38 @@ namespace UI_Chart.ViewModels {
                 }
                 
                 if (i == 0) {
-                    _minTrend = statistic.MinValue;
-                    _maxTrend = statistic.MaxValue;
+                    _allminTrend = statistic.MinValue;
+                    _allmaxTrend = statistic.MaxValue;
 
-                    _sigmaLowTrend = statistic.GetSigmaRangeLow(SigmaByIdx(TrendSigmaSelectionIdx));
-                    _sigmaHighTrend = statistic.GetSigmaRangeHigh(SigmaByIdx(TrendSigmaSelectionIdx));
+                    _allsigmaLowTrend = statistic.GetSigmaRangeLow(SigmaByIdx(TrendSigmaSelectionIdx));
+                    _allsigmaHighTrend = statistic.GetSigmaRangeHigh(SigmaByIdx(TrendSigmaSelectionIdx));
 
                     if (_selectedIds.Count == 1) {
                         var info = da.GetTestInfo(_selectedIds[0]);
                         var failRate = (statistic.FailCount * 100.0 / statistic.ValidCount).ToString("f3") + "%";
-                        _itemTitleTrend = $"{_selectedIds[0]}:{info.TestText}\nmean|{statistic.MeanValue:f3}  median|{statistic.MedianValue:f3}  fail|{statistic.FailCount}/{statistic.ValidCount}={failRate}  cpk|{statistic.Cpk:f3}";
+                        _itemTitleTrend = $"{_selectedIds[0]}:{info.TestText}\nmean|{statistic.MeanValue:f3}  median|{statistic.MedianValue:f3}  cpk|{statistic.Cpk:f3}  σ|{statistic.Sigma:f3}  fail|{statistic.FailCount}/{statistic.ValidCount}={failRate}";
                     } else {
                         _itemTitleTrend = _selectedIds[0];
                     }
 
+                    MinTrend = statistic.MinValue;
+                    MaxTrend = statistic.MaxValue;
+                    MeanTrend = statistic.MeanValue;
+                    MedianTrend = statistic.MedianValue;
+                    Sigma3LTrend = statistic.GetSigmaRangeLow(3);
+                    Sigma3HTrend = statistic.GetSigmaRangeHigh(3);
+                    Sigma6LTrend = statistic.GetSigmaRangeLow(6);
+                    Sigma6HTrend = statistic.GetSigmaRangeHigh(6);
 
                 } else {
-                    _minTrend = statistic.MinValue < _minTrend ? statistic.MinValue : _minTrend;
-                    _maxTrend = statistic.MaxValue > _maxTrend ? statistic.MaxValue : _maxTrend;
+                    _allminTrend = statistic.MinValue < _allminTrend ? statistic.MinValue : _allminTrend;
+                    _allmaxTrend = statistic.MaxValue > _allmaxTrend ? statistic.MaxValue : _allmaxTrend;
 
                     var sigmaLow = statistic.GetSigmaRangeLow(SigmaByIdx(TrendSigmaSelectionIdx));
                     var sigmaHigh = statistic.GetSigmaRangeHigh(SigmaByIdx(TrendSigmaSelectionIdx));
 
-                    if (sigmaLow < _sigmaLowTrend) _sigmaLowTrend = sigmaLow;
-                    if (sigmaHigh > _sigmaHighTrend) _sigmaHighTrend = sigmaHigh;
+                    if (sigmaLow < _allsigmaLowTrend) _allsigmaLowTrend = sigmaLow;
+                    if (sigmaHigh > _allsigmaHighTrend) _allsigmaHighTrend = sigmaHigh;
 
                     _itemTitleTrend += " & " + _selectedIds[i];
                 }
@@ -379,30 +524,39 @@ namespace UI_Chart.ViewModels {
                 }
 
                 if (i == 0) {
-                    _minHisto = statistic.MinValue;
-                    _maxHisto = statistic.MaxValue;
+                    _allminHisto = statistic.MinValue;
+                    _allmaxHisto = statistic.MaxValue;
 
-                    _sigmaLowHisto = statistic.GetSigmaRangeLow(SigmaByIdx(HistoSigmaSelectionIdx));
-                    _sigmaHighHisto = statistic.GetSigmaRangeHigh(SigmaByIdx(HistoSigmaSelectionIdx));
+                    _allsigmaLowHisto = statistic.GetSigmaRangeLow(SigmaByIdx(HistoSigmaSelectionIdx));
+                    _allsigmaHighHisto = statistic.GetSigmaRangeHigh(SigmaByIdx(HistoSigmaSelectionIdx));
 
                     if (_selectedIds.Count == 1) {
                         var info = da.GetTestInfo(_selectedIds[0]);
                         var failRate = (statistic.FailCount * 100.0 / statistic.ValidCount).ToString("f3") + "%";
-                        _itemTitleHisto = $"{_selectedIds[0]}:{info.TestText}\nmean|{statistic.MeanValue:f3}  median|{statistic.MedianValue:f3}  fail|{statistic.FailCount}/{statistic.ValidCount}={failRate}  cpk|{statistic.Cpk:f3}";
+                        _itemTitleHisto = $"{_selectedIds[0]}:{info.TestText}\nmean|{statistic.MeanValue:f3}  median|{statistic.MedianValue:f3}  cpk|{statistic.Cpk:f3}  σ|{statistic.Sigma:f3}  fail|{statistic.FailCount}/{statistic.ValidCount}={failRate}";
                     } else {
                         _itemTitleHisto = _selectedIds[0];
                     }
 
+                    MinHisto = statistic.MinValue;
+                    MaxHisto = statistic.MaxValue;
+                    MeanHisto = statistic.MeanValue;
+                    MedianHisto = statistic.MedianValue;
+                    Sigma3LHisto = statistic.GetSigmaRangeLow(3);
+                    Sigma3HHisto = statistic.GetSigmaRangeHigh(3);
+                    Sigma6LHisto = statistic.GetSigmaRangeLow(6);
+                    Sigma6HHisto = statistic.GetSigmaRangeHigh(6);
+
 
                 } else {
-                    _minHisto = statistic.MinValue < _minHisto ? statistic.MinValue : _minHisto;
-                    _maxHisto = statistic.MaxValue > _maxHisto ? statistic.MaxValue : _maxHisto;
+                    _allminHisto = statistic.MinValue < _allminHisto ? statistic.MinValue : _allminHisto;
+                    _allmaxHisto = statistic.MaxValue > _allmaxHisto ? statistic.MaxValue : _allmaxHisto;
 
                     var sigmaLow = statistic.GetSigmaRangeLow(SigmaByIdx(HistoSigmaSelectionIdx));
                     var sigmaHigh = statistic.GetSigmaRangeHigh(SigmaByIdx(HistoSigmaSelectionIdx));
 
-                    if (sigmaLow < _sigmaLowHisto) _sigmaLowHisto = sigmaLow;
-                    if (sigmaHigh > _sigmaHighHisto) _sigmaHighHisto = sigmaHigh;
+                    if (sigmaLow < _allsigmaLowHisto) _allsigmaLowHisto = sigmaLow;
+                    if (sigmaHigh > _allsigmaHighHisto) _allsigmaHighHisto = sigmaHigh;
 
                     _itemTitleHisto += " & " + _selectedIds[i];
                 }
@@ -656,16 +810,15 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisSigmaTrend ?? (_CmdSelectAxisSigmaTrend = new DelegateCommand(ExecuteCmdSelectAxisSigmaTrend));
 
         void ExecuteCmdSelectAxisSigmaTrend() {
-            var ov = 0.05 * (_sigmaHighTrend - _sigmaLowTrend);
+            var ov = 0.05 * (_allsigmaHighTrend - _allsigmaLowTrend);
             if (ov == 0) ov = 1;
-            YAxisTrend.VisibleRange.SetMinMax(_sigmaLowTrend-ov, _sigmaHighTrend+ov);
+            YAxisTrend.VisibleRange.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
             RaisePropertyChanged("YAxisTrend");
             XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
             RaisePropertyChanged("XAxisTrend");
 
-            UserTrendLowRange = _sigmaLowTrend.ToString("f3");
-            UserTrendHighRange = _sigmaHighTrend.ToString("f3");
-            _trendAxisMode = ChartAxis.Sigma;
+            UserTrendLowRange = _allsigmaLowTrend.ToString("f3");
+            UserTrendHighRange = _allsigmaHighTrend.ToString("f3");
         }
 
         private DelegateCommand _CmdSelectAxisMinMaxTrend;
@@ -673,16 +826,15 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisMinMaxTrend ?? (_CmdSelectAxisMinMaxTrend = new DelegateCommand(ExecuteCmdSelectAxisMinMaxTrend));
 
         void ExecuteCmdSelectAxisMinMaxTrend() {
-            var ov = 0.05 * (_maxTrend - _minTrend);
+            var ov = 0.05 * (_allmaxTrend - _allminTrend);
             if (ov == 0) ov = 1;
-            YAxisTrend.VisibleRange.SetMinMax(_minTrend - ov, _maxTrend + ov);
+            YAxisTrend.VisibleRange.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
             RaisePropertyChanged("YAxisTrend");
             XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
             RaisePropertyChanged("XAxisTrend");
 
-            UserTrendLowRange = _minTrend.ToString("f3");
-            UserTrendHighRange = _maxTrend.ToString("f3");
-            _trendAxisMode = ChartAxis.MinMax;
+            UserTrendLowRange = _allminTrend.ToString("f3");
+            UserTrendHighRange = _allmaxTrend.ToString("f3");
         }
 
         private DelegateCommand _CmdSelectAxisLimitTrend;
@@ -690,8 +842,8 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitTrend ?? (_CmdSelectAxisLimitTrend = new DelegateCommand(ExecuteCmdSelectAxisLimitTrend));
 
         void ExecuteCmdSelectAxisLimitTrend() {
-            float l = float.IsNaN(LowLimit) ? _minTrend : LowLimit;
-            float h = float.IsNaN(HighLimit) ? _maxTrend : HighLimit;
+            float l = float.IsNaN(LowLimit) ? _allminTrend : LowLimit;
+            float h = float.IsNaN(HighLimit) ? _allmaxTrend : HighLimit;
 
             var ov = 0.1 * (h - l);
             if (ov == 0) ov = 1;
@@ -702,7 +854,6 @@ namespace UI_Chart.ViewModels {
 
             UserTrendLowRange = l.ToString("f3");
             UserTrendHighRange = h.ToString("f3");
-            _trendAxisMode = ChartAxis.Limit;
         }
 
         private DelegateCommand _CmdSelectAxisUserTrend;
@@ -723,7 +874,6 @@ namespace UI_Chart.ViewModels {
             }
             XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
             RaisePropertyChanged("XAxisTrend");
-            _trendAxisMode = ChartAxis.User;
         }
 
         private DelegateCommand _CmdApplyTrendRange;
@@ -778,11 +928,10 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisSigmaHisto ?? (_CmdSelectAxisSigmaHisto = new DelegateCommand(ExecuteCmdSelectAxisSigmaHisto));
 
         void ExecuteCmdSelectAxisSigmaHisto() {
-            UpdateHistoSeries(_sigmaLowHisto, _sigmaHighHisto);
+            UpdateHistoSeries(_allsigmaLowHisto, _allsigmaHighHisto);
 
-            UserHistoLowRange = _sigmaLowHisto.ToString("f3");
-            UserHistoHighRange = _sigmaHighHisto.ToString("f3");
-            _histoAxisMode = ChartAxis.Sigma;
+            UserHistoLowRange = _allsigmaLowHisto.ToString("f3");
+            UserHistoHighRange = _allsigmaHighHisto.ToString("f3");
         }
 
         private DelegateCommand _CmdSelectAxisMinMaxHisto;
@@ -790,11 +939,10 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisMinMaxHisto ?? (_CmdSelectAxisMinMaxHisto = new DelegateCommand(ExecuteCmdSelectAxisMinMaxHisto));
 
         void ExecuteCmdSelectAxisMinMaxHisto() {
-            UpdateHistoSeries(_minHisto, _maxHisto);
+            UpdateHistoSeries(_allminHisto, _allmaxHisto);
 
-            UserHistoLowRange = _minHisto.ToString("f3");
-            UserHistoHighRange = _maxHisto.ToString("f3");
-            _histoAxisMode = ChartAxis.MinMax;
+            UserHistoLowRange = _allminHisto.ToString("f3");
+            UserHistoHighRange = _allmaxHisto.ToString("f3");
         }
 
         private DelegateCommand _CmdSelectAxisLimitHisto;
@@ -802,14 +950,13 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitHisto ?? (_CmdSelectAxisLimitHisto = new DelegateCommand(ExecuteCmdSelectAxisLimitHisto));
 
         void ExecuteCmdSelectAxisLimitHisto() {
-            float l = float.IsNaN(LowLimit) ? _minHisto : LowLimit;
-            float h = float.IsNaN(HighLimit) ? _maxHisto : HighLimit;
+            float l = float.IsNaN(LowLimit) ? _allminHisto : LowLimit;
+            float h = float.IsNaN(HighLimit) ? _allmaxHisto : HighLimit;
 
             UpdateHistoSeries(l, h);
 
             UserHistoLowRange = l.ToString();
             UserHistoHighRange = h.ToString();
-            _histoAxisMode = ChartAxis.Limit;
         }
 
         private DelegateCommand _CmdSelectAxisUserHisto;
@@ -826,7 +973,6 @@ namespace UI_Chart.ViewModels {
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
-            _histoAxisMode = ChartAxis.User;
         }
 
         private DelegateCommand _CmdApplyHistoRange;

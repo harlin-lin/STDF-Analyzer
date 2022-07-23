@@ -9,12 +9,14 @@
              xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
              xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="UI_Chart.Views.Trend"
              mc:Ignorable="d"         
+             xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
              d:DesignHeight="700" d:DesignWidth="600"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Name="chart">
     <Grid>
         <Grid.Resources>
             <ResourceDictionary>
+                <smCore:BooleanNegationConverter x:Key="nbool"/>
 
                 <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
                     <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -34,7 +36,7 @@
             </ResourceDictionary>
 
         </Grid.Resources>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
@@ -42,86 +44,109 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
-            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
-                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
-            </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0" >
-                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
-            </Button>
-            <RadioButton x:Name="radioSigma" Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding TrendSigmaSelectionIdx, Mode=OneWayToSource}"  IsEnabled="{Binding IfTrendLimitBySigma}" Margin="0,0,5,0">
-                <ComboBoxItem Content="6σ" IsSelected="True"/>
-                <ComboBoxItem Content="5σ"/>
-                <ComboBoxItem Content="4σ"/>
-                <ComboBoxItem Content="3σ"/>
-                <ComboBoxItem Content="2σ"/>
-                <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaRangeIdxTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>            
-            </ComboBox>
-            <RadioButton Content="MinMax" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}" Margin="0,0,5,0">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="Limit" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}" Margin="0,0,5,0">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="User" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <Label Content="L:" Margin="4,0,0,0"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Label Content="H:"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
-                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
-            </Button>
-            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierTrend, Mode=TwoWay}"
-                          Command="{Binding CmdToggleOutlierTrend}"
-                          Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
+                    <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
+                </Button>
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0" >
+                    <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
+                </Button>
+                <RadioButton x:Name="radioSigma" Content="Sigma" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitBySigma, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding TrendSigmaSelectionIdx, Mode=OneWayToSource}"  IsEnabled="{Binding IfTrendLimitBySigma}" Margin="0,0,5,0">
+                    <ComboBoxItem Content="6σ" IsSelected="True"/>
+                    <ComboBoxItem Content="5σ"/>
+                    <ComboBoxItem Content="4σ"/>
+                    <ComboBoxItem Content="3σ"/>
+                    <ComboBoxItem Content="2σ"/>
+                    <ComboBoxItem Content="1σ"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged" >
+                            <i:InvokeCommandAction Command="{Binding CmdChangedSigmaRangeIdxTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <RadioButton Content="MinMax" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByMinMax, Mode=TwoWay}" Margin="0,0,5,0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <RadioButton Content="Limit" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByLimit, Mode=TwoWay}" Margin="0,0,5,0">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <RadioButton Content="User" GroupName="YaxisTrend" IsChecked="{Binding IfTrendLimitByUser, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <Label Content="L:" Margin="4,0,0,0"/>
+                <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserTrendLowRange, Mode=TwoWay}" 
+                         FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Label Content="H:"/>
+                <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserTrendHighRange, Mode=TwoWay}" 
+                         FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyTrendRange, Mode=OneWay}" ToolTip="Apply the limit"  BorderThickness="0">
+                    <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
+                </Button>
+                <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierTrend, Mode=TwoWay}"
+                              Command="{Binding CmdToggleOutlierTrend}"
+                              Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                    <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+                </ToggleButton>
+                <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxTrend, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierTrend, Mode=TwoWay}" Margin="0,0,0,0">
+                    <ComboBoxItem Content="6σ" IsSelected="True"/>
+                    <ComboBoxItem Content="5σ"/>
+                    <ComboBoxItem Content="4σ"/>
+                    <ComboBoxItem Content="3σ"/>
+                    <ComboBoxItem Content="2σ"/>
+                    <ComboBoxItem Content="1σ"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged" >
+                            <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxTrend}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+            <ToggleButton Grid.Column="1" x:Name="tgPopTrend" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />
             </ToggleButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxTrend, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierTrend, Mode=TwoWay}" Margin="0,0,0,0">
-                <ComboBoxItem Content="6σ" IsSelected="True"/>
-                <ComboBoxItem Content="5σ"/>
-                <ComboBoxItem Content="4σ"/>
-                <ComboBoxItem Content="3σ"/>
-                <ComboBoxItem Content="2σ"/>
-                <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxTrend}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-        </StackPanel>
+            <Popup x:Name="popTrend" IsOpen="{Binding ElementName=tgPopTrend, Path=IsChecked, Mode=TwoWay}"  
+                   PlacementTarget="{Binding ElementName=tgPopTrend}" Placement="Bottom" Width="80" Height="150"
+                   PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False" HorizontalOffset="-65">
+                <Border Background="White" BorderThickness="1" BorderBrush="Gray">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox x:Name="AxisLimitTrend" Content="Limit" IsChecked="{Binding EnAxisLimitTrend, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMinMaxTrend" Content="MinMax" IsChecked="{Binding EnAxisMinMaxTrend, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMeanTrend" Content="Mean" IsChecked="{Binding EnAxisMeanTrend, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMedianTrend" Content="Median" IsChecked="{Binding EnAxisMedianTrend, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisSigma6Trend" Content="6 Sigma" IsChecked="{Binding EnAxisSigma6Trend, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisSigma3Trend" Content="3 Sigma" IsChecked="{Binding EnAxisSigma3Trend, Mode=TwoWay}" Margin="3"/>
+                    </StackPanel>
+                </Border>
+            </Popup>
+        </Grid>
         <s:SciChartSurface x:Name="sciChart" Background="White" 
                            ChartTitle="{Binding ItemTitleTrend}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
                            Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}">
@@ -145,91 +170,123 @@
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>
-                <s:HorizontalLineAnnotation Y1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
-                <s:HorizontalLineAnnotation Y1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
+                <s:HorizontalLineAnnotation Y1="{Binding LowLimit}" IsHidden="{Binding ElementName=AxisLimitTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Red" StrokeThickness="2"/>
+                <s:HorizontalLineAnnotation Y1="{Binding HighLimit}" IsHidden="{Binding ElementName=AxisLimitTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Red" StrokeThickness="2"/>
+                <s:HorizontalLineAnnotation Y1="{Binding MeanTrend}" IsHidden="{Binding ElementName=AxisMeanTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Tomato" StrokeThickness="2" />
+                <s:HorizontalLineAnnotation Y1="{Binding MedianTrend}" IsHidden="{Binding ElementName=AxisMedianTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DarkGoldenrod" StrokeThickness="2"/>
+                <s:HorizontalLineAnnotation Y1="{Binding MinTrend}" IsHidden="{Binding ElementName=AxisMinMaxTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="IndianRed" StrokeThickness="2"/>
+                <s:HorizontalLineAnnotation Y1="{Binding MaxTrend}" IsHidden="{Binding ElementName=AxisMinMaxTrend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="IndianRed" StrokeThickness="2"/>
+                <s:HorizontalLineAnnotation Y1="{Binding Sigma6LTrend}" IsHidden="{Binding ElementName=AxisSigma6Trend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DeepSkyBlue" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:HorizontalLineAnnotation Y1="{Binding Sigma6HTrend}" IsHidden="{Binding ElementName=AxisSigma6Trend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DeepSkyBlue" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:HorizontalLineAnnotation Y1="{Binding Sigma3LTrend}" IsHidden="{Binding ElementName=AxisSigma3Trend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Lime" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:HorizontalLineAnnotation Y1="{Binding Sigma3HTrend}" IsHidden="{Binding ElementName=AxisSigma3Trend, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Lime" StrokeThickness="3" StrokeDashArray="1,3"/>
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
         <GridSplitter Grid.Row="2"/>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
-                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
-            </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
-                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
-            </Button>
-            <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding HistoSigmaSelectionIdx, Mode=OneWayToSource}"  IsEnabled="{Binding IfHistoLimitBySigma}" Margin="0,0,5,0">
-                <ComboBoxItem Content="6σ" IsSelected="True"/>
-                <ComboBoxItem Content="5σ"/>
-                <ComboBoxItem Content="4σ"/>
-                <ComboBoxItem Content="3σ"/>
-                <ComboBoxItem Content="2σ"/>
-                <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaRangeIdxHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-            <RadioButton Content="MinMax" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="Limit" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="User" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <Label Content="L:" Margin="4,0,0,0"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Label Content="H:"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
-            </Button>
-            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierHisto, Mode=TwoWay}"
-                  Command="{Binding CmdToggleOutlierHisto}"
-                  Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="15"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
+                    <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
+                </Button>
+                <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
+                </Button>
+                <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding HistoSigmaSelectionIdx, Mode=OneWayToSource}"  IsEnabled="{Binding IfHistoLimitBySigma}" Margin="0,0,5,0">
+                    <ComboBoxItem Content="6σ" IsSelected="True"/>
+                    <ComboBoxItem Content="5σ"/>
+                    <ComboBoxItem Content="4σ"/>
+                    <ComboBoxItem Content="3σ"/>
+                    <ComboBoxItem Content="2σ"/>
+                    <ComboBoxItem Content="1σ"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged" >
+                            <i:InvokeCommandAction Command="{Binding CmdChangedSigmaRangeIdxHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <RadioButton Content="MinMax" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <RadioButton Content="Limit" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <RadioButton Content="User" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked" >
+                            <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </RadioButton>
+                <Label Content="L:" Margin="4,0,0,0"/>
+                <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" 
+                         FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Label Content="H:"/>
+                <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" 
+                         FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Button  Width="23" Height="23" Margin="4,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
+                    <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
+                </Button>
+                <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierHisto, Mode=TwoWay}"
+                      Command="{Binding CmdToggleOutlierHisto}"
+                      Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                    <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+                </ToggleButton>
+                <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxHisto, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierHisto, Mode=TwoWay}" Margin="0,0,0,0">
+                    <ComboBoxItem Content="6σ" IsSelected="True"/>
+                    <ComboBoxItem Content="5σ"/>
+                    <ComboBoxItem Content="4σ"/>
+                    <ComboBoxItem Content="3σ"/>
+                    <ComboBoxItem Content="2σ"/>
+                    <ComboBoxItem Content="1σ"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged" >
+                            <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxHisto}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </StackPanel>
+            <ToggleButton Grid.Column="1" x:Name="tgPopHisto" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />
             </ToggleButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxHisto, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierHisto, Mode=TwoWay}" Margin="0,0,0,0">
-                <ComboBoxItem Content="6σ" IsSelected="True"/>
-                <ComboBoxItem Content="5σ"/>
-                <ComboBoxItem Content="4σ"/>
-                <ComboBoxItem Content="3σ"/>
-                <ComboBoxItem Content="2σ"/>
-                <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-        </StackPanel>
+            <Popup x:Name="popHisto" IsOpen="{Binding ElementName=tgPopHisto, Path=IsChecked, Mode=TwoWay}"  
+                   PlacementTarget="{Binding ElementName=tgPopHisto}" Placement="Bottom" Width="80" Height="150"
+                   PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False" HorizontalOffset="-65">
+                <Border Background="White" BorderThickness="1" BorderBrush="Gray">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox x:Name="AxisLimitHisto" Content="Limit" IsChecked="{Binding EnAxisLimitHisto, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMinMaxHisto" Content="MinMax" IsChecked="{Binding EnAxisMinMaxHisto, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMeanHisto" Content="Mean" IsChecked="{Binding EnAxisMeanHisto, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisMedianHisto" Content="Median" IsChecked="{Binding EnAxisMedianHisto, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisSigma6Histo" Content="6 Sigma" IsChecked="{Binding EnAxisSigma6Histo, Mode=TwoWay}" Margin="3"/>
+                        <CheckBox x:Name="AxisSigma3Histo" Content="3 Sigma" IsChecked="{Binding EnAxisSigma3Histo, Mode=TwoWay}" Margin="3"/>
+                    </StackPanel>
+                </Border>
+            </Popup>
+
+        </Grid>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
                            Grid.Row="4" Margin="2,2,2,2" Grid.RowSpan="3" 
                            XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}"  
@@ -249,8 +306,16 @@
                 </s:ModifierGroup>
             </s:SciChartSurface.ChartModifier>
             <s:SciChartSurface.Annotations>
-                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
-                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
+                <s:VerticalLineAnnotation X1="{Binding LowLimit}" IsHidden="{Binding ElementName=AxisLimitHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Red" StrokeThickness="2"/>
+                <s:VerticalLineAnnotation X1="{Binding HighLimit}" IsHidden="{Binding ElementName=AxisLimitHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Red" StrokeThickness="2"/>
+                <s:VerticalLineAnnotation X1="{Binding MeanHisto}" IsHidden="{Binding ElementName=AxisMeanHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Tomato" StrokeThickness="2" />
+                <s:VerticalLineAnnotation X1="{Binding MedianHisto}" IsHidden="{Binding ElementName=AxisMedianHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DarkGoldenrod" StrokeThickness="2"/>
+                <s:VerticalLineAnnotation X1="{Binding MinHisto}" IsHidden="{Binding ElementName=AxisMinMaxHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="IndianRed" StrokeThickness="2"/>
+                <s:VerticalLineAnnotation X1="{Binding MaxHisto}" IsHidden="{Binding ElementName=AxisMinMaxHisto, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="IndianRed" StrokeThickness="2"/>
+                <s:VerticalLineAnnotation X1="{Binding Sigma6LHisto}" IsHidden="{Binding ElementName=AxisSigma6Histo, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DeepSkyBlue" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:VerticalLineAnnotation X1="{Binding Sigma6HHisto}" IsHidden="{Binding ElementName=AxisSigma6Histo, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="DeepSkyBlue" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:VerticalLineAnnotation X1="{Binding Sigma3LHisto}" IsHidden="{Binding ElementName=AxisSigma3Histo, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Lime" StrokeThickness="3" StrokeDashArray="1,3"/>
+                <s:VerticalLineAnnotation X1="{Binding Sigma3HHisto}" IsHidden="{Binding ElementName=AxisSigma3Histo, Path=IsChecked, Converter={StaticResource nbool}}" Stroke="Lime" StrokeThickness="3" StrokeDashArray="1,3"/>
             </s:SciChartSurface.Annotations>
         </s:SciChartSurface>
 

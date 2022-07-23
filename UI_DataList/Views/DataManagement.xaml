@@ -6,14 +6,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:UI_DataList="clr-namespace:UI_DataList"
+             xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
              xmlns:local="clr-namespace:UI_DataList.ViewModels"
              xmlns:core="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
              x:Name="FileManagement"
              d:DesignHeight="300" d:DesignWidth="300"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <UserControl.Resources>
-        <UI_DataList:ImgVisibilityCtr x:Key="imgbool"/>
+        <smCore:ImgVisibilityCtr x:Key="imgbool"/>
         <core:BindingProxy x:Key="Proxy" Data="{Binding}"/>
 
         <!--<Style x:Key="expandT" TargetType="TreeViewItem">

@@ -4,13 +4,13 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:UI_DataList="clr-namespace:UI_DataList"
+        xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
         xmlns:local="clr-namespace:UI_DataList.Views"
         xmlns:prism="http://prismlibrary.com/"             
         mc:Ignorable="d"
         Title="CorrDataSelectWindow" Height="450" Width="800">
     <Window.Resources>
-        <UI_DataList:SubDataCvtStr x:Key="subDataCvtStr"/>
+        <smCore:SubDataCvtStr x:Key="subDataCvtStr"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
