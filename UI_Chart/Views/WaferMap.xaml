@@ -31,7 +31,7 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>
-            <ComboBox x:Name="cbItemX" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordX}" Margin="3,1,20,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+            <ComboBox x:Name="cbItemX" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordX}" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -48,7 +48,7 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox x:Name="cbItemY" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordY}" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+            <ComboBox x:Name="cbItemY" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordY}" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -65,7 +65,7 @@
             </ComboBox>
 
             <Label Content="WaferNO:"/>
-            <ComboBox x:Name="cbItemWaferNO" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedWaferNO}" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="150">
+            <ComboBox x:Name="cbItemWaferNO" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedWaferNO}" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>

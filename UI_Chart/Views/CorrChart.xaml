@@ -83,6 +83,25 @@
                 <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
+            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierHisto, Mode=TwoWay}"
+                  Command="{Binding CmdToggleOutlierHisto}"
+                  Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+            </ToggleButton>
+            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxHisto, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierHisto, Mode=TwoWay}" Margin="0,0,0,0">
+                <ComboBoxItem Content="6σ" IsSelected="True"/>
+                <ComboBoxItem Content="5σ"/>
+                <ComboBoxItem Content="4σ"/>
+                <ComboBoxItem Content="3σ"/>
+                <ComboBoxItem Content="2σ"/>
+                <ComboBoxItem Content="1σ"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged" >
+                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxHisto}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
                            ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"

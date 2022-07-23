@@ -133,14 +133,14 @@ namespace UI_Data.ViewModels {
 
             foreach (var v in baseItem) {
                 DataRow r = dt.NewRow();
-                r[0] = v.TestNumber;
+                r[0] = v.TNumber;
                 r[1] = v.TestText;
                 r[2] = v.LoLimit;
                 r[3] = v.HiLimit;
                 r[4] = v.Unit;
                 for (int i = 0; i < cnt; i++) {
-                    if (!allDa[i].IfContainsTestId(v.TestNumber)) continue;
-                    var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
+                    if (!allDa[i].IfContainsTestId(v.TNumber)) continue;
+                    var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TNumber);
                     r[5 + i] = s.MeanValue;
                     r[5 + 1 * cnt + i] = s.MinValue;
                     r[5 + 2 * cnt + i] = s.MaxValue;

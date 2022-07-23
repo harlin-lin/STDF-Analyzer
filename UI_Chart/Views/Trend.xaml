@@ -117,7 +117,7 @@
                 <ComboBoxItem Content="1σ"/>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutliterIdxTrend}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxTrend}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
@@ -125,10 +125,15 @@
         <s:SciChartSurface x:Name="sciChart" Background="White" 
                            ChartTitle="{Binding ItemTitleTrend}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
                            Grid.Row="1" Margin="2,2,2,2" XAxis="{s:AxesBinding XAxisTrend}" YAxis="{s:AxesBinding YAxisTrend}"  RenderableSeries="{s:SeriesBinding TrendSeries}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick" >
+                    <i:InvokeCommandAction Command="{Binding CmdZoomOutTrend}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
-                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
+                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="False" />
                     <s:MouseWheelZoomModifier XyDirection="XDirection" IsEnabled="True" />
                     <s:LegendModifier Margin="10"
                                       VerticalAlignment="Top"
@@ -220,7 +225,7 @@
                 <ComboBoxItem Content="1σ"/>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutliterIdxHisto}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>

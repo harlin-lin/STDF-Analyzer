@@ -46,7 +46,7 @@
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
                 </Button>
             </StackPanel>
-            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">
+            <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" ColumnWidth="SizeToHeader" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
                         <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>

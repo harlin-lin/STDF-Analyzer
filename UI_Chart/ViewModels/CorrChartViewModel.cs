@@ -108,6 +108,28 @@ namespace UI_Chart.ViewModels {
             get { return _itemTitle; }
             set { SetProperty(ref _itemTitle, value); }
         }
+
+        private bool _ignoreOutlierHisto=true;
+        public bool IgnoreOutlierHisto {
+            get { return _ignoreOutlierHisto; }
+            set { SetProperty(ref _ignoreOutlierHisto, value); }
+        }
+
+        private int _outlierRangeIdxHisto = 0;
+        public int OutlierRangeIdxHisto {
+            get { return _outlierRangeIdxHisto; }
+            set { SetProperty(ref _outlierRangeIdxHisto, value); }
+        }
+
+        private int _histoSigmaSelectionIdx = 0;
+        public int HistoSigmaSelectionIdx {
+            get { return _histoSigmaSelectionIdx; }
+            set { SetProperty(ref _histoSigmaSelectionIdx, value); }
+        }
+
+        int SigmaByIdx(int idx) {
+            return 6 - idx;
+        }
         #endregion
 
         public CorrChartViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -149,9 +171,16 @@ namespace UI_Chart.ViewModels {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
                 if (!da.IfContainsTestId(_selectedId)) continue;
 
-                //var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
+                var statistic_raw = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
+                ItemStatistic statistic;
 
-                var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
+                if (_ignoreOutlierHisto) {
+                    statistic = da.GetFilteredStatisticIgnoreOutlier(_subDataList[i].FilterId, _selectedId, SigmaByIdx(OutlierRangeIdxHisto));
+                } else {
+                    statistic = statistic_raw;
+                }
+
+                //var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
                 sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-13}");
                 sb_mean.Append($"{statistic.MeanValue,-13}");
@@ -493,6 +522,21 @@ namespace UI_Chart.ViewModels {
             ExecuteCmdSelectAxisUserHisto();
         }
 
+        private DelegateCommand _cmdChangedSigmaOutlierIdxHisto;
+        public DelegateCommand CmdChangedSigmaOutlierIdxHisto =>
+            _cmdChangedSigmaOutlierIdxHisto ?? (_cmdChangedSigmaOutlierIdxHisto = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdxHisto));
+
+        void ExecuteCmdChangedSigmaOutlierIdxHisto() {
+            UpdateView();
+        }
+
+        private DelegateCommand _cmdToggleOutlierHisto;
+        public DelegateCommand CmdToggleOutlierHisto =>
+            _cmdToggleOutlierHisto ?? (_cmdToggleOutlierHisto = new DelegateCommand(ExecuteCmdToggleOutlierHisto));
+
+        void ExecuteCmdToggleOutlierHisto() {
+            UpdateView();
+        }
 
     }
 }

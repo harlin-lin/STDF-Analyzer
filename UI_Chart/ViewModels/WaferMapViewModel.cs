@@ -69,13 +69,13 @@ namespace UI_Chart.ViewModels {
 
             try {
                 foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
-                    var cordX = da.GetItemData(x.TestNumber, v);
+                    var cordX = da.GetItemData(x.TNumber, v);
                     if (float.IsNaN(cordX) || float.IsInfinity(cordX)) continue;
 
-                    var cordY = da.GetItemData(y.TestNumber, v);
+                    var cordY = da.GetItemData(y.TNumber, v);
                     if (float.IsNaN(cordY) || float.IsInfinity(cordY)) continue;
 
-                    var waferNO = da.GetItemData(w.TestNumber, v);
+                    var waferNO = da.GetItemData(w.TNumber, v);
                     if (float.IsNaN(waferNO) || float.IsInfinity(waferNO)) continue;
 
                     _dieInfoList.Add(new DieInfo(v, (short)cordX, (short)cordY, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), (short)waferNO));

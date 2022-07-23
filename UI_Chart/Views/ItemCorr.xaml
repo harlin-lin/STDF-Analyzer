@@ -43,7 +43,7 @@
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <Label Content="X:"/>
-            <ComboBox Width="200" x:Name="cbItemX" ItemsSource="{Binding ItemX}" Margin="3,1,20,1">
+            <ComboBox Width="180" x:Name="cbItemX" ItemsSource="{Binding ItemX}" Margin="3,1,20,1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -65,7 +65,7 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox Width="200" x:Name="cbItemY" ItemsSource="{Binding ItemY}" Margin="3,1">
+            <ComboBox Width="180" x:Name="cbItemY" ItemsSource="{Binding ItemY}" Margin="3,1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -85,11 +85,35 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
+            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlier, Mode=TwoWay}"
+                  Command="{Binding CmdToggleOutlier}"
+                  Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+            </ToggleButton>
+            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdx, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlier, Mode=TwoWay}" Margin="0,0,0,0">
+                <ComboBoxItem Content="6σ" IsSelected="True"/>
+                <ComboBoxItem Content="5σ"/>
+                <ComboBoxItem Content="4σ"/>
+                <ComboBoxItem Content="3σ"/>
+                <ComboBoxItem Content="2σ"/>
+                <ComboBoxItem Content="1σ"/>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged" >
+                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdx}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
 
         </StackPanel>
         <s:SciChartSurface x:Name="sciChart" Background="White"
                            ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
                            Grid.Row="1" Margin="2,2,2,2">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick" >
+                    <i:InvokeCommandAction Command="{Binding CmdZoomOut}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <!-- Declare RenderableSeries -->
             <s:SciChartSurface.RenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="scatterRenderSeries" DataSeries="{Binding CorrSeries}">
@@ -101,19 +125,19 @@
             </s:SciChartSurface.RenderableSeries>
 
             <!-- Create an X Axis with GrowBy -->
-            <s:SciChartSurface.XAxis>
-                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True"/>
+            <s:SciChartSurface.XAxis >
+                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True" VisibleRange="{Binding XRange, Mode=TwoWay}"/>
             </s:SciChartSurface.XAxis>
 
             <!-- Create a Y Axis with GrowBy. Optional bands give a cool look and feel for minimal performance impact -->
             <s:SciChartSurface.YAxis>
-                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True" />
+                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True" VisibleRange="{Binding YRange, Mode=TwoWay}" />
             </s:SciChartSurface.YAxis>
 
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
-                    <!--<s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>-->
-                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
+                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
+                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="False" />
                     <s:MouseWheelZoomModifier XyDirection="XYDirection" IsEnabled="True" />
                     <s:RubberBandXyZoomModifier IsAnimated="True" IsXAxisOnly="False"/>
                 </s:ModifierGroup>

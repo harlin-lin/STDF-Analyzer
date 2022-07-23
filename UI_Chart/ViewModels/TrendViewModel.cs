@@ -26,6 +26,8 @@ namespace UI_Chart.ViewModels {
         SubData _subData;
         List<string> _selectedIds;
 
+        private int _deviceCount;
+
         private float _sigmaLowTrend, _sigmaHighTrend, _minTrend, _maxTrend;
         private float _sigmaLowHisto, _sigmaHighHisto, _minHisto, _maxHisto;
 
@@ -134,7 +136,7 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _ifTrendLimitByUser, value); }
         }
 
-        private bool _ignoreOutlierTrend;
+        private bool _ignoreOutlierTrend=true;
         public bool IgnoreOutlierTrend {
             get { return _ignoreOutlierTrend; }
             set { SetProperty(ref _ignoreOutlierTrend, value); }
@@ -146,7 +148,7 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _outlierRangeIdxTrend, value); }
         }
 
-        private bool _ignoreOutlierHisto;
+        private bool _ignoreOutlierHisto=true;
         public bool IgnoreOutlierHisto {
             get { return _ignoreOutlierHisto; }
             set { SetProperty(ref _ignoreOutlierHisto, value); }
@@ -263,12 +265,14 @@ namespace UI_Chart.ViewModels {
                 var idInfo = da.GetTestInfo(_selectedIds[0]);
                 LowLimit = idInfo.LoLimit ?? float.NaN;
                 HighLimit = idInfo.HiLimit ?? float.NaN;
+                IfShowLegendCheckBox = false;
             } else {
                 LowLimit = float.NaN;
                 HighLimit = float.NaN;
+                IfShowLegendCheckBox = true;
             }
-
-            if (da.GetFilteredChipsCount(_subData.FilterId) > 0) {
+            _deviceCount = da.GetFilteredChipsCount(_subData.FilterId);
+            if (_deviceCount > 0) {
                 var xs = da.GetFilteredPartIndex(_subData.FilterId);
                 TrendSeries.Clear();
                 for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
@@ -286,7 +290,7 @@ namespace UI_Chart.ViewModels {
                 }
                 RaisePropertyChanged("TrendSeries");
 
-                XAxisTrend.VisibleRange.SetMinMax(1, xs.Last()+1);
+                XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
                 RaisePropertyChanged("XAxisTrend");
 
             } else {
@@ -444,13 +448,15 @@ namespace UI_Chart.ViewModels {
             return (range, rangeCnt);
         }
 
+        private 
+
         void UpdateHistoSeries(float start, float stop) {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
             var maxCnt = 0;
             HistoSeries.Clear();
-            if (da.GetFilteredChipsCount(_subData.FilterId) == 0) return;
+            if (_deviceCount == 0) return;
             for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
                 var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
 
@@ -654,6 +660,9 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             YAxisTrend.VisibleRange.SetMinMax(_sigmaLowTrend-ov, _sigmaHighTrend+ov);
             RaisePropertyChanged("YAxisTrend");
+            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XAxisTrend");
+
             UserTrendLowRange = _sigmaLowTrend.ToString("f3");
             UserTrendHighRange = _sigmaHighTrend.ToString("f3");
             _trendAxisMode = ChartAxis.Sigma;
@@ -668,6 +677,9 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             YAxisTrend.VisibleRange.SetMinMax(_minTrend - ov, _maxTrend + ov);
             RaisePropertyChanged("YAxisTrend");
+            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XAxisTrend");
+
             UserTrendLowRange = _minTrend.ToString("f3");
             UserTrendHighRange = _maxTrend.ToString("f3");
             _trendAxisMode = ChartAxis.MinMax;
@@ -685,6 +697,9 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             YAxisTrend.VisibleRange.SetMinMax(l - ov, h + ov);
             RaisePropertyChanged("YAxisTrend");
+            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XAxisTrend");
+
             UserTrendLowRange = l.ToString("f3");
             UserTrendHighRange = h.ToString("f3");
             _trendAxisMode = ChartAxis.Limit;
@@ -706,6 +721,8 @@ namespace UI_Chart.ViewModels {
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
+            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XAxisTrend");
             _trendAxisMode = ChartAxis.User;
         }
 
@@ -829,11 +846,11 @@ namespace UI_Chart.ViewModels {
             UpdateTrendViewRange();
         }
 
-        private DelegateCommand _cmdChangedSigmaOutliterIdxTrend;
-        public DelegateCommand CmdChangedSigmaOutliterIdxTrend =>
-            _cmdChangedSigmaOutliterIdxTrend ?? (_cmdChangedSigmaOutliterIdxTrend = new DelegateCommand(ExecuteCmdChangedSigmaOutliterIdxTrend));
+        private DelegateCommand _cmdChangedSigmaOutlierIdxTrend;
+        public DelegateCommand CmdChangedSigmaOutlierIdxTrend =>
+            _cmdChangedSigmaOutlierIdxTrend ?? (_cmdChangedSigmaOutlierIdxTrend = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdxTrend));
 
-        void ExecuteCmdChangedSigmaOutliterIdxTrend() {
+        void ExecuteCmdChangedSigmaOutlierIdxTrend() {
             UpdateTrendViewRange();
         }
 
@@ -854,11 +871,11 @@ namespace UI_Chart.ViewModels {
             UpdateHistoViewRange();
         }
 
-        private DelegateCommand _cmdChangedSigmaOutliterIdxHisto;
-        public DelegateCommand CmdChangedSigmaOutliterIdxHisto =>
-            _cmdChangedSigmaOutliterIdxHisto ?? (_cmdChangedSigmaOutliterIdxHisto = new DelegateCommand(ExecuteCmdChangedSigmaOutliterIdxHisto));
+        private DelegateCommand _cmdChangedSigmaOutlierIdxHisto;
+        public DelegateCommand CmdChangedSigmaOutlierIdxHisto =>
+            _cmdChangedSigmaOutlierIdxHisto ?? (_cmdChangedSigmaOutlierIdxHisto = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdxHisto));
 
-        void ExecuteCmdChangedSigmaOutliterIdxHisto() {
+        void ExecuteCmdChangedSigmaOutlierIdxHisto() {
             UpdateHistoViewRange();
         }
 
@@ -870,5 +887,21 @@ namespace UI_Chart.ViewModels {
             UpdateHistoViewRange();
         }
 
+        private DelegateCommand _cmdZoomOutTrend;
+        public DelegateCommand CmdZoomOutTrend =>
+            _cmdZoomOutTrend ?? (_cmdZoomOutTrend = new DelegateCommand(ExecuteCmdZoomOutTrend));
+
+        void ExecuteCmdZoomOutTrend() {
+            //set the y axix
+            if (IfTrendLimitBySigma) {
+                ExecuteCmdSelectAxisSigmaTrend();
+            } else if (IfTrendLimitByMinMax) {
+                ExecuteCmdSelectAxisMinMaxTrend();
+            } else if (IfTrendLimitByLimit) {
+                ExecuteCmdSelectAxisLimitTrend();
+            } else {
+                ExecuteCmdSelectAxisUserTrend();
+            }
+        }
     }
 }

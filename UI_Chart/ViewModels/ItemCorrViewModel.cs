@@ -30,7 +30,7 @@ namespace UI_Chart.ViewModels {
             _ea = ea;
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
 
-            InitUi();
+            //InitUi();
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
@@ -57,6 +57,10 @@ namespace UI_Chart.ViewModels {
 
         }
 
+        int SigmaByIdx(int idx) {
+            return 6 - idx;
+        }
+
 
         void UpdateData() {
             if (_selectedX == null || _selectedY == null) {
@@ -66,20 +70,46 @@ namespace UI_Chart.ViewModels {
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
+            CorrSeries.Clear();
+            //CorrSeries = new XyDataSeries<float, float>();
+            //CorrSeries.AcceptsUnsortedData = true;
+
             var xs = da.GetFilteredItemData(_selectedX, _subData.FilterId);
             var ys = da.GetFilteredItemData(_selectedY, _subData.FilterId);
+            CorrSeries.Append(xs, ys);
+            RaisePropertyChanged("CorrSeries");
+
+            UpdateViewRange();
 
             var infoX = da.GetTestInfo(_selectedX);
             var infoY = da.GetTestInfo(_selectedY);
 
             ItemTitle = $"{_selectedX}:{infoX.TestText}\n{_selectedY}:{infoY.TestText}\n";
 
-            CorrSeries = new XyDataSeries<float, float>();
-            CorrSeries.AcceptsUnsortedData = true;
-            CorrSeries.Append(xs, ys);
-            RaisePropertyChanged("CorrSeries");
-
             _ea.GetEvent<Event_Log>().Publish("");
+        }
+
+        void UpdateViewRange() {
+            if (_selectedX == null || _selectedY == null) return;
+            
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+            var statistic_rawX = da.GetFilteredStatistic(_subData.FilterId, _selectedX);
+            var statistic_rawY = da.GetFilteredStatistic(_subData.FilterId, _selectedY);
+            ItemStatistic statisticX, statisticY;
+
+            if (_ignoreOutlier) {
+                statisticX = da.GetFilteredStatisticIgnoreOutlier(_subData.FilterId, _selectedX, SigmaByIdx(OutlierRangeIdx));
+                statisticY = da.GetFilteredStatisticIgnoreOutlier(_subData.FilterId, _selectedY, SigmaByIdx(OutlierRangeIdx));
+            } else {
+                statisticX = statistic_rawX;
+                statisticY = statistic_rawY;
+            }
+            _xRange.SetMinMax(statisticX.GetSigmaRangeLow(6), statisticX.GetSigmaRangeHigh(6));
+            RaisePropertyChanged("XRange");
+            _yRange.SetMinMax(statisticY.GetSigmaRangeLow(6), statisticY.GetSigmaRangeHigh(6));
+            RaisePropertyChanged("YRange");
+
         }
 
 
@@ -99,21 +129,10 @@ namespace UI_Chart.ViewModels {
             get { return _items; }
             set { SetProperty(ref _items, value); }
         }
-        public DataSeries<float, float> _corrSeries;
+        public DataSeries<float, float> _corrSeries = new XyDataSeries<float, float>() { AcceptsUnsortedData=true};
         public DataSeries<float, float> CorrSeries {
             get { return _corrSeries; }
             set { SetProperty(ref _corrSeries, value); }
-        }
-
-        private IAxisViewModel _xAxis;
-        public IAxisViewModel XAxis {
-            get { return _xAxis; }
-            set { SetProperty(ref _xAxis, value); }
-        }
-        private IAxisViewModel _yAxis;
-        public IAxisViewModel YAxis {
-            get { return _yAxis; }
-            set { SetProperty(ref _yAxis, value); }
         }
 
         private string _itemTitle;
@@ -122,30 +141,53 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _itemTitle, value); }
         }
 
-        void InitUi() {
-            XAxis = new NumericAxisViewModel {
-                //AxisTitle = "XAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "#",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
-                VisibleRange = new DoubleRange(1, 1),
-            };
-            YAxis = new NumericAxisViewModel {
-                AxisAlignment = AxisAlignment.Right,
-                //AxisTitle = "YAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "f3",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
-                VisibleRange = new DoubleRange(0, 1),
-            };
+        //private IAxisViewModel _xAxis;
+        //public IAxisViewModel XAxis {
+        //    get { return _xAxis; }
+        //    set { SetProperty(ref _xAxis, value); }
+        //}
+        //private IAxisViewModel _yAxis;
+        //public IAxisViewModel YAxis {
+        //    get { return _yAxis; }
+        //    set { SetProperty(ref _yAxis, value); }
+        //}
+
+        //void InitUi() {
+        //XAxis = new NumericAxisViewModel {
+        //    //AxisTitle = "XAxis",
+        //    DrawMinorGridLines = false,
+        //    DrawMajorBands = false,
+        //    DrawMajorGridLines = true,
+        //    TextFormatting = "#",
+        //    FontSize = 10,
+        //    TickTextBrush = Brushes.Black,
+        //    FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+        //    VisibleRange = new DoubleRange(1, 1),
+        //};
+        //YAxis = new NumericAxisViewModel {
+        //    AxisAlignment = AxisAlignment.Right,
+        //    //AxisTitle = "YAxis",
+        //    DrawMinorGridLines = false,
+        //    DrawMajorBands = false,
+        //    DrawMajorGridLines = true,
+        //    TextFormatting = "f3",
+        //    FontSize = 10,
+        //    TickTextBrush = Brushes.Black,
+        //    FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(400),
+        //    VisibleRange = new DoubleRange(0, 1),
+        //};
+        //}
+
+        private IRange _xRange = new DoubleRange(0, 1);
+        public IRange XRange {
+            get { return _xRange; }
+            set { SetProperty(ref _xRange, value); }
+        }
+
+        private IRange _yRange = new DoubleRange(0,1);
+        public IRange YRange {
+            get { return _yRange; }
+            set { SetProperty(ref _yRange, value); }
         }
 
         private DelegateCommand<Item> cmdSelectItemX;
@@ -153,7 +195,7 @@ namespace UI_Chart.ViewModels {
             cmdSelectItemX ?? (cmdSelectItemX = new DelegateCommand<Item>(ExecuteCmdSelectItemX));
 
         void ExecuteCmdSelectItemX(Item parameter) {
-            _selectedX = parameter.TestNumber;
+            _selectedX = parameter.TNumber;
             UpdateData();
         }
 
@@ -162,7 +204,7 @@ namespace UI_Chart.ViewModels {
             cmdSelectItemY ?? (cmdSelectItemY = new DelegateCommand<Item>(ExecuteCmdSelectItemY));
 
         void ExecuteCmdSelectItemY(Item parameter) {
-            _selectedY = parameter.TestNumber;
+            _selectedY = parameter.TNumber;
             UpdateData();
         }
 
@@ -257,5 +299,50 @@ namespace UI_Chart.ViewModels {
             _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
         }
 
+
+        private bool _ignoreOutlier=true;
+        public bool IgnoreOutlier {
+            get { return _ignoreOutlier; }
+            set { SetProperty(ref _ignoreOutlier, value); }
+        }
+
+        private int _outlierRangeIdx = 0;
+        public int OutlierRangeIdx {
+            get { return _outlierRangeIdx; }
+            set { SetProperty(ref _outlierRangeIdx, value); }
+        }
+
+        private DelegateCommand _cmdChangedSigmaRangeIdx;
+        public DelegateCommand CmdChangedSigmaRangeIdx =>
+            _cmdChangedSigmaRangeIdx ?? (_cmdChangedSigmaRangeIdx = new DelegateCommand(ExecuteCmdChangedSigmaRangeIdx));
+
+        void ExecuteCmdChangedSigmaRangeIdx() {
+            UpdateViewRange();
+        }
+
+        private DelegateCommand _cmdChangedSigmaOutlierIdx;
+        public DelegateCommand CmdChangedSigmaOutlierIdx =>
+            _cmdChangedSigmaOutlierIdx ?? (_cmdChangedSigmaOutlierIdx = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdx));
+
+        void ExecuteCmdChangedSigmaOutlierIdx() {
+            UpdateViewRange();
+        }
+
+        private DelegateCommand _cmdToggleOutlier;
+        public DelegateCommand CmdToggleOutlier =>
+            _cmdToggleOutlier ?? (_cmdToggleOutlier = new DelegateCommand(ExecuteCmdToggleOutlier));
+
+        void ExecuteCmdToggleOutlier() {
+            UpdateViewRange();
+        }
+
+
+        private DelegateCommand _cmdZoomOut;
+        public DelegateCommand CmdZoomOut=>
+            _cmdZoomOut ?? (_cmdZoomOut= new DelegateCommand(ExecuteCmdZoomOut));
+
+        void ExecuteCmdZoomOut() {
+            UpdateViewRange();
+        }
     }
 }
