@@ -5,7 +5,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Title="{Binding Title}" Height="800" Width="1400" MinHeight="300" MinWidth="600"
-        Icon="/SillyMonkey.Core;component/Resource/icon/SA_48.ico" DragEnter="Window_DragEnter" AllowDrop="True" FontFamily="Consolas"
+        Icon="/SillyMonkey.Core;component/Resource/icon/SA_AllSize.ico" DragEnter="Window_DragEnter" AllowDrop="True" FontFamily="Consolas"
         >
 
     <i:Interaction.Triggers>

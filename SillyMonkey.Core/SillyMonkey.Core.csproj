@@ -111,5 +111,8 @@
     <Resource Include="Resource\icon\SA_48.ico" />
     <Resource Include="Resource\icon\SA_64.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\SA_AllSize.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
