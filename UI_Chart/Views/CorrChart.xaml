@@ -29,7 +29,7 @@
                 <Setter Property="DrawMajorBands" Value="False"/>
                 <Setter Property="DrawMinorGridLines" Value="False"/>
                 <Setter Property="DrawMajorGridLines" Value="True"/>
-                <Setter Property="TextFormatting" Value="#"/>
+                <!--<Setter Property="TextFormatting" Value="#"/>-->
                 <Setter Property="FontSize" Value="10"/>
                 <Setter Property="TickTextBrush" Value="Black"/>
                 <Setter Property="FontWeight" Value="Light"/>
@@ -55,28 +55,28 @@
             <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
             <RadioButton Content="MinMax" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
             <RadioButton Content="Limit" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>
             <RadioButton Content="User" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Checked" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </RadioButton>

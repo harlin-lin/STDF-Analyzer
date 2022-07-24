@@ -59,7 +59,7 @@
                 </ComboBox.ItemTemplate>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectItemX}" CommandParameter="{Binding ElementName=cbItemX, Path=SelectedItem}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectItemX}" CommandParameter="{Binding ElementName=cbItemX, Path=SelectedItem}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>
@@ -81,7 +81,7 @@
                 </ComboBox.ItemTemplate>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <prism:InvokeCommandAction Command="{Binding CmdSelectItemY}" CommandParameter="{Binding ElementName=cbItemY, Path=SelectedItem}"/>
+                        <i:InvokeCommandAction Command="{Binding CmdSelectItemY}" CommandParameter="{Binding ElementName=cbItemY, Path=SelectedItem}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ComboBox>

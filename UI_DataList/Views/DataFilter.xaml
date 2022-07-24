@@ -35,7 +35,7 @@
                                  ItemsSource="{Binding AllSites}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding AddSite}" CommandParameter="{Binding ElementName=lbAllSites}"/>
+                                    <i:InvokeCommandAction Command="{Binding AddSite}" CommandParameter="{Binding ElementName=lbAllSites}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -49,7 +49,7 @@
                                  ItemsSource="{Binding EnabledSites}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding RemoveSite}" CommandParameter="{Binding ElementName=lbEnabledSites}"/>
+                                    <i:InvokeCommandAction Command="{Binding RemoveSite}" CommandParameter="{Binding ElementName=lbEnabledSites}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -71,7 +71,7 @@
                                  ItemsSource="{Binding AllHBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding AddHBin}" CommandParameter="{Binding ElementName=lbAllHBins}"/>
+                                    <i:InvokeCommandAction Command="{Binding AddHBin}" CommandParameter="{Binding ElementName=lbAllHBins}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -85,7 +85,7 @@
                                  ItemsSource="{Binding EnabledHBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding RemoveHBin}" CommandParameter="{Binding ElementName=lbEnabledHBins}"/>
+                                    <i:InvokeCommandAction Command="{Binding RemoveHBin}" CommandParameter="{Binding ElementName=lbEnabledHBins}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -108,7 +108,7 @@
                                  ItemsSource="{Binding AllSBins}" SelectionMode="Extended" Grid.ColumnSpan="2">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding AddSBin}" CommandParameter="{Binding ElementName=lbAllSBins}"/>
+                                    <i:InvokeCommandAction Command="{Binding AddSBin}" CommandParameter="{Binding ElementName=lbAllSBins}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -122,7 +122,7 @@
                                  ItemsSource="{Binding EnabledSBins}" SelectionMode="Extended">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseDoubleClick" >
-                                    <prism:InvokeCommandAction Command="{Binding RemoveSBin}" CommandParameter="{Binding ElementName=lbEnabledSBins}"/>
+                                    <i:InvokeCommandAction Command="{Binding RemoveSBin}" CommandParameter="{Binding ElementName=lbEnabledSBins}"/>
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </ListBox>
@@ -197,7 +197,7 @@
                         </ComboBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged" >
-                                <prism:InvokeCommandAction Command="{Binding CmdSelectItem}" CommandParameter="{Binding ElementName=cbItems, Path=SelectedItem}"/>
+                                <i:InvokeCommandAction Command="{Binding CmdSelectItem}" CommandParameter="{Binding ElementName=cbItems, Path=SelectedItem}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -214,7 +214,7 @@
                     <ListBox Grid.Row="3" x:Name="lbItemFilters" ItemsSource="{Binding ItemFilters}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick" >
-                                <prism:InvokeCommandAction Command="{Binding RemoveItemLimitFilter}" CommandParameter="{Binding ElementName=lbItemFilters, Path=SelectedItem}"/>
+                                <i:InvokeCommandAction Command="{Binding RemoveItemLimitFilter}" CommandParameter="{Binding ElementName=lbItemFilters, Path=SelectedItem}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ListBox>

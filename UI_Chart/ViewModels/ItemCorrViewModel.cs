@@ -195,7 +195,7 @@ namespace UI_Chart.ViewModels {
             cmdSelectItemX ?? (cmdSelectItemX = new DelegateCommand<Item>(ExecuteCmdSelectItemX));
 
         void ExecuteCmdSelectItemX(Item parameter) {
-            _selectedX = parameter.TNumber;
+            _selectedX = parameter.TestNumber;
             UpdateData();
         }
 
@@ -204,7 +204,7 @@ namespace UI_Chart.ViewModels {
             cmdSelectItemY ?? (cmdSelectItemY = new DelegateCommand<Item>(ExecuteCmdSelectItemY));
 
         void ExecuteCmdSelectItemY(Item parameter) {
-            _selectedY = parameter.TNumber;
+            _selectedY = parameter.TestNumber;
             UpdateData();
         }
 

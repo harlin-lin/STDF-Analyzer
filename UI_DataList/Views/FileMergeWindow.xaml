@@ -15,7 +15,7 @@
                                  ItemsSource="{Binding FileList}" SelectionMode="Extended">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick" >
-                    <prism:InvokeCommandAction Command="{Binding AddFile}" CommandParameter="{Binding ElementName=lbAllFiles}"/>
+                    <i:InvokeCommandAction Command="{Binding AddFile}" CommandParameter="{Binding ElementName=lbAllFiles}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ListBox>
@@ -27,7 +27,7 @@
                                  ItemsSource="{Binding EnableFiles}" SelectionMode="Extended">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick" >
-                    <prism:InvokeCommandAction Command="{Binding RemoveFile}" CommandParameter="{Binding ElementName=lbEnabledFiles}"/>
+                    <i:InvokeCommandAction Command="{Binding RemoveFile}" CommandParameter="{Binding ElementName=lbEnabledFiles}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
         </ListBox>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DataContainer {
     public class Item{
         public int Idx { get; private set; }
-        public string TNumber { get; private set; }
+        public string TestNumber { get; private set; }
 
         public string TestText { get; private set; }
         public float? LoLimit { get; private set; }
@@ -26,7 +26,7 @@ namespace DataContainer {
 
         public Item(int idx, string uid, ItemInfo info, ItemStatistic statistic) {
             Idx = idx;
-            TNumber = uid;
+            TestNumber = uid;
 
             TestText = info.TestText;
             LoLimit = info.LoLimit;

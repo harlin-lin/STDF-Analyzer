@@ -35,10 +35,10 @@
         <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" >
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
-                    <prism:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
+                    <i:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
                 <i:EventTrigger EventName="MouseDoubleClick" >
-                    <prism:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
+                    <i:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <i:Interaction.Behaviors>

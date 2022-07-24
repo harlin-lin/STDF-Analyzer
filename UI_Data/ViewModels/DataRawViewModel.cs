@@ -253,13 +253,13 @@ namespace UI_Data.ViewModels {
                     double totalItemCnt = testItems.Count();
                     foreach (var v in testItems) {
                         int row = 6;
-                        ws2.Cells[1, col].Value = v.TNumber;
+                        ws2.Cells[1, col].Value = v.TestNumber;
                         ws2.Cells[2, col].Value = v.TestText;
                         ws2.Cells[3, col].Value = v.LoLimit;
                         ws2.Cells[4, col].Value = v.HiLimit;
                         ws2.Cells[5, col].Value = v.Unit;
 
-                        foreach (var r in dataAcquire.GetFilteredItemData(v.TNumber, _subData.FilterId)) {
+                        foreach (var r in dataAcquire.GetFilteredItemData(v.TestNumber, _subData.FilterId)) {
                             ws2.Cells[row, col].Value = r;
                             row++;
                         }
@@ -323,7 +323,7 @@ namespace UI_Data.ViewModels {
                 _selectedItemList.Clear();
                 var grid = x as System.Windows.Controls.DataGrid;
                 foreach(var v in grid.SelectedItems) {
-                    _selectedItemList.Add((v as Item).TNumber);
+                    _selectedItemList.Add((v as Item).TestNumber);
                 }
 
                 if (_selectedItemList.Count > 0) {

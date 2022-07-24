@@ -279,7 +279,7 @@ namespace UI_DataList.ViewModels {
 
         void ExecuteCmdSelectItem(object parameter) {
             if(parameter is Item) {
-                _curSelectedTN = ((Item)parameter).TNumber;
+                _curSelectedTN = ((Item)parameter).TestNumber;
 
                 PartFilterLowLimit = float.NegativeInfinity.ToString();
                 PartFilterHighLimit = float.PositiveInfinity.ToString();

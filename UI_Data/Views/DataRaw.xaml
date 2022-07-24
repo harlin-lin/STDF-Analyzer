@@ -49,7 +49,7 @@
             <DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" ColumnWidth="SizeToHeader" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <prism:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
+                        <i:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
                     </i:EventTrigger> 
                 </i:Interaction.Triggers>
             </DataGrid>
