@@ -300,6 +300,9 @@ namespace UI_Chart.ViewModels {
             if (_selectedId == null || _subDataList.Count == 0) return;
             var maxCnt = 0;
             HistoSeries.Clear();
+
+            if (float.IsNaN(start) || float.IsInfinity(start) || float.IsNaN(stop) || float.IsInfinity(stop)) return;
+
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
 
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);

@@ -13,7 +13,7 @@
             <i:InvokeCommandAction Command="{Binding MainWindowLoaded}"></i:InvokeCommandAction>
         </i:EventTrigger>
         <i:EventTrigger EventName="Drop">
-            <i:InvokeCommandAction Command="{Binding MainWindowDropped}"/>
+            <prism:InvokeCommandAction Command="{Binding MainWindowDropped}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>

@@ -397,14 +397,12 @@ namespace UI_Chart.ViewModels {
             if (_selectedIds == null || _selectedIds.Count == 0) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
+            var idInfo = da.GetTestInfo(_selectedIds[0]);
+            LowLimit = idInfo.LoLimit ?? float.NaN;
+            HighLimit = idInfo.HiLimit ?? float.NaN;
             if (_selectedIds.Count == 1) {
-                var idInfo = da.GetTestInfo(_selectedIds[0]);
-                LowLimit = idInfo.LoLimit ?? float.NaN;
-                HighLimit = idInfo.HiLimit ?? float.NaN;
                 IfShowLegendCheckBox = false;
             } else {
-                LowLimit = float.NaN;
-                HighLimit = float.NaN;
                 IfShowLegendCheckBox = true;
             }
             _deviceCount = da.GetFilteredChipsCount(_subData.FilterId);
@@ -609,6 +607,9 @@ namespace UI_Chart.ViewModels {
 
             var maxCnt = 0;
             HistoSeries.Clear();
+
+            if (float.IsNaN(start) || float.IsInfinity(start) || float.IsNaN(stop) || float.IsInfinity(stop)) return;
+
             if (_deviceCount == 0) return;
             for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
                 var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
