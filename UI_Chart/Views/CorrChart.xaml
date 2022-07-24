@@ -26,6 +26,13 @@
                 <Setter Property="StrokeDashArray" Value="1,3"/>
             </Style>
             <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
+                <Setter Property="DrawMajorBands" Value="False"/>
+                <Setter Property="DrawMinorGridLines" Value="False"/>
+                <Setter Property="DrawMajorGridLines" Value="True"/>
+                <Setter Property="TextFormatting" Value="#"/>
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="TickTextBrush" Value="Black"/>
+                <Setter Property="FontWeight" Value="Light"/>
                 <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
             </Style>
         </Grid.Resources>
@@ -105,7 +112,14 @@
         </StackPanel>
         <s:SciChartSurface x:Name="sciChartHisto" Background="White"
                            ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
-                           Grid.Row="3" Margin="2,2,2,2" Grid.RowSpan="3" XAxis="{s:AxesBinding XAxisHisto}" YAxis="{s:AxesBinding YAxisHisto}"  RenderableSeries="{s:SeriesBinding HistoSeries}">
+                           Grid.Row="3" Margin="2,2,2,2" Grid.RowSpan="3"  RenderableSeries="{s:SeriesBinding HistoSeries}">
+            <s:SciChartSurface.XAxis >
+                <s:NumericAxis Style="{StaticResource GridLineStyle}" VisibleRange="{Binding XRangeHisto, Mode=TwoWay}"/>
+            </s:SciChartSurface.XAxis>
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis Style="{StaticResource GridLineStyle}" VisibleRange="{Binding YRangeHisto, Mode=TwoWay}" />
+            </s:SciChartSurface.YAxis>
+
             <s:SciChartSurface.ChartModifier>
                 <s:ModifierGroup>
                     <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>

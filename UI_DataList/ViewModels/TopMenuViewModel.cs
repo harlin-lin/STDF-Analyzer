@@ -7,6 +7,7 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using UI_DataList.Views;
@@ -137,6 +138,25 @@ namespace UI_DataList.ViewModels {
 
         void ExecuteCmdHelp() {
             ;
+        }
+
+        private DelegateCommand _cmdSetDftProgram;
+        public DelegateCommand CmdSetDftProgram =>
+            _cmdSetDftProgram ?? (_cmdSetDftProgram = new DelegateCommand(ExecuteCmdSetDftProgram));
+
+        void ExecuteCmdSetDftProgram() {
+            string str = System.Environment.CurrentDirectory;
+            string pgmPath = str + "\\SillyMonkey.exe";
+            string icoPath = str + "\\SA_48.ico";
+            try {
+                Utils.SillyMonkeySetup.SetFileOpenApp(".std", pgmPath, icoPath);
+                Utils.SillyMonkeySetup.SetFileOpenApp(".stdf", pgmPath, icoPath);
+            }
+            catch {
+                System.Windows.Forms.MessageBox.Show("Failed to set the default pgm");
+                return;
+            }
+            System.Windows.Forms.MessageBox.Show("Done");
         }
     }
 }

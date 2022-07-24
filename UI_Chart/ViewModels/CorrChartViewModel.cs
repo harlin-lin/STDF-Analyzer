@@ -49,16 +49,16 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _highLimit, value); }
         }
 
-        private IAxisViewModel _xAxisHisto;
-        public IAxisViewModel XAxisHisto {
-            get { return _xAxisHisto; }
-            set { SetProperty(ref _xAxisHisto, value); }
+        private IRange _xRangeHisto = new DoubleRange(0, 1);
+        public IRange XRangeHisto {
+            get { return _xRangeHisto; }
+            set { SetProperty(ref _xRangeHisto, value); }
         }
 
-        private IAxisViewModel _yAxisHisto;
-        public IAxisViewModel YAxisHisto {
-            get { return _yAxisHisto; }
-            set { SetProperty(ref _yAxisHisto, value); }
+        private IRange _yRangeHisto = new DoubleRange(0, 1);
+        public IRange YRangeHisto {
+            get { return _yRangeHisto; }
+            set { SetProperty(ref _yRangeHisto, value); }
         }
 
         private string _userHistoLowRange;
@@ -73,25 +73,25 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _userHistoHighRange, value); }
         }
 
-        private bool _ifHistoLimitBySigma;
+        private bool _ifHistoLimitBySigma = true;
         public bool IfHistoLimitBySigma {
             get { return _ifHistoLimitBySigma; }
             set { SetProperty(ref _ifHistoLimitBySigma, value); }
         }
 
-        private bool _ifHistoLimitByMinMax;
+        private bool _ifHistoLimitByMinMax = false;
         public bool IfHistoLimitByMinMax {
             get { return _ifHistoLimitByMinMax; }
             set { SetProperty(ref _ifHistoLimitByMinMax, value); }
         }
 
-        private bool _ifHistoLimitByLimit;
+        private bool _ifHistoLimitByLimit = false;
         public bool IfHistoLimitByLimit {
             get { return _ifHistoLimitByLimit; }
             set { SetProperty(ref _ifHistoLimitByLimit, value); }
         }
 
-        private bool _ifHistoLimitByUser;
+        private bool _ifHistoLimitByUser = false;
         public bool IfHistoLimitByUser {
             get { return _ifHistoLimitByUser; }
             set { SetProperty(ref _ifHistoLimitByUser, value); }
@@ -137,8 +137,6 @@ namespace UI_Chart.ViewModels {
             _ea = ea;
             _ea.GetEvent<Event_CorrItemSelected>().Subscribe(UpdateItems);
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
-
-            InitUi();
         }
 
         private void UpdateView(SubData data) {
@@ -332,42 +330,11 @@ namespace UI_Chart.ViewModels {
             var step = (stop - start) / 100;
             var actStart = start - step * 5;
             var actStop = stop + step * 5;
-            XAxisHisto.VisibleRange.SetMinMax(actStart, actStop);
-            RaisePropertyChanged("XAxisHisto");
+            _xRangeHisto.SetMinMax(actStart, actStop);
+            RaisePropertyChanged("XRangeHisto");
 
-            YAxisHisto.VisibleRange.SetMinMax(0, maxCnt);
-            RaisePropertyChanged("YAxisHisto");
-
-        }
-
-        void InitUi() {
-            XAxisHisto = new NumericAxisViewModel {
-                //AxisTitle = "XAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "f3",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(1, 1),
-                StyleKey = "GridLineStyle",
-            };
-            YAxisHisto = new NumericAxisViewModel {
-                AxisAlignment = AxisAlignment.Right,
-                //AxisTitle = "YAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "#",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(0, 1),
-                StyleKey = "GridLineStyle",
-            };
-
-            IfHistoLimitBySigma = true;
+            _yRangeHisto.SetMinMax(0, maxCnt);
+            RaisePropertyChanged("YRangeHisto");
 
         }
 

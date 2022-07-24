@@ -85,11 +85,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resource\icon\SA_128x128.ico" />
-    <Resource Include="Resource\icon\SA_48x48.ico" />
-    <Resource Include="Resource\icon\SA_64x64.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resource\icon\load2.png" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +105,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resource\icon\VaadinIcons-EllipsisDotsV.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\SA_128.ico" />
+    <Resource Include="Resource\icon\SA_48.ico" />
+    <Resource Include="Resource\icon\SA_64.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

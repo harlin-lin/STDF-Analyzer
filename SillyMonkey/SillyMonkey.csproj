@@ -85,7 +85,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>SA_48x48.ico</ApplicationIcon>
+    <ApplicationIcon>SA_48.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -200,10 +200,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="SA_48x48.ico" />
+    <Resource Include="SA_128.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="SA_128x128.ico" />
+    <Resource Include="SA_48.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SA_64.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

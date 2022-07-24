@@ -44,15 +44,28 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _histoSeries, value); }
         }
 
-        private IAxisViewModel _xAxisTrend;
-        public IAxisViewModel XAxisTrend {
-            get { return _xAxisTrend; }
-            set { SetProperty(ref _xAxisTrend, value); }
+        private IRange _xRangeTrend = new DoubleRange(0, 1);
+        public IRange XRangeTrend {
+            get { return _xRangeTrend; }
+            set { SetProperty(ref _xRangeTrend, value); }
         }
-        private IAxisViewModel _yAxisTrend;
-        public IAxisViewModel YAxisTrend {
-            get { return _yAxisTrend; }
-            set { SetProperty(ref _yAxisTrend, value); }
+
+        private IRange _yRangeTrend = new DoubleRange(0, 1);
+        public IRange YRangeTrend {
+            get { return _yRangeTrend; }
+            set { SetProperty(ref _yRangeTrend, value); }
+        }
+
+        private IRange _xRangeHisto = new DoubleRange(0, 1);
+        public IRange XRangeHisto {
+            get { return _xRangeHisto; }
+            set { SetProperty(ref _xRangeHisto, value); }
+        }
+
+        private IRange _yRangeHisto = new DoubleRange(0, 1);
+        public IRange YRangeHisto {
+            get { return _yRangeHisto; }
+            set { SetProperty(ref _yRangeHisto, value); }
         }
 
         private float _lowLimit = float.NaN;
@@ -85,25 +98,25 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _trendSigmaSelectionIdx, value); }
         }
 
-        private bool _ifTrendLimitBySigma;
+        private bool _ifTrendLimitBySigma = true;
         public bool IfTrendLimitBySigma {
             get { return _ifTrendLimitBySigma; }
             set { SetProperty(ref _ifTrendLimitBySigma, value); }
         }
 
-        private bool _ifTrendLimitByMinMax;
+        private bool _ifTrendLimitByMinMax = false;
         public bool IfTrendLimitByMinMax {
             get { return _ifTrendLimitByMinMax; }
             set { SetProperty(ref _ifTrendLimitByMinMax, value); }
         }
 
-        private bool _ifTrendLimitByLimit;
+        private bool _ifTrendLimitByLimit = false;
         public bool IfTrendLimitByLimit {
             get { return _ifTrendLimitByLimit; }
             set { SetProperty(ref _ifTrendLimitByLimit, value); }
         }
 
-        private bool _ifTrendLimitByUser;
+        private bool _ifTrendLimitByUser = false;
         public bool IfTrendLimitByUser {
             get { return _ifTrendLimitByUser; }
             set { SetProperty(ref _ifTrendLimitByUser, value); }
@@ -139,18 +152,6 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _histoSigmaSelectionIdx, value); }
         }
 
-
-        private IAxisViewModel _xAxisHisto;
-        public IAxisViewModel XAxisHisto {
-            get { return _xAxisHisto; }
-            set { SetProperty(ref _xAxisHisto, value); }
-        }
-        private IAxisViewModel _yAxisHisto;
-        public IAxisViewModel YAxisHisto {
-            get { return _yAxisHisto; }
-            set { SetProperty(ref _yAxisHisto, value); }
-        }
-
         private string _userHistoLowRange;
         public string UserHistoLowRange {
             get { return _userHistoLowRange; }
@@ -163,25 +164,25 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _userHistoHighRange, value); }
         }
 
-        private bool _ifHistoLimitBySigma;
+        private bool _ifHistoLimitBySigma = true;
         public bool IfHistoLimitBySigma {
             get { return _ifHistoLimitBySigma; }
             set { SetProperty(ref _ifHistoLimitBySigma, value); }
         }
 
-        private bool _ifHistoLimitByMinMax;
+        private bool _ifHistoLimitByMinMax = false;
         public bool IfHistoLimitByMinMax {
             get { return _ifHistoLimitByMinMax; }
             set { SetProperty(ref _ifHistoLimitByMinMax, value); }
         }
 
-        private bool _ifHistoLimitByLimit;
+        private bool _ifHistoLimitByLimit = false;
         public bool IfHistoLimitByLimit {
             get { return _ifHistoLimitByLimit; }
             set { SetProperty(ref _ifHistoLimitByLimit, value); }
         }
 
-        private bool _ifHistoLimitByUser;
+        private bool _ifHistoLimitByUser = false;
         public bool IfHistoLimitByUser {
             get { return _ifHistoLimitByUser; }
             set { SetProperty(ref _ifHistoLimitByUser, value); }
@@ -379,10 +380,8 @@ namespace UI_Chart.ViewModels {
             _ea = ea;
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
             _ea.GetEvent<Event_ItemsSelected>().Subscribe(UpdateItems);
-
-
-            InitUi();
         }
+
         void UpdateItems(Tuple<SubData, List<string>> para) {
             if (!para.Item1.Equals(_subData)) return;
             if (para.Item2 == null || para.Item2.Count == 0) return;
@@ -427,8 +426,8 @@ namespace UI_Chart.ViewModels {
                 }
                 RaisePropertyChanged("TrendSeries");
 
-                XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
-                RaisePropertyChanged("XAxisTrend");
+                _xRangeTrend.SetMinMax(1, _deviceCount);
+                RaisePropertyChanged("XRangeTrend");
 
             } else {
                 TrendSeries.Clear();
@@ -638,73 +637,14 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             var actStart = start - ov;
             var actStop = stop + ov;
-            XAxisHisto.VisibleRange.SetMinMax(actStart, actStop);
-            RaisePropertyChanged("XAxisHisto");
+            _xRangeHisto.SetMinMax(actStart, actStop);
+            RaisePropertyChanged("XRangeHisto");
 
-            YAxisHisto.VisibleRange.SetMinMax(0, maxCnt);
-            RaisePropertyChanged("YAxisHisto");
+            _yRangeHisto.SetMinMax(0, maxCnt);
+            RaisePropertyChanged("YRangeHisto");
 
         }
         
-        void InitUi() {
-            XAxisTrend = new NumericAxisViewModel {
-                //AxisTitle = "XAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "#",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(1, 1),
-                StyleKey= "GridLineStyle",
-            };
-            YAxisTrend = new NumericAxisViewModel {
-                AxisAlignment = AxisAlignment.Right,
-                //AxisTitle = "YAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "f3",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(0, 1),
-                StyleKey = "GridLineStyle",
-            };
-
-            IfTrendLimitBySigma = true;
-
-            XAxisHisto = new NumericAxisViewModel {
-                //AxisTitle = "XAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "f3",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(1, 1),
-                StyleKey = "GridLineStyle",
-            };
-            YAxisHisto = new NumericAxisViewModel {
-                AxisAlignment = AxisAlignment.Right,
-                //AxisTitle = "YAxis",
-                DrawMinorGridLines = false,
-                DrawMajorBands = false,
-                DrawMajorGridLines = true,
-                TextFormatting = "#",
-                FontSize = 10,
-                TickTextBrush = Brushes.Black,
-                FontWeight = System.Windows.FontWeight.FromOpenTypeWeight(200),
-                VisibleRange = new DoubleRange(0, 1),
-                StyleKey = "GridLineStyle",
-            };
-
-            IfHistoLimitBySigma = true;
-
-        }
-
         public void OnNavigatedTo(NavigationContext navigationContext) {
             var data = (SubData)navigationContext.Parameters["subData"];
             if (!_subData.Equals(data)) {
@@ -812,10 +752,10 @@ namespace UI_Chart.ViewModels {
         void ExecuteCmdSelectAxisSigmaTrend() {
             var ov = 0.05 * (_allsigmaHighTrend - _allsigmaLowTrend);
             if (ov == 0) ov = 1;
-            YAxisTrend.VisibleRange.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
-            RaisePropertyChanged("YAxisTrend");
-            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
-            RaisePropertyChanged("XAxisTrend");
+            _yRangeTrend.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
+            RaisePropertyChanged("YRangeTrend");
+            _xRangeTrend.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allsigmaLowTrend.ToString("f3");
             UserTrendHighRange = _allsigmaHighTrend.ToString("f3");
@@ -828,10 +768,10 @@ namespace UI_Chart.ViewModels {
         void ExecuteCmdSelectAxisMinMaxTrend() {
             var ov = 0.05 * (_allmaxTrend - _allminTrend);
             if (ov == 0) ov = 1;
-            YAxisTrend.VisibleRange.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
-            RaisePropertyChanged("YAxisTrend");
-            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
-            RaisePropertyChanged("XAxisTrend");
+            _yRangeTrend.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
+            RaisePropertyChanged("YRangeTrend");
+            _xRangeTrend.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allminTrend.ToString("f3");
             UserTrendHighRange = _allmaxTrend.ToString("f3");
@@ -847,10 +787,10 @@ namespace UI_Chart.ViewModels {
 
             var ov = 0.1 * (h - l);
             if (ov == 0) ov = 1;
-            YAxisTrend.VisibleRange.SetMinMax(l - ov, h + ov);
-            RaisePropertyChanged("YAxisTrend");
-            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
-            RaisePropertyChanged("XAxisTrend");
+            _yRangeTrend.SetMinMax(l - ov, h + ov);
+            RaisePropertyChanged("YRangeTrend");
+            _xRangeTrend.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = l.ToString("f3");
             UserTrendHighRange = h.ToString("f3");
@@ -866,14 +806,14 @@ namespace UI_Chart.ViewModels {
                 float.TryParse(UserTrendHighRange, out float h);
                 var ov = 0.1 * (h - l);
                 if (ov == 0) ov = 1;
-                YAxisTrend.VisibleRange.SetMinMax(l - ov, h + ov);
-                RaisePropertyChanged("YAxisTrend");
+                _yRangeTrend.SetMinMax(l - ov, h + ov);
+                RaisePropertyChanged("YRangeTrend");
             }
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
-            XAxisTrend.VisibleRange.SetMinMax(1, _deviceCount);
-            RaisePropertyChanged("XAxisTrend");
+            _xRangeTrend.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XRangeTrend");
         }
 
         private DelegateCommand _CmdApplyTrendRange;
