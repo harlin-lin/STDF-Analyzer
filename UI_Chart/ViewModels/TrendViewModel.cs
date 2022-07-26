@@ -68,13 +68,13 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _yRangeHisto, value); }
         }
 
-        private float _lowLimit = float.NaN;
+        private float _lowLimit = float.NegativeInfinity;
         public float LowLimit {
             get { return _lowLimit; }
             set { SetProperty(ref _lowLimit, value); }
         }
 
-        private float _highLimit = float.NaN;
+        private float _highLimit = float.PositiveInfinity;
         public float HighLimit {
             get { return _highLimit; }
             set { SetProperty(ref _highLimit, value); }
@@ -208,6 +208,10 @@ namespace UI_Chart.ViewModels {
 
         int SigmaByIdx(int idx) {
             return 6 - idx;
+        }
+
+        bool isInvalid(float f){
+            return float.IsNaN(f) || float.IsInfinity(f);
         }
 
         private bool _enAxisLimitTrend=true;
@@ -392,45 +396,81 @@ namespace UI_Chart.ViewModels {
             UpdateData();
         }
 
+        bool _dataValid;
+
+        void ClearChart() {
+            //clear chart
+            TrendSeries.Clear();
+            RaisePropertyChanged("TrendSeries");
+            _xRangeTrend.SetMinMax(0,1);
+            RaisePropertyChanged("XRangeTrend");
+            _yRangeTrend.SetMinMax(0, 1);
+            RaisePropertyChanged("YRangeTrend");
+
+            ItemTitleTrend = null;
+            RaisePropertyChanged("ItemTitleTrend");
+
+            ItemTitleHisto = null;
+            RaisePropertyChanged("ItemTitleHisto");
+
+            HistoSeries.Clear();
+            RaisePropertyChanged("HistoSeries");
+
+            _xRangeHisto.SetMinMax(0, 1);
+            RaisePropertyChanged("XRangeHisto");
+
+            _yRangeHisto.SetMinMax(0, 1);
+            RaisePropertyChanged("YRangeHisto");
+
+        }
+
         //get raw data
         void UpdateData() {
-            if (_selectedIds == null || _selectedIds.Count == 0) return;
+            if (_selectedIds == null || _selectedIds.Count == 0){
+                _dataValid = false;
+                ClearChart();
+                return;
+            }else{
+                _dataValid = true;
+            }
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
             var idInfo = da.GetTestInfo(_selectedIds[0]);
-            LowLimit = idInfo.LoLimit ?? float.NaN;
-            HighLimit = idInfo.HiLimit ?? float.NaN;
+            LowLimit = idInfo.LoLimit ?? float.NegativeInfinity;
+            HighLimit = idInfo.HiLimit ?? float.PositiveInfinity;
             if (_selectedIds.Count == 1) {
                 IfShowLegendCheckBox = false;
             } else {
                 IfShowLegendCheckBox = true;
             }
             _deviceCount = da.GetFilteredChipsCount(_subData.FilterId);
-            if (_deviceCount > 0) {
-                var xs = da.GetFilteredPartIndex(_subData.FilterId);
-                TrendSeries.Clear();
-                for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
-                    var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
 
-                    var series = new XyDataSeries<int, float>();
-                    series.Append(xs, data);
-                    series.SeriesName = _selectedIds[i];
-
-                    TrendSeries.Add(new LineRenderableSeriesViewModel {
-                        DataSeries = series,
-                        Stroke = SillyMonkeySetup.GetColor(i)
-                    });
-
-                }
-                RaisePropertyChanged("TrendSeries");
-
-                _xRangeTrend.SetMinMax(1, _deviceCount);
-                RaisePropertyChanged("XRangeTrend");
-
-            } else {
-                TrendSeries.Clear();
-                RaisePropertyChanged("TrendSeries");
+            if(_deviceCount == 0) {
+                _dataValid = false;
+                ClearChart();
+                return;
             }
+
+            var xs = da.GetFilteredPartIndex(_subData.FilterId);
+            TrendSeries.Clear();
+            for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
+                var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
+
+                var series = new XyDataSeries<int, float>();
+                series.Append(xs, data);
+                series.SeriesName = _selectedIds[i];
+
+                TrendSeries.Add(new LineRenderableSeriesViewModel {
+                    DataSeries = series,
+                    Stroke = SillyMonkeySetup.GetColor(i)
+                });
+
+            }
+            RaisePropertyChanged("TrendSeries");
+
+            _xRangeTrend.SetMinMax(1, _deviceCount);
+            RaisePropertyChanged("XRangeTrend");
+
             UpdateTrendViewRange();
 
             UpdateHistoViewRange();
@@ -585,7 +625,7 @@ namespace UI_Chart.ViewModels {
             int[] rangeCnt = new int[113];
 
             foreach (var f in data) {
-                if (float.IsNaN(f) || float.IsInfinity(f)) continue;
+                if (isInvalid(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
                 } else if (f >= actStop) {
@@ -602,13 +642,13 @@ namespace UI_Chart.ViewModels {
         private 
 
         void UpdateHistoSeries(float start, float stop) {
-            if (_selectedIds == null || _selectedIds.Count == 0) return;
+            if (!_dataValid) return;
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
             var maxCnt = 0;
             HistoSeries.Clear();
 
-            if (float.IsNaN(start) || float.IsInfinity(start) || float.IsNaN(stop) || float.IsInfinity(stop)) return;
+            if (isInvalid(start) || isInvalid(stop)) return;
 
             if (_deviceCount == 0) return;
             for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
@@ -751,6 +791,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisSigmaTrend ?? (_CmdSelectAxisSigmaTrend = new DelegateCommand(ExecuteCmdSelectAxisSigmaTrend));
 
         void ExecuteCmdSelectAxisSigmaTrend() {
+            if (!_dataValid) return;
             var ov = 0.05 * (_allsigmaHighTrend - _allsigmaLowTrend);
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
@@ -767,6 +808,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisMinMaxTrend ?? (_CmdSelectAxisMinMaxTrend = new DelegateCommand(ExecuteCmdSelectAxisMinMaxTrend));
 
         void ExecuteCmdSelectAxisMinMaxTrend() {
+            if (!_dataValid) return;
             var ov = 0.05 * (_allmaxTrend - _allminTrend);
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
@@ -783,8 +825,9 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitTrend ?? (_CmdSelectAxisLimitTrend = new DelegateCommand(ExecuteCmdSelectAxisLimitTrend));
 
         void ExecuteCmdSelectAxisLimitTrend() {
-            float l = float.IsNaN(LowLimit) ? _allminTrend : LowLimit;
-            float h = float.IsNaN(HighLimit) ? _allmaxTrend : HighLimit;
+            if (!_dataValid) return;
+            float l = isInvalid(LowLimit) ? _allminTrend : LowLimit;
+            float h = isInvalid(HighLimit) ? _allmaxTrend : HighLimit;
 
             var ov = 0.1 * (h - l);
             if (ov == 0) ov = 1;
@@ -802,6 +845,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisUserTrend ?? (_CmdSelectAxisUserTrend = new DelegateCommand(ExecuteCmdSelectAxisUserTrend));
 
         void ExecuteCmdSelectAxisUserTrend() {
+            if (!_dataValid) return;
             try {
                 float.TryParse(UserTrendLowRange, out float l);
                 float.TryParse(UserTrendHighRange, out float h);
@@ -822,6 +866,7 @@ namespace UI_Chart.ViewModels {
             _CmdApplyTrendRange ?? (_CmdApplyTrendRange = new DelegateCommand(ExecuteCmdApplyTrendRange));
 
         void ExecuteCmdApplyTrendRange() {
+            if (!_dataValid) return;
             IfTrendLimitByUser = true;
             ExecuteCmdSelectAxisUserTrend();
         }
@@ -869,6 +914,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisSigmaHisto ?? (_CmdSelectAxisSigmaHisto = new DelegateCommand(ExecuteCmdSelectAxisSigmaHisto));
 
         void ExecuteCmdSelectAxisSigmaHisto() {
+            if (!_dataValid) return;
             UpdateHistoSeries(_allsigmaLowHisto, _allsigmaHighHisto);
 
             UserHistoLowRange = _allsigmaLowHisto.ToString("f3");
@@ -880,6 +926,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisMinMaxHisto ?? (_CmdSelectAxisMinMaxHisto = new DelegateCommand(ExecuteCmdSelectAxisMinMaxHisto));
 
         void ExecuteCmdSelectAxisMinMaxHisto() {
+            if (!_dataValid) return;
             UpdateHistoSeries(_allminHisto, _allmaxHisto);
 
             UserHistoLowRange = _allminHisto.ToString("f3");
@@ -891,8 +938,9 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisLimitHisto ?? (_CmdSelectAxisLimitHisto = new DelegateCommand(ExecuteCmdSelectAxisLimitHisto));
 
         void ExecuteCmdSelectAxisLimitHisto() {
-            float l = float.IsNaN(LowLimit) ? _allminHisto : LowLimit;
-            float h = float.IsNaN(HighLimit) ? _allmaxHisto : HighLimit;
+            if (!_dataValid) return;
+            float l = isInvalid(LowLimit) ? _allminHisto : LowLimit;
+            float h = isInvalid(HighLimit) ? _allmaxHisto : HighLimit;
 
             UpdateHistoSeries(l, h);
 
@@ -905,6 +953,7 @@ namespace UI_Chart.ViewModels {
             _CmdSelectAxisUserHisto ?? (_CmdSelectAxisUserHisto = new DelegateCommand(ExecuteCmdSelectAxisUserHisto));
 
         void ExecuteCmdSelectAxisUserHisto() {
+            if (!_dataValid) return;
             float l, h;
             try {
                 float.TryParse(UserHistoLowRange, out l);
@@ -921,6 +970,7 @@ namespace UI_Chart.ViewModels {
             _CmdApplyHistoRange ?? (_CmdApplyHistoRange = new DelegateCommand(ExecuteCmdApplyHistoRange));
 
         void ExecuteCmdApplyHistoRange() {
+            if (!_dataValid) return;
             IfHistoLimitByUser = true;
             ExecuteCmdSelectAxisUserHisto();
         }
@@ -930,6 +980,7 @@ namespace UI_Chart.ViewModels {
             _cmdChangedSigmaRangeIdxTrend ?? (_cmdChangedSigmaRangeIdxTrend = new DelegateCommand(ExecuteCmdChangedSigmaRangeIdxTrend));
 
         void ExecuteCmdChangedSigmaRangeIdxTrend() {
+            if (!_dataValid) return;
             UpdateTrendViewRange();
         }
 
@@ -938,6 +989,7 @@ namespace UI_Chart.ViewModels {
             _cmdChangedSigmaOutlierIdxTrend ?? (_cmdChangedSigmaOutlierIdxTrend = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdxTrend));
 
         void ExecuteCmdChangedSigmaOutlierIdxTrend() {
+            if (!_dataValid) return;
             UpdateTrendViewRange();
         }
 
@@ -946,6 +998,7 @@ namespace UI_Chart.ViewModels {
             _cmdToggleOutlierTrend ?? (_cmdToggleOutlierTrend = new DelegateCommand(ExecuteCmdToggleOutlierTrend));
 
         void ExecuteCmdToggleOutlierTrend() {
+            if (!_dataValid) return;
             UpdateTrendViewRange();
         }
 
@@ -955,6 +1008,7 @@ namespace UI_Chart.ViewModels {
             _cmdChangedSigmaRangeIdxHisto ?? (_cmdChangedSigmaRangeIdxHisto = new DelegateCommand(ExecuteCmdChangedSigmaRangeIdxHisto));
 
         void ExecuteCmdChangedSigmaRangeIdxHisto() {
+            if (!_dataValid) return;
             UpdateHistoViewRange();
         }
 
@@ -963,6 +1017,7 @@ namespace UI_Chart.ViewModels {
             _cmdChangedSigmaOutlierIdxHisto ?? (_cmdChangedSigmaOutlierIdxHisto = new DelegateCommand(ExecuteCmdChangedSigmaOutlierIdxHisto));
 
         void ExecuteCmdChangedSigmaOutlierIdxHisto() {
+            if (!_dataValid) return;
             UpdateHistoViewRange();
         }
 
@@ -971,6 +1026,7 @@ namespace UI_Chart.ViewModels {
             _cmdToggleOutlierHisto ?? (_cmdToggleOutlierHisto = new DelegateCommand(ExecuteCmdToggleOutlierHisto));
 
         void ExecuteCmdToggleOutlierHisto() {
+            if (!_dataValid) return;
             UpdateHistoViewRange();
         }
 
@@ -979,6 +1035,7 @@ namespace UI_Chart.ViewModels {
             _cmdZoomOutTrend ?? (_cmdZoomOutTrend = new DelegateCommand(ExecuteCmdZoomOutTrend));
 
         void ExecuteCmdZoomOutTrend() {
+            if (!_dataValid) return;
             //set the y axix
             if (IfTrendLimitBySigma) {
                 ExecuteCmdSelectAxisSigmaTrend();

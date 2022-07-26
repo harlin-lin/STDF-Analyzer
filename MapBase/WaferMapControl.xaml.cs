@@ -340,12 +340,13 @@ namespace MapBase {
         }
 
         private void UpdateViewMode() {
+            if (_mapControlList is null || _mapControlList.Count == 0) return;
             switch (ViewMode) {
                 case MapViewMode.Split:
                     SwitchSplitView();
                     break;
                 case MapViewMode.Single:
-                    if (_selectedMap is null && _mapControlList!=null && _mapControlList.Count>0) _selectedMap = _mapControlList.ElementAt(0).Value;
+                    if (_selectedMap is null) _selectedMap = _mapControlList.ElementAt(0).Value;
                     SwitchSingleView();
                     break;
                 default: break;
@@ -357,6 +358,7 @@ namespace MapBase {
         }
 
         private void viewGrid_SizeChanged(object sender, SizeChangedEventArgs e) {
+            if (_mapControlList is null || _mapControlList.Count == 0) return;
             var width = viewGrid.ActualWidth / 2;
 
             if (ViewMode== MapViewMode.Split) {
