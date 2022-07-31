@@ -31,13 +31,11 @@ namespace MapBase {
         private Dictionary<ushort, Color> _sBinColors = new Dictionary<ushort, Color>();
         private Dictionary<ushort, Color> _hBinColors = new Dictionary<ushort, Color>();
 
-        private Dictionary<ushort, int> _sBinDieCnt = new Dictionary<ushort, int>();
-        private Dictionary<ushort, int> _hBinDieCnt = new Dictionary<ushort, int>();
-        //private Dictionary<short?, Dictionary<ushort, int>> _perWaferSBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
-        //private Dictionary<short?, Dictionary<ushort, int>> _perWaferHBinDieCnt = new Dictionary<short?, Dictionary<ushort, int>>();
-
-        private int _totalDieCnt = 0;
-        private Dictionary<short?, int> _perWaferTotalDieCnt = new Dictionary<short?, int>();
+        private Dictionary<Color, int> _colorDieCnt = new Dictionary<Color, int>();
+        //private Dictionary<ushort, int> _sBinDieCnt = new Dictionary<ushort, int>();
+        //private Dictionary<ushort, int> _hBinDieCnt = new Dictionary<ushort, int>();
+        //private int _totalDieCnt = 0;
+        //private Dictionary<short?, int> _perWaferTotalDieCnt = new Dictionary<short?, int>();
 
         private List<string> _logList = new List<string>();
 
@@ -48,6 +46,8 @@ namespace MapBase {
 
         private Dictionary<short?, MapBaseControl> _mapControlList = new Dictionary<short?, MapBaseControl>();
         private MapBaseControl _selectedMap = null;
+
+        private Color NullColor = new Color();
 
         private void MapBaseControl_CordChanged(int x, int y, Color color) {
             if (x == int.MinValue || y == int.MinValue) {
@@ -101,7 +101,18 @@ namespace MapBase {
             _selectedMap.CordChanged += MapBaseControl_CordChanged;
             _selectedMap.EnableZoom = true;
             viewGrid.Children.Add(_selectedMap);
+            
+            _colorDieCnt.Clear();
 
+            foreach (var die in _selectedMap.MapDataSource) {
+                if (die != NullColor) {
+                    if (_colorDieCnt.ContainsKey(die)) {
+                        _colorDieCnt[die]++;
+                    } else {
+                        _colorDieCnt.Add(die, 1);
+                    }
+                }
+            }
 
             UpdateBinInfo();
         }
@@ -128,6 +139,8 @@ namespace MapBase {
 
             var width = viewGrid.ActualWidth / splitColCnt;
 
+            _colorDieCnt.Clear();
+
             for (int i = 0; i < _mapControlList.Count; i++) {
                 _mapControlList.ElementAt(i).Value.CordChanged -= MapBaseControl_CordChanged;
                 _mapControlList.ElementAt(i).Value.MapSelected += SplitView_MapSelected;
@@ -139,6 +152,17 @@ namespace MapBase {
                 viewGrid.Children.Add(_mapControlList.ElementAt(i).Value);
                 Grid.SetRow(_mapControlList.ElementAt(i).Value, i / splitColCnt);
                 Grid.SetColumn(_mapControlList.ElementAt(i).Value, i % splitColCnt);
+
+                //calc the bin yield based on the map
+                foreach(var die in _mapControlList.ElementAt(i).Value.MapDataSource) {
+                    if(die != NullColor) {
+                        if (_colorDieCnt.ContainsKey(die)) {
+                            _colorDieCnt[die]++;
+                        } else {
+                            _colorDieCnt.Add(die, 1);
+                        }
+                    }
+                }
             }
 
             UpdateBinInfo();
@@ -184,13 +208,29 @@ namespace MapBase {
 
         private void UpdateBinInfo() {
 
+            int totalCnt = 0;
+            Dictionary<ushort, int> binCnt = new Dictionary<ushort, int>();
+            foreach(var c in _colorDieCnt) {
+                totalCnt += c.Value;
+                if (BinMode == MapBinMode.HBin) {
+                    var bin = _hBinColors.FirstOrDefault(a => a.Value == c.Key).Key;
+                    binCnt.Add(bin, c.Value);
+                } else {
+                    var bin = _sBinColors.FirstOrDefault(a => a.Value == c.Key).Key;
+                    binCnt.Add(bin, c.Value);
+                }
+            }
+
+            textBlockDieCnt.Text = $"Total:{totalCnt}";
+
             binInfo.Children.Clear();
 
             if (BinMode == MapBinMode.HBin) {
-                foreach (var b in _hBinColors) {
+                foreach (var b in binCnt) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key,-2} {(_hBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_hBinDieCnt[b.Key],-7}";
-                    textBlock.Background = new SolidColorBrush(b.Value);
+                    textBlock.Text = $"BIN{b.Key,-2} {(binCnt[b.Key] * 100.0 / totalCnt).ToString("f2") + "%",-6} {binCnt[b.Key],-7}";
+
+                    textBlock.Background = new SolidColorBrush(_hBinColors[b.Key]);
                     textBlock.BorderThickness = new Thickness(0);
                     textBlock.Height = 18;
                     textBlock.IsReadOnly = true;
@@ -202,10 +242,10 @@ namespace MapBase {
                     binInfo.Children.Add(textBlock);
                 }
             } else {
-                foreach (var b in _sBinColors) {
+                foreach (var b in binCnt) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key,-5} {(_sBinDieCnt[b.Key] * 100.0 / _totalDieCnt).ToString("f2") + "%",-6} {_sBinDieCnt[b.Key],-7}";
-                    textBlock.Background = new SolidColorBrush(b.Value);
+                    textBlock.Text = $"BIN{b.Key,-5} {(binCnt[b.Key] * 100.0 / totalCnt).ToString("f2") + "%",-6} {binCnt[b.Key],-7}";
+                    textBlock.Background = new SolidColorBrush(_sBinColors[b.Key]);
                     textBlock.BorderThickness = new Thickness(0);
                     textBlock.Height = 18;
                     textBlock.IsReadOnly = true;
@@ -225,11 +265,6 @@ namespace MapBase {
             _logList.Clear();
             _sBinColors.Clear();
             _hBinColors.Clear();
-            _sBinDieCnt.Clear();
-            _hBinDieCnt.Clear();
-
-            _perWaferTotalDieCnt.Clear();
-            _totalDieCnt = 0;
             
             _sBinMaps.Clear();
             _hBinMaps.Clear();
@@ -246,7 +281,6 @@ namespace MapBase {
             if (_waferData.HBinInfo != null) {
                 int i = 0;
                 foreach (var hb in _waferData.HBinInfo) {
-                    _hBinDieCnt.Add(hb.Key, 0);
                     if (hb.Value.Item2.Contains("P")) {
                         _hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
                     } else {
@@ -258,7 +292,6 @@ namespace MapBase {
             if (_waferData.SBinInfo != null) {
                 int i = 0;
                 foreach (var sb in _waferData.SBinInfo) {
-                    _sBinDieCnt.Add(sb.Key, 0);
                     if (sb.Value.Item2.Contains("P")) {
                         _sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
                     } else {
@@ -277,7 +310,6 @@ namespace MapBase {
                     } else {
                         _sBinColors.Add(die.SBin, BinColor.GetFailBinColor(fsbCnt++));
                     }
-                    _sBinDieCnt.Add(die.SBin, 0);
                 }
                 if (!hbFlg && !_hBinColors.ContainsKey(die.HBin)) {
                     if (die.PassOrFail) {
@@ -285,13 +317,7 @@ namespace MapBase {
                     } else {
                         _hBinColors.Add(die.HBin, BinColor.GetFailBinColor(fhbCnt++));
                     }
-                    _hBinDieCnt.Add(die.HBin, 0);
                 }
-
-
-                _totalDieCnt++;
-                _sBinDieCnt[die.SBin]++;
-                _hBinDieCnt[die.HBin]++;
 
                 if (!_sBinMaps.ContainsKey(die.WaferId)) {
                     _sBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
@@ -299,10 +325,7 @@ namespace MapBase {
                     _freshSBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
                     _freshHBinMaps.Add(die.WaferId, new Color[_xCnt, _yCnt]);
                     _containRtFlg.Add(die.WaferId, false);
-                    _perWaferTotalDieCnt.Add(die.WaferId, 0);
                 }
-
-                _perWaferTotalDieCnt[die.WaferId]++;
 
                 //ignore the unreasonable point
                 if (die.X > _waferData.XUbound || die.X < _waferData.XLbound || die.Y > _waferData.YUbound || die.Y < _waferData.YLbound) {
@@ -310,7 +333,7 @@ namespace MapBase {
                     continue;
                 }
 
-                if (_sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] == new Color()) {
+                if (_sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] == NullColor) {
                     _sBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];
                     _hBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _hBinColors[die.HBin];
                     _freshSBinMaps[die.WaferId][die.X - _waferData.XLbound, die.Y - _waferData.YLbound] = _sBinColors[die.SBin];

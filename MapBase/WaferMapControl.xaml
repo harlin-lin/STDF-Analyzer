@@ -18,6 +18,7 @@
             <RowDefinition Height="4*"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="*" MinHeight="40"/>
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Name="scrollBar">
             <Grid Grid.Row="0" Name="viewGrid"  SizeChanged="viewGrid_SizeChanged" />
@@ -27,5 +28,6 @@
         <ScrollViewer Grid.Row="2">
             <WrapPanel Name="binInfo" HorizontalAlignment="Left" VerticalAlignment="Top" />
         </ScrollViewer>
+        <TextBlock Grid.Row="3" Name="textBlockDieCnt" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="12"/>
     </Grid>
 </UserControl>
