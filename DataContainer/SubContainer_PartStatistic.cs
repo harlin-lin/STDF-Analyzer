@@ -49,12 +49,12 @@ namespace DataContainer {
             _allIndex.TrimExcess();
             _partStatistic = new PartStatistic(_siteContainer.Keys);
 
-            if (_site_PartContainer.Count - 1 != _partIdx) throw new Exception("Error");
+            //if (_site_PartContainer.Count - 1 != _partIdx) throw new Exception("Error");
 
             UInt32 totalTime = 0;
             UInt32 totalTimePassOnly = 0;
 
-            for (int i=0; i <= _partIdx; i++) {
+            for (int i=0; i < _site_PartContainer.Count; i++) {
                 var sn = _site_PartContainer[i];
                 _partStatistic.SiteCnt[sn] += 1;
 

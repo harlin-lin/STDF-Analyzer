@@ -27,7 +27,9 @@
             <ComboBox ItemsSource="{Binding MapBinModeList}" SelectedItem="{Binding SelectedMapBinMode}" Width="60" Margin="0,0,10,0" />
             <ComboBox ItemsSource="{Binding MapViewModeList}" SelectedItem="{Binding SelectedMapViewMode}" Width="70" Margin="0,0,10,0" />
             <ComboBox ItemsSource="{Binding MapRtDataModeList}" SelectedItem="{Binding SelectedMapRtDataMode}" Width="90" Margin="0,0,10,0" />
-            <CheckBox x:Name="cbUserCord" Content="UserCord" VerticalContentAlignment="Bottom" IsChecked="False" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" Command="{Binding CmdChangeUserCord}" CommandParameter="{Binding ElementName=cbUserCord, Path=IsChecked}"/>
+            <CheckBox x:Name="cbUserCord" Content="UserCord" VerticalContentAlignment="Bottom" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" 
+                      IsChecked="{Binding IfEnUserCord}" 
+                      Command="{Binding CmdChangeUserCord}"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>

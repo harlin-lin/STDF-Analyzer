@@ -195,7 +195,11 @@ namespace SillyMonkey.Core {
 
             AppendBinField(ref sb, "Site NO", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in sbin) {
-                AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{sbNames[b.Key].Item2}:{sbNames[b.Key].Item1}", siteSb);
+                if (sbNames.ContainsKey(b.Key)) {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{sbNames[b.Key].Item2}:{sbNames[b.Key].Item1}", siteSb);
+                } else {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{b.Key}:", siteSb);
+                }
             }
             AppendLine(ref sb, "");
         }
@@ -218,7 +222,11 @@ namespace SillyMonkey.Core {
 
             AppendBinField(ref sb, "Site NO", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in hb) {
-                AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{hbNames[b.Key].Item2}:{hbNames[b.Key].Item1}", siteHb);
+                if (hbNames.ContainsKey(b.Key)) {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{hbNames[b.Key].Item2}:{hbNames[b.Key].Item1}", siteHb);
+                } else {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{b.Key}:", siteHb);
+                }
             }
             AppendLine(ref sb, "");
         }

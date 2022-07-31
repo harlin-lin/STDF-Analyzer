@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace UI_Chart.ViewModels {
     public class WaferDataModel : IWaferData {
@@ -258,7 +259,11 @@ namespace UI_Chart.ViewModels {
 
         void UpdateChart(SubData subData) {
             if (subData.Equals(_subData)) {
-                WaferData = new WaferDataModel(_subData);
+                if (IfEnUserCord) {
+                    WaferData = new WaferDataModel(_subData, SelectedCordX, SelectedCordY, SelectedWaferNO);
+                } else {
+                    WaferData = new WaferDataModel(_subData);
+                }
             }
         }
 
@@ -270,12 +275,18 @@ namespace UI_Chart.ViewModels {
             WaferData = new WaferDataModel(_subData, SelectedCordX, SelectedCordY, SelectedWaferNO);
         }
 
-        private DelegateCommand<object> cmdDisableUserCord;
-        public DelegateCommand<object> CmdChangeUserCord =>
-            cmdDisableUserCord ?? (cmdDisableUserCord = new DelegateCommand<object>(ExecuteCmdChangeUserCord));
+        private bool _ifEnUserCord=false;
+        public bool IfEnUserCord {
+            get { return _ifEnUserCord; }
+            set { SetProperty(ref _ifEnUserCord, value); }
+        }
 
-        void ExecuteCmdChangeUserCord(object ifChecked) {
-            if (!(bool)ifChecked) {
+        private DelegateCommand cmdDisableUserCord;
+        public DelegateCommand CmdChangeUserCord =>
+            cmdDisableUserCord ?? (cmdDisableUserCord = new DelegateCommand(ExecuteCmdChangeUserCord));
+
+        void ExecuteCmdChangeUserCord() {
+            if (!IfEnUserCord) {
                 WaferData = new WaferDataModel(_subData);
             } else {
                 if (_selectedWaferNO != null && _selectedCordX != null && _selectedCordY != null)
