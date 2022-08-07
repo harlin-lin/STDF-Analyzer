@@ -114,5 +114,9 @@
   <ItemGroup>
     <Resource Include="Resource\icon\SA_AllSize.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\Entypo-AlignLeft.png" />
+    <Resource Include="Resource\icon\Entypo-AlignRight.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

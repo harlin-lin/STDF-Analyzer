@@ -12,8 +12,8 @@ namespace DataContainer {
         private List<UInt16> _hardBin_PartContainer;
         private List<UInt16> _softBin_PartContainer;
         private List<string> _partId_PartContainer;
-        private List<short?> _xCord_PartContainer;
-        private List<short?> _yCord_PartContainer;
+        private List<short> _xCord_PartContainer;
+        private List<short> _yCord_PartContainer;
         private List<DeviceType> _chipType_PartContainer;
         private List<ResultType> _resultType_PartContainer;
 
@@ -28,8 +28,8 @@ namespace DataContainer {
             _hardBin_PartContainer = new List<ushort>(200000);
             _softBin_PartContainer = new List<ushort>(200000);
             _partId_PartContainer = new List<string>(200000);
-            _xCord_PartContainer = new List<short?>(200000);
-            _yCord_PartContainer = new List<short?>(200000);
+            _xCord_PartContainer = new List<short>(200000);
+            _yCord_PartContainer = new List<short>(200000);
             _chipType_PartContainer = new List<DeviceType>(200000);
             _resultType_PartContainer = new List<ResultType>(200000);
             _allIndex = new List<int>(200000);

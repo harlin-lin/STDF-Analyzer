@@ -40,8 +40,8 @@ namespace DataContainer {
         public List<byte> MaskSites { get; set; }
         public List<ushort> MaskSoftBins { get; set; }
         public List<ushort> MaskHardBins { get; set; }
-        public List<string> MaskChips { get; set; }
-        public List<Tuple<ushort, ushort>> MaskCords { get; set; }
+        public List<int> MaskChips { get; set; }
+        public List<(short, short)> MaskCords { get; set; }
         public bool IfmaskDuplicateChips { get; set; }
         public bool IfMaskOrEnableIds { get; set; }
         public bool IfMaskOrEnableCords { get; set; }
@@ -60,8 +60,8 @@ namespace DataContainer {
             MaskSites = new List<byte>();
             MaskSoftBins = new List<ushort>();
             MaskHardBins = new List<ushort>();
-            MaskChips = new List<string>();
-            MaskCords = new List<Tuple<ushort, ushort>>();
+            MaskChips = new List<int>();
+            MaskCords = new List<(short, short)>();
             IfmaskDuplicateChips = false;
             IfMaskOrEnableIds = false;
             IfMaskOrEnableCords = false;
@@ -82,8 +82,8 @@ namespace DataContainer {
 
             MaskSoftBins = new List<ushort>();
             MaskHardBins = new List<ushort>();
-            MaskChips = new List<string>();
-            MaskCords = new List<Tuple<ushort, ushort>>();
+            MaskChips = new List<int>();
+            MaskCords = new List<(short, short)>();
             IfmaskDuplicateChips = false;
             IfMaskOrEnableIds = false;
             IfMaskOrEnableCords = false;

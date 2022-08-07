@@ -43,7 +43,7 @@ namespace UI_Chart.ViewModels {
 
             foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
                 var cord = da.GetWaferCordTuple(v);
-                _dieInfoList.Add(new DieInfo(v, cord.Item1.Value, cord.Item2.Value, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
+                _dieInfoList.Add(new DieInfo(v, cord.Item1, cord.Item2, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
             }
 
             var xs = from r in _dieInfoList
@@ -106,7 +106,7 @@ namespace UI_Chart.ViewModels {
         //    var da = StdDB.GetDataAcquire(_subData.StdFilePath);
         //    foreach (var v in da.GetFilteredPartIndex(_subData.FilterId)) {
         //        var cord = da.GetWaferCordTuple(v);
-        //        _dieInfoList.Add(new DieInfo(v, cord.Item1.Value, cord.Item2.Value, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
+        //        _dieInfoList.Add(new DieInfo(v, cord.Item1, cord.Item2, da.GetHardBin(v), da.GetSoftBin(v), da.GetSite(v), da.GetPassFail(v), 1));
         //    }
 
         //    var xs = from r in _dieInfoList

@@ -574,29 +574,113 @@ namespace UI_DataList.ViewModels {
 
         }
 
-        private List<string> ParseMaskEnableIds() {
-            List<string> rst = new List<string>();
+        private List<int> ParseMaskEnableIds() {
+            var da = StdDB.GetDataAcquire(_filePath);
+            var cnt = da.ChipsCount;
+
+            List<int> rst = new List<int>();
             var ss = MaskEnableChips.Split(';');
             foreach (string s in ss) {
-                try { rst.Add(s); } catch { continue; }
+                try {
+                    if (s.Contains("-")) {
+                        var m = System.Text.RegularExpressions.Regex.Match(s, @"\s*(\d*)\s*-\s*(\d*)\s*");
+                        if (!m.Success) continue;
+                        var pre = m.Groups[1].Length==0 ? 0 : int.Parse(m.Groups[1].Value);
+                        var post = m.Groups[2].Length == 0 ? cnt-1 : int.Parse(m.Groups[2].Value);
+
+                        for(int i = pre; i<=post; i++) {
+                            if (i < cnt) rst.Add(i);
+                        }
+
+                    } else {
+                        var v = int.Parse(s.Trim());
+                        if(v>=0 && v< cnt) rst.Add(v); 
+                    }
+                } catch { 
+                    continue; 
+                }
             }
             return rst;
         }
-        private List<Tuple<ushort, ushort>> ParseMaskEnableCords() {
-            List<Tuple<ushort, ushort>> rst = new List<Tuple<ushort, ushort>>();
+        private List<(short, short)> ParseMaskEnableCords() {
+            List<(short, short)> rst = new List<(short, short)>();
             var ss = MaskEnableCords.Split(';');
             foreach (string s in ss) {
                 var xy = s.Split(',');
                 if (xy.Length != 2) continue;
                 try {
-                    ushort x = ushort.Parse(xy[0]);
-                    ushort y = ushort.Parse(xy[1]);
-                    rst.Add(new Tuple<ushort, ushort>(x, y));
+                    short x = short.Parse(xy[0].Trim());
+                    short y = short.Parse(xy[1].Trim());
+                    rst.Add((x, y));
                 } catch { continue; }
             }
 
             return rst;
         }
+
+        private DelegateCommand _cmdGetDupCords;
+        public DelegateCommand CmdGetDupCords =>
+            _cmdGetDupCords ?? (_cmdGetDupCords = new DelegateCommand(ExecuteCmdGetDupCords));
+
+        void ExecuteCmdGetDupCords() {
+
+            var da = StdDB.GetDataAcquire(_filePath);
+            var allCords = da.GetAllCords();
+            var dups = allCords.GroupBy(x => $"{x.Item1},{x.Item2}")
+                .Where(g => g.Count() > 1)
+                .Select(y => y.Key);
+
+            StringBuilder sb = new StringBuilder();
+            foreach(var v in dups) {
+                sb.Append(v);
+                sb.Append(";");
+            }
+
+            MaskEnableCords = sb.ToString();
+        }
+
+        private DelegateCommand _cmdGetFreshIdx;
+        public DelegateCommand CmdGetFreshIdx =>
+            _cmdGetFreshIdx ?? (_cmdGetFreshIdx = new DelegateCommand(ExecuteCmdGetFreshIdx));
+
+        void ExecuteCmdGetFreshIdx() {
+            var da = StdDB.GetDataAcquire(_filePath);
+            var allCords = da.GetAllCordsAndIdx();
+            var dups = allCords.GroupBy(x => (x.Item1,x.Item2))
+                .Where(g => g.Count() > 1)
+                .Select(y => y);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var vv in dups) {
+                var idx = (from v in vv
+                 select v.Item3).Min();
+                sb.Append(idx);
+                sb.Append(";");
+            }
+            MaskEnableChips = sb.ToString();
+        }
+
+        private DelegateCommand _cmdGetRtIdx;
+        public DelegateCommand CmdGetRtIdx=>
+            _cmdGetRtIdx ?? (_cmdGetRtIdx = new DelegateCommand(ExecuteCmdGetRtIdx));
+
+        void ExecuteCmdGetRtIdx() {
+            var da = StdDB.GetDataAcquire(_filePath);
+            var allCords = da.GetAllCordsAndIdx();
+            var dups = allCords.GroupBy(x => (x.Item1, x.Item2))
+                .Where(g => g.Count() > 1)
+                .Select(y => y);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var vv in dups) {
+                var idx = (from v in vv
+                           select v.Item3).Max();
+                sb.Append(idx);
+                sb.Append(";");
+            }
+            MaskEnableChips = sb.ToString();
+        }
+
         #endregion
 
 

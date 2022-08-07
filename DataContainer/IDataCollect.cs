@@ -14,7 +14,7 @@ namespace DataContainer{
         void UpdateItemInfo(string uid, ItemInfo itemInfo);
         void AddTestData(byte siteNum, string uid, float rst);
         void AddPrr(byte siteNum, UInt32? testTime, UInt16 hardBin, UInt16 softBin, string partId,
-            short? xCord, short? yCord, DeviceType deviceType, ResultType result);
+            short xCord, short yCord, DeviceType deviceType, ResultType result);
         //TestID GetUid(TempID id, byte siteNum);
         //TestID GetUid_AutoIncSubId(TestID uid);
         ItemInfo IfContainItemInfo(string uid);

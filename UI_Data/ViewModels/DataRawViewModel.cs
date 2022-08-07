@@ -237,7 +237,7 @@ namespace UI_Data.ViewModels {
 
                     int i = 6;
                     foreach (var v in chips) {
-                        ws2.Cells[i, 1].Value = dataAcquire.GetPartId(v);
+                        ws2.Cells[i, 1].Value = v;
                         ws2.Cells[i, 2].Value = dataAcquire.GetWaferCord(v);
                         ws2.Cells[i, 3].Value = dataAcquire.GetHardBin(v);
                         ws2.Cells[i, 4].Value = dataAcquire.GetSoftBin(v);

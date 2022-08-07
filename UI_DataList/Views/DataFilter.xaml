@@ -132,34 +132,49 @@
             <TabItem Header="Parts">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="23"/>
                         <RowDefinition/>
-                        <RowDefinition Height="20"/>
+                        <RowDefinition Height="23"/>
                         <RowDefinition/>
                         <!--<RowDefinition Height="30"/>-->
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Text="Index" VerticalAlignment="Center" FontSize="8" Margin="2,0,0,0" ToolTip="Edit the part ID, split the IDs with ';' e.g:1;11;999"/>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal"  ToolTip="Edit the part ID, split the IDs with ';' e.g:1;11;999">
+                        <TextBlock Text="Index" VerticalAlignment="Center" FontSize="8" Margin="2,0,0,0"/>
                         <ComboBox Width="60" Margin="3,0" FontSize="8" HorizontalAlignment="Left" VerticalAlignment="Center">
                             <ComboBoxItem Content="Mask" FontSize="8" ToolTip="Mask the indexes from the below user input window" IsSelected="{Binding MaskOrEnableIds,Converter={StaticResource negbool}, Mode=TwoWay}"/>
                             <ComboBoxItem Content="Enable" FontSize="8" ToolTip="Enable only the indexes from the below user input window" IsSelected="{Binding MaskOrEnableIds, Mode=TwoWay}"/>
                         </ComboBox>
                     </StackPanel>
-                    <TextBox  Grid.Row="1" Text="{Binding MaskEnableChips, Mode=TwoWay}" FontSize="8" AcceptsReturn="True" VerticalContentAlignment="Top">
+                    <TextBox  Grid.Row="1" Text="{Binding MaskEnableChips, Mode=TwoWay}" FontSize="8" AcceptsReturn="True" VerticalContentAlignment="Top" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto">
                         <TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Clear" Command="{Binding ClearIds}" />
                             </ContextMenu>
                         </TextBox.ContextMenu>
                     </TextBox>
-                    <StackPanel  Grid.Row="2" Orientation="Horizontal">
-                        <TextBlock Text="Cord " VerticalAlignment="Center" FontSize="8" Margin="2,0,0,0" ToolTip="Edit the part Cords, split the Cords with ';', xis in the front, split the x,y with ',', e.g:1,1;99,32;0,33"/>
+                    <StackPanel  Grid.Row="2" Orientation="Horizontal" ToolTip="Edit the part Cords, split the Cords with ';', x in the front, split the x,y with ',', e.g:1,1;99,32;0,33">
+                        <TextBlock Text="Cord " VerticalAlignment="Center" FontSize="8" Margin="2,0,0,0"/>
                         <ComboBox Width="60" Margin="3,0" FontSize="8" VerticalAlignment="Center" HorizontalAlignment="Left">
                             <ComboBoxItem Content="Mask" FontSize="8" ToolTip="Mask the cord from the below user input window" IsSelected="{Binding MaskOrEnableCords,Converter={StaticResource negbool}, Mode=TwoWay}"/>
                             <ComboBoxItem Content="Enable" FontSize="8" ToolTip="Enable only the cord from the below user input window" IsSelected="{Binding MaskOrEnableCords, Mode=TwoWay}"/>
                         </ComboBox>
+                        <Button Width="20" Height="20" ToolTip="Get whole duplicated cords"
+                              Command="{Binding CmdGetDupCords}"
+                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
+                            <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+                        </Button>
+                        <Button Width="20" Height="20" ToolTip="Get fresh part index of duplicated cords"
+                              Command="{Binding CmdGetFreshIdx}"
+                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
+                            <Image Source="/SillyMonkey.Core;component/Resource/icon/Entypo-AlignLeft.png" Width="16" Height="16"/>
+                        </Button>
+                        <Button Width="20" Height="20" ToolTip="Get Re-Test part index of duplicated cords"
+                              Command="{Binding CmdGetRtIdx}"
+                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
+                            <Image Source="/SillyMonkey.Core;component/Resource/icon/Entypo-AlignRight.png" Width="16" Height="16"/>
+                        </Button>
                     </StackPanel>
-                    <TextBox Grid.Row="3" Text="{Binding MaskEnableCords, Mode=TwoWay}" FontSize="8" AcceptsReturn="True"  VerticalContentAlignment="Top">
+                    <TextBox Grid.Row="3" Text="{Binding MaskEnableCords, Mode=TwoWay}" FontSize="8" AcceptsReturn="True"  VerticalContentAlignment="Top" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto">
                         <TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Clear"  Command="{Binding ClearCords}" />

@@ -42,7 +42,7 @@ namespace DataContainer {
         }
 
         public void AddPrr(byte siteNum, uint? testTime, ushort hardBin, 
-            ushort softBin, string partId, short? xCord, short? yCord, 
+            ushort softBin, string partId, short xCord, short yCord, 
             DeviceType deviceType, ResultType result) {
             _site_PartContainer.Add(siteNum);
             _testTime_PartContainer.Add(testTime);
@@ -51,7 +51,7 @@ namespace DataContainer {
             _partId_PartContainer.Add(partId);
             _xCord_PartContainer.Add(xCord);
             _yCord_PartContainer.Add(yCord);
-            if(_ifCordValid && (!xCord.HasValue || !yCord.HasValue)) {
+            if(_ifCordValid && (xCord == short.MinValue || yCord == short.MinValue)) {
                 _ifCordValid = false;
             }
             _chipType_PartContainer.Add(deviceType);
@@ -162,7 +162,7 @@ namespace DataContainer {
                 _partId_PartContainer.Add(da._partId_PartContainer[i]);
                 _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
                 _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
-                if (_ifCordValid && (!da._xCord_PartContainer[i].HasValue || !da._yCord_PartContainer[i].HasValue)) {
+                if (_ifCordValid && (da._xCord_PartContainer[i]==short.MinValue || da._yCord_PartContainer[i] == short.MinValue)) {
                     _ifCordValid = false;
                 }
                 _chipType_PartContainer.Add(da._chipType_PartContainer[i]);

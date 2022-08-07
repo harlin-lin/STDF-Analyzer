@@ -250,12 +250,12 @@ namespace DataContainer {
 
                 //init
                 if (!filter.IfMaskOrEnableIds) {
-                    if (filter.MaskChips.Contains(_partId_PartContainer[i])) {
+                    if (filter.MaskChips.Contains(i)) {
                         chipsFilter.Add(i);
                         continue;
                     }
                 } else {
-                    if (!filter.MaskChips.Contains(_partId_PartContainer[i])) {
+                    if (!filter.MaskChips.Contains(i)) {
                         chipsFilter.Add(i);
                         continue;
                     }
@@ -263,12 +263,12 @@ namespace DataContainer {
 
                 if (_ifCordValid) {
                     if (!filter.IfMaskOrEnableCords) {
-                        if (filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) {
+                        if (filter.MaskCords.Contains((_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
                             chipsFilter.Add(i);
                             continue;
                         }
                     } else {
-                        if (!filter.MaskCords.Contains(new Tuple<ushort, ushort>((ushort)_xCord_PartContainer[i].Value, (ushort)_yCord_PartContainer[i].Value))) {
+                        if (!filter.MaskCords.Contains((_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
                             chipsFilter.Add(i);
                             continue;
                         }
