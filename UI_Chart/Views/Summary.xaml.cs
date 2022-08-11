@@ -1,5 +1,5 @@
 ﻿using SciChart.Charting.Model.DataSeries;
-using SciChart.Examples.ExternalDependencies.Data;
+using System.Linq;
 using System.Windows.Controls;
 
 namespace UI_Chart.Views {
@@ -13,12 +13,10 @@ namespace UI_Chart.Views {
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e) {
             // Create a data series of type X=double, Y=double
-            var dataSeries = new XyDataSeries<double, double>();
-
-            var data = DataManager.Instance.GetDampedSinewave(1.0, 0.02, 200);
+            var dataSeries = new XyDataSeries<int, int>();
 
             // Append data to series. SciChart automatically redraws
-            dataSeries.Append(data.XData, data.YData);
+            dataSeries.Append(Enumerable.Range(0, 2).ToArray(), Enumerable.Range(0, 2).ToArray());
 
             scatterRenderSeries.DataSeries = dataSeries;
 
