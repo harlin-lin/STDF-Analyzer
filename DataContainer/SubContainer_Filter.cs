@@ -22,7 +22,7 @@ namespace DataContainer {
             int key = System.DateTime.UtcNow.Ticks.GetHashCode();
             while (_filterContainer.ContainsKey(key)) key++;
 
-            _filterContainer.Add(key, new Filter(_partIdx+1, _itemContainer.Count));
+            _filterContainer.Add(key, new Filter(_partIdx + 1, _itemContainer.Count));
             _filterSetupContainer.Add(key, new FilterSetup(""));
 
             ResetFilterStatistic(key);
@@ -67,7 +67,7 @@ namespace DataContainer {
             CurrentLoadingProgress = 0;
             OnPropertyChanged("CurrentLoadingProgress");
 
-            _filterContainer[filterId].FilteredPartIdx = from i in Enumerable.Range(0, _partIdx + 1)
+            _filterContainer[filterId].FilteredPartIdx = from i in Enumerable.Range(0, _partIdx+1)
                                                          where !_filterContainer[filterId].FilterIdxFlag[i]
                                                          select i;
 

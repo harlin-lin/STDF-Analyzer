@@ -26,6 +26,7 @@ namespace DataContainer {
 
         private Dictionary<string, List<DataBlock_Float>> _dataBase_Result;
         private Dictionary<string, ItemInfo> _itemContainer;
+        private int _preIdx;
         private int _partIdx;
         //mark the current site corresponding part index
         private Dictionary<byte, int> _siteContainer;
@@ -39,6 +40,7 @@ namespace DataContainer {
         private void Initialize_RawData() {
             _dataBase_Result = new Dictionary<string, List<DataBlock_Float>>(DEFAULT_ITEMS_COUNT);
             _itemContainer = new Dictionary<string, ItemInfo>(DEFAULT_ITEMS_COUNT);
+            _preIdx = -1;
             _partIdx = -1;
             _siteContainer = new Dictionary<byte, int>();
             _basicInfo = new Dictionary<string, string>(50);
@@ -52,7 +54,7 @@ namespace DataContainer {
                 _itemContainer.Add(uid, null);
                 _dataBase_Result.Add(uid, new List<DataBlock_Float>(200));
 
-                var requiredBlockCnt = (_partIdx >> 12) + 1;
+                var requiredBlockCnt = (_preIdx >> 12) + 1;
                 var currentBlockCnt = _dataBase_Result[uid].Count;
                 for (int i = 0; i < (requiredBlockCnt - currentBlockCnt); i++) {
                     _dataBase_Result[uid].Add(new DataBlock_Float((currentBlockCnt + i) * DataBlock_Float.BLOCK_SIZE));
@@ -64,8 +66,8 @@ namespace DataContainer {
 
         private void AdjustDataBaseCapcity() {
             foreach(var v in _dataBase_Result) {
-                if (v.Value.Count <= (_partIdx >> 12)) {
-                    var requiredBlockCnt = (_partIdx >> 12) + 1;
+                if (v.Value.Count <= (_preIdx >> 12)) {
+                    var requiredBlockCnt = (_preIdx >> 12) + 1;
                     var currentBlockCnt = v.Value.Count;
                     for (int i = 0; i < (requiredBlockCnt - currentBlockCnt); i++) {
                         v.Value.Add(new DataBlock_Float((currentBlockCnt + i) * DataBlock_Float.BLOCK_SIZE));

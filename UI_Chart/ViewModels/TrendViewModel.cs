@@ -26,7 +26,7 @@ namespace UI_Chart.ViewModels {
         SubData _subData;
         List<string> _selectedIds;
 
-        private int _deviceCount;
+        private int _deviceCount, _ubound;
 
         private float _allsigmaLowTrend, _allsigmaHighTrend, _allminTrend, _allmaxTrend;
         private float _allsigmaLowHisto, _allsigmaHighHisto, _allminHisto, _allmaxHisto;
@@ -444,11 +444,13 @@ namespace UI_Chart.ViewModels {
                 IfShowLegendCheckBox = true;
             }
             _deviceCount = da.GetFilteredChipsCount(_subData.FilterId);
-
-            if(_deviceCount == 0) {
+            if (_deviceCount == 0) {
+                _ubound = 1;
                 _dataValid = false;
                 ClearChart();
                 return;
+            } else {
+                _ubound = da.GetFilteredPartIndex(_subData.FilterId).Last() + 1;
             }
 
             var xs = da.GetFilteredPartIndex(_subData.FilterId);
@@ -468,7 +470,7 @@ namespace UI_Chart.ViewModels {
             }
             RaisePropertyChanged("TrendSeries");
 
-            _xRangeTrend.SetMinMax(1, _deviceCount);
+            _xRangeTrend.SetMinMax(1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UpdateTrendViewRange();
@@ -796,7 +798,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _deviceCount);
+            _xRangeTrend.SetMinMax(1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allsigmaLowTrend.ToString("f3");
@@ -813,7 +815,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _deviceCount);
+            _xRangeTrend.SetMinMax(1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allminTrend.ToString("f3");
@@ -833,7 +835,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(l - ov, h + ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _deviceCount);
+            _xRangeTrend.SetMinMax(1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = l.ToString("f3");
@@ -857,7 +859,7 @@ namespace UI_Chart.ViewModels {
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
-            _xRangeTrend.SetMinMax(1, _deviceCount);
+            _xRangeTrend.SetMinMax(1, _ubound);
             RaisePropertyChanged("XRangeTrend");
         }
 

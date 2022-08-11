@@ -16,9 +16,8 @@ namespace DataContainer {
         }
 
         public void AddPir(byte siteNum) {
-            _partIdx +=1 ;
-            _siteContainer[siteNum] = _partIdx;
-            _allIndex.Add(_partIdx);
+            _preIdx +=1 ;
+            _siteContainer[siteNum] = _preIdx;
             AdjustDataBaseCapcity();
         }
 
@@ -56,6 +55,10 @@ namespace DataContainer {
             }
             _chipType_PartContainer.Add(deviceType);
             _resultType_PartContainer.Add(result);
+            if (_partIdx < _preIdx) {
+                _partIdx += 1;
+                _allIndex.Add(_partIdx);
+            }
         }
 
         public ItemInfo IfContainItemInfo(string uid) {
@@ -142,7 +145,8 @@ namespace DataContainer {
             SetReadingPercent(2);
 
             int start = _partIdx + 1;
-            _partIdx += da._partIdx+1;
+            _preIdx += da._preIdx+1;
+            _partIdx += da._partIdx + 1;
             AdjustDataBaseCapcity();
             SetReadingPercent(5);
             double p = 1.0;

@@ -49,7 +49,7 @@ namespace DataContainer {
             _allIndex.TrimExcess();
             _partStatistic = new PartStatistic(_siteContainer.Keys);
 
-            //if (_site_PartContainer.Count - 1 != _partIdx) throw new Exception("Error");
+            //if (_site_PartContainer.Count - 1 != _preIdx) throw new Exception("Error");
 
             UInt32 totalTime = 0;
             UInt32 totalTimePassOnly = 0;
@@ -69,7 +69,15 @@ namespace DataContainer {
                 } else {
                     _partStatistic.SoftBinBySite[sn].Add(_softBin_PartContainer[i], 1);
                 }
-                
+
+                if (!_hardBinNames.ContainsKey(_hardBin_PartContainer[i])) {
+                    _hardBinNames.Add(_hardBin_PartContainer[i], new Tuple<string, string>("", ""));
+                }
+                if (!_softBinNames.ContainsKey(_softBin_PartContainer[i])) {
+                    _softBinNames.Add(_softBin_PartContainer[i], new Tuple<string, string>("", ""));
+                }
+
+
                 switch (_chipType_PartContainer[i]) {
                     case DeviceType.Fresh:
                         _partStatistic.FreshCntBySite[sn] += 1;
@@ -175,7 +183,6 @@ namespace DataContainer {
             UInt32 totalTime = 0;
             UInt32 totalTimePassOnly = 0;
 
-            //for (int i = 0; i <= _partIdx; i++) {
             foreach (var i in filter.FilteredPartIdx) { 
                 var sn = _site_PartContainer[i];
                 filter.FilterPartStatistic.SiteCnt[sn] += 1;
