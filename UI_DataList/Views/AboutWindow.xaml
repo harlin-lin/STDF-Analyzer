@@ -1,0 +1,24 @@
+﻿<Window x:Class="UI_DataList.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI_DataList.Views"
+        mc:Ignorable="d"
+        Title="About" Height="500" Width="400" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBlock Margin="5" Text="SA StdfAnalyzer" FontSize="15" HorizontalAlignment="Center"/>
+            <TextBlock Margin="5" Text="Author: Harlin Zhang" HorizontalAlignment="Center"/>
+            <TextBlock Margin="5" Text="Mail:harlin_zhang@outlook.com" HorizontalAlignment="Center"/>
+            <TextBlock Margin="5" Text="关注下方公众号获得最新版本和使用说明~" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <Image Source="/SillyMonkey.Core;component/Resource/icon/SA_qrcode.jpg" Height="258" Width="258" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -118,5 +118,8 @@
     <Resource Include="Resource\icon\Entypo-AlignLeft.png" />
     <Resource Include="Resource\icon\Entypo-AlignRight.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\SA_qrcode.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

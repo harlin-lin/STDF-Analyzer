@@ -75,6 +75,9 @@
     <Compile Include="ViewModels\DataManagementViewModel.cs" />
     <Compile Include="ViewModels\DataSummaryViewModel.cs" />
     <Compile Include="ViewModels\TopMenuViewModel.cs" />
+    <Compile Include="Views\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\BottomStrip.xaml.cs">
       <DependentUpon>BottomStrip.xaml</DependentUpon>
     </Compile>
@@ -124,6 +127,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\BottomStrip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

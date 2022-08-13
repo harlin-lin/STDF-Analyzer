@@ -19,7 +19,6 @@
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Command="{Binding Path=CmdAbout}"/>
-                <MenuItem Header="Help" Command="{Binding Path=CmdHelp}"/>
             </MenuItem>
         </Menu>
     </StackPanel>
