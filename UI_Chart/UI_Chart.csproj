@@ -90,6 +90,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ViewModels\BoxViewModel.cs" />
+    <Compile Include="ViewModels\FastDataGridModel.cs" />
     <Compile Include="ViewModels\PieViewModel.cs" />
     <Compile Include="ViewModels\RawViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
@@ -135,6 +136,10 @@
     <ProjectReference Include="..\DataContainer\DataContainer.csproj">
       <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
       <Name>DataContainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
+      <Project>{e9d6f03c-bfb5-4d31-a15e-7f789b4bbcc3}</Project>
+      <Name>FastWpfGrid</Name>
     </ProjectReference>
     <ProjectReference Include="..\MapBase\MapBase.csproj">
       <Project>{d51805d7-6133-4db3-9f5c-0fc506165d59}</Project>
