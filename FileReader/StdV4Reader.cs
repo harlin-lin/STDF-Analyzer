@@ -49,7 +49,11 @@ namespace FileReader {
                 if (!ValidFile()) return ReadStatus.FileInvalid;
                 long length = _stream.Length;
 
-                System.Threading.Timer myTimer = new System.Threading.Timer((x)=> { _dc.SetReadingPercent((int)(_stream.Position * 100.0 / length)); }, null, 100, 100);
+                System.Threading.Timer myTimer = new System.Threading.Timer((x)=> {
+                    if (_stream.CanRead) {
+                        _dc.SetReadingPercent((int)(_stream.Position * 100.0 / length));
+                    } 
+                }, null, 100, 100);
 
                 byte[] buf = new byte[4];
                 ushort len = 0;
