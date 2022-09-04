@@ -40,6 +40,10 @@ namespace UI_DataList.ViewModels {
         }
 
         private string GenerateBriefSummary(string filePath) {
+            if (string.IsNullOrEmpty(filePath)) {
+                return string.Empty;
+            }
+
             StringBuilder sb = new StringBuilder();
             var dataAcquire = StdDB.GetDataAcquire(filePath);
             var statistic = dataAcquire.GetPartStatistic();

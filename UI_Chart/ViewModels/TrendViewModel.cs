@@ -464,7 +464,7 @@ namespace UI_Chart.ViewModels {
 
                 TrendSeries.Add(new LineRenderableSeriesViewModel {
                     DataSeries = series,
-                    Stroke = SillyMonkeySetup.GetColor(i)
+                    Stroke = SA.GetColor(i)
                 });
 
             }
@@ -664,7 +664,7 @@ namespace UI_Chart.ViewModels {
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,
                     Stroke = Colors.DarkBlue,
-                    Fill = new SolidColorBrush(SillyMonkeySetup.GetColor(i)),
+                    Fill = new SolidColorBrush(SA.GetColor(i)),
                     DataPointWidth = 1
                 });
 

@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
-
+using Newtonsoft.Json;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Utils {
-    public enum ChartAxis {
-        Sigma,
-        MinMax,
-        Limit,
-        User
-    }
-    public static class SillyMonkeySetup {
+
+    public static class SA {
+        public static UserSetup SaUserSetup;
+        const string SetupPath = @".\SaUserSetup.json";
+
         private static bool _ifCmpTextInUid = false;
 
         private static Color[] ColorList = {
@@ -37,29 +37,29 @@ namespace Utils {
         };
 
         public static void Init() {
-            object val = null;
-            try {
-                if(ReadFromReg("IfCmpTextInUid", out val)) {
-                    if(!(val is null)) {
-                        _ifCmpTextInUid = (bool)val;
-                    }
+            if (File.Exists(SetupPath)) {
+                try {
+                    SaUserSetup = JsonConvert.DeserializeObject<UserSetup>(File.ReadAllText(SetupPath));
+                    return;
+                } catch {
+                    SaUserSetup = new UserSetup();
                 }
             }
-            catch {
-                System.Diagnostics.Debug.Print("Init Setup Fail");
+            SaUserSetup = new UserSetup();
+            SaveSetup();
+        }
+        
+        private static void SaveSetup() {
+            try {
+                string output = JsonConvert.SerializeObject(SaUserSetup);
+                File.WriteAllText(SetupPath, output);
+            } catch {
+                MessageBox.Show("Setup save failed");
             }
         }
 
         public static void ApplyAndSave() {
-            try {
-                if(!WriteToReg("IfCmpTextInUid", _ifCmpTextInUid)) {
-                    System.Diagnostics.Debug.Print("Save Setup Fail");
-                }
-            }
-            catch {
-                System.Diagnostics.Debug.Print("Init Setup Fail");
-            }
-
+            SaveSetup();
         }
 
         public static bool IfCmpTextInUid { 

@@ -25,7 +25,7 @@ namespace FileReader {
     }
 
     public class StdV4Reader : IDisposable {
-        const int BufferSize = 409600;
+        const int BufferSize = 4096 * 1000;
         public static int ExpectItemCounts = 500;
 
         private FileStream _stream;
@@ -44,8 +44,15 @@ namespace FileReader {
         public ReadStatus ReadRaw(IDataCollect dc) {
             InitBuffer();
             _dc = dc;
+            var s = new System.Diagnostics.Stopwatch();
+            s.Start();
+            //var bf = File.ReadAllBytes(_path);
+            //s.Stop();
+            //Console.WriteLine("Read to Mem:" + s.ElapsedMilliseconds);
 
+            //s.Restart();
             using (_stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize)) {
+                //using (_stream = new MemoryStream(bf)) {
                 if (!ValidFile()) return ReadStatus.FileInvalid;
                 long length = _stream.Length;
 
@@ -68,8 +75,10 @@ namespace FileReader {
                 myTimer.Dispose();
                 //_sq.StopTransaction();
             }
-
+            s.Stop();
+            Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
             return ReadStatus.Done;
+
         }
 
         private bool ReadRecordHeader(byte[] buf) {
@@ -422,10 +431,11 @@ namespace FileReader {
                     unit = rdCn(record, i, len);
                 }
                 i += (ushort)(1 + unit.Length);
-                _dc.UpdateItemInfo(id.GetUID(), new ItemInfo(txt, ll, hl, unit, llScal, hlScal, resScal));
+                info = new ItemInfo(txt, ll, hl, unit, llScal, hlScal, resScal);
+                _dc.UpdateItemInfo(id.GetUID(), info);
             }
 
-            info = _dc.GetTestInfo(id.GetUID());
+            //info = _dc.GetTestInfo(id.GetUID());
 
             //means use last test limt
             if (info == null) {

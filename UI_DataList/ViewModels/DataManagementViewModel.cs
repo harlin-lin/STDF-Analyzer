@@ -327,6 +327,11 @@ namespace UI_DataList.ViewModels {
             _selectData ?? (_selectData = new DelegateCommand<object>(ExecuteSelectData));
 
         void ExecuteSelectData(object x) {
+            if (x is null) {
+                // all files closed, publish event
+                _ea.GetEvent<Event_DataSelected>().Publish(string.Empty);
+                return;
+            }
             if (x.GetType().Name == "FileNode") {
                 if((x as FileNode).ExtractedDone)
                     _ea.GetEvent<Event_DataSelected>().Publish((x as FileNode).FilePath);

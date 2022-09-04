@@ -37,17 +37,17 @@ namespace FileReader {
         public string FileName { get; private set; }
 
         public void ExtractStdf() {
-            var s = new System.Diagnostics.Stopwatch();
+            //var s = new System.Diagnostics.Stopwatch();
             using(StdV4Reader _v4Reader = new StdV4Reader(FilePath)) {
                 var dc = StdDB.GetDataCollect(FilePath);
                 try {
-                    s.Start();
+                    //s.Start();
                     _v4Reader.ReadRaw(dc);
-                    s.Stop();
+                    //s.Stop();
                     //Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
-                    s.Restart();
+                    //s.Restart();
                     dc.AnalyseData();
-                    s.Stop();
+                    //s.Stop();
                     //Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
                 }
                 catch {

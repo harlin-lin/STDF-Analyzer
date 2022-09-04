@@ -23,8 +23,6 @@ namespace DataContainer
 
     public static class StdDB{
 
-        public static bool IfCmpTextInUid = false;
-
         private static ConcurrentDictionary<string, SubContainer> _subContainers = new ConcurrentDictionary<string, SubContainer>();
 
         public static List<string> GetAllFiles() {

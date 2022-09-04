@@ -143,8 +143,8 @@ namespace UI_DataList.ViewModels {
             string pgmPath = str + "\\SillyMonkey.exe";
             string icoPath = str + "\\SA_48.ico";
             try {
-                Utils.SillyMonkeySetup.SetFileOpenApp(".std", pgmPath, icoPath);
-                Utils.SillyMonkeySetup.SetFileOpenApp(".stdf", pgmPath, icoPath);
+                Utils.SA.SetFileOpenApp(".std", pgmPath, icoPath);
+                Utils.SA.SetFileOpenApp(".stdf", pgmPath, icoPath);
             }
             catch {
                 System.Windows.Forms.MessageBox.Show("Failed to set the default pgm");

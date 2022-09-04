@@ -54,7 +54,7 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                 <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveTrend, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
@@ -136,7 +136,7 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
             </StackPanel>
-            <ToggleButton Grid.Column="1" x:Name="tgPopTrend" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent">
+            <ToggleButton Grid.Column="1" Width="20" Height="20" x:Name="tgPopTrend" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent" HorizontalAlignment="Left">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />
             </ToggleButton>
             <Popup x:Name="popTrend" IsOpen="{Binding ElementName=tgPopTrend, Path=IsChecked, Mode=TwoWay}"  
@@ -201,7 +201,7 @@
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="25"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
@@ -283,7 +283,7 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
             </StackPanel>
-            <ToggleButton Grid.Column="1" x:Name="tgPopHisto" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent">
+            <ToggleButton Grid.Column="1" Width="20" Height="20" x:Name="tgPopHisto" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent" HorizontalAlignment="Left">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />
             </ToggleButton>
             <Popup x:Name="popHisto" IsOpen="{Binding ElementName=tgPopHisto, Path=IsChecked, Mode=TwoWay}"  

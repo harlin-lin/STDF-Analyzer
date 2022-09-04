@@ -5,16 +5,145 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI_DataList.Views"
         mc:Ignorable="d"
-        Title="SetupWindow" Height="200" Width="400">
+        Title="SetupWindow" Height="400" Width="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <CheckBox Content="Use Test Text In Item Uid" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="{Binding IfCmpTextInUid}" Margin="10,10,0,0"/>
-        </Grid>
+        <TabControl Grid.Row="0" >
+            <TabItem Header="Data">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Item Uid Mode:" VerticalAlignment="Center" Width="150" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding UidTypeList}" SelectedItem="{Binding SelectedUidMode}" Width="150" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Histogram">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Chart Axis:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding ChartAxisTypeList}" SelectedItem="{Binding SelectedHistogramChartAxis}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Axis Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedHistogramChartAxisSigmaRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Outlier Filter:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableOutlierFilter}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Outlier Filter Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedHistogramOutlierFilterRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Limit Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableLimitLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable 6 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableSigma6Line}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable 3 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableSigma3Line}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Min Max Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableMinMaxLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Mean Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableMeanLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Median Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding HistogramEnableMedianLine}" Margin="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Trend">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Chart Axis:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding ChartAxisTypeList}" SelectedItem="{Binding SelectedTrendChartAxis}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Axis Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedTrendChartAxisSigmaRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Outlier Filter:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableOutlierFilter}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Outlier Filter Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedTrendOutlierFilterRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Limit Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableLimitLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable 6 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableSigma6Line}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable 3 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableSigma3Line}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Min Max Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableMinMaxLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Mean Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableMeanLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Median Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding TrendEnableMedianLine}" Margin="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="DataCorr">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Chart Axis:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding ChartAxisTypeList}" SelectedItem="{Binding SelectedCorrHistogramChartAxis}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Axis Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedCorrHistogramChartAxisSigmaRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Outlier Filter:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding CorrHistogramEnableOutlierFilter}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Outlier Filter Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedCorrHistogramOutlierFilterRange}" Width="150" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="ItemCorr">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Outlier Filter:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding ItemCorrEnableOutlierFilter}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Outlier Filter Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedItemCorrOutlierFilterRange}" Width="150" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
         <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Vertical">
             <Button Content="Apply" Width="100" Command="{Binding Apply}"/>
         </StackPanel>

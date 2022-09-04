@@ -318,7 +318,7 @@ namespace UI_Chart.ViewModels {
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,
                     Stroke = Colors.DarkBlue,
-                    Fill = new SolidColorBrush(SillyMonkeySetup.GetColor(i)),
+                    Fill = new SolidColorBrush(SA.GetColor(i)),
                     DataPointWidth = 1
                 });
 

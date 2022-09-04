@@ -65,7 +65,7 @@ namespace SillyMonkey.ViewModels
             mainWindowLoaded ?? (mainWindowLoaded = new DelegateCommand(MainWindow_LoadExecute));
 
         private void MainWindow_LoadExecute() {
-            SillyMonkeySetup.Init();
+            SA.Init();
 
             string[] commandLineArgs = Environment.GetCommandLineArgs(); // [a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*([a-zA-Z0-9]+.*)
 
