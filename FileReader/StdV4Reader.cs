@@ -388,7 +388,10 @@ namespace FileReader {
                 return;
 
             var result = rdR4(record, i, len); i += 4;
-            var txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
+            string txt="";
+            if (i < len) {
+                txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
+            }
 
             TestID id;
             if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {
@@ -469,8 +472,10 @@ namespace FileReader {
 
                 var stat = rdKxN1(record, i, len, rtnCnt); i += (ushort)(rtnCnt / 2 + rtnCnt % 2);
                 var rsts = rdKxR4(record, i, len, rstCnt); i += (ushort)(rstCnt * 4);
-                var txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
-
+                string txt = "";
+                if (i < len) {
+                    txt = rdCn(record, i, len); i += (ushort)(1 + txt.Length);
+                }
 
                 TestID id;
                 if (!_lastUidBySite[sn].IfSubTest(tn, txt)) {

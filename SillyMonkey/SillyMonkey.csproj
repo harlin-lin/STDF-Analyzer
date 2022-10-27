@@ -53,10 +53,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>79EDCAC06373A777AFA5352065270A3E52E42B16</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>91F6EEBB1CFB23691FB88F6DD2F2FD8F2CCCFCBC</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>SillyMonkey_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>SillyMonkey_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -153,6 +153,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="SillyMonkey_1_TemporaryKey.pfx" />
     <None Include="SillyMonkey_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
