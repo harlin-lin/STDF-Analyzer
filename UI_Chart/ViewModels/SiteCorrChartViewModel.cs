@@ -18,13 +18,14 @@ using System.Text;
 using System.Windows.Media;
 using Utils;
 
+
 namespace UI_Chart.ViewModels {
-    public class CorrChartViewModel : BindableBase {
+    public class SiteCorrChartViewModel : BindableBase {
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
         string _selectedId;
-        List<SubData> _subDataList = new List<SubData>();
+        SubData _subData;
 
 
         private float _sigmaLow, _sigmaHigh, _min, _max;
@@ -108,7 +109,7 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _itemTitle, value); }
         }
 
-        private bool _ignoreOutlierHisto=true;
+        private bool _ignoreOutlierHisto = true;
         public bool IgnoreOutlierHisto {
             get { return _ignoreOutlierHisto; }
             set { SetProperty(ref _ignoreOutlierHisto, value); }
@@ -131,15 +132,15 @@ namespace UI_Chart.ViewModels {
         }
         #endregion
 
-        public CorrChartViewModel(IRegionManager regionManager, IEventAggregator ea) {
+        public SiteCorrChartViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_CorrItemSelected>().Subscribe(UpdateItems);
+            _ea.GetEvent<Event_SiteCorrItemSelected>().Subscribe(UpdateItems);
             _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
         }
 
         private void UpdateView(SubData data) {
-            if (_subDataList.Contains(data)) {
+            if (_subData.Equals(data)) {
                 UpdateView();
             }
         }
@@ -155,8 +156,8 @@ namespace UI_Chart.ViewModels {
             StringBuilder sb_cpk = new StringBuilder();
             StringBuilder sb_sigma = new StringBuilder();
 
-            sb_subData.Append($"{"SubData:",-13}");
-            sb_mean.Append($"{"Mean:", -13}");
+            sb_subData.Append($"{"Site:",-13}");
+            sb_mean.Append($"{"Mean:",-13}");
             sb_median.Append($"{"Median:",-13}");
             sb_min.Append($"{"Min:",-13}");
             sb_max.Append($"{"Max:",-13}");
@@ -164,22 +165,23 @@ namespace UI_Chart.ViewModels {
             sb_cpk.Append($"{"CPK:",-13}");
             sb_sigma.Append($"{"Sigma:",-13}");
 
-            for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
-                var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+            var sites = da.GetSites();
+            for (int i = 0; i < sites.Length; i++) {
                 if (!da.IfContainsTestId(_selectedId)) continue;
 
-                var statistic_raw = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
+                var statistic_raw = da.GetFilteredStatisticBySite(_subData.FilterId, _selectedId, sites[i]);
                 ItemStatistic statistic;
 
                 if (_ignoreOutlierHisto) {
-                    statistic = da.GetFilteredStatisticIgnoreOutlier(_subDataList[i].FilterId, _selectedId, SigmaByIdx(OutlierRangeIdxHisto));
+                    statistic = da.GetFilteredStatisticIgnoreOutlierBySite(_subData.FilterId, _selectedId, SigmaByIdx(OutlierRangeIdxHisto), sites[i]);
                 } else {
                     statistic = statistic_raw;
                 }
 
                 //var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
-                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-13}");
+                sb_subData.Append($"{sites[i].ToString(),-13}");
                 sb_mean.Append($"{statistic.MeanValue,-13}");
                 sb_median.Append($"{statistic.MedianValue,-13}");
                 sb_min.Append($"{statistic.MinValue,-13}");
@@ -206,7 +208,7 @@ namespace UI_Chart.ViewModels {
                     var item = da.GetTestInfo(_selectedId);
                     sb.Append($"{_selectedId,-13}");
                     sb.Append($"{item.TestText}\r\n");
-                    sb.Append($"{"Lo Limit:", -13}{item.LoLimit, -13}{item.Unit,-13}\r\n");
+                    sb.Append($"{"Lo Limit:",-13}{item.LoLimit,-13}{item.Unit,-13}\r\n");
                     sb.Append($"{"Hi Limit:",-13}{item.HiLimit,-13}{item.Unit,-13}\r\n");
                 } else {
                     _min = statistic.MinValue < _min ? statistic.MinValue : _min;
@@ -260,9 +262,8 @@ namespace UI_Chart.ViewModels {
 
 
 
-        void UpdateItems(Tuple<string, IEnumerable<SubData>> para) {
-            _subDataList.Clear();
-            _subDataList.AddRange(para.Item2);
+        void UpdateItems(Tuple<string, SubData> para) {
+            _subData = para.Item2;
             _selectedId = para.Item1;
 
             UpdateView();
@@ -296,23 +297,24 @@ namespace UI_Chart.ViewModels {
         }
 
         void UpdateHistoSeries(float start, float stop) {
-            if (_selectedId == null || _subDataList.Count == 0) return;
+            if (_selectedId == null || _subData.FilterId == 0) return;
             var maxCnt = 0;
             HistoSeries.Clear();
 
             if (float.IsNaN(start) || float.IsInfinity(start) || float.IsNaN(stop) || float.IsInfinity(stop)) return;
 
-            for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+            var sites = da.GetSites();
+            for (int i = 0; i < sites.Length; i++) {
 
-                var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
                 if (!da.IfContainsTestId(_selectedId)) continue;
 
-                var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
+                var data = da.GetFilteredItemDataBySite(_selectedId, _subData.FilterId, sites[i]);
 
                 var histo = GetHistogramData(start, stop, data);
                 var series = new XyDataSeries<float, int>();
                 series.Append(histo.Item1, histo.Item2);
-                series.SeriesName = $"F_{i}:{_subDataList[i].FilterId:X8}";
+                series.SeriesName = $"S:{sites[i]}";
 
                 HistoSeries.Add(new ColumnRenderableSeriesViewModel {
                     DataSeries = series,
@@ -351,8 +353,7 @@ namespace UI_Chart.ViewModels {
 
             try {
                 stream = file.Open(FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 //the file is unavailable because it is:
                 //still being written to
                 //or being processed by another thread
@@ -407,12 +408,11 @@ namespace UI_Chart.ViewModels {
 
         void ExecuteCmdSaveHisto(object e) {
             string filePath;
-            if (_selectedId == null || _subDataList.Count == 0) {
+            if (_selectedId == null || _subData.FilterId == 0) {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            string dftName = _selectedId + "_CorrHisto";
-            if (_subDataList.Count > 1) dftName += "_cmp";
+            string dftName = _selectedId + "_SiteCorrHisto";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
             }
@@ -424,7 +424,7 @@ namespace UI_Chart.ViewModels {
             _CmdCopy ?? (_CmdCopy = new DelegateCommand<object>(ExecuteCmdCopy));
 
         void ExecuteCmdCopy(object e) {
-            if (_selectedId == null || _subDataList.Count == 0) {
+            if (_selectedId == null || _subData.FilterId == 0) {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
@@ -476,8 +476,7 @@ namespace UI_Chart.ViewModels {
                 float.TryParse(UserHistoLowRange, out l);
                 float.TryParse(UserHistoHighRange, out h);
                 UpdateHistoSeries(l, h);
-            }
-            catch {
+            } catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
         }
@@ -506,6 +505,5 @@ namespace UI_Chart.ViewModels {
         void ExecuteCmdToggleOutlierHisto() {
             UpdateView();
         }
-
     }
 }

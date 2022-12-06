@@ -93,6 +93,7 @@
     <Compile Include="ViewModels\FastDataGridModel.cs" />
     <Compile Include="ViewModels\PieViewModel.cs" />
     <Compile Include="ViewModels\RawViewModel.cs" />
+    <Compile Include="ViewModels\SiteCorrChartViewModel.cs" />
     <Compile Include="ViewModels\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CorrChartViewModel.cs" />
     <Compile Include="ViewModels\TrendViewModel.cs" />
@@ -106,6 +107,9 @@
     </Compile>
     <Compile Include="Views\Raw.xaml.cs">
       <DependentUpon>Raw.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SiteCorrChart.xaml.cs">
+      <DependentUpon>SiteCorrChart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Summary.xaml.cs">
       <DependentUpon>Summary.xaml</DependentUpon>
@@ -164,6 +168,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Raw.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SiteCorrChart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

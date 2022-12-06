@@ -137,5 +137,11 @@ namespace DataContainer {
             }
         }
 
+        private IEnumerable<float> GetItemValBySite(string uid, Filter filter, byte site) {
+            return from i in Enumerable.Range(0, _partIdx + 1)
+                    where !filter.FilterIdxFlag[i] && _site_PartContainer[i]==site
+                    select GetItemVal(uid, i);
+        }
+
     }
 }

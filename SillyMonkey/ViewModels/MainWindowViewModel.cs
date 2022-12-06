@@ -35,7 +35,7 @@ namespace SillyMonkey.ViewModels
             selectSubdata ?? (selectSubdata = new DelegateCommand<object>(ExecuteSelectSubData));
 
         void ExecuteSelectSubData(object parameter) {
-            if (parameter is null) return;
+            if (parameter is null || !parameter.GetType().Name.Equals("DataRaw")) return;
             var view = (parameter as UI_Data.Views.DataRaw).DataContext as DataRawViewModel;
             if (view.CurrentData.HasValue) {
                 _ea.GetEvent<Event_SubDataTabSelected>().Publish(view.CurrentData.Value);

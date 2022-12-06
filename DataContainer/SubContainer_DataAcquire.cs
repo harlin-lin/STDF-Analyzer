@@ -141,6 +141,10 @@ namespace DataContainer {
             return GetItemVal(testID, startIndex, count, _filterContainer[filterId]);
         }
 
+        public IEnumerable<float> GetFilteredItemDataBySite(string testID, int filterId, byte site) {
+            return GetItemValBySite(testID, _filterContainer[filterId], site);
+        }
+
         public IEnumerable<Item> GetFilteredItemStatistic(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");
 
@@ -150,6 +154,23 @@ namespace DataContainer {
             return from i in Enumerable.Range(1, _itemContainer.Count)
                    let item = _itemContainer.ElementAt(i-1)
                    select new Item(i, item.Key, item.Value, _filterContainer[filterId].FilterItemStatistics[item.Key]);
+        }
+
+        public IEnumerable<Item> GetFilteredItemStatisticBySite(int filterId, byte site) {
+
+            var filterItemStatistics = new ConcurrentDictionary<string, ItemStatistic>(from i in Enumerable.Range(0, _itemContainer.Count)
+                                                                                          let v = new KeyValuePair<string, ItemStatistic>(_itemContainer.ElementAt(i).Key, null)
+                                                                                          select v);
+
+            Parallel.For(0, _filterContainer[filterId].FilterItemStatistics.Count, (x) => {
+                var key = _filterContainer[filterId].FilterItemStatistics.ElementAt((int)x).Key;
+                _filterContainer[filterId].FilterItemStatistics[key] = new ItemStatistic(GetItemValBySite(key, _filterContainer[filterId], site), _itemContainer[key].LoLimit, _itemContainer[key].HiLimit);
+            });
+
+            return from i in Enumerable.Range(1, _itemContainer.Count)
+                   let item = _itemContainer.ElementAt(i - 1)
+                   select new Item(i, item.Key, item.Value, filterItemStatistics[item.Key]);
+
         }
 
         public bool IfContainsTestId(string uid) {
@@ -211,6 +232,25 @@ namespace DataContainer {
 
             return new ItemStatistic(data, item.LoLimit, item.HiLimit);
         }
+
+        public ItemStatistic GetFilteredStatisticBySite(int filterId, string uid, byte site) {
+            return new ItemStatistic(GetItemValBySite(uid, _filterContainer[filterId], site), _itemContainer[uid].LoLimit, _itemContainer[uid].HiLimit);
+
+        }
+        public ItemStatistic GetFilteredStatisticIgnoreOutlierBySite(int filterId, string uid, int rangeBySigma, byte site) {
+            var item = _itemContainer[uid];
+            var raw = GetItemValBySite(uid, _filterContainer[filterId], site);
+            var st = new ItemStatistic(raw, item.LoLimit, item.HiLimit);
+            var l = st.GetSigmaRangeLow(rangeBySigma);
+            var h = st.GetSigmaRangeHigh(rangeBySigma);
+            var data = from r in raw
+                       where r >= l && r <= h
+                       select r;
+
+            return new ItemStatistic(data, item.LoLimit, item.HiLimit);
+        }
+
+
 
         public PartStatistic GetFilteredPartStatistic(int filterId) {
             if (!_filterContainer.ContainsKey(filterId)) throw new Exception("No Such Filter Id");

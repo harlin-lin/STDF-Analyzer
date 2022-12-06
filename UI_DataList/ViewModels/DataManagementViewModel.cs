@@ -411,6 +411,22 @@ namespace UI_DataList.ViewModels {
             CloseSubData((parameter as FilterNode).SubData);
         }
 
+        private DelegateCommand<object> _cmdSiteDataCorr;
+        public DelegateCommand<object> CmdSiteDataCorr =>
+            _cmdSiteDataCorr ?? (_cmdSiteDataCorr = new DelegateCommand<object>(ExecuteCmdSiteDataCorr));
+
+        void ExecuteCmdSiteDataCorr(object parameter) {
+            var f = (parameter as FilterNode);
+
+            var parameters = new NavigationParameters();
+            parameters.Add("subData", f.SubData);
+            parameters.Add("fileIdx", f.ParentNode.FileIdx);
+            parameters.Add("filterIdx", f.FilterIdx);
+            _regionManager.RequestNavigate("Region_DataView", "SiteDataCorrelation", parameters);
+
+        }
+
+
         private void Log(string s) {
             _ea.GetEvent<Event_Log>().Publish(s);
         }

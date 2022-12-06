@@ -7,7 +7,6 @@ using Prism.Regions;
 using SciChart.Charting.Model.ChartSeries;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Charting.Visuals;
-using SciChart.Charting.Visuals.Axes;
 using SciChart.Data.Model;
 using SillyMonkey.Core;
 using System;

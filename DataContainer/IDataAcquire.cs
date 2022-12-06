@@ -125,6 +125,13 @@ namespace DataContainer{
         IEnumerable<Item> GetFilteredItemStatistic(int filterId);
         IEnumerable<int> GetFilteredPartIndex(int filterId);
 
+        IEnumerable<float> GetFilteredItemDataBySite(string testID, int filterId, byte site);
+        //IEnumerable<int> GetFilteredPartIndexBySite(int filterId, byte site);
+        IEnumerable<Item> GetFilteredItemStatisticBySite(int filterId, byte site);
+        ItemStatistic GetFilteredStatisticBySite(int filterId, string uid, byte site);
+        ItemStatistic GetFilteredStatisticIgnoreOutlierBySite(int filterId, string uid, int rangeBySigma, byte site);
+
+
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
         ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma);
         PartStatistic GetFilteredPartStatistic(int filterId);

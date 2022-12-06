@@ -15,6 +15,7 @@ namespace UI_Data
         {
             containerRegistry.RegisterForNavigation<DataRaw>();
             containerRegistry.RegisterForNavigation<DataCorrelation>();
+            containerRegistry.RegisterForNavigation<SiteDataCorrelation>();
         }
     }
 }

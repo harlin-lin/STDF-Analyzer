@@ -38,6 +38,7 @@
                 <TextBlock Text="{Binding NodeName}"/>
                 <StackPanel.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="Show Site Correlation" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdSiteDataCorr}" CommandParameter="{Binding}"/>
                         <MenuItem Header="Close Filtered Data" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                 </StackPanel.ContextMenu>

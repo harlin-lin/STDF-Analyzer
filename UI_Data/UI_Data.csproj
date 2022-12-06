@@ -85,11 +85,15 @@
     </Compile>
     <Compile Include="ViewModels\DataCorrelationViewModel.cs" />
     <Compile Include="ViewModels\DataRawViewModel.cs" />
+    <Compile Include="ViewModels\SiteDataCorrelationViewModel.cs" />
     <Compile Include="Views\DataCorrelation.xaml.cs">
       <DependentUpon>DataCorrelation.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DataRaw.xaml.cs">
       <DependentUpon>DataRaw.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SiteDataCorrelation.xaml.cs">
+      <DependentUpon>SiteDataCorrelation.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -121,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataRaw.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SiteDataCorrelation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
