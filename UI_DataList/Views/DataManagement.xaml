@@ -16,14 +16,34 @@
         <smCore:ImgVisibilityCtr x:Key="imgbool"/>
         <core:BindingProxy x:Key="Proxy" Data="{Binding}"/>
 
-        <!--<Style x:Key="expandT" TargetType="TreeViewItem">
-            <Setter Property="IsExpanded" 
-                Value="True" />
-        </Style>
-        <Style x:Key="expandF" TargetType="TreeViewItem">
-            <Setter Property="IsExpanded" 
-                Value="False" />
-        </Style>-->
+        <HierarchicalDataTemplate DataType="{x:Type local:FileNode}" ItemsSource="{Binding SubDataList}">
+            <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
+                <Image Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}">
+                    <Image.Source>
+                        <BitmapImage UriSource="/SillyMonkey.Core;component/Resource/icon/load2.png"/>
+                    </Image.Source>
+                </Image>
+                <TextBlock Text="{Binding NodeName}"/>
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Create Filter By Sites" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCreateSitesFilter}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Close File" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseFile}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type local:FilterNode}">
+            <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
+                <TextBlock Text="{Binding NodeName}"/>
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Close Filtered Data" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
     </UserControl.Resources>
 
     <Grid DataContext="{Binding}">
@@ -32,7 +52,7 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" >
+        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" SelectedValuePath="">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
                     <i:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
@@ -41,56 +61,11 @@
                     <i:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <i:Interaction.Behaviors>
-                <local:BindableSelectedItemBehavior SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-            </i:Interaction.Behaviors>
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="IsExpanded" Value="True" />
                 </Style>
             </TreeView.ItemContainerStyle>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding SubDataList}">
-                    <StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
-                        <Image Width="12" Height="12"  Visibility="{Binding ExtractedDone, Converter={StaticResource imgbool}}">
-                            <Image.Source>
-                                <BitmapImage UriSource="/SillyMonkey.Core;component/Resource/icon/load2.png"/>
-                            </Image.Source>
-                        </Image>
-                        <TextBlock Text="{Binding NodeName}"/>
-                        <StackPanel.ContextMenu>
-                            <ContextMenu  Visibility="{Binding EnableContextMenu}">
-                                <MenuItem Header="Close File" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseFile}" CommandParameter="{Binding}"/>
-                            </ContextMenu>
-                        </StackPanel.ContextMenu>
-                    </StackPanel>
-                    <HierarchicalDataTemplate.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="IsExpanded" Value="False" />
-                            <Setter Property="IsSelected" Value="{Binding IsSelected}" />
-                        </Style>
-                    </HierarchicalDataTemplate.ItemContainerStyle>
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding SiteList}">
-                            <StackPanel ToolTip="{Binding FilePath}">
-                                <TextBlock Text="{Binding NodeName}"/>
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu Visibility="{Binding EnableContextMenu}">
-                                        <MenuItem Header="Close Filtered Data" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
-                            </StackPanel>
-                            <HierarchicalDataTemplate.ItemTemplate>
-                                <DataTemplate DataType="{x:Type local:SiteNode}" >
-                                    <StackPanel ToolTip="{Binding FilePath}">
-                                        <TextBlock Text="{Binding NodeName}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </HierarchicalDataTemplate.ItemTemplate>
-                        </HierarchicalDataTemplate>
-                    </HierarchicalDataTemplate.ItemTemplate>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
         </TreeView>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch"/>
         <TabControl Grid.Row="2" >

@@ -20,7 +20,14 @@ namespace UI_Data.ViewModels {
         IEventAggregator _ea;
 
         SubData _subData;
-        public SubData? CurrentData { get { return _subData; } }
+        public SubData? CurrentData { 
+            get {
+                if (_subData.StdFilePath is null)
+                    return null;
+                else
+                    return _subData;
+            } 
+        }
         public TabType CurrentTabType { get { return TabType.RawDataTab; } }
 
         int _fileIdx=-1;
@@ -85,6 +92,7 @@ namespace UI_Data.ViewModels {
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
 
+                _ea.GetEvent<Event_SubDataTabSelected>().Publish(_subData);
                 //ShowTrend();                
                 ExecuteOpenSummaryCommand();
             }

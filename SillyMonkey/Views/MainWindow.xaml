@@ -44,7 +44,7 @@
                 </TabControl.Resources>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding SelectTab}" CommandParameter="{Binding ElementName=tcTab, Path=SelectedIndex}"/>
+                        <i:InvokeCommandAction Command="{Binding SelectTab}" CommandParameter="{Binding ElementName=tcTab, Path=SelectedContent}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 

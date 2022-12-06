@@ -16,7 +16,7 @@ namespace SillyMonkey.Core
 
     }
 
-    public class Event_SubDataTabSelected : PubSubEvent<int> {
+    public class Event_SubDataTabSelected : PubSubEvent<SubData> {
 
     }
 

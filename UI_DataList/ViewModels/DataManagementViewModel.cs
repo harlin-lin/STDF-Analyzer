@@ -18,62 +18,67 @@ namespace UI_DataList.ViewModels {
     public interface ISubNode {
         string NodeName { get; }
         string FilePath { get; }
-        bool IsSelected { get; set; }
+        //bool IsSelected { get; set; }
         FileNode ParentNode { get; }
-        IEnumerable<SiteNode> SiteList { get; }
+        //IEnumerable<SiteNode> SiteList { get; }
         Visibility EnableContextMenu { get; }
     }
 
-    public class SiteNode : ISubNode {
+    //public class SiteNode : ISubNode {
+    //    public string NodeName { get; private set; }
+    //    public string FilePath { get; private set; }
+    //    public bool IsSelected { get; set; }
+    //    public byte Site { get; private set; }
+
+    //    public FileNode ParentNode { get; private set; }
+
+    //    public IEnumerable<SiteNode> SiteList { get { return null; } }
+
+    //    public Visibility EnableContextMenu { get { return Visibility.Hidden; } }
+
+    //    public SiteNode(FileNode file, byte site, int cnt) {
+    //        ParentNode = file;
+    //        Site = site;
+    //        NodeName = $"Site {site}: {cnt}";
+    //        FilePath = ParentNode.FilePath;
+    //    }
+    //}
+
+    //public class SiteCollectionNode : ISubNode {
+    //    public string NodeName { get; private set; }
+    //    public string FilePath { get; private set; }
+    //    public bool IsSelected { get; set; }
+    //    public IEnumerable<SiteNode> SiteList { get; private set; }
+
+    //    public FileNode ParentNode { get; private set; }
+    //    public Visibility EnableContextMenu { get { return  Visibility.Hidden; } }
+
+    //    public SiteCollectionNode(FileNode file) {
+    //        ParentNode = file;
+    //        if (!file.ExtractedDone) 
+    //            return;
+    //        FilePath = file.FilePath;
+    //        var dataAcquire = StdDB.GetDataAcquire(FilePath);
+    //        SiteList = (from r in dataAcquire.GetSitesChipCount()
+    //                    let l = new SiteNode(file, r.Key, r.Value)
+    //                    select l);
+    //        NodeName = "Site List";
+    //        IsSelected = false;
+    //    }
+    //}
+
+    public class FilterNode : BindableBase, ISubNode {
         public string NodeName { get; private set; }
-        public string FilePath { get; private set; }
-        public bool IsSelected { get; set; }
-        public byte Site { get; private set; }
-
-        public FileNode ParentNode { get; private set; }
-
-        public IEnumerable<SiteNode> SiteList { get { return null; } }
-
-        public Visibility EnableContextMenu { get { return Visibility.Hidden; } }
-
-        public SiteNode(FileNode file, byte site, int cnt) {
-            ParentNode = file;
-            Site = site;
-            NodeName = $"Site {site}: {cnt}";
-            FilePath = ParentNode.FilePath;
-        }
-    }
-
-    public class SiteCollectionNode : ISubNode {
-        public string NodeName { get; private set; }
-        public string FilePath { get; private set; }
-        public bool IsSelected { get; set; }
-        public IEnumerable<SiteNode> SiteList { get; private set; }
-
-        public FileNode ParentNode { get; private set; }
-        public Visibility EnableContextMenu { get { return  Visibility.Hidden; } }
-
-        public SiteCollectionNode(FileNode file) {
-            ParentNode = file;
-            if (!file.ExtractedDone) 
-                return;
-            FilePath = file.FilePath;
-            var dataAcquire = StdDB.GetDataAcquire(FilePath);
-            SiteList = (from r in dataAcquire.GetSitesChipCount()
-                        let l = new SiteNode(file, r.Key, r.Value)
-                        select l);
-            NodeName = "Site List";
-            IsSelected = false;
-        }
-    }
-
-    public class FilterNode : ISubNode {
-        public string NodeName { get; private set; }
 
         public string FilePath { get; private set; }
-        public bool IsSelected { get; set; }
+        //public bool IsSelected { get; set; }
+        //private bool isSelected = true;
+        //public bool IsSelected {
+        //    get { return isSelected; }
+        //    set { SetProperty(ref isSelected, value); }
+        //}
 
-        public IEnumerable<SiteNode> SiteList { get; private set; }
+        //public IEnumerable<SiteNode> SiteList { get; private set; }
 
         public FileNode ParentNode { get; private set; }
 
@@ -92,7 +97,7 @@ namespace UI_DataList.ViewModels {
             NodeName = $"Filter_{filterIdx}:{filterId:X8}";
             FilePath = file.FilePath;
             SubData = new SubData(FilePath, filterId);
-            IsSelected = true;
+            //IsSelected = true;
         }
     }
 
@@ -108,7 +113,7 @@ namespace UI_DataList.ViewModels {
 
         public FileNode ParentNode { get { return null; } }
 
-        public IEnumerable<SiteNode> SiteList { get { return null; } }
+        //public IEnumerable<SiteNode> SiteList { get { return null; } }
 
         public FileNode(string path, int idx) {
             SubDataList = new ObservableCollection<ISubNode>();
@@ -125,7 +130,7 @@ namespace UI_DataList.ViewModels {
             RaisePropertyChanged("EnableContextMenu");
 
             SubDataList.Clear();
-            SubDataList.Add(new SiteCollectionNode(this));
+            //SubDataList.Add(new SiteCollectionNode(this));
             foreach(var f in dataAcquire.GetAllFilterId()) {
                 SubDataList.Add(new FilterNode(this, f, dataAcquire.GetFilterIndex(f)));
             }
@@ -162,19 +167,17 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_SubDataTabSelected>().Subscribe(SubDataTabSelected);
         }
 
-        private void SubDataTabSelected(int tabIdx) {
+        private void SubDataTabSelected(SubData subData) {
             try {
-                var data = _regionManager.Regions["Region_DataView"].Views.ElementAt(tabIdx);
-                if(data is DataRaw) {
-                    var subData = ((data as DataRaw).DataContext as UI_Data.ViewModels.DataRawViewModel).CurrentData;
-                    //change the selected treeview sub data
-                    foreach (var f in _files) {
-                        foreach (var sn in f.SubDataList) {
-                            if (sn is FilterNode) {
-                                if ((sn as FilterNode).SubData.Equals(subData)) {
-                                    SelectedItem = sn;
-                                    break;
-                                }
+                var view = _regionManager.Regions["Region_DataList"].Views.ElementAt(0) as Views.DataManagement;
+                //change the selected treeview sub data
+                foreach (var f in _files) {
+                    foreach (var sn in f.SubDataList) {
+                        if (sn is FilterNode) {
+                            if ((sn as FilterNode).SubData.Equals(subData)) {
+                                var filenode = view.dataList.ItemContainerGenerator.ContainerFromItem(f) as System.Windows.Controls.TreeViewItem;
+                                (filenode.ItemContainerGenerator.ContainerFromItem(sn) as System.Windows.Controls.TreeViewItem).IsSelected = true;
+                                break;
                             }
                         }
                     }
@@ -352,15 +355,15 @@ namespace UI_DataList.ViewModels {
             if (x.GetType().Name == "FilterNode") {
                 var f = (x as FilterNode);
                 RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
-            } else if (x.GetType().Name == "SiteNode") {
-                var s = (x as SiteNode);
-                var f = StdDB.GetDataAcquire(s.FilePath);
-                var id = f.CreateFilter(s.Site);
+            //} else if (x.GetType().Name == "SiteNode") {
+            //    var s = (x as SiteNode);
+            //    var f = StdDB.GetDataAcquire(s.FilePath);
+            //    var id = f.CreateFilter(s.Site);
 
-                s.ParentNode.Update();
-                RaisePropertyChanged("Files");
+            //    s.ParentNode.Update();
+            //    RaisePropertyChanged("Files");
 
-                RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx, f.GetFilterIndex(id));
+            //    RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx, f.GetFilterIndex(id));
             }else if(x.GetType().Name == "FileNode") {
                 var f = x as FileNode;
                 var da = StdDB.GetDataAcquire(f.FilePath);
@@ -370,6 +373,26 @@ namespace UI_DataList.ViewModels {
                 RequestRawTab(new SubData(f.FilePath, id), f.FileIdx, da.GetFilterIndex(id));
 
             }
+        }
+
+        private DelegateCommand<object> _cmdCreateSitesFilter;
+        public DelegateCommand<object> CmdCreateSitesFilter =>
+            _cmdCreateSitesFilter ?? (_cmdCreateSitesFilter = new DelegateCommand<object>(ExecuteCmdCreateSitesFilter));
+
+        void ExecuteCmdCreateSitesFilter(object parameter) {
+            var file = parameter as FileNode;
+            if (!file.ExtractedDone) return;
+            var da = StdDB.GetDataAcquire(file.FilePath);
+            foreach(var s in da.GetSites()) {
+                var id = da.CreateFilter(s);
+
+                file.Update();
+                RaisePropertyChanged("Files");
+
+                RequestRawTab(new SubData(file.FilePath, id), file.FileIdx, da.GetFilterIndex(id));
+
+            }
+
         }
 
         private DelegateCommand<object> _cmdCloseFile;
