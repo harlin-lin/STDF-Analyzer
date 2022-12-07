@@ -10,7 +10,7 @@
              xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="UI_Chart.Views.Trend"
              mc:Ignorable="d"         
              xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
-             d:DesignHeight="700" d:DesignWidth="600"
+             d:DesignHeight="800" d:DesignWidth="700"
              prism:ViewModelLocator.AutoWireViewModel="True"
              x:Name="chart">
     <Grid>
@@ -282,6 +282,16 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ComboBox>
+
+                <ToggleButton Width="23" Height="23" ToolTip="Split by site(single test item)" 
+                              IsChecked="{Binding SplitBySiteHisto, Mode=TwoWay}"
+                              IsEnabled="{Binding EnSplitBySiteHisto, Mode=TwoWay}"
+                      Command="{Binding CmdToggleSplitBySiteHisto}"
+                      Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                    <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-CallSplit.png" Width="16" Height="16"/>
+                </ToggleButton>
+
             </StackPanel>
             <ToggleButton Grid.Column="1" Width="20" Height="20" x:Name="tgPopHisto" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent" HorizontalAlignment="Left">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />

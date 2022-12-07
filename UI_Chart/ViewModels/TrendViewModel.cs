@@ -376,6 +376,18 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _sigma3HHisto, value); }
         }
 
+        private bool _splitBySiteHisto = false;
+        public bool SplitBySiteHisto {
+            get { return _splitBySiteHisto; }
+            set { SetProperty(ref _splitBySiteHisto, value); }
+        }
+
+        private bool _enSplitBySiteHisto=false;
+        public bool EnSplitBySiteHisto {
+            get { return _enSplitBySiteHisto; }
+            set { SetProperty(ref _enSplitBySiteHisto, value); }
+        }
+
         #endregion
 
         public TrendViewModel(IRegionManager regionManager, IEventAggregator ea) {
@@ -391,6 +403,12 @@ namespace UI_Chart.ViewModels {
 
             _selectedIds.Clear();
             _selectedIds.AddRange(para.Item2);
+
+            if (_selectedIds.Count == 1) {
+                EnSplitBySiteHisto = true;
+            } else {
+                EnSplitBySiteHisto = false;
+            }
 
             UpdateData();
         }
@@ -438,7 +456,10 @@ namespace UI_Chart.ViewModels {
             LowLimit = idInfo.LoLimit ?? float.NegativeInfinity;
             HighLimit = idInfo.HiLimit ?? float.PositiveInfinity;
             if (_selectedIds.Count == 1) {
-                IfShowLegendCheckBox = false;
+                if (_enSplitBySiteHisto && _splitBySiteHisto)
+                    IfShowLegendCheckBox = true;
+                else
+                    IfShowLegendCheckBox = false;
             } else {
                 IfShowLegendCheckBox = true;
             }
@@ -652,25 +673,53 @@ namespace UI_Chart.ViewModels {
             if (isInvalid(start) || isInvalid(stop)) return;
 
             if (_deviceCount == 0) return;
-            for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
-                var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
 
-                var histo = GetHistogramData(start, stop, data);
-                var series = new XyDataSeries<float, int>();
-                series.Append(histo.Item1, histo.Item2);
-                series.SeriesName = _selectedIds[i];
+            if (_enSplitBySiteHisto && _splitBySiteHisto) {
+                var sites = da.GetSites();
 
-                HistoSeries.Add(new ColumnRenderableSeriesViewModel {
-                    DataSeries = series,
-                    Stroke = Colors.DarkBlue,
-                    Fill = new SolidColorBrush(SA.GetColor(i)),
-                    DataPointWidth = 1
-                });
+                for (int i = 0; i < sites.Length; i++) {
+                    var data = da.GetFilteredItemDataBySite(_selectedIds[0], _subData.FilterId, sites[i]);
+                    if (data.Count() == 0) continue; 
+                    var histo = GetHistogramData(start, stop, data);
+                    var series = new XyDataSeries<float, int>();
+                    series.Append(histo.Item1, histo.Item2);
+                    series.SeriesName = $"S:{sites[i]}";
 
-                if (i == 0) {
-                    maxCnt = histo.Item2.Max();
-                } else {
-                    if (maxCnt < histo.Item2.Max()) maxCnt = histo.Item2.Max();
+                    HistoSeries.Add(new ColumnRenderableSeriesViewModel {
+                        DataSeries = series,
+                        Stroke = Colors.DarkBlue,
+                        Fill = new SolidColorBrush(SA.GetColor(i)),
+                        DataPointWidth = 1
+                    });
+
+                    if (i == 0) {
+                        maxCnt = histo.Item2.Max();
+                    } else {
+                        if (maxCnt < histo.Item2.Max()) maxCnt = histo.Item2.Max();
+                    }
+                }
+
+            } else {
+                for (int i = 0; i < (_selectedIds.Count > 16 ? 16 : _selectedIds.Count); i++) {
+                    var data = da.GetFilteredItemData(_selectedIds[i], _subData.FilterId);
+
+                    var histo = GetHistogramData(start, stop, data);
+                    var series = new XyDataSeries<float, int>();
+                    series.Append(histo.Item1, histo.Item2);
+                    series.SeriesName = _selectedIds[i];
+
+                    HistoSeries.Add(new ColumnRenderableSeriesViewModel {
+                        DataSeries = series,
+                        Stroke = Colors.DarkBlue,
+                        Fill = new SolidColorBrush(SA.GetColor(i)),
+                        DataPointWidth = 1
+                    });
+
+                    if (i == 0) {
+                        maxCnt = histo.Item2.Max();
+                    } else {
+                        if (maxCnt < histo.Item2.Max()) maxCnt = histo.Item2.Max();
+                    }
                 }
             }
             RaisePropertyChanged("HistoSeries");
@@ -1030,6 +1079,26 @@ namespace UI_Chart.ViewModels {
             if (!_dataValid) return;
             UpdateHistoViewRange();
         }
+
+        private DelegateCommand _cmdToggleSplitBySiteHisto;
+        public DelegateCommand CmdToggleSplitBySiteHisto =>
+            _cmdToggleSplitBySiteHisto ?? (_cmdToggleSplitBySiteHisto = new DelegateCommand(ExecuteCmdToggleSplitBySiteHisto));
+
+        void ExecuteCmdToggleSplitBySiteHisto() {
+            if (!_dataValid) return;
+
+            if (_selectedIds.Count == 1) {
+                if (_enSplitBySiteHisto && _splitBySiteHisto)
+                    IfShowLegendCheckBox = true;
+                else
+                    IfShowLegendCheckBox = false;
+            } else {
+                IfShowLegendCheckBox = true;
+            }
+
+            UpdateHistoViewRange();
+        }
+
 
         private DelegateCommand _cmdZoomOutTrend;
         public DelegateCommand CmdZoomOutTrend =>

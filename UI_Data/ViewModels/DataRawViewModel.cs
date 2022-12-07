@@ -28,6 +28,9 @@ namespace UI_Data.ViewModels {
                     return _subData;
             } 
         }
+        List<SubData> _subDataList = null;
+        public List<SubData> SubDataList { get { return _subDataList; } }
+
         public TabType CurrentTabType { get { return TabType.RawDataTab; } }
 
         int _fileIdx=-1;
@@ -82,7 +85,9 @@ namespace UI_Data.ViewModels {
                 _subData = (SubData)navigationContext.Parameters["subData"];
                 _fileIdx = (int)navigationContext.Parameters["fileIdx"];
                 _filterIdx = (int)navigationContext.Parameters["filterIdx"];
-
+                
+                _subDataList = new List<SubData>();
+                _subDataList.Add(_subData);
 
                 var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
 
@@ -351,7 +356,17 @@ namespace UI_Data.ViewModels {
             _regionManager.RequestNavigate(RegionName, "Raw", parameters);
         }
 
+        private DelegateCommand _correlationBySiteCommand;
+        public DelegateCommand CorrelationBySiteCommand =>
+            _correlationBySiteCommand ?? (_correlationBySiteCommand = new DelegateCommand(ExecuteCorrelationBySiteCommand));
 
+        void ExecuteCorrelationBySiteCommand() {
+            var parameters = new NavigationParameters();
+            parameters.Add("subData", _subData);
+            _regionManager.RequestNavigate("Region_DataView", "SiteDataCorrelation", parameters);
+
+
+        }
 
     }
 }

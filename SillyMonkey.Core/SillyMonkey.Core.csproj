@@ -121,5 +121,11 @@
   <ItemGroup>
     <Resource Include="Resource\icon\SA_qrcode.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\Material-CallSplit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resource\icon\Material-SetSplit.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

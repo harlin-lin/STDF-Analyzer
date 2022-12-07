@@ -41,6 +41,10 @@
                     <!--<iconPacks:PackIconModern Kind="Grid"  Width="21" Height="21"/>-->
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Modern-Grid.png" Width="21" Height="21"/>
                 </Button>
+                <Button Margin="0,0,10,0" Command="{Binding CorrelationBySiteCommand, Mode=OneWay}" ToolTip="Show Site Correlation" BorderThickness="0">
+                    <!--<iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>-->
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-SetSplit.png" Width="21" Height="21"/>
+                </Button>
                 <Button Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
                     <!--<iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>-->
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>

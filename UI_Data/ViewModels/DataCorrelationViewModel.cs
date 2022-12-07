@@ -39,7 +39,9 @@ namespace UI_Data.ViewModels {
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
-        List<SubData> _subDataList;
+        List<SubData> _subDataList = null;
+        public List<SubData> SubDataList { get { return _subDataList; } }
+
         int _corrDataIdx = -1;
 
         private DataTable dt;

@@ -1,14 +1,17 @@
 ﻿using DataContainer;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace SillyMonkey.Core {
     public enum TabType {
         RawDataTab,
-        RawDataCorTab
+        RawDataCorTab,
+        SiteDataCorTab
     }
 
     public interface IDataView {
         SubData? CurrentData{ get; }
+        List<SubData> SubDataList { get; }
         TabType CurrentTabType { get; }
     }
 

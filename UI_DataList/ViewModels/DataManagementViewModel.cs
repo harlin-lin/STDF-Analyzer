@@ -290,9 +290,25 @@ namespace UI_DataList.ViewModels {
         }
 
         private void RemoveRawTab(SubData data) {
-            var v =_regionManager.Regions["Region_DataView"].Views;
-            var view = v.First(x => ((x as System.Windows.Controls.UserControl).DataContext as IDataView).CurrentData.Equals(data));
-            _regionManager.Regions["Region_DataView"].Remove(view);
+            var views =_regionManager.Regions["Region_DataView"].Views;
+            foreach(var v in views) {
+                var x = (v as System.Windows.Controls.UserControl).DataContext as IDataView;
+                if(x.CurrentTabType == TabType.RawDataTab) {
+                    if (x.CurrentData.Value.Equals(data)) {
+                        _regionManager.Regions["Region_DataView"].Remove(v);
+                    }
+                } else {
+                    foreach(var s in x.SubDataList) {
+                        if (s.Equals(data)) {
+                            _regionManager.Regions["Region_DataView"].Remove(v);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            //var view = v.First(x => ((x as System.Windows.Controls.UserControl).DataContext as IDataView).CurrentData.Equals(data));
+            //_regionManager.Regions["Region_DataView"].Remove(view);
         }
 
         private void CloseSubData(SubData data) {
@@ -420,8 +436,8 @@ namespace UI_DataList.ViewModels {
 
             var parameters = new NavigationParameters();
             parameters.Add("subData", f.SubData);
-            parameters.Add("fileIdx", f.ParentNode.FileIdx);
-            parameters.Add("filterIdx", f.FilterIdx);
+            //parameters.Add("fileIdx", f.ParentNode.FileIdx);
+            //parameters.Add("filterIdx", f.FilterIdx);
             _regionManager.RequestNavigate("Region_DataView", "SiteDataCorrelation", parameters);
 
         }

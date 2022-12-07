@@ -15,15 +15,15 @@ using System.Windows.Forms;
 
 namespace UI_Data.ViewModels {
     public class SiteDataCorrelationViewModel : BindableBase, INavigationAware, IDataView {
-        public SubData? CurrentData { get { return null; } }
-        public TabType CurrentTabType { get { return TabType.RawDataCorTab; } }
+        public TabType CurrentTabType { get { return TabType.SiteDataCorTab; } }
 
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
         SubData _subData;
-        int _fileIdx = -1;
-        int _filterIdx = -1;
+        public SubData? CurrentData { get { return _subData; } }
+        List<SubData> _subDataList = null;
+        public List<SubData> SubDataList { get { return _subDataList; } }
 
         private DataTable dt;
         public DataTable TestItems {
@@ -61,10 +61,10 @@ namespace UI_Data.ViewModels {
         public void OnNavigatedTo(NavigationContext navigationContext) {
             if (_subData.FilterId == 0) {
                 _subData = (SubData)navigationContext.Parameters["subData"];
-                _fileIdx = (int)navigationContext.Parameters["fileIdx"];
-                _filterIdx = (int)navigationContext.Parameters["filterIdx"];
+                _subDataList = new List<SubData>();
+                _subDataList.Add(_subData);
 
-                Header = $"SiteCorr_File_{_fileIdx}|Filter_{_filterIdx}";
+                Header = $"SiteCorr_|{_subData.FilterId:X8}";
 
                 //RegionName = $"Region_Corr_{_corrDataIdx}";
                 InitView();
@@ -84,22 +84,22 @@ namespace UI_Data.ViewModels {
             var sites = da.GetSites();
 
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("MeanValue_" + i);
+                dt.Columns.Add("Mean S:" + sites[i]);
             }
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("MinValue_" + i);
+                dt.Columns.Add("Min S:" + sites[i]);
             }
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("MaxValue_" + i);
+                dt.Columns.Add("Max S:" + sites[i]);
             }
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Cp_" + i);
+                dt.Columns.Add("Cp S:" + sites[i]);
             }
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Cpk_" + i);
+                dt.Columns.Add("Cpk S:" + sites[i]);
             }
             for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Sigma_" + i);
+                dt.Columns.Add("Sigma S:" + sites[i]);
             }
         }
 
