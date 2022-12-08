@@ -172,8 +172,10 @@ namespace DataContainer {
                 _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
                 _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
             }
-            _allIndex= (from i in Enumerable.Range(0, _partIdx + 1)
-                       select i).ToList();
+
+            //20221208 mask this, seems uncecessary
+            //_allIndex= (from i in Enumerable.Range(0, _partIdx + 1)
+            //           select i).ToList();
 
             SetReadingPercent(100);
         }

@@ -193,7 +193,7 @@ namespace SillyMonkey.Core {
 
             var sbNames = dataAcquire.GetSBinInfo();
 
-            AppendBinField(ref sb, "Site NO", "All", partStatistic.SiteCnt.Keys);
+            AppendBinField(ref sb, "BIN NO", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in sbin) {
                 if (sbNames.ContainsKey(b.Key)) {
                     AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{sbNames[b.Key].Item2}:{sbNames[b.Key].Item1}", siteSb);
@@ -220,7 +220,7 @@ namespace SillyMonkey.Core {
 
             var hbNames = dataAcquire.GetHBinInfo();
 
-            AppendBinField(ref sb, "Site NO", "All", partStatistic.SiteCnt.Keys);
+            AppendBinField(ref sb, "BIN NO", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in hb) {
                 if (hbNames.ContainsKey(b.Key)) {
                     AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{hbNames[b.Key].Item2}:{hbNames[b.Key].Item1}", siteHb);

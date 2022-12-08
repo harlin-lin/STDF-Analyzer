@@ -224,11 +224,11 @@ namespace MapBase {
             textBlockDieCnt.Text = $"Total:{totalCnt}";
 
             binInfo.Children.Clear();
-
+            var orderBincnt = binCnt.OrderBy(x=>x.Key);
             if (BinMode == MapBinMode.HBin) {
-                foreach (var b in binCnt) {
+                foreach (var b in orderBincnt) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key,-2} {(binCnt[b.Key] * 100.0 / totalCnt).ToString("f2") + "%",-6} {binCnt[b.Key],-7}";
+                    textBlock.Text = $"BIN{b.Key,-2} {(b.Value * 100.0 / totalCnt).ToString("f2") + "%",-6} {b.Value,-7}";
 
                     textBlock.Background = new SolidColorBrush(_hBinColors[b.Key]);
                     textBlock.BorderThickness = new Thickness(0);
@@ -242,9 +242,9 @@ namespace MapBase {
                     binInfo.Children.Add(textBlock);
                 }
             } else {
-                foreach (var b in binCnt) {
+                foreach (var b in orderBincnt) {
                     TextBox textBlock = new TextBox();
-                    textBlock.Text = $"BIN{b.Key,-5} {(binCnt[b.Key] * 100.0 / totalCnt).ToString("f2") + "%",-6} {binCnt[b.Key],-7}";
+                    textBlock.Text = $"BIN{b.Key,-5} {(b.Value * 100.0 / totalCnt).ToString("f2") + "%",-6} {b.Value,-7}";
                     textBlock.Background = new SolidColorBrush(_sBinColors[b.Key]);
                     textBlock.BorderThickness = new Thickness(0);
                     textBlock.Height = 18;
