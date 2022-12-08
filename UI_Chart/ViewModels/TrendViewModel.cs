@@ -7,6 +7,8 @@ using Prism.Regions;
 using SciChart.Charting.Model.ChartSeries;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Charting.Visuals;
+using SciChart.Charting.Visuals.PaletteProviders;
+using SciChart.Charting.Visuals.RenderableSeries;
 using SciChart.Data.Model;
 using SillyMonkey.Core;
 using System;
@@ -19,6 +21,24 @@ using Utils;
 
 namespace UI_Chart.ViewModels {
     public class TrendViewModel : BindableBase, INavigationAware {
+        class StrokeFillPaletteProvider : IStrokePaletteProvider, IFillPaletteProvider {
+
+            public void OnBeginSeriesDraw(IRenderableSeries rSeries) {
+
+            }
+
+            public Brush OverrideFillBrush(IRenderableSeries series, int index, IPointMetadata metadata) {
+                if(index==0 || index==102)
+                    return new SolidColorBrush(SA.GetHistogramOutlierColor());
+                return null;
+            }
+
+            public Color? OverrideStrokeColor(IRenderableSeries series, int index, IPointMetadata metadata) {
+                return null;
+            }
+
+        }
+
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
@@ -637,21 +657,21 @@ namespace UI_Chart.ViewModels {
         //default 100 bins, and enable outliers count, total 112bins
         (float[], int[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
             var step = (stop - start) / 100;
-            float[] range = new float[113];
-            var actStart = start - step * 5;
-            var actStop = stop + step * 5;
+            float[] range = new float[103];
+            var actStart = start;// - step * 5;
+            var actStop = stop;// + step * 5;
 
-            for (int i = 0; i < 113; i++) {
-                range[i] = start + (i - 6) * step;
+            for (int i = 0; i < 103; i++) {
+                range[i] = start + (i - 1) * step;
             }
-            int[] rangeCnt = new int[113];
+            int[] rangeCnt = new int[103];
 
             foreach (var f in data) {
                 if (isInvalid(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
                 } else if (f >= actStop) {
-                    rangeCnt[112]++;
+                    rangeCnt[102]++;
                 } else {
                     var idx = (int)Math.Round((f - actStart) / step) + 1;
                     rangeCnt[idx]++;
@@ -689,7 +709,8 @@ namespace UI_Chart.ViewModels {
                         DataSeries = series,
                         Stroke = Colors.DarkBlue,
                         Fill = new SolidColorBrush(SA.GetColor(i)),
-                        DataPointWidth = 1
+                        DataPointWidth = 1,
+                        PaletteProvider = new StrokeFillPaletteProvider()
                     });
 
                     if (i == 0) {
@@ -712,7 +733,8 @@ namespace UI_Chart.ViewModels {
                         DataSeries = series,
                         Stroke = Colors.DarkBlue,
                         Fill = new SolidColorBrush(SA.GetColor(i)),
-                        DataPointWidth = 1
+                        DataPointWidth = 1,
+                        PaletteProvider = new StrokeFillPaletteProvider()
                     });
 
                     if (i == 0) {

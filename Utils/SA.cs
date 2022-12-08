@@ -76,6 +76,11 @@ namespace Utils {
             return ColorList[idx];
         }
 
+        public static Color GetHistogramOutlierColor() {
+            return Color.FromRgb(0,0,0);
+        }
+
+
         private static bool WriteToReg(string keyName, object val) {
 
             var regSubKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\SillyMonkeyStdfAnalyzer");
