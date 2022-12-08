@@ -8,7 +8,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
              xmlns:local="clr-namespace:UI_DataList.ViewModels"
-             xmlns:core="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
+             xmlns:core="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core" xmlns:views="clr-namespace:UI_DataList.Views"
              x:Name="FileManagement"
              d:DesignHeight="300" d:DesignWidth="300"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -26,7 +26,8 @@
                 <TextBlock Text="{Binding NodeName}"/>
                 <StackPanel.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Create Filter By Sites" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCreateSitesFilter}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Create SubData(New Filter)" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCreateNewFilter}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Create SubData By Sites" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCreateSitesFilter}" CommandParameter="{Binding}"/>
                         <MenuItem Header="Close File" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseFile}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                 </StackPanel.ContextMenu>
@@ -39,7 +40,7 @@
                 <StackPanel.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Show Site Correlation" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdSiteDataCorr}" CommandParameter="{Binding}"/>
-                        <MenuItem Header="Close Filtered Data" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Close SubData" Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdCloseData}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                 </StackPanel.ContextMenu>
             </StackPanel>
@@ -53,12 +54,12 @@
             <RowDefinition Height="3"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TreeView x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" SelectedValuePath="">
+        <views:TreeViewEx x:Name="dataList" DataContext="{Binding}" Grid.Row="0" ItemsSource="{Binding Files}" SelectedValuePath="">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedItemChanged" >
                     <i:InvokeCommandAction Command="{Binding SelectData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
-                <i:EventTrigger EventName="MouseDoubleClick" >
+                <i:EventTrigger EventName="MouseDoubleClickEx" >
                     <i:InvokeCommandAction Command="{Binding OpenData}" CommandParameter="{Binding ElementName=dataList,Path=SelectedItem}"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
@@ -67,7 +68,7 @@
                     <Setter Property="IsExpanded" Value="True" />
                 </Style>
             </TreeView.ItemContainerStyle>
-        </TreeView>
+        </views:TreeViewEx>
         <GridSplitter Grid.Row="1" VerticalAlignment="Stretch"/>
         <TabControl Grid.Row="2" >
             <TabItem Header="File Sumary">

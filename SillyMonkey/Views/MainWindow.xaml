@@ -35,7 +35,7 @@
             <TabControl Grid.Column="2" prism:RegionManager.RegionName="Region_DataView" Name="tcTab" Margin="0">
                 <TabControl.Resources>
                     <ContextMenu x:Key="HeaderContextMenu" Width="150">
-                        <MenuItem Header="Close" Command="{Binding DataContext.CloseCommand}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Close SubData" Command="{Binding DataContext.CloseCommand}" CommandParameter="{Binding}"/>
                     </ContextMenu>
                     <Style TargetType="TabItem">
                         <Setter Property="Header" Value="{Binding DataContext.Header}" />

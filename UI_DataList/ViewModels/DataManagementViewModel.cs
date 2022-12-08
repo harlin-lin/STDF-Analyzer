@@ -368,9 +368,9 @@ namespace UI_DataList.ViewModels {
             _openData ?? (_openData = new DelegateCommand<object>(ExecuteOpenData));
 
         void ExecuteOpenData(object x) {
-            if (x.GetType().Name == "FilterNode") {
-                var f = (x as FilterNode);
-                RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
+            //if (x.GetType().Name == "FilterNode") {
+            //    var f = (x as FilterNode);
+            //    RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
             //} else if (x.GetType().Name == "SiteNode") {
             //    var s = (x as SiteNode);
             //    var f = StdDB.GetDataAcquire(s.FilePath);
@@ -380,7 +380,8 @@ namespace UI_DataList.ViewModels {
             //    RaisePropertyChanged("Files");
 
             //    RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx, f.GetFilterIndex(id));
-            }else if(x.GetType().Name == "FileNode") {
+            //}else 
+            if(x.GetType().Name == "FileNode") {
                 var f = x as FileNode;
                 var da = StdDB.GetDataAcquire(f.FilePath);
                 var id = da.CreateFilter();
@@ -442,6 +443,19 @@ namespace UI_DataList.ViewModels {
 
         }
 
+        private DelegateCommand<object> _cmdCreateNewFilter;
+        public DelegateCommand<object> CmdCreateNewFilter =>
+            _cmdCreateNewFilter ?? (_cmdCreateNewFilter = new DelegateCommand<object>(ExecuteCmdCreateNewFilter));
+
+        void ExecuteCmdCreateNewFilter(object parameter) {
+            var file = parameter as FileNode;
+            if (!file.ExtractedDone) return;
+            var da = StdDB.GetDataAcquire(file.FilePath);
+            var id = da.CreateFilter();
+            file.Update();
+            RaisePropertyChanged("Files");
+            RequestRawTab(new SubData(file.FilePath, id), file.FileIdx, da.GetFilterIndex(id));
+        }
 
         private void Log(string s) {
             _ea.GetEvent<Event_Log>().Publish(s);
