@@ -36,6 +36,8 @@ namespace UI_Chart.ViewModels {
             }
 
             public Color? OverrideStrokeColor(IRenderableSeries series, int index, IPointMetadata metadata) {
+                if (index == 0 || index == 102)
+                    return SA.GetHistogramOutlierColor();
                 return null;
             }
 
@@ -306,7 +308,7 @@ namespace UI_Chart.ViewModels {
                 if (float.IsNaN(f) || float.IsInfinity(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
-                } else if (f >= actStop) {
+                } else if (f > actStop) {
                     rangeCnt[102]++;
                 } else {
                     var idx = (int)Math.Round((f - actStart) / step) + 1;

@@ -10,7 +10,6 @@ using SciChart.Charting.Visuals;
 using SciChart.Charting.Visuals.PaletteProviders;
 using SciChart.Charting.Visuals.RenderableSeries;
 using SciChart.Data.Model;
-using SciChart.Data.Model;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
@@ -37,6 +36,8 @@ namespace UI_Chart.ViewModels {
             }
 
             public Color? OverrideStrokeColor(IRenderableSeries series, int index, IPointMetadata metadata) {
+                if (index == 0 || index == 102)
+                    return SA.GetHistogramOutlierColor();
                 return null;
             }
 
@@ -188,7 +189,7 @@ namespace UI_Chart.ViewModels {
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
             var sites = da.GetSites();
-            for (int i = 0; i < sites.Length; i++) {
+            for (int i = 0; i < (sites.Length > 16 ? 16 : sites.Length); i++) {
                 if (!da.IfContainsTestId(_selectedId)) continue;
 
                 var statistic_raw = da.GetFilteredStatisticBySite(_subData.FilterId, _selectedId, sites[i]);
@@ -306,7 +307,7 @@ namespace UI_Chart.ViewModels {
                 if (float.IsNaN(f) || float.IsInfinity(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
-                } else if (f >= actStop) {
+                } else if (f > actStop) {
                     rangeCnt[102]++;
                 } else {
                     var idx = (int)Math.Round((f - actStart) / step) + 1;
@@ -326,7 +327,7 @@ namespace UI_Chart.ViewModels {
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
             var sites = da.GetSites();
-            for (int i = 0; i < sites.Length; i++) {
+            for (int i = 0; i < (sites.Length > 16 ? 16 : sites.Length); i++) {
 
                 if (!da.IfContainsTestId(_selectedId)) continue;
 

@@ -34,6 +34,8 @@ namespace UI_Chart.ViewModels {
             }
 
             public Color? OverrideStrokeColor(IRenderableSeries series, int index, IPointMetadata metadata) {
+                if (index == 0 || index == 102)
+                    return SA.GetHistogramOutlierColor();
                 return null;
             }
 
@@ -670,7 +672,7 @@ namespace UI_Chart.ViewModels {
                 if (isInvalid(f)) continue;
                 if (f < actStart) {
                     rangeCnt[0]++;
-                } else if (f >= actStop) {
+                } else if (f > actStop) {
                     rangeCnt[102]++;
                 } else {
                     var idx = (int)Math.Round((f - actStart) / step) + 1;
@@ -697,7 +699,7 @@ namespace UI_Chart.ViewModels {
             if (_enSplitBySiteHisto && _splitBySiteHisto) {
                 var sites = da.GetSites();
 
-                for (int i = 0; i < sites.Length; i++) {
+                for (int i = 0; i < (sites.Length > 16 ? 16 : sites.Length); i++) {
                     var data = da.GetFilteredItemDataBySite(_selectedIds[0], _subData.FilterId, sites[i]);
                     if (data.Count() == 0) continue; 
                     var histo = GetHistogramData(start, stop, data);

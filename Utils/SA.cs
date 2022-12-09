@@ -20,8 +20,13 @@ namespace Utils {
         private static Color[] ColorList = {
                 Color.FromRgb(0, 0, 255),
                 Color.FromRgb(255, 182, 193),
-                Color.FromRgb(220, 20, 60),
-                Color.FromRgb(255, 20, 147),
+                
+                Color.FromRgb(166, 86, 40),
+                Color.FromRgb(153, 153, 153),
+
+                //Color.FromRgb(220, 20, 60),
+                //Color.FromRgb(255, 20, 147),
+
                 Color.FromRgb(255, 0, 255),
                 Color.FromRgb(148, 0, 211),
                 Color.FromRgb(72, 61, 139),
@@ -77,7 +82,7 @@ namespace Utils {
         }
 
         public static Color GetHistogramOutlierColor() {
-            return Color.FromRgb(0,0,0);
+            return Color.FromRgb(239,0,0);
         }
 
 
