@@ -26,7 +26,7 @@ namespace DataContainer
         private static ConcurrentDictionary<string, SubContainer> _subContainers = new ConcurrentDictionary<string, SubContainer>();
 
         public static List<string> GetAllFiles() {
-            return (from r in _subContainers select r.Value.FilePath).ToList();
+            return _subContainers.Keys.ToList();
         }
 
         public static List<IDataAcquire> GetAllDataAcquires() {
@@ -46,7 +46,7 @@ namespace DataContainer
 
 
         public static bool IfExsistFile(string filePath) {
-            return _subContainers.Any(x=> x.Value.FilePath == filePath);
+            return _subContainers.ContainsKey(filePath);
         }
 
         //public static IDataCollect CreateSubContainer(string filePath) {
@@ -71,8 +71,7 @@ namespace DataContainer
             return _subContainers[filePath];
         }
 
-        public static string MergeFiles(List<string> files) {
-            var filePath = "\\MergerFile_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+        public static void MergeFiles(string filePath, List<string> files) {
             _subContainers.TryAdd(filePath, new SubContainer(filePath));
             foreach(var f in files) {
                 if (!IfExsistFile(f)) throw new Exception("File not exsist");
@@ -81,8 +80,6 @@ namespace DataContainer
                 _subContainers[filePath].MergeData(_subContainers[f]);
             }
             _subContainers[filePath].AnalyseData();
-
-            return filePath;
         }
 
         public static bool RemoveFile(string filePath) {

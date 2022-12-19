@@ -171,12 +171,16 @@ namespace UI_DataList.ViewModels {
             try {
                 var view = _regionManager.Regions["Region_DataList"].Views.ElementAt(0) as Views.DataManagement;
                 //change the selected treeview sub data
-                foreach (var f in _files) {
-                    foreach (var sn in f.SubDataList) {
+                foreach (var f in view.dataList.Items) {
+                    foreach (var sn in ((FileNode)f).SubDataList) {
                         if (sn is FilterNode) {
                             if ((sn as FilterNode).SubData.Equals(subData)) {
                                 var filenode = view.dataList.ItemContainerGenerator.ContainerFromItem(f) as System.Windows.Controls.TreeViewItem;
-                                (filenode.ItemContainerGenerator.ContainerFromItem(sn) as System.Windows.Controls.TreeViewItem).IsSelected = true;
+                                //(filenode.ItemContainerGenerator.ContainerFromItem(sn) as System.Windows.Controls.TreeViewItem).IsSelected = true;
+                                var oo = filenode.ItemContainerGenerator.ContainerFromItem(sn);
+                                if (oo is null) return;
+                                var tvi = oo as System.Windows.Controls.TreeViewItem;
+                                tvi.IsSelected = true;
                                 break;
                             }
                         }
@@ -196,20 +200,27 @@ namespace UI_DataList.ViewModels {
             _regionManager.RequestNavigate("Region_DataView", "DataCorrelation", parameters);
         }
 
-        private void MergeFiles(List<string> files) {
-            try {
-                Task<string> task = Task.Run(() => {
-                    return StdDB.MergeFiles(files);
-                });
-                task.Wait();
+        private async void MergeFiles(List<string> files) {
+            string ss = "";
+            foreach(var s in Files) {
+                ss += s.FileIdx;
+                ss += "_";
+            }
+            var filePath = "MergerFile_" + ss + DateTime.Now.ToString("HH-mm-ss");
+            var f = new FileNode(filePath, _fileIdx++);
+            Files.Add(f);
 
-                var f = new FileNode(task.Result, _fileIdx++);
-                Files.Add(f);
+            try {
+                await Task.Run(() => {
+                    StdDB.MergeFiles(filePath, files);
+                });
                 LoadingDone(f);
 
-                MessageBox.Show("Merge Done!");
+                Log($"MergerFile_{ss} Done!");
             }
             catch (Exception e) {
+                Files.Remove(f);
+                StdDB.RemoveFile(filePath);
                 Log("File Merger Failed:" + e);
                 return;
             }
@@ -278,14 +289,13 @@ namespace UI_DataList.ViewModels {
             var id = dataAcquire.CreateFilter();
             fn.Update();
             RaisePropertyChanged("Files");
-            RequestRawTab(new SubData(fn.FilePath, id), fn.FileIdx, dataAcquire.GetFilterIndex(id));
+            RequestRawTab(new SubData(fn.FilePath, id), fn.FileIdx);
         }
 
-        private void RequestRawTab(SubData data, int fileIdx, int filterIdx) {
+        private void RequestRawTab(SubData data, int fileIdx) {
             var parameters = new NavigationParameters();
             parameters.Add("subData", data);
             parameters.Add("fileIdx", fileIdx);
-            parameters.Add("filterIdx", filterIdx);
             _regionManager.RequestNavigate("Region_DataView", "DataRaw", parameters);
         }
 
@@ -357,7 +367,7 @@ namespace UI_DataList.ViewModels {
             } else if (x.GetType().Name == "FilterNode") {
                 _ea.GetEvent<Event_SubDataSelected>().Publish((x as FilterNode).SubData);
                 var f = (x as FilterNode);
-                RequestRawTab(f.SubData, f.ParentNode.FileIdx, f.FilterIdx);
+                RequestRawTab(f.SubData, f.ParentNode.FileIdx);
             } else {
                 _ea.GetEvent<Event_DataSelected>().Publish(null);
             }
@@ -379,7 +389,7 @@ namespace UI_DataList.ViewModels {
             //    s.ParentNode.Update();
             //    RaisePropertyChanged("Files");
 
-            //    RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx, f.GetFilterIndex(id));
+            //    RequestRawTab(new SubData(s.FilePath, id), s.ParentNode.FileIdx);
             //}else 
             if(x.GetType().Name == "FileNode") {
                 var f = x as FileNode;
@@ -387,7 +397,7 @@ namespace UI_DataList.ViewModels {
                 var id = da.CreateFilter();
                 f.Update();
                 RaisePropertyChanged("Files");
-                RequestRawTab(new SubData(f.FilePath, id), f.FileIdx, da.GetFilterIndex(id));
+                RequestRawTab(new SubData(f.FilePath, id), f.FileIdx);
 
             }
         }
@@ -406,7 +416,7 @@ namespace UI_DataList.ViewModels {
                 file.Update();
                 RaisePropertyChanged("Files");
 
-                RequestRawTab(new SubData(file.FilePath, id), file.FileIdx, da.GetFilterIndex(id));
+                RequestRawTab(new SubData(file.FilePath, id), file.FileIdx);
 
             }
 
@@ -454,7 +464,7 @@ namespace UI_DataList.ViewModels {
             var id = da.CreateFilter();
             file.Update();
             RaisePropertyChanged("Files");
-            RequestRawTab(new SubData(file.FilePath, id), file.FileIdx, da.GetFilterIndex(id));
+            RequestRawTab(new SubData(file.FilePath, id), file.FileIdx);
         }
 
         private void Log(string s) {

@@ -34,7 +34,6 @@ namespace UI_Data.ViewModels {
         public TabType CurrentTabType { get { return TabType.RawDataTab; } }
 
         int _fileIdx=-1;
-        int _filterIdx=-1;
 
         private ObservableCollection<Item> _testItems;
         public ObservableCollection<Item> TestItems {
@@ -84,7 +83,6 @@ namespace UI_Data.ViewModels {
             if (_fileIdx == -1) {
                 _subData = (SubData)navigationContext.Parameters["subData"];
                 _fileIdx = (int)navigationContext.Parameters["fileIdx"];
-                _filterIdx = (int)navigationContext.Parameters["filterIdx"];
                 
                 _subDataList = new List<SubData>();
                 _subDataList.Add(_subData);
@@ -93,7 +91,7 @@ namespace UI_Data.ViewModels {
 
                 TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(_subData.FilterId));
 
-                Header = $"File_{_fileIdx}|Filter_{_filterIdx}";
+                Header = $"File_{_fileIdx}|{_subData.FilterId:x8}";
 
                 RegionName = $"Region_{_subData.FilterId:x8}";
 

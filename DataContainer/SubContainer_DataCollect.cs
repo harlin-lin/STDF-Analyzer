@@ -123,7 +123,8 @@ namespace DataContainer {
                     _siteContainer.Add(s.Key, 0);
                 }
             }
-            _basicInfo = new Dictionary<string, string>(da._basicInfo);
+            if(_basicInfo is null)
+                _basicInfo = new Dictionary<string, string>(da._basicInfo);
 
             foreach (var s in da._softBinNames) {
                 if (!_softBinNames.ContainsKey(s.Key)) {
@@ -182,9 +183,15 @@ namespace DataContainer {
         public void MergeSubData(SubContainer da, int filterId) {
             SetReadingPercent(0);
 
+            if (!da._filterContainer.ContainsKey(filterId)) {
+                throw new Exception("merge filter not exsist");
+            }
+
+            var filter = da._filterContainer[filterId];
+
             //merge the misc
-            foreach (var s in da._siteContainer) {
-                if (!_siteContainer.ContainsKey(s.Key)) {
+            foreach (var s in filter.FilterPartStatistic.SiteCnt) {
+                if (s.Value>0 && !_siteContainer.ContainsKey(s.Key)) {
                     _siteContainer.Add(s.Key, 0);
                 }
             }
@@ -201,29 +208,31 @@ namespace DataContainer {
                 }
             }
 
+            var tgtItems = filter.FilterItemStatistics.Keys;
+
             //add item info
-            foreach (var item in da._itemContainer) {
-                if (!CheckItemContainer(item.Key)) {
-                    _itemContainer[item.Key] = new ItemInfo(item.Value);
+            foreach (var item in tgtItems) {
+                if (!CheckItemContainer(item)) {
+                    _itemContainer[item] = new ItemInfo(_itemContainer[item]);
                 }
             }
             SetReadingPercent(2);
 
             int start = _partIdx + 1;
-            _preIdx += da._preIdx + 1;
-            _partIdx += da._partIdx + 1;
+            _preIdx += filter.FilterPartStatistic.TotalCnt;
+            _partIdx += filter.FilterPartStatistic.TotalCnt;
             AdjustDataBaseCapcity();
             SetReadingPercent(5);
             double p = 1.0;
-            foreach (var uid in da._dataBase_Result.Keys) {
+            foreach (var uid in tgtItems) {
                 int i = start;
-                foreach (var v in da.GetItemVal(uid, da._filterContainer[filterId])) {
+                foreach (var v in da.GetFilteredItemData(uid, filterId)) {
                     SetData(uid, i++, v);
                 }
-                SetReadingPercent((int)((p / (double)(da._dataBase_Result.Keys.Count())) * 90));
+                SetReadingPercent((int)((p / (double)(tgtItems.Count())) * 90));
             }
 
-            for (int i = 0; i <= da._partIdx; i++) {
+            foreach(var i in filter.FilteredPartIdx) {
                 _site_PartContainer.Add(da._site_PartContainer[i]);
                 _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
                 _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
