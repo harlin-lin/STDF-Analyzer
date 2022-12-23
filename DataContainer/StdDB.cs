@@ -71,21 +71,35 @@ namespace DataContainer
             return _subContainers[filePath];
         }
 
-        public static void MergeFiles(string filePath, List<string> files) {
-            _subContainers.TryAdd(filePath, new SubContainer(filePath));
-            foreach(var f in files) {
-                if (!IfExsistFile(f)) throw new Exception("File not exsist");
-            }
+        public static bool MergeFiles(string filePath, IEnumerable<string> files) {
+            if (!_subContainers.TryAdd(filePath, new SubContainer(filePath))) return false;
             foreach (var f in files) {
-                _subContainers[filePath].MergeData(_subContainers[f]);
+                if (!IfExsistFile(f) || !_subContainers[filePath].MergeData(_subContainers[f])) {
+                    RemoveFile(filePath);
+                    return false;
+                }
             }
             _subContainers[filePath].AnalyseData();
+            return true;
+        }
+
+        public static bool MergeSubData(string filePath, IEnumerable<SubData> subDataList) {
+            if (!_subContainers.TryAdd(filePath, new SubContainer(filePath))) return false;
+            foreach (var f in subDataList) {
+                if (!IfExsistFile(f.StdFilePath) || !_subContainers[filePath].MergeSubData(_subContainers[f.StdFilePath], f.FilterId)) {
+                    RemoveFile(filePath);
+                    return false;
+                }
+            }
+            _subContainers[filePath].AnalyseData();
+            return true;
         }
 
         public static bool RemoveFile(string filePath) {
             SubContainer tmp;
             var rst = _subContainers.TryRemove(filePath, out tmp);
-            tmp.Dispose();
+            if(tmp != null)
+                tmp.Dispose();
             GC.Collect();
             return rst;
         }

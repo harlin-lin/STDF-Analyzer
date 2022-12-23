@@ -162,9 +162,11 @@ namespace UI_DataList.ViewModels {
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
             _ea.GetEvent<Event_CloseData>().Subscribe(CloseSubData);
             _ea.GetEvent<Event_MergeFiles>().Subscribe(MergeFiles);
+            _ea.GetEvent<Event_MergeSubData>().Subscribe(MergeSubData);
             _ea.GetEvent<Event_CorrData>().Subscribe(RequestCorrTab);
             _ea.GetEvent<Event_CloseAllFiles>().Subscribe(CloseAllFiles);
             _ea.GetEvent<Event_SubDataTabSelected>().Subscribe(SubDataTabSelected);
+            //_ea.GetEvent<Event_AddRtFile>().Subscribe(MergeRtFile);
         }
 
         private void SubDataTabSelected(SubData subData) {
@@ -200,10 +202,10 @@ namespace UI_DataList.ViewModels {
             _regionManager.RequestNavigate("Region_DataView", "DataCorrelation", parameters);
         }
 
-        private async void MergeFiles(List<string> files) {
+        private async void MergeFiles(IEnumerable<string> files) {
             string ss = "";
-            foreach(var s in Files) {
-                ss += s.FileIdx;
+            foreach(var s in files) {
+                ss += Files.First((x)=>x.FilePath.Equals(s)).FileIdx;
                 ss += "_";
             }
             var filePath = "MergerFile_" + ss + DateTime.Now.ToString("HH-mm-ss");
@@ -211,20 +213,46 @@ namespace UI_DataList.ViewModels {
             Files.Add(f);
 
             try {
-                await Task.Run(() => {
-                    StdDB.MergeFiles(filePath, files);
+                var rst = await Task.Run<bool>(() => {
+                    return StdDB.MergeFiles(filePath, files);
                 });
+                if (!rst) {
+                    System.Windows.Forms.MessageBox.Show("Files on loading, please try later");
+                }
                 LoadingDone(f);
 
-                Log($"MergerFile_{ss} Done!");
+                Log($"Merge Done!");
             }
             catch (Exception e) {
                 Files.Remove(f);
                 StdDB.RemoveFile(filePath);
-                Log("File Merger Failed:" + e);
+                Log("Merge Failed:" + e);
                 return;
             }
 
+        }
+
+        private async void MergeSubData(IEnumerable<SubData> subDataList) {
+            var filePath = "MergerSubData_" + DateTime.Now.ToString("HH-mm-ss");
+            var f = new FileNode(filePath, _fileIdx++);
+            Files.Add(f);
+
+            try {
+                var rst = await Task.Run<bool>(() => {
+                    return StdDB.MergeSubData(filePath, subDataList);
+                });
+                if (!rst) {
+                    System.Windows.Forms.MessageBox.Show("Files on loading, please try later");
+                }
+                LoadingDone(f);
+
+                Log($"Merge Done!");
+            } catch (Exception e) {
+                Files.Remove(f);
+                StdDB.RemoveFile(filePath);
+                Log("Merge Failed:" + e);
+                return;
+            }
         }
 
         private async void OpenStdFile(string path) {
@@ -369,7 +397,7 @@ namespace UI_DataList.ViewModels {
                 var f = (x as FilterNode);
                 RequestRawTab(f.SubData, f.ParentNode.FileIdx);
             } else {
-                _ea.GetEvent<Event_DataSelected>().Publish(null);
+                _ea.GetEvent<Event_DataSelected>().Publish(string.Empty);
             }
         }
 

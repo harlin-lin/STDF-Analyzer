@@ -114,7 +114,9 @@ namespace DataContainer {
             OnPropertyChanged("LoadingDone");
         }
 
-        public void MergeData(SubContainer da) {
+        public bool MergeData(SubContainer da) {
+            if (!da.LoadingDone) return false;
+
             SetReadingPercent(0);
 
             //merge the misc
@@ -178,9 +180,12 @@ namespace DataContainer {
                          select i).ToList();
 
             SetReadingPercent(100);
+            return true;
         }
 
-        public void MergeSubData(SubContainer da, int filterId) {
+        public bool MergeSubData(SubContainer da, int filterId) {
+            if (!da.LoadingDone) return false;
+
             SetReadingPercent(0);
 
             if (!da._filterContainer.ContainsKey(filterId)) {
@@ -213,7 +218,7 @@ namespace DataContainer {
             //add item info
             foreach (var item in tgtItems) {
                 if (!CheckItemContainer(item)) {
-                    _itemContainer[item] = new ItemInfo(_itemContainer[item]);
+                    _itemContainer[item] = new ItemInfo(da._itemContainer[item]);
                 }
             }
             SetReadingPercent(2);
@@ -251,6 +256,7 @@ namespace DataContainer {
                          select i).ToList();
 
             SetReadingPercent(100);
+            return true;
         }
 
     }

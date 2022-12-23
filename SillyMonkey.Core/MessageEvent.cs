@@ -32,6 +32,11 @@ namespace SillyMonkey.Core
     public class Event_OpenFile : PubSubEvent<string> {
 
     }
+
+    public class Event_AddRtFile : PubSubEvent<string> {
+
+    }
+
     public class Event_CloseFile : PubSubEvent<string> {
 
     }
@@ -56,7 +61,8 @@ namespace SillyMonkey.Core
     }
     public class Event_FileInfo : PubSubEvent<string> {}
 
-    public class Event_MergeFiles : PubSubEvent<List<string>> {}
+    public class Event_MergeFiles : PubSubEvent<IEnumerable<string>> {}
+    public class Event_MergeSubData : PubSubEvent<IEnumerable<SubData>> { }
 
     public class Event_CorrData : PubSubEvent<IEnumerable<SubData>> { }
 

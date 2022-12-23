@@ -22,6 +22,13 @@ namespace UI_DataList.ViewModels {
             _regionManager = regionManager;
             _ea = ea;
 
+            _ea.GetEvent<Event_DataSelected>().Subscribe((x)=>{
+                if (string.IsNullOrEmpty(x)) IfFileSelectionValid = false;
+                IfFileSelectionValid = true;
+            });
+            _ea.GetEvent<Event_SubDataSelected>().Subscribe((x) => {
+                IfFileSelectionValid = false;
+            });
         }
 
         private DelegateCommand _openFileDiag;
@@ -50,24 +57,6 @@ namespace UI_DataList.ViewModels {
                     System.Windows.Forms.MessageBox.Show("Invalid File");
                 }
             }
-
-            //FolderBrowserDialog openFileDialog = new FolderBrowserDialog();
-
-            //var dir = openFileDialog.ShowDialog();
-            //if (dir != DialogResult.OK) return;
-
-            //string[] dicFileList = System.IO.Directory.GetFiles(openFileDialog.SelectedPath, "*.std", System.IO.SearchOption.AllDirectories);
-
-            //foreach (string path in dicFileList) {
-            //    var ext = System.IO.Path.GetExtension(path).ToLower();
-            //    if (ext == ".stdf" || ext == ".std") {
-            //        _ea.GetEvent<Event_OpenFile>().Publish(path);
-            //    } else {
-            //        //log message not supported
-            //    }
-            //}
-
-
         }
 
         private DelegateCommand _closeAllFiles;
@@ -90,6 +79,62 @@ namespace UI_DataList.ViewModels {
                 _ea.GetEvent<Event_MergeFiles>().Publish(ll);
             });
             mergerWindow.ShowDialog();
+        }
+
+        private DelegateCommand openSubDataMergeDiag;
+        public DelegateCommand OpenSubDataMergeDiag =>
+            openSubDataMergeDiag ?? (openSubDataMergeDiag = new DelegateCommand(ExecuteOpenSubDataMergeDiag));
+
+        void ExecuteOpenSubDataMergeDiag() {
+
+            var ss = from r in StdDB.GetAllSubData()
+                     select $"{r.FilterId:x8}|{r.StdFilePath}";
+
+            var mergerWindow = new FileMergeWindow(ss.ToList());
+            mergerWindow.ReturnHandler += new SubWindowReturnHandler((x) => {
+                var ll = from r in (x as IEnumerable<string>)
+                         let s = r.Split('|')
+                         select new SubData(s[1], int.Parse(s[0], System.Globalization.NumberStyles.HexNumber));
+
+                _ea.GetEvent<Event_MergeSubData>().Publish(ll);
+            });
+            mergerWindow.ShowDialog();
+        }
+
+        private bool _ifFileSelectionValid=false;
+        public bool IfFileSelectionValid {
+            get { return _ifFileSelectionValid; }
+            set { SetProperty(ref _ifFileSelectionValid, value); }
+        }
+
+        private DelegateCommand openRtFileMergeDiag;
+        public DelegateCommand OpenRtFileMergeDiag =>
+            openRtFileMergeDiag ?? (openRtFileMergeDiag = new DelegateCommand(ExecuteOpenRtFileMergeDiag));
+
+        void ExecuteOpenRtFileMergeDiag() {
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Title = "选择数据源文件";
+            //openFileDialog.Filter = "All|*.*|STDF|*.stdf|STD|*.std";
+            //openFileDialog.FileName = string.Empty;
+            //openFileDialog.FilterIndex = 1;
+            //openFileDialog.Multiselect = false;
+            //openFileDialog.RestoreDirectory = false;
+            //openFileDialog.DefaultExt = "stdf";
+            //if (openFileDialog.ShowDialog() == false) {
+            //    return;
+            //}
+
+            //var paths = openFileDialog.FileNames;
+            //foreach (string path in paths) {
+            //    var ext = System.IO.Path.GetExtension(path).ToLower();
+            //    if (ext == ".stdf" || ext == ".std") {
+            //        _ea.GetEvent<Event_AddRtFile>().Publish(path);
+            //    } else {
+            //        System.Windows.Forms.MessageBox.Show("Invalid File");
+            //    }
+            //    break;
+            //}
+            System.Windows.Forms.MessageBox.Show("TBD: use subdata merge instead");
         }
 
         private DelegateCommand _openCorrelationDiag;
