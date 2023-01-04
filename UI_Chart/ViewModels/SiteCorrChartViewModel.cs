@@ -293,6 +293,10 @@ namespace UI_Chart.ViewModels {
 
         //default 100 bins, and enable outliers count, total 112bins
         (float[], int[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
+            if (start == stop) {
+                start -= 1;
+                stop += 1;
+            }
             var step = (stop - start) / 100;
             float[] range = new float[103];
             var actStart = start;// - step * 5;
