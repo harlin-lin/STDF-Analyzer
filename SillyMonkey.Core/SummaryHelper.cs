@@ -193,7 +193,7 @@ namespace SillyMonkey.Core {
 
             var sbNames = dataAcquire.GetSBinInfo();
 
-            AppendBinField(ref sb, "BIN NO", "All", partStatistic.SiteCnt.Keys);
+            AppendBinField(ref sb, "BIN", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in sbin) {
                 if (sbNames.ContainsKey(b.Key)) {
                     AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{sbNames[b.Key].Item2}:{sbNames[b.Key].Item1}", siteSb);
@@ -220,7 +220,7 @@ namespace SillyMonkey.Core {
 
             var hbNames = dataAcquire.GetHBinInfo();
 
-            AppendBinField(ref sb, "BIN NO", "All", partStatistic.SiteCnt.Keys);
+            AppendBinField(ref sb, "BIN", "All", partStatistic.SiteCnt.Keys);
             foreach (var b in hb) {
                 if (hbNames.ContainsKey(b.Key)) {
                     AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{hbNames[b.Key].Item2}:{hbNames[b.Key].Item1}", siteHb);
@@ -241,7 +241,7 @@ namespace SillyMonkey.Core {
 
             }
 
-            AppendField(ref sb, bin.Item1.Key.ToString(), fmStr);
+            AppendField_Short(ref sb, bin.Item1.Key.ToString(), fmStr);
         }
 
         public static void AppendBinField(ref StringBuilder sb, string fieldName, string allData, IEnumerable<byte> sitesData) {
@@ -250,7 +250,7 @@ namespace SillyMonkey.Core {
                 fmStr += $"{v,15}";
             }
 
-            AppendField(ref sb, fieldName, fmStr);
+            AppendField_Short(ref sb, fieldName, fmStr);
         }
 
         //public static void AppendItems() {
@@ -280,6 +280,21 @@ namespace SillyMonkey.Core {
             //_paragraph.Inlines.Add(runContent);
 
         }
+
+        public static void AppendField_Short(ref StringBuilder sb, string fieldName, string content, bool skipIfNull = false) {
+            if (skipIfNull) {
+                if (content == null || content.Trim().Length == 0) return;
+            }
+
+            sb.Append($"{fieldName + ":",-7}{content}\r\n");
+
+            //Run runField = new Run() { Text = $"{fieldName+":", -16}", Foreground = new SolidColorBrush(Colors.Black), FontWeight = FontWeight.FromOpenTypeWeight(700) };
+            //Run runContent = new Run() { Text = content + "\r\n", Foreground = new SolidColorBrush(Colors.Black) };
+            //_paragraph.Inlines.Add(runField);
+            //_paragraph.Inlines.Add(runContent);
+
+        }
+
 
         public static void AppendTitle(ref StringBuilder sb, string title) {
 
