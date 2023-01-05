@@ -30,10 +30,10 @@ namespace DataContainer {
             _rstScale = (float)Math.Pow(10, (rstScale ?? 0));
 
             //ZM_BI advise calc by this method to solve float accurcy issue
-            //LoLimit = _llScale * ll;
-            //HiLimit = _hlScale * hl;
-            LoLimit = Convert.ToSingle(Convert.ToDecimal(_llScale) * Convert.ToDecimal(ll));
-            HiLimit = Convert.ToSingle(Convert.ToDecimal(_hlScale) * Convert.ToDecimal(hl));
+            LoLimit = _llScale * ll;
+            HiLimit = _hlScale * hl;
+            //LoLimit = Convert.ToSingle(Convert.ToDecimal(_llScale) * Convert.ToDecimal(ll));
+            //HiLimit = Convert.ToSingle(Convert.ToDecimal(_hlScale) * Convert.ToDecimal(hl));
 
             unScaledLo = ll;
             unScaledHi = hl;

@@ -14,20 +14,44 @@ namespace UI_Chart.ViewModels {
 
         private Color? _cellColor;
 
+        private HashSet<int> _frozenCols = new HashSet<int>();
+        private HashSet<int> _frozenRows = new HashSet<int>();
+
         public FastDataGridModel(SubData subData) {
             _subData = subData;
             _da = StdDB.GetDataAcquire(subData.StdFilePath);
+
+            //_frozenRows.Add(0);
+            //_frozenRows.Add(1);
+            //_frozenRows.Add(2);
+            //_frozenRows.Add(3);
+            //_frozenRows.Add(4);
+            //_frozenRows.Add(5);
+
+            _frozenCols.Add(0);
+            _frozenCols.Add(1);
         }
 
         public override HashSet<int> GetFrozenColumns(IFastGridView view) {
-            var col = new HashSet<int>();
-            col.Add(0);
-            col.Add(1);
-            return col;
+            return _frozenCols;
+        }
+
+        public override HashSet<int> GetFrozenRows(IFastGridView view) {
+            return _frozenRows;
         }
 
         public override string GetColumnHeaderText(int column) {
-            return (column+1).ToString();
+            //return (column+1).ToString();
+
+            if (column == 0) {
+                return string.Empty;
+            } else if (column == 1) {
+                return $"Index\nCord\nTime\nHBin\nSBin\nSite";
+            } else if (column > 1) {
+                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
+                return $"{idx.ToString()}\n{_da.GetWaferCord(idx)}\n{_da.GetTestTime(idx).ToString()}\n{_da.GetHardBin(idx).ToString()}\n{_da.GetSoftBin(idx).ToString()}\n{_da.GetSite(idx).ToString()}";
+            }
+            return string.Empty;
         }
 
         public override string GetRowHeaderText(int row) {
@@ -39,7 +63,7 @@ namespace UI_Chart.ViewModels {
         }
 
         public override int RowCount {
-            get { return _da.GetTestIDs().Count() + 6; }
+            get { return _da.GetTestIDs().Count(); }
         }
 
         public override Color? FontColor {
@@ -50,31 +74,13 @@ namespace UI_Chart.ViewModels {
             _cellColor = null;
 
             if (column == 0) {
-                if (row < 6) {
-                    return string.Empty;
-                }
-                return _da.GetTestIDs().ElementAt(row-6);
-            } else if (column == 1){
-                if (row == 0) return "Index";
-                if (row == 1) return "Cord";
-                if (row == 2) return "Time";
-                if (row == 3) return "HBin";
-                if (row == 4) return "SBin";
-                if (row == 5) return "Site";
-
-                var uid = _da.GetTestIDs().ElementAt(row-6);
-                return _da.GetTestIDs_Info()[uid].TestText;
-
+                return (row+1).ToString();
+            }else if (column == 1) {
+                return _da.GetTestIDs().ElementAt(row);
             } else if(column > 1){
                 var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
-                if (row == 0) return idx.ToString();
-                if (row == 1) return _da.GetWaferCord(idx);
-                if (row == 2) return _da.GetTestTime(idx).ToString();
-                if (row == 3) return _da.GetHardBin(idx).ToString();
-                if (row == 4) return _da.GetSoftBin(idx).ToString();
-                if (row == 5) return _da.GetSite(idx).ToString();
                 
-                var uid = _da.GetTestIDs().ElementAt(row - 6);
+                var uid = _da.GetTestIDs().ElementAt(row);
                 var val = _da.GetItemData(uid, idx);
                 var limit = _da.GetTestInfo(uid);
 

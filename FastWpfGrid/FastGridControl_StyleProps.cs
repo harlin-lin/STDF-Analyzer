@@ -18,7 +18,7 @@ namespace FastWpfGrid
         private Color _limitedSelectedColor = Color.FromRgb(51, 220, 220);
         private Color _limitedSelectedTextColor = Colors.White;
         private Color _mouseOverRowColor = Color.FromRgb(235, 235, 255); // Colors.LemonChiffon; // Colors .Beige;
-        private string _cellFontName = "Arial";
+        private string _cellFontName = "Consolas";
         private int _cellFontSize;
         private Color _gridLineColor = Colors.LightGray;
         private int _cellPaddingHorizontal = 2;

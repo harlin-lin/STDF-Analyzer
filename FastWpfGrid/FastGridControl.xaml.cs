@@ -102,7 +102,8 @@ namespace FastWpfGrid
         private void RecalculateDefaultCellSize()
         {
             ClearCaches();
-            int rowHeight = GetFont(false, false).TextHeight + CellPaddingVertical*2 + 2 + RowHeightReserve;
+            //int rowHeight = GetFont(false, false).TextHeight + CellPaddingVertical*2 + 2 + RowHeightReserve;
+            int rowHeight = GetFont(false, false).TextHeight + CellPaddingVertical * 2 + 3;
             int columnWidth = MinColumnWidthOverride ?? rowHeight*4;
 
             _rowSizes.DefaultSize = rowHeight;
@@ -116,7 +117,8 @@ namespace FastWpfGrid
         private void RecalculateHeaderSize()
         {
             HeaderWidth = GetTextWidth("0", false, false);//0000000
-            HeaderHeight = _rowSizes.DefaultSize;
+            //HeaderHeight = _rowSizes.DefaultSize;
+            HeaderHeight = 100;
 
             if (IsTransposed) CountTransposedHeaderWidth();
             if (Model != null)
