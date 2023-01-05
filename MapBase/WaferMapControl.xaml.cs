@@ -224,7 +224,7 @@ namespace MapBase {
             textBlockDieCnt.Text = $"Total:{totalCnt}";
 
             binInfo.Children.Clear();
-            var orderBincnt = binCnt.OrderBy(x=>x.Key);
+            var orderBincnt = binCnt.OrderByDescending(x=>x.Value);
             if (BinMode == MapBinMode.HBin) {
                 foreach (var b in orderBincnt) {
                     TextBox textBlock = new TextBox();
@@ -237,7 +237,7 @@ namespace MapBase {
                     textBlock.Foreground = new SolidColorBrush(Colors.White);
 
                     if (_waferData.HBinInfo != null) {
-                        textBlock.ToolTip = _waferData.HBinInfo[b.Key].Item2;
+                        textBlock.ToolTip = $"{_waferData.HBinInfo[b.Key].Item2}:{_waferData.HBinInfo[b.Key].Item1}";
                     }
                     binInfo.Children.Add(textBlock);
                 }
@@ -252,7 +252,7 @@ namespace MapBase {
                     textBlock.Foreground = new SolidColorBrush(Colors.White);
 
                     if (_waferData.SBinInfo != null) {
-                        textBlock.ToolTip = _waferData.SBinInfo[b.Key].Item2;
+                        textBlock.ToolTip = $"{_waferData.SBinInfo[b.Key].Item2}:{_waferData.SBinInfo[b.Key].Item1}";
                     }
                     binInfo.Children.Add(textBlock);
                 }
