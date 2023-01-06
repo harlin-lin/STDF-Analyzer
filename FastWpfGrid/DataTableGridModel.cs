@@ -21,6 +21,8 @@ namespace FastWpfGrid
                 return 0;
             }
         }
+        public override int ColumnHeaderHeight => 20;
+        public override int RowHeaderWidth => 20;
 
         public override int RowCount
         {

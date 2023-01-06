@@ -8,7 +8,7 @@ using DataContainer;
 using FastWpfGrid;
 
 namespace UI_Chart.ViewModels {
-    public class FastDataGridModel : FastGridModelBase{
+    public class FastDataGridModel : FastGridModelBase {
         private IDataAcquire _da;
         private SubData _subData;
 
@@ -21,15 +21,7 @@ namespace UI_Chart.ViewModels {
             _subData = subData;
             _da = StdDB.GetDataAcquire(subData.StdFilePath);
 
-            //_frozenRows.Add(0);
-            //_frozenRows.Add(1);
-            //_frozenRows.Add(2);
-            //_frozenRows.Add(3);
-            //_frozenRows.Add(4);
-            //_frozenRows.Add(5);
-
             _frozenCols.Add(0);
-            _frozenCols.Add(1);
         }
 
         public override HashSet<int> GetFrozenColumns(IFastGridView view) {
@@ -40,26 +32,24 @@ namespace UI_Chart.ViewModels {
             return _frozenRows;
         }
 
-        public override string GetColumnHeaderText(int column) {
-            //return (column+1).ToString();
+        public override int ColumnHeaderHeight => 90;
+        public override int RowHeaderWidth => 33;
 
+        public override string GetColumnHeaderText(int column) {
             if (column == 0) {
-                return string.Empty;
-            } else if (column == 1) {
                 return $"Index\nCord\nTime\nHBin\nSBin\nSite";
-            } else if (column > 1) {
-                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
+            } else {
+                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
                 return $"{idx.ToString()}\n{_da.GetWaferCord(idx)}\n{_da.GetTestTime(idx).ToString()}\n{_da.GetHardBin(idx).ToString()}\n{_da.GetSoftBin(idx).ToString()}\n{_da.GetSite(idx).ToString()}";
             }
-            return string.Empty;
         }
 
         public override string GetRowHeaderText(int row) {
-            return string.Empty;
+            return (row + 1).ToString();
         }
 
         public override int ColumnCount {
-            get { return _da.GetFilteredChipsCount(_subData.FilterId) + 2; }
+            get { return _da.GetFilteredChipsCount(_subData.FilterId) + 1; }
         }
 
         public override int RowCount {
@@ -74,11 +64,9 @@ namespace UI_Chart.ViewModels {
             _cellColor = null;
 
             if (column == 0) {
-                return (row+1).ToString();
-            }else if (column == 1) {
                 return _da.GetTestIDs().ElementAt(row);
-            } else if(column > 1){
-                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
+            }else {
+                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
                 
                 var uid = _da.GetTestIDs().ElementAt(row);
                 var val = _da.GetItemData(uid, idx);
@@ -91,7 +79,6 @@ namespace UI_Chart.ViewModels {
 
                 return val.ToString();
             }
-            return string.Empty;
         }
 
         //public override void SetCellText(int row, int column, string value) {

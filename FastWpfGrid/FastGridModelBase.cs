@@ -62,6 +62,9 @@ namespace FastWpfGrid
             return new FastGridCellImpl();
         }
 
+        public abstract int ColumnHeaderHeight { get; }
+        public abstract int RowHeaderWidth { get; }
+
         public virtual string GetColumnHeaderText(int column)
         {
             return "Column " + (column + 1).ToString();
