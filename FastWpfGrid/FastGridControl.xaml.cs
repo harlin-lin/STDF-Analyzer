@@ -157,7 +157,6 @@ namespace FastWpfGrid
             //RenderGrid();
             ScrollContent(rowIndex, columnIndex);
             AdjustInlineEditorPosition();
-            AdjustSelectionMenuPosition();
         }
 
 
@@ -435,29 +434,6 @@ namespace FastWpfGrid
             }
         }
 
-        private void AdjustSelectionMenuPosition()
-        {
-            FastGridCellAddress maxaddr = FastGridCellAddress.Empty;
-
-            foreach(var addr in _selectedCells)
-            {
-                if (!addr.IsCell) continue;
-                if (!maxaddr.IsCell) maxaddr = addr;
-                if (addr.Row.Value + addr.Column.Value > maxaddr.Row.Value + maxaddr.Column.Value) maxaddr = addr;
-            }
-
-            if (!maxaddr.IsCell) return;
-
-            int left = GetColumnLeft(maxaddr.Column.Value);
-            int top = GetRowTop(maxaddr.Row.Value + 1);
-
-            mnuSelection.Margin = new Thickness
-            {
-                Left = left / DpiDetector.DpiXKoef,
-                Top = top / DpiDetector.DpiYKoef,
-            };
-        }
-
         private void InvalidateCurrentCell()
         {
             if (_currentCell.IsCell) InvalidateCell(_currentCell);
@@ -682,19 +658,5 @@ namespace FastWpfGrid
             set { CurrentCell = ModelToReal(value); }
         }
 
-        public void ShowSelectionMenu(IEnumerable<string> commands)
-        {
-            if (commands == null)
-            {
-                mnuSelection.ItemsSource = null;
-                mnuSelection.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                mnuSelection.ItemsSource = commands.Select(x => new SelectionQuickCommand(Model, x)).ToList();
-                mnuSelection.Visibility = Visibility.Visible;
-                AdjustSelectionMenuPosition();
-            }
-        }
     }
 }

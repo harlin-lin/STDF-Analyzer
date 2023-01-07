@@ -98,12 +98,6 @@ namespace FastWpfGrid
         ActiveSeries GetActiveColumns();
 
         /// <summary>
-        /// shows quick acces menu to selection
-        /// </summary>
-        /// <param name="commands"></param>
-        void ShowSelectionMenu(IEnumerable<string> commands);
-
-        /// <summary>
         /// hides inline editor
         /// </summary>
         /// <param name="saveCellValue"></param>

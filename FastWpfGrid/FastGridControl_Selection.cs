@@ -21,6 +21,11 @@ namespace FastWpfGrid
         private Dictionary<int, int> _selectedRows = new Dictionary<int, int>();
         private Dictionary<int, int> _selectedColumns = new Dictionary<int, int>();
 
+        private Tuple<FastGridCellAddress, FastGridCellAddress> _selectedCellRange = null;
+        //private HashSet<int> _selectedRowRange = new HashSet<int>();
+        //private HashSet<int> _selectedColumnRange = new HashSet<int>();
+
+
         private void ClearSelectedCells()
         {
             _selectedCells.Clear();
