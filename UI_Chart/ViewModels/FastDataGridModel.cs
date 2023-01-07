@@ -86,16 +86,6 @@ namespace UI_Chart.ViewModels {
         //    _editedCells[key] = value;
         //}
 
-        //public override IFastGridCell GetGridHeader(IFastGridView view) {
-        //    var impl = new FastGridCellImpl();
-        //    var btn = impl.AddImageBlock(view.IsTransposed ? "/Images/flip_horizontal_small.png" : "/Images/flip_vertical_small.png");
-        //    btn.CommandParameter = FastWpfGrid.FastGridControl.ToggleTransposedCommand;
-        //    btn.ToolTip = "Swap rows and columns";
-        //    impl.AddImageBlock("/Images/foreign_keysmall.png").CommandParameter = "FK";
-        //    impl.AddImageBlock("/Images/primary_keysmall.png").CommandParameter = "PK";
-        //    return impl;
-        //}
-
         //public override void HandleCommand(IFastGridView view, FastGridCellAddress address, object commandParameter, ref bool handled) {
         //    //base.HandleCommand(view, address, commandParameter, ref handled);
         //    //if (commandParameter is string) MessageBox.Show(commandParameter.ToString());

@@ -13,7 +13,6 @@ namespace FastWpfGrid
 {
     partial class FastGridControl
     {
-        public static readonly object ToggleTransposedCommand = new object();
         public static readonly object ToggleAllowFlexibleRowsCommand = new object();
         public static readonly object SelectAllCommand = new object();
         public static readonly object AdjustColumnSizesCommand = new object();
@@ -96,25 +95,11 @@ namespace FastWpfGrid
                 bool isHeaderClickHandled = false;
                 if (_resizingColumn == null && cell.IsColumnHeader)
                 {
-                    if (IsTransposed)
-                    {
-                        isHeaderClickHandled = OnModelRowClick(_columnSizes.RealToModel(cell.Column.Value));
-                    }
-                    else
-                    {
-                        isHeaderClickHandled = OnModelColumnClick(_columnSizes.RealToModel(cell.Column.Value));
-                    }
+                    isHeaderClickHandled = OnModelColumnClick(_columnSizes.RealToModel(cell.Column.Value));
                 }
                 if (cell.IsRowHeader)
                 {
-                    if (IsTransposed)
-                    {
-                        isHeaderClickHandled = OnModelColumnClick(_rowSizes.RealToModel(cell.Row.Value));
-                    }
-                    else
-                    {
-                        isHeaderClickHandled = OnModelRowClick(_rowSizes.RealToModel(cell.Row.Value));
-                    }
+                    isHeaderClickHandled = OnModelRowClick(_rowSizes.RealToModel(cell.Row.Value));
                 }
 
                 if (!isHeaderClickHandled && ((_resizingColumn == null && cell.IsColumnHeader) || cell.IsRowHeader) 
@@ -282,17 +267,17 @@ namespace FastWpfGrid
                 _columnSizes.RemoveSizeOverride(col);
 
                 if (_model == null) return;
-                int rowCount = _isTransposed ? _modelColumnCount : _modelRowCount;
-                int colCount = _isTransposed ? _modelRowCount : _modelColumnCount;
+                int rowCount = _modelRowCount;
+                int colCount = _modelColumnCount;
                 {
-                    var cell = _isTransposed ? _model.GetRowHeader(this, col) : _model.GetColumnHeader(this, col);
+                    var cell = _model.GetColumnHeader(this, col);
                     _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell) + 2 * CellPaddingHorizontal);
                 }
                 int visRows = VisibleRowCount;
                 int row0 = FirstVisibleRowScrollIndex + _rowSizes.FrozenCount;
                 for (int row = row0; row < Math.Min(row0 + visRows, rowCount); row++)
                 {
-                    var cell = _isTransposed ? _model.GetCell(this, col, row) : _model.GetCell(this, row, col);
+                    var cell = _model.GetCell(this, row, col);
                     _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell, _columnSizes.MaxSize) + 2 * CellPaddingHorizontal);
                 }
 
@@ -771,10 +756,6 @@ namespace FastWpfGrid
                 Model.HandleCommand(this, addressModel, commandParameter, ref handled);
             }
             if (handled) return;
-            if (commandParameter == ToggleTransposedCommand)
-            {
-                IsTransposed = !IsTransposed;
-            }
             if (commandParameter == ToggleAllowFlexibleRowsCommand)
             {
                 AllowFlexibleRows = !AllowFlexibleRows;
@@ -809,25 +790,11 @@ namespace FastWpfGrid
         //    var cols = _columnSizes.RealCount;
         //    if (rowCountLimit != null)
         //    {
-        //        if (IsTransposed)
-        //        {
-        //            if (rowCountLimit.Value < cols) cols = rowCountLimit.Value;
-        //        }
-        //        else
-        //        {
-        //            if (rowCountLimit.Value < rows) rows = rowCountLimit.Value;
-        //        }
+        //        if (rowCountLimit.Value < rows) rows = rowCountLimit.Value;
         //    }
         //    if (columnCountLimit != null)
         //    {
-        //        if (IsTransposed)
-        //        {
-        //            if (columnCountLimit.Value < rows) rows = columnCountLimit.Value;
-        //        }
-        //        else
-        //        {
-        //            if (columnCountLimit.Value < cols) cols = columnCountLimit.Value;
-        //        }
+        //        if (columnCountLimit.Value < cols) cols = columnCountLimit.Value;
         //    }
         //    SetSelectedRectangle(new FastGridCellAddress(0, 0), new FastGridCellAddress(rows - 1, cols - 1));
         //}

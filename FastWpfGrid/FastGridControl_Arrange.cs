@@ -98,7 +98,7 @@ namespace FastWpfGrid
 
         public Rect GetColumnHeaderRectangle(int modelColumnIndex)
         {
-            var rect = (IsTransposed ? GetRowHeaderRect(_rowSizes.ModelToReal(modelColumnIndex)) : GetColumnHeaderRect(_columnSizes.ModelToReal(modelColumnIndex))).ToRect();
+            var rect = GetColumnHeaderRect(_columnSizes.ModelToReal(modelColumnIndex)).ToRect();
             var pt = image.PointToScreen(rect.TopLeft);
             return new Rect(pt, rect.Size);
         }
@@ -238,21 +238,13 @@ namespace FastWpfGrid
 
         private void UpdateSeriesCounts()
         {
-            _rowSizes.Count = IsTransposed ? _modelColumnCount : _modelRowCount;
-            _columnSizes.Count = IsTransposed ? _modelRowCount : _modelColumnCount;
+            _rowSizes.Count = _modelRowCount;
+            _columnSizes.Count = _modelColumnCount;
 
             if (_model != null)
             {
-                if (IsTransposed)
-                {
-                    _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
-                    _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
-                }
-                else
-                {
-                    _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
-                    _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
-                }
+                _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
+                _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
             }
 
             _realRowCount = _rowSizes.RealCount;
@@ -264,31 +256,6 @@ namespace FastWpfGrid
             T tmp = a;
             a = b;
             b = tmp;
-        }
-
-        private void OnIsTransposedPropertyChanged()
-        {
-            if (_isTransposed != IsTransposed)
-            {
-                _isTransposed = IsTransposed;
-                Exchange(ref FirstVisibleColumnScrollIndex, ref FirstVisibleRowScrollIndex);
-                if (_currentCell.IsCell) _currentCell = new FastGridCellAddress(_currentCell.Column, _currentCell.Row);
-                var oldSelected = _selectedCells.ToList();
-                ClearSelectedCells();
-                foreach (var cell in oldSelected) AddSelectedCell(new FastGridCellAddress(cell.Column, cell.Row, cell.IsColumnHeader));
-                _mouseOverCell = FastGridCellAddress.Empty;
-                _mouseOverRow = null;
-                _mouseOverRowHeader = null;
-                _mouseOverColumnHeader = null;
-                UpdateSeriesCounts();
-                RecountColumnWidths();
-                RecountRowHeights();
-                RecalculateDefaultCellSize();
-                AdjustScrollbars();
-                AdjustScrollBarPositions();
-                AdjustInlineEditorPosition();
-                AdjustSelectionMenuPosition();
-            }
         }
 
         public int HeaderHeight
@@ -345,44 +312,20 @@ namespace FastWpfGrid
 
         private FastGridCellAddress RealToModel(FastGridCellAddress address)
         {
-            if (IsTransposed)
-            {
-                return new FastGridCellAddress(
-                    address.Column.HasValue ? _columnSizes.RealToModel(address.Column.Value) : (int?)null,
-                    address.Row.HasValue ? _rowSizes.RealToModel(address.Row.Value) : (int?)null,
-                    address.IsGridHeader
-                    );
-            }
-            else
-            {
-                return new FastGridCellAddress(
-                    address.Row.HasValue ? _rowSizes.RealToModel(address.Row.Value) : (int?)null,
-                    address.Column.HasValue ? _columnSizes.RealToModel(address.Column.Value) : (int?)null,
-                    address.IsGridHeader
-                    );
-
-            }
+            return new FastGridCellAddress(
+                address.Row.HasValue ? _rowSizes.RealToModel(address.Row.Value) : (int?)null,
+                address.Column.HasValue ? _columnSizes.RealToModel(address.Column.Value) : (int?)null,
+                address.IsGridHeader
+                );
         }
 
         private FastGridCellAddress ModelToReal(FastGridCellAddress address)
         {
-            if (IsTransposed)
-            {
-                return new FastGridCellAddress(
-                    address.Column.HasValue ? _rowSizes.ModelToReal(address.Column.Value) : (int?)null,
-                    address.Row.HasValue ? _columnSizes.ModelToReal(address.Row.Value) : (int?)null,
-                    address.IsGridHeader
-                    );
-            }
-            else
-            {
-                return new FastGridCellAddress(
-                    address.Row.HasValue ? _rowSizes.ModelToReal(address.Row.Value) : (int?)null,
-                    address.Column.HasValue ? _columnSizes.ModelToReal(address.Column.Value) : (int?)null,
-                    address.IsGridHeader
-                    );
-
-            }
+            return new FastGridCellAddress(
+                address.Row.HasValue ? _rowSizes.ModelToReal(address.Row.Value) : (int?)null,
+                address.Column.HasValue ? _columnSizes.ModelToReal(address.Column.Value) : (int?)null,
+                address.IsGridHeader
+                );
         }
 
 
@@ -445,26 +388,19 @@ namespace FastWpfGrid
 
         public ActiveSeries GetActiveRows()
         {
-            return IsTransposed ? GetActiveRealColumns() : GetActiveRealRows();
+            return GetActiveRealRows();
         }
 
         public ActiveSeries GetActiveColumns()
         {
-            return IsTransposed ? GetActiveRealRows() : GetActiveRealColumns();
+            return GetActiveRealColumns();
         }
 
         private void SetExtraordinaryRealColumns()
         {
             if (_model != null)
             {
-                if (IsTransposed)
-                {
-                    _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
-                }
-                else
-                {
-                    _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
-                }
+                _columnSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
             }
         }
 
@@ -479,12 +415,12 @@ namespace FastWpfGrid
 
             if (IsWide) return;
             if (_model == null) return;
-            int rowCount = _isTransposed ? _modelColumnCount : _modelRowCount;
-            int colCount = _isTransposed ? _modelRowCount : _modelColumnCount;
+            int rowCount = _modelRowCount;
+            int colCount = _modelColumnCount;
 
             for (int col = 0; col < colCount; col++)
             {
-                var cell = _isTransposed ? _model.GetRowHeader(this, col) : _model.GetColumnHeader(this, col);
+                var cell = _model.GetColumnHeader(this, col);
                 _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell) + 2 * CellPaddingHorizontal);
             }
 
@@ -494,7 +430,7 @@ namespace FastWpfGrid
             {
                 for (int col = 0; col < colCount; col++)
                 {
-                    var cell = _isTransposed ? _model.GetCell(this, col, row) : _model.GetCell(this, row, col);
+                    var cell = _model.GetCell(this, row, col);
                     _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell, _columnSizes.MaxSize) + 2 * CellPaddingHorizontal);
                 }
             }
@@ -506,14 +442,7 @@ namespace FastWpfGrid
         {
             if (_model != null)
             {
-                if (IsTransposed)
-                {
-                    _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenColumns(this), _model.GetFrozenColumns(this));
-                }
-                else
-                {
-                    _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
-                }
+                _rowSizes.SetExtraordinaryIndexes(_model.GetHiddenRows(this), _model.GetFrozenRows(this));
             }
         }
 
@@ -530,7 +459,7 @@ namespace FastWpfGrid
         private bool CountVisibleRowHeights()
         {
             if (!FlexibleRows) return false;
-            int colCount = _isTransposed ? _modelRowCount : _modelColumnCount;
+            int colCount = _modelColumnCount;
             int rowCount = VisibleRowCount;
             bool changed = false;
             for (int row = FirstVisibleRowScrollIndex; row < FirstVisibleRowScrollIndex + rowCount; row++)
@@ -540,7 +469,7 @@ namespace FastWpfGrid
                 changed = true;
                 for (int col = 0; col < colCount; col++)
                 {
-                    var cell = _isTransposed ? GetModelCell(col, row) : GetModelCell(row, col);
+                    var cell = GetModelCell(row, col);
                     _rowSizes.PutSizeOverride(modelRow, GetCellContentHeight(cell) + 2 * CellPaddingVertical + 2 + RowHeightReserve);
                 }
             }
@@ -573,7 +502,6 @@ namespace FastWpfGrid
         //{
         //    get
         //    {
-        //        if (IsTransposed) return -1;
         //        return _rowSizes.RealToModel(FirstVisibleRowScrollIndex + _rowSizes.FrozenCount);
         //    }
         //}

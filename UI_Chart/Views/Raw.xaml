@@ -20,7 +20,6 @@
             </Button>
         </StackPanel>
         <FastWpfGrid:FastGridControl x:Name="grid1" Grid.Row="1" 
-                                                 IsTransposed="False"
                                     IsReadOnly="True" 
                                      Model="{Binding RawDataModel}" AllowSelectAll="False">
         </FastWpfGrid:FastGridControl>

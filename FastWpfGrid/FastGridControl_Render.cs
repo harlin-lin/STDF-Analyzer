@@ -399,8 +399,7 @@ namespace FastWpfGrid
                 {
                     InvalidateAll();
                 }
-                if (IsTransposed) OnScrolledModelColumns();
-                else OnScrolledModelRows();
+                OnScrolledModelRows();
                 return;
             }
 
@@ -417,8 +416,7 @@ namespace FastWpfGrid
                     _drawBuffer.ScrollX(scrollX, GetColumnHeadersScrollRect());
                     if (_rowSizes.FrozenCount > 0) _drawBuffer.ScrollX(scrollX, GetFrozenRowsRect());
                 }
-                if (IsTransposed) OnScrolledModelRows();
-                else OnScrolledModelColumns();
+                OnScrolledModelColumns();
                 return;
             }
 
@@ -436,13 +434,11 @@ namespace FastWpfGrid
 
             if (changedRow)
             {
-                if (IsTransposed) OnScrolledModelColumns();
-                else OnScrolledModelRows();
+                OnScrolledModelRows();
             }
             if (changedCol)
             {
-                if (IsTransposed) OnScrolledModelRows();
-                else OnScrolledModelColumns();
+                OnScrolledModelColumns();
             }
         }
     }

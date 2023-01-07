@@ -38,8 +38,6 @@ namespace FastWpfGrid
         //private Color _headerBackground = Color.FromRgb(0xDD, 0xDD, 0xDD);
         private WriteableBitmap _drawBuffer;
 
-        private bool _isTransposed;
-
         private bool _isReadOnly;
         private SelectionModeType _selectionMode = SelectionModeType.CellMode;
 
@@ -126,7 +124,6 @@ namespace FastWpfGrid
             HeaderWidth = GetTextWidth("0", false, false);//0000000
             HeaderHeight = _rowSizes.DefaultSize;
 
-            if (IsTransposed) CountTransposedHeaderWidth();
             if (Model != null)
             {
                 HeaderWidth = Model.RowHeaderWidth;
@@ -135,18 +132,6 @@ namespace FastWpfGrid
                 int width = GetCellContentWidth(Model.GetGridHeader(this));
                 if (width + 2 * CellPaddingHorizontal > HeaderWidth) HeaderWidth = width + 2 * CellPaddingHorizontal;
             }
-        }
-
-        private void CountTransposedHeaderWidth()
-        {
-            int maxw = 0;
-            for (int col = 0; col < _modelColumnCount; col++)
-            {
-                var cell = Model.GetColumnHeader(this, col);
-                int width = GetCellContentWidth(cell) + 2*CellPaddingHorizontal;
-                if (width > maxw) maxw = width;
-            }
-            HeaderWidth = maxw;
         }
 
         //public int RowHeight
@@ -353,19 +338,16 @@ namespace FastWpfGrid
 
         private IFastGridCell GetColumnHeader(int col)
         {
-            if (IsTransposed) return GetModelRowHeader(_columnSizes.RealToModel(col));
             return GetModelColumnHeader(_columnSizes.RealToModel(col));
         }
 
         private IFastGridCell GetRowHeader(int row)
         {
-            if (IsTransposed) return GetModelColumnHeader(_rowSizes.RealToModel(row));
             return GetModelRowHeader(_rowSizes.RealToModel(row));
         }
 
         private IFastGridCell GetCell(int row, int col)
         {
-            if (IsTransposed) return GetModelCell(_columnSizes.RealToModel(col), _rowSizes.RealToModel(row));
             return GetModelCell(_rowSizes.RealToModel(row), _columnSizes.RealToModel(col));
         }
 
