@@ -10,6 +10,8 @@ using System.Windows;
 using FastWpfGrid;
 using System.Collections.Generic;
 using System;
+using OfficeOpenXml;
+using System.Windows.Forms;
 
 namespace UI_Chart.ViewModels {
     public class RawViewModel : BindableBase, INavigationAware {
@@ -131,88 +133,171 @@ namespace UI_Chart.ViewModels {
         }
 
 
-        //private DataTable dt = new DataTable();
-        //public DataTable TestItems {
-        //    get { return dt; }
-        //    set { SetProperty(ref dt, value); }
-        //}
-
-
-        //private string _pageCount;
-        //public string PageCnt {
-        //    get { return _pageCount; }
-        //    set { SetProperty(ref _pageCount, value); }
-        //}
-
-        //private string _jumpPage;
-        //public string JumpPage {
-        //    get { return _jumpPage; }
-        //    set { SetProperty(ref _jumpPage, value); }
-        //}
-
-        //private DelegateCommand jumpFirstPage;
-        //public DelegateCommand JumpFirstPage =>
-        //    jumpFirstPage ?? (jumpFirstPage = new DelegateCommand(ExecuteJumpFirstPage));
-
-        //void ExecuteJumpFirstPage() {
-        //    currPage = 0;
-        //    UpdateTable();
-        //}
-
-        //private DelegateCommand jumpPreviousPage;
-        //public DelegateCommand JumpPreviousPage =>
-        //    jumpPreviousPage ?? (jumpPreviousPage = new DelegateCommand(ExecuteJumpPreviousPage));
-
-        //void ExecuteJumpPreviousPage() {
-        //    if (currPage > 0) {
-        //        currPage--;
-        //        UpdateTable();
-        //    }
-        //}
-
-        //private DelegateCommand jumpNextPage;
-        //public DelegateCommand JumpNextPage =>
-        //    jumpNextPage ?? (jumpNextPage = new DelegateCommand(ExecuteJumpNextPage));
-
-        //void ExecuteJumpNextPage() {
-        //    if (currPage < (totalPages - 1)) {
-        //        currPage++;
-        //        UpdateTable();
-        //    }
-        //}
-
-        //private DelegateCommand jumpLastPage;
-        //public DelegateCommand JumpLastPage =>
-        //    jumpLastPage ?? (jumpLastPage = new DelegateCommand(ExecuteJumpLastPage));
-
-        //void ExecuteJumpLastPage() {
-        //    currPage = totalPages - 1;
-        //    UpdateTable();
-        //}
-
-        //private DelegateCommand _jumpSelectedPage;
-        //public DelegateCommand JumpSelectedPage =>
-        //    _jumpSelectedPage ?? (_jumpSelectedPage = new DelegateCommand(ExecuteJumpSelectedPage));
-
-        //void ExecuteJumpSelectedPage() {
-        //    int targetPage = 0;
-        //    if (int.TryParse(JumpPage, out targetPage)) {
-        //        if (targetPage <= (totalPages - 1) && targetPage >= 0) {
-        //            currPage = targetPage;
-        //            UpdateTable();
-        //        }
-        //    } else {
-        //        MessageBox.Show("Wrong target box");
-        //    }
-        //}
-
-
         private FastGridModelBase _rawDataModel;
         public FastGridModelBase RawDataModel {
             get { return _rawDataModel; }
             set { SetProperty(ref _rawDataModel, value); }
         }
 
+        private DelegateCommand _exportToExcelCommand;
+        public DelegateCommand ExportToExcelCommand =>
+            _exportToExcelCommand ?? (_exportToExcelCommand = new DelegateCommand(ExportToExcelAsync));
 
+        private async void ExportToExcelAsync() {
+            string path;
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Filter = "Excel Files | *.csv";
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath);
+                saveFileDialog.ValidateNames = true;
+                if (saveFileDialog.ShowDialog() != DialogResult.OK) {
+                    return;
+                }
+                path = saveFileDialog.FileName;
+            };
+
+            #region getRcm
+            //List<ItemStatistic> rcmSt = new List<ItemStatistic>();
+            //List<int> wfCnt = new List<int>();
+            //var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+            //var waferId = dataAcquire.GetFilteredItemData("201008_0", _subData.FilterId).ToList();
+            //var rcmValue = dataAcquire.GetFilteredItemData("620001_0", _subData.FilterId).ToList();
+            //for (int i=1; i<=25; i++) {
+            //    var rcmByWf = (from r in dataAcquire.GetAllIndex()
+            //                where waferId[r] == i
+            //                select rcmValue[r]).ToList();
+            //    wfCnt.Add(rcmByWf.Count);
+            //    var st = new ItemStatistic(rcmByWf, 5, 62);
+            //    rcmSt.Add(st);
+            //}
+
+            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            //using (var p = new ExcelPackage()) {
+            //    //write raw data
+            //    var ws2 = p.Workbook.Worksheets.Add("Raw");
+
+
+            //    ws2.Cells[1, 1].Value = "Wafer NO";
+            //    ws2.Cells[1, 2].Value = "Lo Limit";
+            //    ws2.Cells[1, 3].Value = "Hi Limit";
+            //    ws2.Cells[1, 4].Value = "Mean";
+            //    ws2.Cells[1, 5].Value = "Min";
+            //    ws2.Cells[1, 6].Value = "Max";
+            //    ws2.Cells[1, 7].Value = "Cp";
+            //    ws2.Cells[1, 8].Value = "Cpk";
+            //    ws2.Cells[1, 9].Value = "Sigma";
+            //    ws2.Cells[1, 10].Value = "Total Cnt";
+            //    ws2.Cells[1, 11].Value = "Pass Cnt";
+            //    ws2.Cells[1, 12].Value = "Fail Cnt";
+            //    ws2.Cells[1, 13].Value = "Fail Rate";
+
+            //    for (int i = 1; i <= 25; i++) {
+            //        ws2.Cells[i+1, 1].Value = i;
+            //        ws2.Cells[i + 1, 2].Value = 5;
+            //        ws2.Cells[i + 1, 3].Value = 62;
+            //        ws2.Cells[i + 1, 4].Value = rcmSt[i - 1].MeanValue;
+            //        ws2.Cells[i + 1, 5].Value = rcmSt[i - 1].MinValue;
+            //        ws2.Cells[i + 1, 6].Value = rcmSt[i - 1].MaxValue;
+            //        ws2.Cells[i + 1, 7].Value = rcmSt[i - 1].Cp;
+            //        ws2.Cells[i + 1, 8].Value = rcmSt[i - 1].Cpk;
+            //        ws2.Cells[i + 1, 9].Value = rcmSt[i - 1].Sigma;
+            //        ws2.Cells[i + 1, 10].Value = wfCnt[i - 1];
+            //        ws2.Cells[i + 1, 11].Value = rcmSt[i - 1].PassCount;
+            //        ws2.Cells[i + 1, 12].Value = rcmSt[i - 1].FailCount;
+            //        ws2.Cells[i + 1, 13].Value = (rcmSt[i - 1].FailCount*100.0)/ wfCnt[i - 1];
+            //    }
+
+            //    ws2.Cells[1, 1, 26, 13].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+
+            //}
+
+            #endregion
+
+
+            await System.Threading.Tasks.Task.Run(() => {
+                //get file path
+
+                //write data
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (var p = new ExcelPackage()) {
+                    var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+                    string phase = "Loading start";
+                    int percent = 0;
+                    System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
+                        SetProgress(phase, percent);
+                    }, null, 100, 100);
+
+
+                    //write basic info
+                    //var ws1 = p.Workbook.Worksheets.Add("BasicInfo");
+
+                    //write raw data
+                    var ws2 = p.Workbook.Worksheets.Add("Raw");
+                    var testItems = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
+                    var chips = dataAcquire.GetFilteredPartIndex(_subData.FilterId);
+
+
+                    //header
+                    ws2.Cells[1, 1].Value = "Test NO";
+                    ws2.Cells[1, 2].Value = "Cord";
+                    ws2.Cells[1, 3].Value = "HardBin";
+                    ws2.Cells[1, 4].Value = "SoftBin";
+                    ws2.Cells[1, 5].Value = "Site";
+
+                    ws2.Cells[2, 1].Value = "Test Name";
+                    ws2.Cells[3, 1].Value = "Low Limit";
+                    ws2.Cells[4, 1].Value = "High Limit";
+                    ws2.Cells[5, 1].Value = "Unit";
+
+                    phase = "Export chip idx";
+                    percent = 1;
+
+                    int i = 6;
+                    foreach (var v in chips) {
+                        ws2.Cells[i, 1].Value = v;
+                        ws2.Cells[i, 2].Value = dataAcquire.GetWaferCord(v);
+                        ws2.Cells[i, 3].Value = dataAcquire.GetHardBin(v);
+                        ws2.Cells[i, 4].Value = dataAcquire.GetSoftBin(v);
+                        ws2.Cells[i, 5].Value = dataAcquire.GetSite(v);
+                        i++;
+                    }
+
+                    phase = "Export chip items";
+                    percent = 5;
+
+
+                    int col = 6;
+                    double totalItemCnt = testItems.Count();
+                    foreach (var v in testItems) {
+                        int row = 6;
+                        ws2.Cells[1, col].Value = v.TestNumber;
+                        ws2.Cells[2, col].Value = v.TestText;
+                        ws2.Cells[3, col].Value = v.LoLimit;
+                        ws2.Cells[4, col].Value = v.HiLimit;
+                        ws2.Cells[5, col].Value = v.Unit;
+
+                        foreach (var r in dataAcquire.GetFilteredItemData(v.TestNumber, _subData.FilterId)) {
+                            ws2.Cells[row, col].Value = r;
+                            row++;
+                        }
+                        col++;
+
+                        percent = (int)((col / totalItemCnt) * 100);
+                    }
+                    ws2.Cells[1, 1, chips.Count() + 6, testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+                    //p.SaveAs(new System.IO.FileInfo(path));
+                    //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+
+                    myTimer.Dispose();
+                }
+            });
+            _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
+        }
+
+        private void SetProgress(string log, int percent) {
+            _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>(log, percent));
+        }
     }
 }

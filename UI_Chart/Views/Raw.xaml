@@ -14,41 +14,15 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <!--<TextBlock Text="{Binding PageCnt}" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpFirstPage, Mode=OneWay}" ToolTip="To Fisrt Page" BorderThickness="0">
-                --><!--<iconPacks:PackIconBootstrapIcons Kind="ChevronDoubleLeft" />--><!--
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-ChevronDoubleLeft.png" Width="16" Height="16"/>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
             </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpPreviousPage, Mode=OneWay}" ToolTip="To Previous Page" BorderThickness="0">
-                --><!--<iconPacks:PackIconBootstrapIcons Kind="ChevronLeft" />--><!--
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-ChevronLeft.png" Width="16" Height="16"/>
-            </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpNextPage, Mode=OneWay}" ToolTip="To Next Page" BorderThickness="0">
-                --><!--<iconPacks:PackIconBootstrapIcons Kind="ChevronRight" />--><!--
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-ChevronRight.png" Width="16" Height="16"/>
-            </Button>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpLastPage, Mode=OneWay}" ToolTip="To Last Page" BorderThickness="0">
-                --><!--<iconPacks:PackIconBootstrapIcons Kind="ChevronDoubleRight" />--><!--
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-ChevronDoubleRight.png" Width="16" Height="16"/>
-            </Button>
-            <TextBox Text="{Binding JumpPage}" Margin="10,0,10,0" Width="40"/>
-            <Button Width="23" Height="23" Margin="10,0,10,0" Command="{Binding JumpSelectedPage, Mode=OneWay}" ToolTip="Jump" BorderThickness="0">
-                --><!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />--><!--
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
-            </Button>-->
-
         </StackPanel>
-        <!--<DataGrid Grid.Row="1" FrozenColumnCount="2"  ItemsSource="{Binding TestItems}" IsReadOnly="True" ClipboardCopyMode="IncludeHeader"/>-->
         <FastWpfGrid:FastGridControl x:Name="grid1" Grid.Row="1" 
                                                  IsTransposed="False"
                                     IsReadOnly="True" 
-                                     Model="{Binding RawDataModel}">
-            <!--<FastWpfGrid:FastGridControl.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Test" />
-                </ContextMenu>
-            </FastWpfGrid:FastGridControl.ContextMenu>-->
+                                     Model="{Binding RawDataModel}" AllowSelectAll="False">
         </FastWpfGrid:FastGridControl>
 
     </Grid>

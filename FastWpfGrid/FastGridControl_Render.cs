@@ -16,7 +16,7 @@ namespace FastWpfGrid
     {
         private void RenderGrid()
         {
-            var start = DateTime.Now;
+            //var start = DateTime.Now;
             if (_drawBuffer == null)
             {
                 ClearInvalidation();
@@ -104,10 +104,10 @@ namespace FastWpfGrid
                     RenderColumnHeader(col);
                 }
             }
-            if (_isInvalidatedAll)
-            {
-                Debug.WriteLine("Render full grid: {0} ms", Math.Round((DateTime.Now - start).TotalMilliseconds));
-            }
+            //if (_isInvalidatedAll)
+            //{
+            //    Debug.WriteLine("Render full grid: {0} ms", Math.Round((DateTime.Now - start).TotalMilliseconds));
+            //}
             ClearInvalidation();
         }
 
@@ -162,8 +162,8 @@ namespace FastWpfGrid
             Color? hoverRowColor = null;
             if (_currentCell.TestCell(row, col) || _selectedCells.Contains(new FastGridCellAddress(row, col)))
             {
-                selectedBgColor = _isLimitedSelection ? LimitedSelectedColor : SelectedColor;
-                selectedTextColor = _isLimitedSelection ? LimitedSelectedTextColor : SelectedTextColor;
+                selectedBgColor = SelectedColor;
+                selectedTextColor = SelectedTextColor;
             }
             if (row == _mouseOverRow)
             {

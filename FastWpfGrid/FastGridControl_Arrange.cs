@@ -270,8 +270,6 @@ namespace FastWpfGrid
         {
             if (_isTransposed != IsTransposed)
             {
-                _selectedRealRowCountLimitLoaded = false;
-                _selectedRealColumnCountLimitLoaded = false;
                 _isTransposed = IsTransposed;
                 Exchange(ref FirstVisibleColumnScrollIndex, ref FirstVisibleRowScrollIndex);
                 if (_currentCell.IsCell) _currentCell = new FastGridCellAddress(_currentCell.Column, _currentCell.Row);

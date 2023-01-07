@@ -41,6 +41,7 @@ namespace FastWpfGrid
         private bool _isTransposed;
 
         private bool _isReadOnly;
+        private SelectionModeType _selectionMode = SelectionModeType.CellMode;
 
         private static Dictionary<string, ImageHolder> _imageCache = new Dictionary<string, ImageHolder>();
 
@@ -66,6 +67,12 @@ namespace FastWpfGrid
             get { return _isReadOnly; }
             set { _isReadOnly = value; }
         }
+
+        public SelectionModeType SelectionMode {
+            get { return _selectionMode; }
+            set { _selectionMode = value; }
+        }
+
 
         public GlyphFont GetFont(bool isBold, bool isItalic)
         {
@@ -523,16 +530,6 @@ namespace FastWpfGrid
                 if (a.Row == null || b.Row == null) return res;
                 minrow = Math.Min(a.Row.Value, b.Row.Value);
                 maxrow = Math.Max(a.Row.Value, b.Row.Value);
-            }
-
-            const int LIMIT_RESERVE = 3;
-            if (SelectedRealRowCountLimit.HasValue && maxrow - minrow > SelectedRealRowCountLimit.Value + LIMIT_RESERVE)
-            {
-                maxrow = minrow + SelectedRealRowCountLimit.Value + LIMIT_RESERVE;
-            }
-            if (SelectedRealColumnCountLimit.HasValue && maxcol - mincol > SelectedRealColumnCountLimit.Value + LIMIT_RESERVE)
-            {
-                maxcol = mincol + SelectedRealColumnCountLimit.Value + LIMIT_RESERVE;
             }
 
             for (int row = minrow; row <= maxrow; row++)

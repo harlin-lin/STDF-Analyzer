@@ -8,6 +8,11 @@ using System.Windows;
 
 namespace FastWpfGrid
 {
+    public enum SelectionModeType {
+        CellMode,
+        RowMode,
+        ColumnMode
+    }
     partial class FastGridControl
     {
         public event EventHandler<SelectionChangedEventArgs> SelectedCellsChanged;
@@ -16,72 +21,17 @@ namespace FastWpfGrid
         private Dictionary<int, int> _selectedRows = new Dictionary<int, int>();
         private Dictionary<int, int> _selectedColumns = new Dictionary<int, int>();
 
-        int? _selectedRealRowCountLimit;
-        bool _selectedRealRowCountLimitLoaded;
-        public int? SelectedRealRowCountLimit
-        {
-            get
-            {
-                if (_selectedRealRowCountLimitLoaded) return _selectedRealRowCountLimit;
-                _selectedRealRowCountLimitLoaded = true;
-                if (Model == null)
-                {
-                    _selectedRealRowCountLimit = null;
-                }
-                else
-                {
-                    _selectedRealRowCountLimit = IsTransposed ? Model.SelectedColumnCountLimit : Model.SelectedRowCountLimit;
-                }
-                return _selectedRealRowCountLimit;
-            }
-        }
-
-        int? _selectedRealColumnCountLimit;
-        bool _selectedRealColumnCountLimitLoaded;
-        public int? SelectedRealColumnCountLimit
-        {
-            get
-            {
-                if (_selectedRealColumnCountLimitLoaded) return _selectedRealColumnCountLimit;
-                _selectedRealColumnCountLimitLoaded = true;
-                if (Model == null)
-                {
-                    _selectedRealColumnCountLimit = null;
-                }
-                else
-                {
-                    _selectedRealColumnCountLimit = IsTransposed ? Model.SelectedRowCountLimit : Model.SelectedColumnCountLimit;
-                }
-                return _selectedRealColumnCountLimit;
-            }
-        }
-
-        private bool _isLimitedSelection = false;
-
-        private void CheckChangedLimitedSelection()
-        {
-            if (IsLimitedSelection != _isLimitedSelection)
-            {
-                InvalidateAll();
-                _isLimitedSelection = IsLimitedSelection;
-            }
-        }
-
         private void ClearSelectedCells()
         {
             _selectedCells.Clear();
             _selectedRows.Clear();
             _selectedColumns.Clear();
 
-            CheckChangedLimitedSelection();
         }
 
         private void AddSelectedCell(FastGridCellAddress cell)
         {
             if (!cell.IsCell) return;
-
-            if (SelectedRealRowCountLimit.HasValue && _selectedRows.Count >= SelectedRealRowCountLimit.Value && !_selectedRows.ContainsKey(cell.Row.Value)) return;
-            if (SelectedRealColumnCountLimit.HasValue && _selectedColumns.Count >= SelectedRealColumnCountLimit.Value && !_selectedColumns.ContainsKey(cell.Column.Value)) return;
 
             if (_selectedCells.Contains(cell)) return;
 
@@ -93,7 +43,6 @@ namespace FastWpfGrid
             if (!_selectedColumns.ContainsKey(cell.Column.Value)) _selectedColumns[cell.Column.Value] = 0;
             _selectedColumns[cell.Column.Value]++;
 
-            CheckChangedLimitedSelection();
         }
 
         private void RemoveSelectedCell(FastGridCellAddress cell)
@@ -116,17 +65,6 @@ namespace FastWpfGrid
                 if (_selectedColumns[cell.Column.Value] == 0) _selectedColumns.Remove(cell.Column.Value);
             }
 
-            CheckChangedLimitedSelection();
-        }
-
-        public bool IsLimitedSelection
-        {
-            get
-            {
-                return (SelectedRealRowCountLimit.HasValue && _selectedRows.Count >= SelectedRealRowCountLimit.Value)
-                    ||
-                     (SelectedRealColumnCountLimit.HasValue && _selectedColumns.Count >= SelectedRealColumnCountLimit.Value);
-            }
         }
 
         private void SetSelectedRectangle(FastGridCellAddress origin, FastGridCellAddress cell)

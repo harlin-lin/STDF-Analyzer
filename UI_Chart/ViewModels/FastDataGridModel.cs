@@ -101,10 +101,6 @@ namespace UI_Chart.ViewModels {
         //    //if (commandParameter is string) MessageBox.Show(commandParameter.ToString());
         //}
 
-        //public override int? SelectedRowCountLimit {
-        //    get { return 100; }
-        //}
-
         //public override void HandleSelectionCommand(IFastGridView view, string command) {
         //    //MessageBox.Show(command);
         //}

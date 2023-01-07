@@ -274,14 +274,5 @@ namespace FastWpfGrid
             get { return null; }
         }
 
-        public virtual int? SelectedRowCountLimit
-        {
-            get { return null; }
-        }
-
-        public virtual int? SelectedColumnCountLimit
-        {
-            get { return null; }
-        }
     }
 }

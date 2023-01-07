@@ -164,43 +164,104 @@ namespace FastWpfGrid
 
                 if (cell.IsCell)
                 {
-                    if (ControlPressed)
-                    {
-                        HideInlineEditor();
-                        if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
-                        else AddSelectedCell(cell);
-                        InvalidateCell(cell);
-                    }
-                    else if (ShiftPressed)
-                    {
-                        _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
-
-                        HideInlineEditor();
-                        foreach (var cellItem in GetCellRange(_currentCell, cell))
-                        {
-                            AddSelectedCell(cellItem);
-                            InvalidateCell(cellItem);
-                        }
-                    }
-                    else
-                    {
-                        _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
-                        if (_currentCell == cell)
-                        {
-                            _showCellEditorIfMouseUp = _currentCell;
-                        }
-                        else
-                        {
+                    if(_selectionMode == SelectionModeType.CellMode) {
+                        if (ControlPressed) {
                             HideInlineEditor();
-                            SetCurrentCell(cell);
+                            if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
+                            else AddSelectedCell(cell);
+                            InvalidateCell(cell);
+                        } else if (ShiftPressed) {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+
+                            HideInlineEditor();
+                            foreach (var cellItem in GetCellRange(_currentCell, cell)) {
+                                AddSelectedCell(cellItem);
+                                InvalidateCell(cellItem);
+                            }
+                        } else {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+                            if (_currentCell == cell) {
+                                _showCellEditorIfMouseUp = _currentCell;
+                            } else {
+                                HideInlineEditor();
+                                SetCurrentCell(cell);
+                            }
+                            AddSelectedCell(cell);
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
                         }
-                        AddSelectedCell(cell);
-                        _dragStartCell = cell;
-                        _dragTimer.IsEnabled = true;
-                        CaptureMouse();
+
+                    } else if(_selectionMode == SelectionModeType.RowMode) {
+                        var headCell = new FastGridCellAddress(cell.Row, null);
+                        cell = headCell;
+
+                        if (ControlPressed) {
+                            foreach (var rangeCell in GetCellRange(cell, cell)) {
+                                if (_selectedCells.Contains(rangeCell)) RemoveSelectedCell(rangeCell);
+                                else AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                        } else if (ShiftPressed) {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+
+                            foreach (var rangeCell in GetCellRange(cell, _currentCell)) {
+                                AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                        } else {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+                            if (_currentCell.IsCell) {
+                                SetCurrentCell(cell);
+                            }
+                            foreach (var rangeCell in GetCellRange(cell, cell)) {
+                                AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
+                        }
+
+                    } else {
+                        var headCell = new FastGridCellAddress(null, cell.Column);
+                        cell = headCell;
+
+                        if (ControlPressed) {
+                            foreach (var rangeCell in GetCellRange(cell, cell)) {
+                                if (_selectedCells.Contains(rangeCell)) RemoveSelectedCell(rangeCell);
+                                else AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                        } else if (ShiftPressed) {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+
+                            foreach (var rangeCell in GetCellRange(cell, _currentCell)) {
+                                AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                        } else {
+                            _selectedCells.ToList().ForEach(InvalidateCell);
+                            ClearSelectedCells();
+                            if (_currentCell.IsCell) {
+                                SetCurrentCell(cell);
+                            }
+                            foreach (var rangeCell in GetCellRange(cell, cell)) {
+                                AddSelectedCell(rangeCell);
+                                InvalidateCell(rangeCell);
+                            }
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
+                        }
+
                     }
+
                     OnChangeSelectedCells(true);
                 }
             }
