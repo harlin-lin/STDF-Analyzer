@@ -52,6 +52,8 @@ namespace FastWpfGrid
 
         private void SetSelectedRectangle(FastGridCellAddress origin, FastGridCellAddress cell)
         {
+            bool changed = false;
+
             if (origin.IsColumnHeader || _selectionMode == SelectionModeType.ColumnMode) {
                 if (cell.Column.HasValue) {
                     var start = Math.Min(cell.Column.Value, origin.Column.Value);
@@ -61,11 +63,13 @@ namespace FastWpfGrid
                         if (_selectedColumnRange.Contains(added)) continue;
                         InvalidateColumn(added);
                         _selectedColumnRange.Add(added);
+                        changed = true;
                     }
                     foreach (var removed in _selectedColumnRange.ToList()) {
                         if (newSelected.Contains(removed)) continue;
                         InvalidateColumn(removed);
                         _selectedColumnRange.Remove(removed);
+                        changed = true;
                     }
                 }
 
@@ -78,11 +82,13 @@ namespace FastWpfGrid
                         if (_selectedRowRange.Contains(added)) continue;
                         InvalidateRow(added);
                         _selectedRowRange.Add(added);
+                        changed = true;
                     }
                     foreach (var removed in _selectedRowRange.ToList()) {
                         if (newSelected.Contains(removed)) continue;
                         InvalidateRow(removed);
                         _selectedRowRange.Remove(removed);
+                        changed = true;
                     }
                 }
 
@@ -93,17 +99,19 @@ namespace FastWpfGrid
                     if (_selectedCells.Contains(added)) continue;
                     InvalidateCell(added);
                     AddSelectedCell(added);
+                    changed = true;
                 }
                 foreach (var removed in _selectedCells.ToList())
                 {
                     if (newSelected.Contains(removed)) continue;
                     InvalidateCell(removed);
                     RemoveSelectedCell(removed);
+                    changed = true;
                 }
             }
 
             SetCurrentCell(cell);
-            OnChangeSelectedCells(true);
+            if(changed) OnChangeSelectedCells(true);
         }
 
         private void OnChangeSelectedCells(bool isInvokedByUser)
