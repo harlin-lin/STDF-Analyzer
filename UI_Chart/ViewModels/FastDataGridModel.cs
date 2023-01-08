@@ -81,6 +81,13 @@ namespace UI_Chart.ViewModels {
             }
         }
 
+        public override IFastGridCellBlock GetBlock(int blockIndex) {
+            _cellColor = null;
+
+            return this;
+        }
+
+
         //public override void SetCellText(int row, int column, string value) {
         //    var key = Tuple.Create(row, column);
         //    _editedCells[key] = value;

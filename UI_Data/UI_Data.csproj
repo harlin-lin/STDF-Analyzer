@@ -85,6 +85,7 @@
     </Compile>
     <Compile Include="ViewModels\DataCorrelationViewModel.cs" />
     <Compile Include="ViewModels\DataRawViewModel.cs" />
+    <Compile Include="ViewModels\DataRaw_FastDataGridModel.cs" />
     <Compile Include="ViewModels\SiteDataCorrelationViewModel.cs" />
     <Compile Include="Views\DataCorrelation.xaml.cs">
       <DependentUpon>DataCorrelation.xaml</DependentUpon>
@@ -109,6 +110,10 @@
     <ProjectReference Include="..\DataContainer\DataContainer.csproj">
       <Project>{CF9CB8AC-B5A1-49C1-BF3F-C24242A24A9E}</Project>
       <Name>DataContainer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FastWpfGrid\FastWpfGrid.csproj">
+      <Project>{e9d6f03c-bfb5-4d31-a15e-7f789b4bbcc3}</Project>
+      <Name>FastWpfGrid</Name>
     </ProjectReference>
     <ProjectReference Include="..\SillyMonkey.Core\SillyMonkey.Core.csproj">
       <Project>{0649ef81-84ca-4882-bb22-c0599be5d3d1}</Project>
@@ -135,7 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EPPlus">
-      <Version>6.0.6</Version>
+      <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="Prism.Core">
       <Version>8.1.97</Version>

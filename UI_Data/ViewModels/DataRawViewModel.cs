@@ -7,12 +7,10 @@ using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
-using UI_Chart.Views;
 using OfficeOpenXml;
 using System.Windows.Forms;
-using System.Threading.Tasks;
+using FastWpfGrid;
 
 namespace UI_Data.ViewModels {
     public class DataRawViewModel : BindableBase, INavigationAware, IDataView {
@@ -35,11 +33,11 @@ namespace UI_Data.ViewModels {
 
         int _fileIdx=-1;
 
-        private ObservableCollection<Item> _testItems;
-        public ObservableCollection<Item> TestItems {
-            get { return _testItems; }
-            set { SetProperty(ref _testItems, value); }
-        }
+        //private ObservableCollection<Item> _testItems;
+        //public ObservableCollection<Item> TestItems {
+        //    get { return _testItems; }
+        //    set { SetProperty(ref _testItems, value); }
+        //}
 
         private string _header;
         public string Header {
@@ -63,9 +61,10 @@ namespace UI_Data.ViewModels {
 
         private void UpdateView(SubData data) {
             if(data.Equals(_subData)) {
-                var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
-                TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(data.FilterId));
-                RaisePropertyChanged("TestItems");
+                //var dataAcquire = StdDB.GetDataAcquire(data.StdFilePath);
+                //TestItems = new ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(data.FilterId));
+                //RaisePropertyChanged("TestItems");
+                (_rawDataModel as DataRaw_FastDataGridModel).UpdateView();
             }
         }
 
@@ -87,9 +86,9 @@ namespace UI_Data.ViewModels {
                 _subDataList = new List<SubData>();
                 _subDataList.Add(_subData);
 
-                var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
-
-                TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(_subData.FilterId));
+                //var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+                //TestItems = new  ObservableCollection<Item>(dataAcquire.GetFilteredItemStatistic(_subData.FilterId));
+                RawDataModel = new DataRaw_FastDataGridModel(_subData);
 
                 Header = $"File_{_fileIdx}|{_subData.FilterId:x8}";
 
@@ -330,11 +329,25 @@ namespace UI_Data.ViewModels {
             ShowCorrCommand = new DelegateCommand(ShowCorr);
             ExportToExcelCommand = new DelegateCommand(ExportToExcelAsync);
 
+            //OnSelectionChanged = new DelegateCommand<object>((x) => {
+            //    _selectedItemList.Clear();
+            //    var grid = x as System.Windows.Controls.DataGrid;
+            //    foreach(var v in grid.SelectedItems) {
+            //        _selectedItemList.Add((v as Item).TestNumber);
+            //    }
+
+            //    if (_selectedItemList.Count > 0) {
+            //        _ea.GetEvent<Event_ItemsSelected>().Publish(new Tuple<SubData, List<string>>(_subData, _selectedItemList));
+            //    }
+            //});
             OnSelectionChanged = new DelegateCommand<object>((x) => {
                 _selectedItemList.Clear();
-                var grid = x as System.Windows.Controls.DataGrid;
-                foreach(var v in grid.SelectedItems) {
-                    _selectedItemList.Add((v as Item).TestNumber);
+                var grid = x as FastGridControl;
+                
+                foreach (var v in grid.GetSelectedModelRows()) {
+
+                    //Console.WriteLine($"row:{v}");
+                    _selectedItemList.Add((_rawDataModel as DataRaw_FastDataGridModel).GetTestId(v));
                 }
 
                 if (_selectedItemList.Count > 0) {
@@ -364,6 +377,12 @@ namespace UI_Data.ViewModels {
             _regionManager.RequestNavigate("Region_DataView", "SiteDataCorrelation", parameters);
 
 
+        }
+
+        private FastGridModelBase _rawDataModel;
+        public FastGridModelBase RawDataModel {
+            get { return _rawDataModel; }
+            set { SetProperty(ref _rawDataModel, value); }
         }
 
     }
