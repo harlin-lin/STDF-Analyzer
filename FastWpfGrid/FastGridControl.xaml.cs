@@ -644,11 +644,28 @@ namespace FastWpfGrid
         public HashSet<FastGridCellAddress> GetSelectedModelCells()
         {
             var res = new HashSet<FastGridCellAddress>();
-            foreach (var cell in _selectedCells)
-            {
+            foreach (var cell in _selectedCells) {
                 var cellModel = RealToModel(cell);
                 if (cellModel.IsCell && IsModelCellInValidRange(cellModel)) res.Add(cellModel);
             }
+            return res;
+        }
+
+        public HashSet<int> GetSelectedModelRows() {
+            var res = new HashSet<int>();
+            foreach(var x in _selectedRowRange) {
+                res.Add(_rowSizes.RealToModel(x));
+            }
+
+            return res;
+        }
+
+        public HashSet<int> GetSelectedModelColumns() {
+            var res = new HashSet<int>();
+            foreach (var x in _selectedColumnRange) {
+                res.Add(_columnSizes.RealToModel(x));
+            }
+
             return res;
         }
 

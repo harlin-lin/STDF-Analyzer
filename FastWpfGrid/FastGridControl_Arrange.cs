@@ -338,62 +338,6 @@ namespace FastWpfGrid
             InvalidateAll();
         }
 
-        private ActiveSeries GetActiveRealRows()
-        {
-            var res = new ActiveSeries();
-            int visibleRows = VisibleRowCount;
-            for (int i = FirstVisibleRowScrollIndex; i < FirstVisibleRowScrollIndex + visibleRows; i++)
-            {
-                int model = _rowSizes.RealToModel(i + _rowSizes.FrozenCount);
-                res.ScrollVisible.Add(model);
-            }
-            for (int i = 0; i < _rowSizes.FrozenCount; i++)
-            {
-                int model = _rowSizes.RealToModel(i);
-                res.Frozen.Add(model);
-            }
-            foreach (var cell in _selectedCells)
-            {
-                if (!cell.Row.HasValue) continue;
-                int model = _rowSizes.RealToModel(cell.Row.Value);
-                res.Selected.Add(model);
-            }
-            return res;
-        }
-
-        private ActiveSeries GetActiveRealColumns()
-        {
-            var res = new ActiveSeries();
-            int visibleCols = VisibleColumnCount;
-            for (int i = FirstVisibleColumnScrollIndex; i < FirstVisibleColumnScrollIndex + visibleCols; i++)
-            {
-                int model = _columnSizes.RealToModel(i + _columnSizes.FrozenCount);
-                res.ScrollVisible.Add(model);
-            }
-            for (int i = 0; i < _columnSizes.FrozenCount; i++)
-            {
-                int model = _columnSizes.RealToModel(i);
-                res.Frozen.Add(model);
-            }
-            foreach(var cell in _selectedCells)
-            {
-                if (!cell.Column.HasValue) continue;
-                int model = _columnSizes.RealToModel(cell.Column.Value);
-                res.Selected.Add(model);
-            }
-            return res;
-        }
-
-        public ActiveSeries GetActiveRows()
-        {
-            return GetActiveRealRows();
-        }
-
-        public ActiveSeries GetActiveColumns()
-        {
-            return GetActiveRealColumns();
-        }
-
         private void SetExtraordinaryRealColumns()
         {
             if (_model != null)

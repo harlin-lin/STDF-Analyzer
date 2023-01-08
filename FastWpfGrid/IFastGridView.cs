@@ -86,16 +86,17 @@ namespace FastWpfGrid
         HashSet<FastGridCellAddress> GetSelectedModelCells();
 
         /// <summary>
-        /// gets summary of active rows
+        /// gets selected model rows
         /// </summary>
         /// <returns></returns>
-        ActiveSeries GetActiveRows();
+        HashSet<int> GetSelectedModelRows();
 
         /// <summary>
-        /// gets summary of active columns
+        /// gets selected model columns
         /// </summary>
         /// <returns></returns>
-        ActiveSeries GetActiveColumns();
+        HashSet<int> GetSelectedModelColumns();
+
 
         /// <summary>
         /// hides inline editor

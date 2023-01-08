@@ -18,20 +18,16 @@ namespace FastWpfGrid
         public event EventHandler<SelectionChangedEventArgs> SelectedCellsChanged;
 
         private HashSet<FastGridCellAddress> _selectedCells = new HashSet<FastGridCellAddress>();
-        private Dictionary<int, int> _selectedRows = new Dictionary<int, int>();
-        private Dictionary<int, int> _selectedColumns = new Dictionary<int, int>();
 
-        private Tuple<FastGridCellAddress, FastGridCellAddress> _selectedCellRange = null;
-        //private HashSet<int> _selectedRowRange = new HashSet<int>();
-        //private HashSet<int> _selectedColumnRange = new HashSet<int>();
+        private HashSet<int> _selectedRowRange = new HashSet<int>();
+        private HashSet<int> _selectedColumnRange = new HashSet<int>();
 
 
         private void ClearSelectedCells()
         {
             _selectedCells.Clear();
-            _selectedRows.Clear();
-            _selectedColumns.Clear();
-
+            _selectedRowRange.Clear();
+            _selectedColumnRange.Clear();
         }
 
         private void AddSelectedCell(FastGridCellAddress cell)
@@ -41,12 +37,6 @@ namespace FastWpfGrid
             if (_selectedCells.Contains(cell)) return;
 
             _selectedCells.Add(cell);
-
-            if (!_selectedRows.ContainsKey(cell.Row.Value)) _selectedRows[cell.Row.Value] = 0;
-            _selectedRows[cell.Row.Value]++;
-
-            if (!_selectedColumns.ContainsKey(cell.Column.Value)) _selectedColumns[cell.Column.Value] = 0;
-            _selectedColumns[cell.Column.Value]++;
 
         }
 
@@ -58,35 +48,60 @@ namespace FastWpfGrid
 
             _selectedCells.Remove(cell);
 
-            if (_selectedRows.ContainsKey(cell.Row.Value))
-            {
-                _selectedRows[cell.Row.Value]--;
-                if (_selectedRows[cell.Row.Value] == 0) _selectedRows.Remove(cell.Row.Value);
-            }
-
-            if (_selectedColumns.ContainsKey(cell.Column.Value))
-            {
-                _selectedColumns[cell.Column.Value]--;
-                if (_selectedColumns[cell.Column.Value] == 0) _selectedColumns.Remove(cell.Column.Value);
-            }
-
         }
 
         private void SetSelectedRectangle(FastGridCellAddress origin, FastGridCellAddress cell)
         {
-            var newSelected = GetCellRange(origin, cell);
-            foreach (var added in newSelected)
-            {
-                if (_selectedCells.Contains(added)) continue;
-                InvalidateCell(added);
-                AddSelectedCell(added);
+            if (origin.IsColumnHeader || _selectionMode == SelectionModeType.ColumnMode) {
+                if (cell.Column.HasValue) {
+                    var start = Math.Min(cell.Column.Value, origin.Column.Value);
+                    var stop = Math.Max(cell.Column.Value, origin.Column.Value);
+                    var newSelected = Enumerable.Range(start, stop - start + 1);
+                    foreach (var added in newSelected) {
+                        if (_selectedColumnRange.Contains(added)) continue;
+                        InvalidateColumn(added);
+                        _selectedColumnRange.Add(added);
+                    }
+                    foreach (var removed in _selectedColumnRange.ToList()) {
+                        if (newSelected.Contains(removed)) continue;
+                        InvalidateColumn(removed);
+                        _selectedColumnRange.Remove(removed);
+                    }
+                }
+
+            }else if (origin.IsRowHeader || _selectionMode == SelectionModeType.RowMode) {
+                if (cell.Row.HasValue) {
+                    var start = Math.Min(cell.Row.Value, origin.Row.Value);
+                    var stop = Math.Max(cell.Row.Value, origin.Row.Value);
+                    var newSelected = Enumerable.Range(start, stop - start + 1);
+                    foreach (var added in newSelected) {
+                        if (_selectedRowRange.Contains(added)) continue;
+                        InvalidateRow(added);
+                        _selectedRowRange.Add(added);
+                    }
+                    foreach (var removed in _selectedRowRange.ToList()) {
+                        if (newSelected.Contains(removed)) continue;
+                        InvalidateRow(removed);
+                        _selectedRowRange.Remove(removed);
+                    }
+                }
+
+            } else {
+                var newSelected = GetCellRange(origin, cell);
+                foreach (var added in newSelected)
+                {
+                    if (_selectedCells.Contains(added)) continue;
+                    InvalidateCell(added);
+                    AddSelectedCell(added);
+                }
+                foreach (var removed in _selectedCells.ToList())
+                {
+                    if (newSelected.Contains(removed)) continue;
+                    InvalidateCell(removed);
+                    RemoveSelectedCell(removed);
+                }
             }
-            foreach (var removed in _selectedCells.ToList())
-            {
-                if (newSelected.Contains(removed)) continue;
-                InvalidateCell(removed);
-                RemoveSelectedCell(removed);
-            }
+
             SetCurrentCell(cell);
             OnChangeSelectedCells(true);
         }

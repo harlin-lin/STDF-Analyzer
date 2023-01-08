@@ -160,7 +160,7 @@ namespace FastWpfGrid
             Color? selectedBgColor = null;
             Color? selectedTextColor = null;
             Color? hoverRowColor = null;
-            if (_currentCell.TestCell(row, col) || _selectedCells.Contains(new FastGridCellAddress(row, col)))
+            if (_currentCell.TestCell(row, col) || _selectedCells.Contains(new FastGridCellAddress(row, col)) || _selectedRowRange.Contains(row) || _selectedColumnRange.Contains(col))
             {
                 selectedBgColor = SelectedColor;
                 selectedTextColor = SelectedTextColor;

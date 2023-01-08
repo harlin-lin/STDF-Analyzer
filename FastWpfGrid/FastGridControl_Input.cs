@@ -102,54 +102,100 @@ namespace FastWpfGrid
                     isHeaderClickHandled = OnModelRowClick(_rowSizes.RealToModel(cell.Row.Value));
                 }
 
-                if (!isHeaderClickHandled && ((_resizingColumn == null && cell.IsColumnHeader) || cell.IsRowHeader) 
-                    && (_lastDblClickResize == null || DateTime.Now - _lastDblClickResize.Value > TimeSpan.FromSeconds(1)))
-                {
-                    HideInlineEditor();
-
-                    if (ControlPressed)
-                    {
-                        foreach (var rangeCell in GetCellRange(cell, cell))
-                        {
-                            if (_selectedCells.Contains(rangeCell)) RemoveSelectedCell(rangeCell);
-                            else AddSelectedCell(rangeCell);
-                            InvalidateCell(rangeCell);
-                        }
-                    }
-                    else if (ShiftPressed)
-                    {
+                if (!isHeaderClickHandled && (_lastDblClickResize == null || DateTime.Now - _lastDblClickResize.Value > TimeSpan.FromSeconds(1))){
+                    if (_resizingColumn == null && cell.IsColumnHeader) {
                         _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
+                        _selectedCells.Clear();
+                        _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                        _selectedRowRange.Clear();
+                        HideInlineEditor();
 
-                        foreach (var rangeCell in GetCellRange(cell, _currentCell))
-                        {
-                            AddSelectedCell(rangeCell);
-                            InvalidateCell(rangeCell);
+                        if (ControlPressed) {
+                            if (_selectedColumnRange.Contains(cell.Column.Value)) 
+                                _selectedColumnRange.Remove(cell.Column.Value);
+                            else
+                                _selectedColumnRange.Add(cell.Column.Value);
+                                InvalidateColumn(cell.Column.Value);
+                        } else if (ShiftPressed) {
+                            if (_currentCell.Column.HasValue) {
+                                _selectedColumnRange.ToList().ForEach(x=> InvalidateColumn(x));
+                                ClearSelectedCells();
+
+                                var start = Math.Min(_currentCell.Column.Value, cell.Column.Value);
+                                var stop = Math.Max(_currentCell.Column.Value, cell.Column.Value);
+                                for (int c = start; c <= stop; c++) {
+                                    _selectedColumnRange.Add(c);
+                                    InvalidateColumn(c);
+                                }
+                            }
+                        } else {
+                            if (_currentCell.IsCell) {
+                                SetCurrentCell(cell);
+                            }
+                            _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                            ClearSelectedCells();
+
+                            _selectedColumnRange.Add(cell.Column.Value);
+                            InvalidateColumn(cell.Column.Value);
+
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
                         }
+                        OnChangeSelectedCells(true);
+
                     }
-                    else
-                    {
+                    if (cell.IsRowHeader) {
                         _selectedCells.ToList().ForEach(InvalidateCell);
-                        ClearSelectedCells();
-                        if (_currentCell.IsCell)
-                        {
-                            SetCurrentCell(cell);
+                        _selectedCells.Clear();
+                        _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                        _selectedColumnRange.Clear();
+                        HideInlineEditor();
+
+                        if (ControlPressed) {
+                            if (_selectedRowRange.Contains(cell.Row.Value))
+                                _selectedRowRange.Remove(cell.Row.Value);
+                            else
+                                _selectedRowRange.Add(cell.Row.Value);
+                            InvalidateRow(cell.Row.Value);
+                        } else if (ShiftPressed) {
+                            if (_currentCell.Row.HasValue) {
+                                _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                                ClearSelectedCells();
+
+                                var start = Math.Min(_currentCell.Row.Value, cell.Row.Value);
+                                var stop = Math.Max(_currentCell.Row.Value, cell.Row.Value);
+                                for (int c = start; c <= stop; c++) {
+                                    _selectedRowRange.Add(c);
+                                    InvalidateRow(c);
+                                }
+                            }
+                        } else {
+                            if (_currentCell.IsCell) {
+                                SetCurrentCell(cell);
+                            }
+                            _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                            ClearSelectedCells();
+
+                            _selectedRowRange.Add(cell.Row.Value);
+                            InvalidateRow(cell.Row.Value);
+
+                            _dragStartCell = cell;
+                            _dragTimer.IsEnabled = true;
+                            CaptureMouse();
                         }
-                        foreach (var rangeCell in GetCellRange(cell, cell))
-                        {
-                            AddSelectedCell(rangeCell);
-                            InvalidateCell(rangeCell);
-                        }
-                        _dragStartCell = cell;
-                        _dragTimer.IsEnabled = true;
-                        CaptureMouse();
+                        OnChangeSelectedCells(true);
+
                     }
-                    OnChangeSelectedCells(true);
                 }
 
                 if (cell.IsCell)
                 {
                     if(_selectionMode == SelectionModeType.CellMode) {
+                        _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                        _selectedRowRange.Clear();
+                        _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                        _selectedColumnRange.Clear();
                         if (ControlPressed) {
                             HideInlineEditor();
                             if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
@@ -180,66 +226,80 @@ namespace FastWpfGrid
                         }
 
                     } else if(_selectionMode == SelectionModeType.RowMode) {
-                        var headCell = new FastGridCellAddress(cell.Row, null);
-                        cell = headCell;
+                        _selectedCells.ToList().ForEach(InvalidateCell);
+                        _selectedCells.Clear();
+                        _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                        _selectedColumnRange.Clear();
+                        HideInlineEditor();
 
                         if (ControlPressed) {
-                            foreach (var rangeCell in GetCellRange(cell, cell)) {
-                                if (_selectedCells.Contains(rangeCell)) RemoveSelectedCell(rangeCell);
-                                else AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
-                            }
+                            if (_selectedRowRange.Contains(cell.Row.Value))
+                                _selectedRowRange.Remove(cell.Row.Value);
+                            else
+                                _selectedRowRange.Add(cell.Row.Value);
+                            InvalidateRow(cell.Row.Value);
                         } else if (ShiftPressed) {
-                            _selectedCells.ToList().ForEach(InvalidateCell);
-                            ClearSelectedCells();
+                            if (_currentCell.Row.HasValue) {
+                                _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                                ClearSelectedCells();
 
-                            foreach (var rangeCell in GetCellRange(cell, _currentCell)) {
-                                AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
+                                var start = Math.Min(_currentCell.Row.Value, cell.Row.Value);
+                                var stop = Math.Max(_currentCell.Row.Value, cell.Row.Value);
+                                for (int c = start; c <= stop; c++) {
+                                    _selectedRowRange.Add(c);
+                                    InvalidateRow(c);
+                                }
                             }
                         } else {
-                            _selectedCells.ToList().ForEach(InvalidateCell);
-                            ClearSelectedCells();
                             if (_currentCell.IsCell) {
                                 SetCurrentCell(cell);
                             }
-                            foreach (var rangeCell in GetCellRange(cell, cell)) {
-                                AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
-                            }
+                            _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                            ClearSelectedCells();
+
+                            _selectedRowRange.Add(cell.Row.Value);
+                            InvalidateRow(cell.Row.Value);
+
                             _dragStartCell = cell;
                             _dragTimer.IsEnabled = true;
                             CaptureMouse();
                         }
 
                     } else {
-                        var headCell = new FastGridCellAddress(null, cell.Column);
-                        cell = headCell;
+                        _selectedCells.ToList().ForEach(InvalidateCell);
+                        _selectedCells.Clear();
+                        _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                        _selectedRowRange.Clear();
+                        HideInlineEditor();
 
                         if (ControlPressed) {
-                            foreach (var rangeCell in GetCellRange(cell, cell)) {
-                                if (_selectedCells.Contains(rangeCell)) RemoveSelectedCell(rangeCell);
-                                else AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
-                            }
+                            if (_selectedColumnRange.Contains(cell.Column.Value))
+                                _selectedColumnRange.Remove(cell.Column.Value);
+                            else
+                                _selectedColumnRange.Add(cell.Column.Value);
+                            InvalidateColumn(cell.Column.Value);
                         } else if (ShiftPressed) {
-                            _selectedCells.ToList().ForEach(InvalidateCell);
-                            ClearSelectedCells();
+                            if (_currentCell.Column.HasValue) {
+                                _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                                ClearSelectedCells();
 
-                            foreach (var rangeCell in GetCellRange(cell, _currentCell)) {
-                                AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
+                                var start = Math.Min(_currentCell.Column.Value, cell.Column.Value);
+                                var stop = Math.Max(_currentCell.Column.Value, cell.Column.Value);
+                                for (int c = start; c <= stop; c++) {
+                                    _selectedColumnRange.Add(c);
+                                    InvalidateColumn(c);
+                                }
                             }
                         } else {
-                            _selectedCells.ToList().ForEach(InvalidateCell);
-                            ClearSelectedCells();
                             if (_currentCell.IsCell) {
                                 SetCurrentCell(cell);
                             }
-                            foreach (var rangeCell in GetCellRange(cell, cell)) {
-                                AddSelectedCell(rangeCell);
-                                InvalidateCell(rangeCell);
-                            }
+                            _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                            ClearSelectedCells();
+
+                            _selectedColumnRange.Add(cell.Column.Value);
+                            InvalidateColumn(cell.Column.Value);
+
                             _dragStartCell = cell;
                             _dragTimer.IsEnabled = true;
                             CaptureMouse();
@@ -249,6 +309,9 @@ namespace FastWpfGrid
 
                     OnChangeSelectedCells(true);
                 }
+
+                SetCurrentCell(cell);
+
             }
 
             //if (cell.IsCell) ShowTextEditor(
@@ -385,24 +448,24 @@ namespace FastWpfGrid
         {
             base.OnMouseRightButtonDown(e);
 
-            var pt = e.GetPosition(image);
-            pt.X *= DpiDetector.DpiXKoef;
-            pt.Y *= DpiDetector.DpiYKoef;
-            var cell = GetCellAddress(pt);
+            //var pt = e.GetPosition(image);
+            //pt.X *= DpiDetector.DpiXKoef;
+            //pt.Y *= DpiDetector.DpiYKoef;
+            //var cell = GetCellAddress(pt);
 
-            if (!_selectedCells.Contains(cell))
-            {
-                using (var ctx = CreateInvalidationContext())
-                {
-                    InvalidateCell(_currentCell);
-                    _selectedCells.ToList().ForEach(InvalidateCell);
-                    ClearSelectedCells();
-                    AddSelectedCell(cell);
-                    _currentCell = cell;
-                    InvalidateCell(_currentCell);
-                    OnChangeSelectedCells(true);
-                }
-            }
+            //if (!_selectedCells.Contains(cell))
+            //{
+            //    using (var ctx = CreateInvalidationContext())
+            //    {
+            //        InvalidateCell(_currentCell);
+            //        _selectedCells.ToList().ForEach(InvalidateCell);
+            //        ClearSelectedCells();
+            //        AddSelectedCell(cell);
+            //        _currentCell = cell;
+            //        InvalidateCell(_currentCell);
+            //        OnChangeSelectedCells(true);
+            //    }
+            //}
         }
 
         private bool OnModelColumnClick(int column)
@@ -437,48 +500,6 @@ namespace FastWpfGrid
                     RowHeaderClick(this, args);
                 }
                 return args.Handled;
-                //if (!args.Handled)
-                //{
-                //    HideInlinEditor();
-
-                //    if (ControlPressed)
-                //    {
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            if (_selectedCells.Contains(cell)) _selectedCells.Remove(cell);
-                //            else _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //    else if (ShiftPressed)
-                //    {
-                //        _selectedCells.ToList().ForEach(InvalidateCell);
-                //        _selectedCells.Clear();
-                //        var currentModel = RealToModel(_currentCell);
-
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(currentModel.Row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        _selectedCells.ToList().ForEach(InvalidateCell);
-                //        _selectedCells.Clear();
-                //        if (_currentCell.IsCell)
-                //        {
-                //            var currentModel = RealToModel(_currentCell);
-                //            SetCurrentCell(ModelToReal(new FastGridCellAddress(row, currentModel.Column)));
-                //            _dragStartCell = ModelToReal(new FastGridCellAddress(row, null));
-                //        }
-                //        foreach (var cell in GetCellRange(ModelToReal(new FastGridCellAddress(row, 0)), ModelToReal(new FastGridCellAddress(row, _modelColumnCount - 1))))
-                //        {
-                //            _selectedCells.Add(cell);
-                //            InvalidateCell(cell);
-                //        }
-                //    }
-                //}
             }
             return false;
         }
