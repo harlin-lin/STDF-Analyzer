@@ -492,7 +492,7 @@ namespace FileReader {
 
                 for (uint j = 1; j < rtnCnt; j++) {
                     uids[j] = new TestID(uids[j-1]);
-                    _dc.IfContainItemInfo(uids[j].GetUID());
+                    if(_dc.IfContainItemInfo(uids[j].GetUID()) == null && info != null) _dc.UpdateItemInfo(uids[j].GetUID(), info);
                 }
 
                 if (info == null && i < len) {
