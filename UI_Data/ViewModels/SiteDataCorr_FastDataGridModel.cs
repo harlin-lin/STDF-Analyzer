@@ -8,7 +8,7 @@ using DataContainer;
 using FastWpfGrid;
 
 namespace UI_Data.ViewModels {
-    public class DataRaw_FastDataGridModel : FastGridModelBase {
+    public class SiteDataCorr_FastDataGridModel : FastGridModelBase {
         private SubData _subData;
 
         private Color? _cellColor;
@@ -18,22 +18,54 @@ namespace UI_Data.ViewModels {
 
         private List<Item> _testItems = null;
 
+        List<string> _colNames = new List<string>();
 
-        readonly string[] ColNames = { "Idx", "TestNumber", "TestText", "LoLimit", "HiLimit", "Unit", "PassCnt", "FailCnt", "FailPer", "MeanValue", "MedianValue", "MinValue", "MaxValue", "Cp", "Cpk", "Sigma" };
+        private void UpdateColumnRow() {
+            _colNames.Clear();
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
+            _testItems = da.GetFilteredItemStatistic(_subData.FilterId).ToList();
 
-        public DataRaw_FastDataGridModel(SubData subData) {
+            _colNames.Add("Idx");
+            _colNames.Add("TestNO");
+            _colNames.Add("TestText");
+            _colNames.Add("LoLimit");
+            _colNames.Add("HiLimit");
+            _colNames.Add("Unit");
+
+            var sites = da.GetSites();
+
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Mean S:" + sites[i]);
+            }
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Min S:" + sites[i]);
+            }
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Max S:" + sites[i]);
+            }
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Cp S:" + sites[i]);
+            }
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Cpk S:" + sites[i]);
+            }
+            for (int i = 0; i < sites.Length; i++) {
+                _colNames.Add("Sigma S:" + sites[i]);
+            }
+        }
+
+        public SiteDataCorr_FastDataGridModel(SubData subData) {
             _subData = subData;
-
-            var _da = StdDB.GetDataAcquire(_subData.StdFilePath);
-            _testItems = new List<Item>(_da.GetFilteredItemStatistic(_subData.FilterId));
+            UpdateColumnRow();
 
             _frozenCols.Add(0);
+
+
         }
 
         public void UpdateView() {
-            var _da = StdDB.GetDataAcquire(_subData.StdFilePath);
-            _testItems = new List<Item>(_da.GetFilteredItemStatistic(_subData.FilterId));
+            UpdateColumnRow();
 
             NotifyRefresh();
         }
@@ -55,7 +87,7 @@ namespace UI_Data.ViewModels {
         public override int RowHeaderWidth => 33;
 
         public override string GetColumnHeaderText(int column) {
-            return ColNames[column];
+            return _colNames[column];
         }
 
         public override string GetRowHeaderText(int row) {
@@ -63,7 +95,7 @@ namespace UI_Data.ViewModels {
         }
 
         public override int ColumnCount {
-            get { return ColNames.Length; }
+            get { return _colNames.Count; }
         }
 
         public override int RowCount {
@@ -75,6 +107,10 @@ namespace UI_Data.ViewModels {
         }
 
         public override string GetCellText(int row, int column) {
+            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+            var sites = da.GetSites();
+            int cnt = sites.Length;
+
             switch (column) {
                 case 0:
                     return _testItems[row].Idx.ToString();
@@ -88,28 +124,26 @@ namespace UI_Data.ViewModels {
                     return _testItems[row].HiLimit.ToString();
                 case 5:
                     return _testItems[row].Unit.ToString();
-                case 6:
-                    return _testItems[row].PassCnt.ToString();
-                case 7:
-                    return _testItems[row].FailCnt.ToString();
-                case 8:
-                    return _testItems[row].FailPer.ToString();
-                case 9:
-                    return _testItems[row].MeanValue.ToString();
-                case 10:
-                    return _testItems[row].MedianValue.ToString();
-                case 11:
-                    return _testItems[row].MedianValue.ToString();
-                case 12:
-                    return _testItems[row].MinValue.ToString();
-                case 13:
-                    return _testItems[row].MaxValue.ToString();
-                case 14:
-                    return _testItems[row].Cp.ToString();
-                case 15:
-                    return _testItems[row].Cpk.ToString();
-                case 16:
-                    return _testItems[row].Sigma.ToString();
+                default:
+                    var si = (column - 6) % cnt;
+                    var d = (column - 6) / cnt;
+                    var s = da.GetFilteredStatisticBySite(_subData.FilterId, _testItems[row].TestNumber, sites[si]);
+                    switch (d) {
+                        case 0:
+                            return s.MeanValue.ToString();
+                        case 1:
+                            return s.MinValue.ToString();
+                        case 2:
+                            return s.MaxValue.ToString();
+                        case 3:
+                            return s.Cp.ToString();
+                        case 4:
+                            return s.Cpk.ToString();
+                        case 5:
+                            return s.Sigma.ToString();
+                    }
+                    break;
+
             }
             return "";
         }

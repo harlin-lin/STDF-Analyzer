@@ -1,4 +1,5 @@
 ﻿using DataContainer;
+using FastWpfGrid;
 using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Events;
@@ -44,11 +45,11 @@ namespace UI_Data.ViewModels {
 
         int _corrDataIdx = -1;
 
-        private DataTable dt;
-        public DataTable TestItems {
-            get { return dt; }
-            set { SetProperty(ref dt, value); }
-        }
+        //private DataTable dt;
+        //public DataTable TestItems {
+        //    get { return dt; }
+        //    set { SetProperty(ref dt, value); }
+        //}
 
         private string _header;
         public string Header {
@@ -85,103 +86,102 @@ namespace UI_Data.ViewModels {
                 Header = $"Corr_{_corrDataIdx}";
 
                 //RegionName = $"Region_Corr_{_corrDataIdx}";
-                InitView();
-                UpdateView();
+                RawDataModel = new DataCorr_FastDataGridModel(_subDataList);
             }
         }
 
-        private void InitView() {
-            dt = new DataTable();
-            dt.Columns.Add("TestNumber");
-            dt.Columns.Add("TestText");
-            dt.Columns.Add("LoLimit");
-            dt.Columns.Add("HiLimit");
-            dt.Columns.Add("Unit");
+        //private void InitView() {
+        //    dt = new DataTable();
+        //    dt.Columns.Add("TestNumber");
+        //    dt.Columns.Add("TestText");
+        //    dt.Columns.Add("LoLimit");
+        //    dt.Columns.Add("HiLimit");
+        //    dt.Columns.Add("Unit");
 
-            for(int i=0; i<_subDataList.Count; i++) {
-                dt.Columns.Add("MeanValue_" + i);
-            }
-            for (int i = 0; i < _subDataList.Count; i++) {
-                dt.Columns.Add("MinValue_" + i);
-            }
-            for (int i = 0; i < _subDataList.Count; i++) {
-                dt.Columns.Add("MaxValue_" + i);
-            }
-            for (int i = 0; i < _subDataList.Count; i++) {
-                dt.Columns.Add("Cp_" + i);
-            }
-            for (int i = 0; i < _subDataList.Count; i++) {
-                dt.Columns.Add("Cpk_" + i);
-            }
-            for (int i = 0; i < _subDataList.Count; i++) {
-                dt.Columns.Add("Sigma_" + i);
-            }
-        }
+        //    for(int i=0; i<_subDataList.Count; i++) {
+        //        dt.Columns.Add("MeanValue_" + i);
+        //    }
+        //    for (int i = 0; i < _subDataList.Count; i++) {
+        //        dt.Columns.Add("MinValue_" + i);
+        //    }
+        //    for (int i = 0; i < _subDataList.Count; i++) {
+        //        dt.Columns.Add("MaxValue_" + i);
+        //    }
+        //    for (int i = 0; i < _subDataList.Count; i++) {
+        //        dt.Columns.Add("Cp_" + i);
+        //    }
+        //    for (int i = 0; i < _subDataList.Count; i++) {
+        //        dt.Columns.Add("Cpk_" + i);
+        //    }
+        //    for (int i = 0; i < _subDataList.Count; i++) {
+        //        dt.Columns.Add("Sigma_" + i);
+        //    }
+        //}
 
-        private void UpdateView() {
-            List<IDataAcquire> allDa = new List<IDataAcquire>();
+        //private void UpdateView() {
+        //    List<IDataAcquire> allDa = new List<IDataAcquire>();
 
-            int cnt = _subDataList.Count;
+        //    int cnt = _subDataList.Count;
 
-            allDa.Add(StdDB.GetDataAcquire(_subDataList[0].StdFilePath));
-            List<string> allId = new List<string>(allDa[0].GetTestIDs());
-            var baseItem = allDa[0].GetFilteredItemStatistic(_subDataList[0].FilterId);
+        //    allDa.Add(StdDB.GetDataAcquire(_subDataList[0].StdFilePath));
+        //    List<string> allId = new List<string>(allDa[0].GetTestIDs());
+        //    var baseItem = allDa[0].GetFilteredItemStatistic(_subDataList[0].FilterId);
 
-            for (int i = 1; i < cnt; i++) {
-                allDa.Add(StdDB.GetDataAcquire(_subDataList[i].StdFilePath));
-            }
+        //    for (int i = 1; i < cnt; i++) {
+        //        allDa.Add(StdDB.GetDataAcquire(_subDataList[i].StdFilePath));
+        //    }
 
-            dt.Rows.Clear();
+        //    dt.Rows.Clear();
 
-            foreach (var v in baseItem) {
-                DataRow r = dt.NewRow();
-                r[0] = v.TestNumber;
-                r[1] = v.TestText;
-                r[2] = v.LoLimit;
-                r[3] = v.HiLimit;
-                r[4] = v.Unit;
-                for (int i = 0; i < cnt; i++) {
-                    if (!allDa[i].IfContainsTestId(v.TestNumber)) continue;
-                    var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
-                    r[5 + i] = s.MeanValue;
-                    r[5 + 1 * cnt + i] = s.MinValue;
-                    r[5 + 2 * cnt + i] = s.MaxValue;
-                    r[5 + 3 * cnt + i] = s.Cp;
-                    r[5 + 4 * cnt + i] = s.Cpk;
-                    r[5 + 5 * cnt + i] = s.Sigma;
-                }
-                dt.Rows.Add(r);
-            }
+        //    foreach (var v in baseItem) {
+        //        DataRow r = dt.NewRow();
+        //        r[0] = v.TestNumber;
+        //        r[1] = v.TestText;
+        //        r[2] = v.LoLimit;
+        //        r[3] = v.HiLimit;
+        //        r[4] = v.Unit;
+        //        for (int i = 0; i < cnt; i++) {
+        //            if (!allDa[i].IfContainsTestId(v.TestNumber)) continue;
+        //            var s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, v.TestNumber);
+        //            r[5 + i] = s.MeanValue;
+        //            r[5 + 1 * cnt + i] = s.MinValue;
+        //            r[5 + 2 * cnt + i] = s.MaxValue;
+        //            r[5 + 3 * cnt + i] = s.Cp;
+        //            r[5 + 4 * cnt + i] = s.Cpk;
+        //            r[5 + 5 * cnt + i] = s.Sigma;
+        //        }
+        //        dt.Rows.Add(r);
+        //    }
 
-            for (int i = 1; i < cnt; i++) {
-                var appendId = allDa[i].GetTestIDs().Except(allId);
-                foreach(var uid in appendId) {
-                    DataRow r = dt.NewRow();
-                    var  s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, uid);
-                    var v = allDa[i].GetTestInfo(uid);
-                    r[0] = uid;
-                    r[1] = v.TestText;
-                    r[2] = v.LoLimit;
-                    r[3] = v.HiLimit;
-                    r[4] = v.Unit;
+        //    for (int i = 1; i < cnt; i++) {
+        //        var appendId = allDa[i].GetTestIDs().Except(allId);
+        //        foreach(var uid in appendId) {
+        //            DataRow r = dt.NewRow();
+        //            var  s = allDa[i].GetFilteredStatistic(_subDataList[i].FilterId, uid);
+        //            var v = allDa[i].GetTestInfo(uid);
+        //            r[0] = uid;
+        //            r[1] = v.TestText;
+        //            r[2] = v.LoLimit;
+        //            r[3] = v.HiLimit;
+        //            r[4] = v.Unit;
 
-                    r[5 + i] = s.MeanValue;
-                    r[5 + 1 * cnt + i] = s.MinValue;
-                    r[5 + 2 * cnt + i] = s.MaxValue;
-                    r[5 + 3 * cnt + i] = s.Cp;
-                    r[5 + 4 * cnt + i] = s.Cpk;
-                    r[5 + 5 * cnt + i] = s.Sigma;
-                    dt.Rows.Add(r);
-                }
-            }
+        //            r[5 + i] = s.MeanValue;
+        //            r[5 + 1 * cnt + i] = s.MinValue;
+        //            r[5 + 2 * cnt + i] = s.MaxValue;
+        //            r[5 + 3 * cnt + i] = s.Cp;
+        //            r[5 + 4 * cnt + i] = s.Cpk;
+        //            r[5 + 5 * cnt + i] = s.Sigma;
+        //            dt.Rows.Add(r);
+        //        }
+        //    }
 
-            RaisePropertyChanged("TestItems");
-        }
+        //    RaisePropertyChanged("TestItems");
+        //}
 
 
         private void UpdateView(SubData data) {
             if (_subDataList.Contains(data)) {
-                UpdateView();
+                (_rawDataModel as DataCorr_FastDataGridModel).UpdateView();
             }
         }
 
@@ -240,7 +240,12 @@ namespace UI_Data.ViewModels {
 
                     //write raw data
                     var ws2 = p.Workbook.Worksheets.Add("Correlation");
-                    ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
+                    for (int r = 0; r < _rawDataModel.RowCount; r++) {
+                        for (int c = 0; c < _rawDataModel.ColumnCount; c++) {
+                            var v = _rawDataModel.GetCellText(r, c);
+                            ws2.Cells[r + 1, c + 1].Value = v;
+                        }
+                    }
 
                     p.SaveAs(new System.IO.FileInfo(path));
                     File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
@@ -261,10 +266,13 @@ namespace UI_Data.ViewModels {
             _onselection ?? (_onselection = new DelegateCommand<object>(ExecuteOnSelectionChanged));
 
         void ExecuteOnSelectionChanged(object parameter) {
-            var grid = parameter as System.Windows.Controls.DataGrid;
-            if (grid.SelectedItem is null) return;
-            _selectedItem = (grid.SelectedItem as DataRowView).Row[0].ToString();
-            _ea.GetEvent<Event_CorrItemSelected>().Publish(new Tuple<string, IEnumerable<SubData>>(_selectedItem, _subDataList));
+            var grid = parameter as FastGridControl;
+            var rr = grid.GetSelectedModelRows();
+            if (rr is null) return;
+            if (rr.Count == 0) return;
+            _selectedItem = (_rawDataModel as DataCorr_FastDataGridModel).GetTestId(rr.ElementAt(0));
+            if (!string.IsNullOrEmpty(_selectedItem))
+                _ea.GetEvent<Event_CorrItemSelected>().Publish(new Tuple<string, IEnumerable<SubData>>(_selectedItem, _subDataList));
         }
 
 
@@ -275,6 +283,13 @@ namespace UI_Data.ViewModels {
         void ExecuteCloseCommand(object x) {
             _regionManager.Regions["Region_DataView"].Remove(x);
         }
+
+        private FastGridModelBase _rawDataModel;
+        public FastGridModelBase RawDataModel {
+            get { return _rawDataModel; }
+            set { SetProperty(ref _rawDataModel, value); }
+        }
+
 
     }
 }

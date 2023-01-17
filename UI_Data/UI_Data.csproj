@@ -85,6 +85,8 @@
     </Compile>
     <Compile Include="ViewModels\DataCorrelationViewModel.cs" />
     <Compile Include="ViewModels\DataRawViewModel.cs" />
+    <Compile Include="ViewModels\DataCorr_FastDataGridModel.cs" />
+    <Compile Include="ViewModels\SiteDataCorr_FastDataGridModel.cs" />
     <Compile Include="ViewModels\DataRaw_FastDataGridModel.cs" />
     <Compile Include="ViewModels\SiteDataCorrelationViewModel.cs" />
     <Compile Include="Views\DataCorrelation.xaml.cs">

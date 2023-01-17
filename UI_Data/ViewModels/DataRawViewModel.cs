@@ -347,7 +347,8 @@ namespace UI_Data.ViewModels {
                 foreach (var v in grid.GetSelectedModelRows()) {
 
                     //Console.WriteLine($"row:{v}");
-                    _selectedItemList.Add((_rawDataModel as DataRaw_FastDataGridModel).GetTestId(v));
+                    var id = (_rawDataModel as DataRaw_FastDataGridModel).GetTestId(v);
+                    if(!string.IsNullOrEmpty(id)) _selectedItemList.Add(id);
                 }
 
                 if (_selectedItemList.Count > 0) {

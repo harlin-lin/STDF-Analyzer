@@ -1,4 +1,5 @@
 ﻿using DataContainer;
+using FastWpfGrid;
 using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Events;
@@ -24,12 +25,6 @@ namespace UI_Data.ViewModels {
         public SubData? CurrentData { get { return _subData; } }
         List<SubData> _subDataList = null;
         public List<SubData> SubDataList { get { return _subDataList; } }
-
-        private DataTable dt;
-        public DataTable TestItems {
-            get { return dt; }
-            set { SetProperty(ref dt, value); }
-        }
 
         private string _header;
         public string Header {
@@ -67,78 +62,13 @@ namespace UI_Data.ViewModels {
                 Header = $"SiteCorr_|{_subData.FilterId:X8}";
 
                 //RegionName = $"Region_Corr_{_corrDataIdx}";
-                InitView();
-                UpdateView();
+                RawDataModel = new SiteDataCorr_FastDataGridModel(_subData);
             }
         }
-
-        private void InitView() {
-            dt = new DataTable();
-            dt.Columns.Add("TestNumber");
-            dt.Columns.Add("TestText");
-            dt.Columns.Add("LoLimit");
-            dt.Columns.Add("HiLimit");
-            dt.Columns.Add("Unit");
-
-            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
-            var sites = da.GetSites();
-
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Mean S:" + sites[i]);
-            }
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Min S:" + sites[i]);
-            }
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Max S:" + sites[i]);
-            }
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Cp S:" + sites[i]);
-            }
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Cpk S:" + sites[i]);
-            }
-            for (int i = 0; i < sites.Length; i++) {
-                dt.Columns.Add("Sigma S:" + sites[i]);
-            }
-        }
-
-        private void UpdateView() {
-            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
-            var sites = da.GetSites();
-            int cnt = sites.Length;
-
-            var baseItem = da.GetFilteredItemStatistic(_subData.FilterId);
-
-            dt.Rows.Clear();
-
-            foreach (var v in baseItem) {
-                DataRow r = dt.NewRow();
-                r[0] = v.TestNumber;
-                r[1] = v.TestText;
-                r[2] = v.LoLimit;
-                r[3] = v.HiLimit;
-                r[4] = v.Unit;
-                for (int i = 0; i < cnt; i++) {
-                    var s = da.GetFilteredStatisticBySite(_subData.FilterId, v.TestNumber, sites[i]);
-                    r[5 + i] = s.MeanValue;
-                    r[5 + 1 * cnt + i] = s.MinValue;
-                    r[5 + 2 * cnt + i] = s.MaxValue;
-                    r[5 + 3 * cnt + i] = s.Cp;
-                    r[5 + 4 * cnt + i] = s.Cpk;
-                    r[5 + 5 * cnt + i] = s.Sigma;
-                }
-                dt.Rows.Add(r);
-            }
-
-
-            RaisePropertyChanged("TestItems");
-        }
-
 
         private void UpdateView(SubData data) {
             if (_subData.Equals(data)) {
-                UpdateView();
+                (_rawDataModel as SiteDataCorr_FastDataGridModel).UpdateView();
             }
         }
 
@@ -201,7 +131,13 @@ namespace UI_Data.ViewModels {
 
                     //write raw data
                     var ws2 = p.Workbook.Worksheets.Add("Correlation");
-                    ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
+                    //ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
+                    for(int r=0; r<_rawDataModel.RowCount; r++) {
+                        for(int c=0; c<_rawDataModel.ColumnCount; c++) {
+                            var v = _rawDataModel.GetCellText(r, c);
+                            ws2.Cells[r+1, c+1].Value = v;
+                        }
+                    }
 
                     p.SaveAs(new System.IO.FileInfo(path));
                     File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
@@ -222,10 +158,14 @@ namespace UI_Data.ViewModels {
             _onselection ?? (_onselection = new DelegateCommand<object>(ExecuteOnSelectionChanged));
 
         void ExecuteOnSelectionChanged(object parameter) {
-            var grid = parameter as System.Windows.Controls.DataGrid;
-            if (grid.SelectedItem is null) return;
-            _selectedItem = (grid.SelectedItem as DataRowView).Row[0].ToString();
-            _ea.GetEvent<Event_SiteCorrItemSelected>().Publish(new Tuple<string, SubData>(_selectedItem, _subData));
+            var grid = parameter as FastGridControl;
+            var rr = grid.GetSelectedModelRows();
+            if (rr is null) return;
+            if (rr.Count==0) return;
+            _selectedItem = (_rawDataModel as SiteDataCorr_FastDataGridModel).GetTestId(rr.ElementAt(0));
+            if (!string.IsNullOrEmpty(_selectedItem))
+                _ea.GetEvent<Event_SiteCorrItemSelected>().Publish(new Tuple<string, SubData>(_selectedItem, _subData));
+
         }
 
 
@@ -236,6 +176,13 @@ namespace UI_Data.ViewModels {
         void ExecuteCloseCommand(object x) {
             _regionManager.Regions["Region_DataView"].Remove(x);
         }
+
+        private FastGridModelBase _rawDataModel;
+        public FastGridModelBase RawDataModel {
+            get { return _rawDataModel; }
+            set { SetProperty(ref _rawDataModel, value); }
+        }
+
 
     }
 }
