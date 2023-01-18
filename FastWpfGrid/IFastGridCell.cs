@@ -29,13 +29,6 @@ namespace FastWpfGrid
         CellDecoration Decoration { get; }
         Color? DecorationColor { get; }
 
-        /// <summary>
-        /// return NULL disables inline editor
-        /// </summary>
-        /// <returns></returns>
-        string GetEditText();
-        void SetEditText(string value);
-
         string ToolTipText { get; }
         TooltipVisibilityMode ToolTipVisibility { get; }
     }

@@ -38,7 +38,6 @@ namespace FastWpfGrid
         //private Color _headerBackground = Color.FromRgb(0xDD, 0xDD, 0xDD);
         private WriteableBitmap _drawBuffer;
 
-        private bool _isReadOnly;
         private SelectionModeType _selectionMode = SelectionModeType.CellMode;
 
         private static Dictionary<string, ImageHolder> _imageCache = new Dictionary<string, ImageHolder>();
@@ -56,15 +55,6 @@ namespace FastWpfGrid
         }
 
         public bool AllowSelectAll { get; set; }
-
-        /// <summary>
-        /// Prevents the inline editor from being used if the control is in a read-only state.
-        /// </summary>
-        public bool IsReadOnly
-        {
-            get { return _isReadOnly; }
-            set { _isReadOnly = value; }
-        }
 
         public SelectionModeType SelectionMode {
             get { return _selectionMode; }
@@ -156,7 +146,6 @@ namespace FastWpfGrid
             //FirstVisibleColumn = columnIndex;
             //RenderGrid();
             ScrollContent(rowIndex, columnIndex);
-            AdjustInlineEditorPosition();
         }
 
 
@@ -359,81 +348,6 @@ namespace FastWpfGrid
             return null;
         }
 
-        public void HideInlineEditor(bool saveCellValue = true)
-        {
-            using (var ctx = CreateInvalidationContext())
-            {
-                if (saveCellValue && _inplaceEditorCell.IsCell && _inlineTextChanged)
-                {
-                    var cell = GetCell(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
-                    cell.SetEditText(edText.Text);
-                    InvalidateCell(_inplaceEditorCell);
-                }
-                _inplaceEditorCell = new FastGridCellAddress();
-                edText.Text = "";
-                edText.Visibility = Visibility.Hidden;
-            }
-            Keyboard.Focus(image);
-        }
-
-        private void ShowInlineEditor(FastGridCellAddress cell, string textValueOverride = null)
-        {
-            if (_isReadOnly) return;
-            if (!cell.IsCell) return;
-            var cellObj = GetCell(cell.Row.Value, cell.Column.Value);
-            if (cellObj == null) return;
-            string text = cellObj.GetEditText();
-            if (text == null) return;
-
-            _inplaceEditorCell = cell;
-
-            edText.Text = textValueOverride ?? text;
-            edText.Visibility = Visibility.Visible;
-            AdjustInlineEditorPosition();
-
-            if (edText.IsFocused)
-            {
-                if (textValueOverride == null)
-                {
-                    edText.SelectAll();
-                }
-            }
-            else
-            {
-                edText.Focus();
-                if (textValueOverride == null)
-                {
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Input, (Action) edText.SelectAll);
-                }
-            }
-
-            if (textValueOverride != null)
-            {
-                edText.SelectionStart = textValueOverride.Length;
-            }
-
-            _inlineTextChanged = !String.IsNullOrEmpty(textValueOverride);
-        }
-
-        private void AdjustInlineEditorPosition()
-        {
-            if (_inplaceEditorCell.IsCell)
-            {
-                bool visible = _rowSizes.IsVisible(_inplaceEditorCell.Row.Value, FirstVisibleRowScrollIndex, GridScrollAreaHeight)
-                               && _columnSizes.IsVisible(_inplaceEditorCell.Column.Value, FirstVisibleColumnScrollIndex, GridScrollAreaWidth);
-                edText.Visibility = visible ? Visibility.Visible : Visibility.Hidden;
-                var rect = GetCellRect(_inplaceEditorCell.Row.Value, _inplaceEditorCell.Column.Value);
-
-                edText.Margin = new Thickness
-                    {
-                        Left = rect.Left / DpiDetector.DpiXKoef,
-                        Top = rect.Top / DpiDetector.DpiYKoef,
-                        Right = imageGrid.ActualWidth - rect.Right / DpiDetector.DpiXKoef,
-                        Bottom = imageGrid.ActualHeight - rect.Bottom / DpiDetector.DpiYKoef,
-                    };
-            }
-        }
-
         private void InvalidateCurrentCell()
         {
             if (_currentCell.IsCell) InvalidateCell(_currentCell);
@@ -601,22 +515,73 @@ namespace FastWpfGrid
         private bool MoveCurrentCell(int? row, int? col, KeyEventArgs e = null)
         {
             if (e != null) e.Handled = true;
-            if (!ShiftPressed)
-            {
-                _selectedCells.ToList().ForEach(InvalidateCell);
-                ClearSelectedCells();
-            }
-
-            InvalidateCurrentCell();
-
             if (row < 0) row = 0;
             if (row >= _realRowCount) row = _realRowCount - 1;
             if (col < 0) col = 0;
             if (col >= _realColumnCount) col = _realColumnCount - 1;
 
-            _currentCell = new FastGridCellAddress(row, col);
-            if (_currentCell.IsCell) AddSelectedCell(_currentCell);
-            InvalidateCurrentCell();
+            if (_selectionMode == SelectionModeType.CellMode) {
+                if (!ShiftPressed) {
+                    _selectedCells.ToList().ForEach(InvalidateCell);
+                    ClearSelectedCells();
+                }
+
+                InvalidateCurrentCell();
+
+
+                _currentCell = new FastGridCellAddress(row, col);
+                if (_currentCell.IsCell) AddSelectedCell(_currentCell);
+                InvalidateCurrentCell();
+            } else if (_selectionMode == SelectionModeType.RowMode) {
+                _selectedCells.ToList().ForEach(InvalidateCell);
+                _selectedCells.Clear();
+                _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                _selectedColumnRange.Clear();
+                InvalidateCurrentCell();
+
+                if (ShiftPressed) {
+                    if (!_selectedRowRange.Contains(row.Value))
+                        _selectedRowRange.Add(row.Value);
+                    InvalidateRow(row.Value);
+                } else {
+                    _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                    ClearSelectedCells();
+
+                    _selectedRowRange.Add(row.Value);
+                    InvalidateRow(row.Value);
+                }
+                var cell = new FastGridCellAddress(row, col);
+                if (_currentCell.IsCell) {
+                    _currentCell = new FastGridCellAddress(row, col);
+                    InvalidateCurrentCell();
+                }
+            } else {
+                _selectedCells.ToList().ForEach(InvalidateCell);
+                _selectedCells.Clear();
+                _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
+                _selectedRowRange.Clear();
+                InvalidateCurrentCell();
+
+                if (ShiftPressed) {
+                    if (_selectedColumnRange.Contains(col.Value))
+                        _selectedColumnRange.Remove(col.Value);
+                    else
+                        _selectedColumnRange.Add(col.Value);
+                    InvalidateColumn(col.Value);
+                } else {
+                    _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
+                    ClearSelectedCells();
+
+                    _selectedColumnRange.Add(col.Value);
+                    InvalidateColumn(col.Value);
+                }
+                var cell = new FastGridCellAddress(row, col);
+                if (_currentCell.IsCell) {
+                    _currentCell = new FastGridCellAddress(row, col);
+                    InvalidateCurrentCell();
+                }
+            }
+
             ScrollCurrentCellIntoView();
             OnChangeSelectedCells(true);
             return true;

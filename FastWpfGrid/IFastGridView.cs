@@ -97,13 +97,6 @@ namespace FastWpfGrid
         /// <returns></returns>
         HashSet<int> GetSelectedModelColumns();
 
-
-        /// <summary>
-        /// hides inline editor
-        /// </summary>
-        /// <param name="saveCellValue"></param>
-        void HideInlineEditor(bool saveCellValue = true);
-
         /// <summary>
         /// handles command
         /// </summary>

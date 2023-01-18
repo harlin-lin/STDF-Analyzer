@@ -193,7 +193,6 @@ namespace FastWpfGrid
                 }
             }
 
-            AdjustInlineEditorPosition();
             AdjustScrollBarPositions();
         }
 
@@ -334,7 +333,6 @@ namespace FastWpfGrid
             RecountColumnWidths();
             AdjustScrollbars();
             AdjustScrollBarPositions();
-            AdjustInlineEditorPosition();
             InvalidateAll();
         }
 

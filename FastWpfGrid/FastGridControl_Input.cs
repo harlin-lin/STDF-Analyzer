@@ -40,12 +40,9 @@ namespace FastWpfGrid
         private int? _mouseOverRow;
         private int? _mouseOverRowHeader;
         private int? _mouseOverColumnHeader;
-        private FastGridCellAddress _inplaceEditorCell;
         private FastGridCellAddress _shiftDragStartCell;
-        private bool _inlineTextChanged;
         public event EventHandler ScrolledModelRows;
         public event EventHandler ScrolledModelColumns;
-        private FastGridCellAddress _showCellEditorIfMouseUp;
 
         // mouse is scrolled and captured out of control are - force scroll
         private bool _mouseIsBehindBottom;
@@ -66,7 +63,6 @@ namespace FastWpfGrid
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            _showCellEditorIfMouseUp = FastGridCellAddress.Empty;
 
             var pt = e.GetPosition(image);
             pt.X *= DpiDetector.DpiXKoef;
@@ -108,7 +104,6 @@ namespace FastWpfGrid
                         _selectedCells.Clear();
                         _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
                         _selectedRowRange.Clear();
-                        HideInlineEditor();
 
                         if (ControlPressed) {
                             if (_selectedColumnRange.Contains(cell.Column.Value)) 
@@ -150,7 +145,6 @@ namespace FastWpfGrid
                         _selectedCells.Clear();
                         _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
                         _selectedColumnRange.Clear();
-                        HideInlineEditor();
 
                         if (ControlPressed) {
                             if (_selectedRowRange.Contains(cell.Row.Value))
@@ -197,7 +191,6 @@ namespace FastWpfGrid
                         _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
                         _selectedColumnRange.Clear();
                         if (ControlPressed) {
-                            HideInlineEditor();
                             if (_selectedCells.Contains(cell)) RemoveSelectedCell(cell);
                             else AddSelectedCell(cell);
                             InvalidateCell(cell);
@@ -205,7 +198,6 @@ namespace FastWpfGrid
                             _selectedCells.ToList().ForEach(InvalidateCell);
                             ClearSelectedCells();
 
-                            HideInlineEditor();
                             foreach (var cellItem in GetCellRange(_currentCell, cell)) {
                                 AddSelectedCell(cellItem);
                                 InvalidateCell(cellItem);
@@ -213,11 +205,9 @@ namespace FastWpfGrid
                         } else {
                             _selectedCells.ToList().ForEach(InvalidateCell);
                             ClearSelectedCells();
-                            if (_currentCell == cell) {
-                                _showCellEditorIfMouseUp = _currentCell;
-                            } else {
-                                HideInlineEditor();
+                            if (_currentCell != cell) {
                                 SetCurrentCell(cell);
+                                _shiftDragStartCell = FastGridCellAddress.Empty;
                             }
                             AddSelectedCell(cell);
                             _dragStartCell = cell;
@@ -230,7 +220,6 @@ namespace FastWpfGrid
                         _selectedCells.Clear();
                         _selectedColumnRange.ToList().ForEach(x => InvalidateColumn(x));
                         _selectedColumnRange.Clear();
-                        HideInlineEditor();
 
                         if (ControlPressed) {
                             if (_selectedRowRange.Contains(cell.Row.Value))
@@ -270,7 +259,6 @@ namespace FastWpfGrid
                         _selectedCells.Clear();
                         _selectedRowRange.ToList().ForEach(x => InvalidateRow(x));
                         _selectedRowRange.Clear();
-                        HideInlineEditor();
 
                         if (ControlPressed) {
                             if (_selectedColumnRange.Contains(cell.Column.Value))
@@ -313,10 +301,6 @@ namespace FastWpfGrid
                 SetCurrentCell(cell);
 
             }
-
-            //if (cell.IsCell) ShowTextEditor(
-            //    GetCellRect(cell.Row.Value, cell.Column.Value),
-            //    Model.GetCell(cell.Row.Value, cell.Column.Value).GetEditText());
         }
 
         protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
@@ -426,22 +410,6 @@ namespace FastWpfGrid
                 //wasColumnResizing = true;
                 ReleaseMouseCapture();
             }
-
-            var pt = e.GetPosition(image);
-            pt.X *= DpiDetector.DpiXKoef;
-            pt.Y *= DpiDetector.DpiYKoef;
-            var cell = GetCellAddress(pt);
-
-            if (cell == _showCellEditorIfMouseUp)
-            {
-                ShowInlineEditor(_showCellEditorIfMouseUp);
-                _showCellEditorIfMouseUp = FastGridCellAddress.Empty;
-            }
-        }
-
-        private void edTextChanged(object sender, TextChangedEventArgs e)
-        {
-            _inlineTextChanged = true;
         }
 
         protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
@@ -502,26 +470,6 @@ namespace FastWpfGrid
                 return args.Handled;
             }
             return false;
-        }
-
-        private void edTextKeyDown(object sender, KeyEventArgs e)
-        {
-            using (var ctx = CreateInvalidationContext())
-            {
-                if (e.Key == Key.Escape)
-                {
-                    HideInlineEditor(false);
-                    e.Handled = true;
-                }
-                if (e.Key == Key.Enter)
-                {
-                    HideInlineEditor();
-                    MoveCurrentCell(_currentCell.Row + 1, _currentCell.Column, e);
-                }
-
-                HandleCursorMove(e, true);
-                if (e.Handled) HideInlineEditor();
-            }
         }
 
         private void imageMouseWheel(object sender, MouseWheelEventArgs e)
@@ -602,24 +550,11 @@ namespace FastWpfGrid
                 bool moved = HandleCursorMove(e);
                 if (ShiftPressed && moved) SetSelectedRectangle(_shiftDragStartCell, _currentCell);
 
-                if (e.Key == Key.F2 && _currentCell.IsCell)
-                {
-                    ShowInlineEditor(_currentCell);
-                }
                 if (e.Key == Key.A && ControlPressed && AllowSelectAll)
                 {
                     SelectAll();
                 }
             }
-        }
-
-        private void imageTextInput(object sender, TextCompositionEventArgs e)
-        {
-            if (!_currentCell.IsCell) return;
-            if (e.Text == null) return;
-            if (e.Text != " " && String.IsNullOrEmpty(e.Text.Trim())) return;
-            if (e.Text.Length == 1 && e.Text[0] < 32) return;
-            ShowInlineEditor(_currentCell, e.Text);
         }
 
         private void imageMouseDown(object sender, MouseButtonEventArgs e)
@@ -833,11 +768,6 @@ namespace FastWpfGrid
         private void OnScrolledModelColumns()
         {
             if (ScrolledModelColumns != null) ScrolledModelColumns(this, EventArgs.Empty);
-        }
-
-        private void edTextLostFocus(object sender, RoutedEventArgs e)
-        {
-            HideInlineEditor();
         }
 
         private void selectionCommandClick(object sender, RoutedEventArgs e)

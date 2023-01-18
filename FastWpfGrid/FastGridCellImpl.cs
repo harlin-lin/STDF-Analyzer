@@ -49,15 +49,6 @@ namespace FastWpfGrid
             return Blocks[blockIndex];
         }
 
-        public string GetEditText()
-        {
-            return null;
-        }
-
-        public void SetEditText(string value)
-        {
-        }
-
         public IEnumerable<FastGridBlockImpl> SetBlocks
         {
             set

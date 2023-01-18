@@ -154,11 +154,6 @@ namespace UI_Data.ViewModels {
             return this;
         }
 
-        //public override void SetCellText(int row, int column, string value) {
-        //    var key = Tuple.Create(row, column);
-        //    _editedCells[key] = value;
-        //}
-
         //public override void HandleCommand(IFastGridView view, FastGridCellAddress address, object commandParameter, ref bool handled) {
         //    //base.HandleCommand(view, address, commandParameter, ref handled);
         //    //if (commandParameter is string) MessageBox.Show(commandParameter.ToString());

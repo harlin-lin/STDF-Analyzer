@@ -59,7 +59,6 @@
                 </i:Interaction.Triggers>
             </DataGrid>-->
             <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" 
-                                    IsReadOnly="True" 
                                      Model="{Binding RawDataModel}" AllowSelectAll="False" SelectionMode="RowMode">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedCellsChanged" >
