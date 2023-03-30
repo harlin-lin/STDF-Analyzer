@@ -124,6 +124,22 @@ namespace MapBase {
                 _zoomShiftX = (int)Math.Floor(pt.X - _dragStartPoint.X);
                 _zoomShiftY = (int)Math.Floor(pt.Y - _dragStartPoint.Y);
 
+                if (_zoomShiftX < 0) {
+                    var w = (int)(_rawWidth * _zoomDiameter * 1.0 / DEFAULT_WAFER_DIAMETER);
+                    if(w < -_zoomShiftX) _zoomShiftX = -w + 20;
+                }
+                if (_zoomShiftX > 0 && (_drawBuffer.PixelWidth < _zoomShiftX)) {
+                    _zoomShiftX = (_drawBuffer.PixelWidth - 20);
+                }
+
+                if (_zoomShiftY < 0) {
+                    var h = (int)(_rawHeight * _zoomDiameter * 1.0 / DEFAULT_WAFER_DIAMETER);
+                    if (h < -_zoomShiftY) _zoomShiftY = -h + 20;
+                }
+                if (_zoomShiftY > 0 && (_drawBuffer.PixelHeight < _zoomShiftY)) {
+                    _zoomShiftY = (_drawBuffer.PixelHeight - 20);
+                }
+
                 //System.Diagnostics.Debug.WriteLine($"MOV SX:{_zoomShiftX} SY:{_zoomShiftY}");
 
                 UpdateMap();
@@ -288,6 +304,9 @@ namespace MapBase {
                 desth = origin.PixelHeight;
                 srcy = 0;
             }
+
+            if (destw < 0) destw = 0;
+            if (desth < 0) desth = 0;
 
             var srcRect = new Rect(srcx,srcy, destw, desth);
             var destRect = new Rect(destx, desty, destw, desth);
