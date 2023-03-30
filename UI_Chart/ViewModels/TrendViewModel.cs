@@ -512,7 +512,7 @@ namespace UI_Chart.ViewModels {
             }
             RaisePropertyChanged("TrendSeries");
 
-            _xRangeTrend.SetMinMax(1, _ubound);
+            _xRangeTrend.SetMinMax(-1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UpdateTrendViewRange();
@@ -872,7 +872,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allsigmaLowTrend-ov, _allsigmaHighTrend+ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _ubound);
+            _xRangeTrend.SetMinMax(-1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allsigmaLowTrend.ToString("f3");
@@ -889,7 +889,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(_allminTrend - ov, _allmaxTrend + ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _ubound);
+            _xRangeTrend.SetMinMax(-1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = _allminTrend.ToString("f3");
@@ -909,7 +909,7 @@ namespace UI_Chart.ViewModels {
             if (ov == 0) ov = 1;
             _yRangeTrend.SetMinMax(l - ov, h + ov);
             RaisePropertyChanged("YRangeTrend");
-            _xRangeTrend.SetMinMax(1, _ubound);
+            _xRangeTrend.SetMinMax(-1, _ubound);
             RaisePropertyChanged("XRangeTrend");
 
             UserTrendLowRange = l.ToString("f3");
@@ -933,7 +933,7 @@ namespace UI_Chart.ViewModels {
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
-            _xRangeTrend.SetMinMax(1, _ubound);
+            _xRangeTrend.SetMinMax(-1, _ubound);
             RaisePropertyChanged("XRangeTrend");
         }
 
