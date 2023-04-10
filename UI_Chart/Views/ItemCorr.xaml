@@ -2,48 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
-             prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:s="http://schemas.abtsoftware.co.uk/scichart" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
+             Name="chart"
     >
     <Grid>
-        <Grid.Resources>
-            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="FontFamily" Value="Consolas"/>
-                <Setter Property="FontWeight" Value="Normal"/>
-            </Style>
-            <Style x:Key="MajorGridLineStyle" TargetType="Line">
-                <Setter Property="StrokeThickness" Value="0.5"/>
-                <Setter Property="Stroke" Value="LightGray"/>
-                <Setter Property="StrokeDashArray" Value="1,3"/>
-            </Style>
-            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
-                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
-            </Style>
-        </Grid.Resources>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Save" BorderThickness="0">
-                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,5,0" Click="buttonSave_Click" ToolTip="Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChart}" ToolTip="Copy" BorderThickness="0">
-                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+            <Button Name="buttonCopy" Width="23" Height="23" Margin="0,0,10,0" Click="buttonCopy_Click" ToolTip="Copy" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <Label Content="X:"/>
-            <ComboBox Width="180" x:Name="cbItemX" ItemsSource="{Binding ItemX}" Margin="3,1,20,1">
+            <ComboBox Width="180" Name="cbItemX" SelectionChanged="cbItemX_SelectionChanged"  Margin="3,1,20,1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -57,15 +36,10 @@
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectItemX}" CommandParameter="{Binding ElementName=cbItemX, Path=SelectedItem}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox Width="180" x:Name="cbItemY" ItemsSource="{Binding ItemY}" Margin="3,1">
+            <ComboBox Width="180" Name="cbItemY" SelectionChanged="cbItemY_SelectionChanged"  Margin="3,1">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -79,69 +53,22 @@
                         </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectItemY}" CommandParameter="{Binding ElementName=cbItemY, Path=SelectedItem}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </ComboBox>
-            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlier, Mode=TwoWay}"
-                  Command="{Binding CmdToggleOutlier}"
+            <ToggleButton Name="toggleOutlier" Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="True"
+                  Click="toggleOutlier_Click"
                   Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
             </ToggleButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdx, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlier, Mode=TwoWay}" Margin="0,0,0,0">
+            <ComboBox Name="comboboxSigmaOutlier" Style="{StaticResource LineStyleComboBox}" SelectionChanged="comboboxSigmaOutlier_SelectionChanged"  IsEnabled="True" Margin="0,0,0,0">
                 <ComboBoxItem Content="6σ" IsSelected="True"/>
                 <ComboBoxItem Content="5σ"/>
                 <ComboBoxItem Content="4σ"/>
                 <ComboBoxItem Content="3σ"/>
                 <ComboBoxItem Content="2σ"/>
                 <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdx}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </ComboBox>
 
         </StackPanel>
-        <s:SciChartSurface x:Name="sciChart" Background="White"
-                           ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
-                           Grid.Row="1" Margin="2,2,2,2">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick" >
-                    <i:InvokeCommandAction Command="{Binding CmdZoomOut}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <!-- Declare RenderableSeries -->
-            <s:SciChartSurface.RenderableSeries>
-                <s:XyScatterRenderableSeries x:Name="scatterRenderSeries" DataSeries="{Binding CorrSeries}">
-
-                    <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="7" Height="7" Fill="Blue" Stroke="Blue" StrokeThickness="0"/>
-                    </s:XyScatterRenderableSeries.PointMarker>
-                </s:XyScatterRenderableSeries>
-            </s:SciChartSurface.RenderableSeries>
-
-            <!-- Create an X Axis with GrowBy -->
-            <s:SciChartSurface.XAxis >
-                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True" VisibleRange="{Binding XRange, Mode=TwoWay}"/>
-            </s:SciChartSurface.XAxis>
-
-            <!-- Create a Y Axis with GrowBy. Optional bands give a cool look and feel for minimal performance impact -->
-            <s:SciChartSurface.YAxis>
-                <s:NumericAxis DrawMajorBands="False" DrawMinorGridLines="False" DrawMajorGridLines="True" VisibleRange="{Binding YRange, Mode=TwoWay}" />
-            </s:SciChartSurface.YAxis>
-
-            <s:SciChartSurface.ChartModifier>
-                <s:ModifierGroup>
-                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
-                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="False" />
-                    <s:MouseWheelZoomModifier XyDirection="XYDirection" IsEnabled="True" />
-                    <s:RubberBandXyZoomModifier IsAnimated="True" IsXAxisOnly="False"/>
-                </s:ModifierGroup>
-            </s:SciChartSurface.ChartModifier>
-        </s:SciChartSurface>
+        <WpfPlot Grid.Row="1" Margin="2,2,2,2" Name="scatterChart" MouseDoubleClick="scatterChart_MouseDoubleClick"/>
     </Grid>
 </UserControl>

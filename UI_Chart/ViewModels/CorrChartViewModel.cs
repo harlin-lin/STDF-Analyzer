@@ -4,12 +4,6 @@ using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
-using SciChart.Charting.Model.ChartSeries;
-using SciChart.Charting.Model.DataSeries;
-using SciChart.Charting.Visuals;
-using SciChart.Charting.Visuals.PaletteProviders;
-using SciChart.Charting.Visuals.RenderableSeries;
-using SciChart.Data.Model;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
@@ -23,41 +17,29 @@ using Utils;
 namespace UI_Chart.ViewModels {
 
     public class CorrChartViewModel : BindableBase {
-        class StrokeFillPaletteProvider : IStrokePaletteProvider, IFillPaletteProvider {
-
-            public void OnBeginSeriesDraw(IRenderableSeries rSeries) {
-
-            }
-
-            public Brush OverrideFillBrush(IRenderableSeries series, int index, IPointMetadata metadata) {
-                if (index == 0 || index == 102)
-                    return new SolidColorBrush(SA.GetHistogramOutlierColor());
-                return null;
-            }
-
-            public Color? OverrideStrokeColor(IRenderableSeries series, int index, IPointMetadata metadata) {
-                if (index == 0 || index == 102)
-                    return SA.GetHistogramOutlierColor();
-                return null;
-            }
-
-        }
-
-
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
         string _selectedId;
         List<SubData> _subDataList = new List<SubData>();
+        public List<SubData> SubDataList {
+            get { return _subDataList; }
+        }
 
 
         private float _sigmaLow, _sigmaHigh, _min, _max;
 
         #region Binding_prop
-        public ObservableCollection<IRenderableSeriesViewModel> _histoSeries = new ObservableCollection<IRenderableSeriesViewModel>();
-        public ObservableCollection<IRenderableSeriesViewModel> HistoSeries {
+        private List<(double[], double[])> _histoSeries = new List<(double[], double[])>();
+        public List<(double[], double[])> HistoSeries {
             get { return _histoSeries; }
             set { SetProperty(ref _histoSeries, value); }
+        }
+
+        private (double, double, double) _histoViewRange;
+        public (double, double, double) HistoViewRange {
+            get { return _histoViewRange; }
+            set { SetProperty(ref _histoViewRange, value); }
         }
 
         private float _lowLimit;
@@ -72,14 +54,14 @@ namespace UI_Chart.ViewModels {
             set { SetProperty(ref _highLimit, value); }
         }
 
-        private IRange _xRangeHisto = new DoubleRange(0, 1);
-        public IRange XRangeHisto {
+        private (double,double) _xRangeHisto = (0, 1);
+        public (double, double) XRangeHisto {
             get { return _xRangeHisto; }
             set { SetProperty(ref _xRangeHisto, value); }
         }
 
-        private IRange _yRangeHisto = new DoubleRange(0, 1);
-        public IRange YRangeHisto {
+        private (double, double) _yRangeHisto = (0, 1);
+        public (double, double) YRangeHisto {
             get { return _yRangeHisto; }
             set { SetProperty(ref _yRangeHisto, value); }
         }
@@ -293,20 +275,20 @@ namespace UI_Chart.ViewModels {
         }
 
         //default 100 bins, and enable outliers count, total 112bins
-        (float[], int[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
+        (double[], double[]) GetHistogramData(float start, float stop, IEnumerable<float> data) {
             if (start == stop) {
                 start -= 1;
                 stop += 1;
             }
             var step = (stop - start) / 100;
-            float[] range = new float[103];
+            double[] range = new double[103];
             var actStart = start;// - step * 5;
             var actStop = stop;// + step * 5;
 
             for (int i = 0; i < 103; i++) {
                 range[i] = start + (i - 1) * step;
             }
-            int[] rangeCnt = new int[103];
+            double[] rangeCnt = new double[103];
 
             foreach (var f in data) {
                 if (float.IsNaN(f) || float.IsInfinity(f)) continue;
@@ -320,13 +302,13 @@ namespace UI_Chart.ViewModels {
                 }
             }
 
-            return (range, rangeCnt);
+            return (rangeCnt, range);
         }
 
         void UpdateHistoSeries(float start, float stop) {
             if (_selectedId == null || _subDataList.Count == 0) return;
-            var maxCnt = 0;
-            HistoSeries.Clear();
+            double maxCnt = 0;
+            _histoSeries.Clear();
 
             if (float.IsNaN(start) || float.IsInfinity(start) || float.IsNaN(stop) || float.IsInfinity(stop)) return;
 
@@ -338,17 +320,8 @@ namespace UI_Chart.ViewModels {
                 var data = da.GetFilteredItemData(_selectedId, _subDataList[i].FilterId);
 
                 var histo = GetHistogramData(start, stop, data);
-                var series = new XyDataSeries<float, int>();
-                series.Append(histo.Item1, histo.Item2);
-                series.SeriesName = $"F_{i}:{_subDataList[i].FilterId:X8}";
 
-                HistoSeries.Add(new ColumnRenderableSeriesViewModel {
-                    DataSeries = series,
-                    Stroke = Colors.DarkBlue,
-                    Fill = new SolidColorBrush(SA.GetColor(i)),
-                    DataPointWidth = 1,
-                    PaletteProvider = new StrokeFillPaletteProvider()
-                }); ;
+                _histoSeries.Add(histo);
 
                 if (i == 0) {
                     maxCnt = histo.Item2.Max();
@@ -361,10 +334,10 @@ namespace UI_Chart.ViewModels {
             var step = (stop - start) / 100;
             var actStart = start - step * 5;
             var actStop = stop + step * 5;
-            _xRangeHisto.SetMinMax(actStart, actStop);
+            _xRangeHisto = (actStart, actStop);
             RaisePropertyChanged("XRangeHisto");
 
-            _yRangeHisto.SetMinMax(0, maxCnt);
+            _yRangeHisto = (0, maxCnt);
             RaisePropertyChanged("YRangeHisto");
 
         }
@@ -443,7 +416,7 @@ namespace UI_Chart.ViewModels {
             string dftName = _selectedId + "_CorrHisto";
             if (_subDataList.Count > 1) dftName += "_cmp";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
-                (e as SciChartSurface).ExportToFile(filePath, SciChart.Core.ExportType.Png, false);
+                (e as ScottPlot.WpfPlot).Plot.SaveFig(filePath);
             }
 
         }
@@ -457,8 +430,13 @@ namespace UI_Chart.ViewModels {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            var image = (e as SciChartSurface).ExportToBitmapSource();
-            System.Windows.Clipboard.SetImage(image);
+            var image = (e as ScottPlot.WpfPlot).Plot.GetBitmap();
+            System.Windows.Clipboard.SetImage(System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+            image.GetHbitmap(),
+            IntPtr.Zero,
+            System.Windows.Int32Rect.Empty,
+            System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions()));
+
             _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
         }
 

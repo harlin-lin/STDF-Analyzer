@@ -20,11 +20,21 @@ namespace DataContainer {
         public int ValidCount { get; private set; }
 
         public float GetSigmaRangeLow(int times) {
-            return MeanValue - Sigma * times;
+            try {
+                return MeanValue - Sigma * times;
+            }
+            catch {
+                return float.NaN;
+            }
         }
 
         public float GetSigmaRangeHigh(int times) {
-            return MeanValue + Sigma * times;
+            try {
+                return MeanValue + Sigma * times;
+            }
+            catch {
+                return float.NaN;
+            }
         }
 
         public ItemStatistic(IEnumerable<float> data, float? ll, float? hl) {

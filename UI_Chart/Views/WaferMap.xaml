@@ -5,10 +5,11 @@
              xmlns:m="clr-namespace:MapBase;assembly=MapBase"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             x:Name="chart"  Loaded="chart_Loaded"
+             >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
@@ -17,11 +18,9 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
             <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save" BorderThickness="0">
-                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Copy" BorderThickness="0">
-                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <ComboBox ItemsSource="{Binding MapBinModeList}" SelectedItem="{Binding SelectedMapBinMode}" Width="60" Margin="0,0,10,0" />
@@ -84,7 +83,6 @@
             </ComboBox>
 
             <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApply, Mode=OneWay}" ToolTip="Apply the user cord"  BorderThickness="0" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}">
-                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
 
