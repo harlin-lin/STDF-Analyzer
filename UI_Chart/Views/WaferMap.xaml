@@ -5,10 +5,9 @@
              xmlns:m="clr-namespace:MapBase;assembly=MapBase"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
-             x:Name="chart"  Loaded="chart_Loaded"
+             x:Name="chart"
              >
     <Grid>
         <Grid.RowDefinitions>
@@ -17,22 +16,22 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSave, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Save" BorderThickness="0">
+            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,5,0" Click="buttonSave_Click" ToolTip="Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=waferMap}" ToolTip="Copy" BorderThickness="0">
+            <Button Name="buttonCopy" Width="23" Height="23" Margin="0,0,10,0" Click="buttonCopy_Click" ToolTip="Copy" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
-            <ComboBox ItemsSource="{Binding MapBinModeList}" SelectedItem="{Binding SelectedMapBinMode}" Width="60" Margin="0,0,10,0" />
-            <ComboBox ItemsSource="{Binding MapViewModeList}" SelectedItem="{Binding SelectedMapViewMode}" Width="70" Margin="0,0,10,0" />
-            <ComboBox ItemsSource="{Binding MapRtDataModeList}" SelectedItem="{Binding SelectedMapRtDataMode}" Width="90" Margin="0,0,10,0" />
+            <ComboBox Name="cbBinMode" Width="60" Margin="0,0,10,0" />
+            <ComboBox Name="cbViewMode" Width="70" Margin="0,0,10,0" />
+            <ComboBox Name="cbRtDataMode" Width="90" Margin="0,0,10,0" />
             <CheckBox x:Name="cbUserCord" Content="UserCord" VerticalContentAlignment="Bottom" ToolTip="If need select wafer no and cord from test item" VerticalAlignment="Center" Margin="0,0,10,0" Width="80" 
-                      IsChecked="{Binding IfEnUserCord}" 
-                      Command="{Binding CmdChangeUserCord}"/>
+                      IsChecked="False"
+                      Click="cbUserCord_Click"/>
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>
-            <ComboBox x:Name="cbItemX" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordX}" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemX" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -49,7 +48,7 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox x:Name="cbItemY" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedCordY}" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemY" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -66,7 +65,7 @@
             </ComboBox>
 
             <Label Content="WaferNO:"/>
-            <ComboBox x:Name="cbItemWaferNO" ItemsSource="{Binding AllItems}" SelectedItem="{Binding SelectedWaferNO}" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemWaferNO" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -82,11 +81,11 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApply, Mode=OneWay}" ToolTip="Apply the user cord"  BorderThickness="0" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}">
+            <Button Name="buttonApplyUserCord" Width="23" Height="23" Margin="0,0,0,0" Click="buttonApplyUserCord_Click" ToolTip="Apply the user cord"  BorderThickness="0" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
 
         </StackPanel>
-        <m:WaferMapControl Grid.Row="2" Name="waferMap" WaferDataSource="{Binding WaferData}" BinMode="{Binding SelectedMapBinMode}" ViewMode="{Binding SelectedMapViewMode, Mode=TwoWay}" RtDataMode="{Binding SelectedMapRtDataMode}"/>
+        <m:WaferMapControl Grid.Row="2" Name="waferMap" BinMode="{Binding ElementName=cbBinMode,Path=SelectedItem}" ViewMode="{Binding ElementName=cbViewMode,Path=SelectedItem}" RtDataMode="{Binding ElementName=cbRtDataMode,Path=SelectedItem}"/>
     </Grid>
 </UserControl>

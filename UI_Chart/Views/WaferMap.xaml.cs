@@ -1,8 +1,13 @@
 ﻿using DataContainer;
 using MapBase;
+using Microsoft.Win32;
+using Prism.Events;
+using Prism.Regions;
+using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
@@ -11,24 +16,182 @@ namespace UI_Chart.Views {
     /// <summary>
     /// Interaction logic for WaferMap
     /// </summary>
-    public partial class WaferMap : UserControl {
-        public WaferMap() {
+    public partial class WaferMap : UserControl, INavigationAware {
+        public WaferMap(IRegionManager regionManager, IEventAggregator ea) {
             InitializeComponent();
+
+            _regionManager = regionManager;
+            _ea = ea;
+            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
+
+            cbBinMode.ItemsSource = Enum.GetValues(typeof(MapBinMode)).OfType<MapBinMode>();
+            cbViewMode.ItemsSource = Enum.GetValues(typeof(MapViewMode)).OfType<MapViewMode>();
+            cbRtDataMode.ItemsSource = Enum.GetValues(typeof(MapRtDataMode)).OfType<MapRtDataMode>();
+
+            cbBinMode.SelectedItem = MapBinMode.SBin;
+            cbViewMode.SelectedItem = MapViewMode.Single;
+            cbRtDataMode.SelectedItem = MapRtDataMode.OverWrite;
         }
 
-        private void chart_Loaded(object sender, System.Windows.RoutedEventArgs e) {
-            var vm = (INotifyPropertyChanged)(chart.DataContext);
-            vm.PropertyChanged += Vm_PropertyChanged;
+        IRegionManager _regionManager;
+        IEventAggregator _ea;
+
+        SubData _subData;
+
+        //private WaferDataModel _waferData;
+
+        public bool IsNavigationTarget(NavigationContext navigationContext) {
+            var data = (SubData)navigationContext.Parameters["subData"];
+
+            return data.Equals(_subData);
         }
 
-        private void Vm_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-            //System.Diagnostics.Debug.WriteLine(sender.ToString());
-            var vm = (WaferMapViewModel)sender;
-            //switch (e.PropertyName) {
-            //        break;
-            //}
+        public void OnNavigatedFrom(NavigationContext navigationContext) {
 
         }
+
+        public void OnNavigatedTo(NavigationContext navigationContext) {
+            var data = (SubData)navigationContext.Parameters["subData"];
+            if (!_subData.Equals(data)) {
+                _subData = data;
+
+                var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+                var items = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
+
+                cbItemX.ItemsSource = items;
+                cbItemY.ItemsSource = items;
+                cbItemWaferNO.ItemsSource = items;
+
+                waferMap.WaferDataSource = new WaferDataModel(_subData);
+            }
+        }
+
+
+        void UpdateChart(SubData subData) {
+            if (subData.Equals(_subData)) {
+                if (cbUserCord.IsChecked.Value) {
+                    waferMap.WaferDataSource = new WaferDataModel(_subData, (Item)cbItemX.SelectedItem, (Item)cbItemY.SelectedItem, (Item)cbItemWaferNO.SelectedItem);
+                } else {
+                    waferMap.WaferDataSource = new WaferDataModel(_subData);
+                }
+            }
+        }
+
+
+        void ExecuteCmdApply() {
+            waferMap.WaferDataSource = new WaferDataModel(_subData, (Item)cbItemX.SelectedItem, (Item)cbItemY.SelectedItem, (Item)cbItemWaferNO.SelectedItem);
+        }
+
+
+        void ExecuteCmdChangeUserCord() {
+            if (!cbUserCord.IsChecked.Value) {
+                waferMap.WaferDataSource = new WaferDataModel(_subData);
+            } else {
+                if (cbItemWaferNO.SelectedItem != null && cbItemX.SelectedItem != null && cbItemY.SelectedItem != null)
+                    ExecuteCmdApply();
+            }
+        }
+
+
+        ///<summary>
+        /// Check if file is Good for writing
+        ///</summary>
+        ///<param name="filePath">File path</param>
+        ///<returns></returns>
+        public static bool IsFileGoodForWriting(string filePath) {
+            FileStream stream = null;
+            FileInfo file = new FileInfo(filePath);
+
+            try {
+                stream = file.Open(FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+            } catch (Exception) {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return false;
+            } finally {
+                if (stream != null)
+                    stream.Close();
+            }
+
+            //file is not locked
+            return true;
+        }
+
+        public SaveFileDialog CreateFileDialog(string filter) {
+            var saveFileDialog = new SaveFileDialog {
+                Filter = filter,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+            };
+
+            return saveFileDialog;
+        }
+
+        private bool GetAndCheckPath(string filter, string dftName, out string path) {
+            var ret = false;
+            var isGoodPath = false;
+            var saveFileDialog = CreateFileDialog(filter);
+            saveFileDialog.FileName = dftName;
+            path = null;
+
+            while (!isGoodPath) {
+                if (saveFileDialog.ShowDialog() == true) {
+                    if (IsFileGoodForWriting(saveFileDialog.FileName)) {
+                        path = saveFileDialog.FileName;
+                        isGoodPath = true;
+                        ret = true;
+                    } else {
+                        System.Windows.MessageBox.Show(
+                            "File is inaccesible for writing or you can not create file in this location, please choose another one.");
+                    }
+                } else {
+                    isGoodPath = true;
+                }
+            }
+
+            return ret;
+        }
+
+        private void buttonSave_Click(object sender, System.Windows.RoutedEventArgs e) {
+            string filePath;
+
+            string dftName = Path.GetFileNameWithoutExtension(_subData.StdFilePath);
+            if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
+                var image = waferMap.GetWaferMap();
+                if (image is null) {
+                    System.Windows.MessageBox.Show("Select single map first");
+                } else {
+                    using (var fileStream = new FileStream(filePath, FileMode.Create)) {
+                        System.Windows.Media.Imaging.BitmapEncoder encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+                        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(image));
+                        encoder.Save(fileStream);
+                    }
+                }
+            }
+
+        }
+
+        private void buttonCopy_Click(object sender, System.Windows.RoutedEventArgs e) {
+            var image = waferMap.GetWaferMap();
+            if (image is null) {
+                System.Windows.MessageBox.Show("Select single map first");
+            } else {
+                System.Windows.Clipboard.SetImage(image);
+                _ea.GetEvent<Event_Log>().Publish("Copied to clipboard");
+            }
+
+        }
+
+        private void cbUserCord_Click(object sender, System.Windows.RoutedEventArgs e) {
+            ExecuteCmdChangeUserCord();
+        }
+
+        private void buttonApplyUserCord_Click(object sender, System.Windows.RoutedEventArgs e) {
+            ExecuteCmdApply();
+        }
+
+
     }
 
 
@@ -77,7 +240,6 @@ namespace UI_Chart.Views {
             }
         }
 
-
         public WaferDataModel(SubData subData, Item x, Item y, Item w) {
             _subData = subData;
 
@@ -112,8 +274,7 @@ namespace UI_Chart.Views {
                     YUbound = ys.Max();
                     YLbound = ys.Min();
                 }
-            }
-            catch {
+            } catch {
 
             }
 

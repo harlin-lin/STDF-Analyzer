@@ -474,7 +474,6 @@ namespace UI_Chart.Views {
                 }
             }
 
-            double step = (stop - start) / 100;
             var ov = 5 * (stop - start) / 100;
             if (ov == 0) ov = 1;
             var actStart = start - ov;

@@ -16,6 +16,9 @@ namespace UI_Chart {
             containerRegistry.RegisterForNavigation<ItemCorr>();
             containerRegistry.RegisterForNavigation<WaferMap>();
 
+            containerRegistry.RegisterForNavigation<CorrChart>();
+            containerRegistry.RegisterForNavigation<SiteCorrChart>();
+
         }
     }
 }
