@@ -27,8 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastWpfGrid", "FastWpfGrid\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteableBitmapExx", "WriteableBitmapEx\WriteableBitmapExx.csproj", "{B0AA6A94-6784-4221-81F0-244A68C374C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "scottplotTrial", "scottplotTrial\scottplotTrial.csproj", "{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,14 +123,6 @@ Global
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Release|x64.ActiveCfg = Release|Any CPU
 		{B0AA6A94-6784-4221-81F0-244A68C374C0}.Release|x64.Build.0 = Release|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Debug|x64.Build.0 = Debug|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Release|x64.ActiveCfg = Release|Any CPU
-		{FB0E8D1F-A17B-4E5F-8353-F9196A7D4D53}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
