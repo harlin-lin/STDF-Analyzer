@@ -85,7 +85,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ViewModels\FastDataGridModel.cs" />
-    <Compile Include="ViewModels\CorrChartViewModel.cs" />
     <Compile Include="Views\Raw.xaml.cs">
       <DependentUpon>Raw.xaml</DependentUpon>
     </Compile>

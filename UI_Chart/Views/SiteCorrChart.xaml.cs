@@ -41,14 +41,8 @@ namespace UI_Chart.Views {
         private float _sigmaLow, _sigmaHigh, _min, _max;
 
         #region Binding_prop
-        private List<(double[], double[])> _histoSeries = new List<(double[], double[])>();
-
         private float _lowLimit;
-
         private float _highLimit;
-
-
-
         private string _itemTitle;
 
         bool _dataValid;
