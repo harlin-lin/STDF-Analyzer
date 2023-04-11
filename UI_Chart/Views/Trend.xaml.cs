@@ -22,8 +22,6 @@ namespace UI_Chart.Views {
 
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
-            _ea.GetEvent<Event_ItemsSelected>().Subscribe(UpdateItems);
 
             trendChart.RightClicked -= trendChart.DefaultRightClickEvent;
             trendChart.Configuration.DoubleClickBenchmark = false;
@@ -492,17 +490,26 @@ namespace UI_Chart.Views {
 
                 _selectedIds = new List<string>((List<string>)navigationContext.Parameters["itemList"]);
 
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
+                _ea.GetEvent<Event_ItemsSelected>().Subscribe(UpdateItems);
+
                 UpdateData();
+
             }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.Equals(_subData);
+            return false;
+
+            //var data = (SubData)navigationContext.Parameters["subData"];
+
+            //return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(UpdateFilter);
+            _ea.GetEvent<Event_ItemsSelected>().Unsubscribe(UpdateItems);
 
         }
         ///<summary>

@@ -22,7 +22,6 @@ namespace UI_Chart.Views {
 
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
 
             scatterChart.RightClicked -= scatterChart.DefaultRightClickEvent;
             scatterChart.Configuration.DoubleClickBenchmark = false;
@@ -46,18 +45,21 @@ namespace UI_Chart.Views {
                 cbItemX.ItemsSource = items;
                 cbItemY.ItemsSource = items;
 
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
+
                 UpdateData();
             }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            var data = (SubData)navigationContext.Parameters["subData"];
+            return false;
+            //var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.Equals(_subData);
+            //return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(UpdateChart);
         }
 
         int SigmaByIdx(int idx) {

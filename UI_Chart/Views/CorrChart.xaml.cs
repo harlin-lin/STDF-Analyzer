@@ -23,8 +23,6 @@ namespace UI_Chart.Views {
 
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_CorrItemSelected>().Subscribe(UpdateItems);
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
 
             histoChart.RightClicked -= histoChart.DefaultRightClickEvent;
             histoChart.Configuration.DoubleClickBenchmark = false;
@@ -299,6 +297,9 @@ namespace UI_Chart.Views {
                 _subDataList = new List<SubData>((IEnumerable<SubData>)navigationContext.Parameters["subDataList"]);
                 _corrDataIdx = (int)navigationContext.Parameters["corrDataIdx"];
 
+                _ea.GetEvent<Event_CorrItemSelected>().Subscribe(UpdateItems);
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
+
                 UpdateData();
             }
         }
@@ -308,7 +309,8 @@ namespace UI_Chart.Views {
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-            throw new NotImplementedException();
+            _ea.GetEvent<Event_CorrItemSelected>().Unsubscribe(UpdateItems);
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(UpdateFilter);
         }
 
 

@@ -17,8 +17,6 @@ namespace UI_Chart.Views {
             _regionManager = regionManager;
             _ea = ea;
 
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
-
         }
 
         IRegionManager _regionManager;
@@ -32,19 +30,21 @@ namespace UI_Chart.Views {
             if (!_subData.Equals(data)) {
                 _subData = data;
 
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateFilter);
 
                 UpdateSummary();
             }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            var data = (SubData)navigationContext.Parameters["subData"];
+            return false;
+            //var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.Equals(_subData);
+            //return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(UpdateFilter);
         }
 
         void UpdateFilter(SubData subData) {

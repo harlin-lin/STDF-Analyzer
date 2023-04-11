@@ -18,11 +18,6 @@ namespace UI_Chart.Views {
             InitializeComponent();
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(x => {
-                if (_subData.Equals(x)) {
-                    _rawDataModel.NotifyRefresh();
-                }
-            });
         }
         IRegionManager _regionManager;
         IEventAggregator _ea;
@@ -35,16 +30,29 @@ namespace UI_Chart.Views {
                 _subData = data;
                 _rawDataModel = new FastDataGridModel(_subData);
                 rawgrid.Model = _rawDataModel;
+
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(x => {
+                    if (_subData.Equals(x)) {
+                        _rawDataModel.NotifyRefresh();
+                    }
+                });
+
             }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            var data = (SubData)navigationContext.Parameters["subData"];
+            return false;
+            //var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.Equals(_subData);
+            //return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(x => {
+                if (_subData.Equals(x)) {
+                    _rawDataModel.NotifyRefresh();
+                }
+            });
 
         }
 

@@ -22,7 +22,6 @@ namespace UI_Chart.Views {
 
             _regionManager = regionManager;
             _ea = ea;
-            _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
 
             cbBinMode.ItemsSource = Enum.GetValues(typeof(MapBinMode)).OfType<MapBinMode>();
             cbViewMode.ItemsSource = Enum.GetValues(typeof(MapViewMode)).OfType<MapViewMode>();
@@ -41,13 +40,14 @@ namespace UI_Chart.Views {
         //private WaferDataModel _waferData;
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
-            var data = (SubData)navigationContext.Parameters["subData"];
+            return false;
+            //var data = (SubData)navigationContext.Parameters["subData"];
 
-            return data.Equals(_subData);
+            //return data.Equals(_subData);
         }
 
         public void OnNavigatedFrom(NavigationContext navigationContext) {
-
+            _ea.GetEvent<Event_FilterUpdated>().Unsubscribe(UpdateChart);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
@@ -57,6 +57,8 @@ namespace UI_Chart.Views {
 
                 var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
                 var items = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
+
+                _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateChart);
 
                 cbItemX.ItemsSource = items;
                 cbItemY.ItemsSource = items;
