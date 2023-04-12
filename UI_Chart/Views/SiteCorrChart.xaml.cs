@@ -240,7 +240,7 @@ namespace UI_Chart.Views {
             if (isInvalid(fstart) || isInvalid(fstop)) return;
 
             histoChart.Plot.Clear();
-            histoChart.Plot.Title(_itemTitle);
+            histoChart.Plot.Title(_itemTitle, true, null, 12);
             histoChart.Plot.Legend(true, ScottPlot.Alignment.UpperRight);
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);

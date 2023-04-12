@@ -69,6 +69,6 @@
             </ComboBox>
 
         </StackPanel>
-        <WpfPlot Grid.Row="1" Margin="2,2,2,2" Name="scatterChart" MouseDoubleClick="scatterChart_MouseDoubleClick"/>
+        <WpfPlot Grid.Row="1" Margin="2,2,2,2" Name="scatterChart" MouseDoubleClick="scatterChart_MouseDoubleClick" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
     </Grid>
 </UserControl>

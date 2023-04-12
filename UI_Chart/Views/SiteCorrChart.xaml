@@ -50,6 +50,6 @@
 
         <TextBox x:Name="tbSummary" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
         <GridSplitter Grid.Row="1"/>
-        <WpfPlot Grid.Row="3" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick"/>
+        <WpfPlot Grid.Row="3" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
     </Grid>
 </UserControl>

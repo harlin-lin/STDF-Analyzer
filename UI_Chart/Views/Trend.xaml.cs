@@ -256,7 +256,7 @@ namespace UI_Chart.Views {
                     _itemTitleTrend += " & " + _selectedIds[i];
                 }
             }
-            trendChart.Plot.Title(_itemTitleTrend);
+            trendChart.Plot.Title(_itemTitleTrend,true,null,12);
             trendChart.Plot.Legend(_ifShowLegendCheckBox, ScottPlot.Alignment.UpperRight);
 
             lineLLimit_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_lowLimit)?float.MinValue:_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
@@ -390,7 +390,7 @@ namespace UI_Chart.Views {
             if (_deviceCount == 0) return;
 
             histoChart.Plot.Clear();
-            histoChart.Plot.Title(_itemTitleHisto);
+            histoChart.Plot.Title(_itemTitleHisto, true, null, 12);
             histoChart.Plot.Legend(_ifShowLegendCheckBox, ScottPlot.Alignment.UpperRight);
 
             lineLLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_lowLimit)?float.MinValue:_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);

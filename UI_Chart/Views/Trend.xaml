@@ -80,7 +80,7 @@
                 </Border>
             </Popup>
         </Grid>
-        <WpfPlot Grid.Row="1" Margin="2,2,2,2" Name="trendChart" MouseDoubleClick="trendChart_MouseDoubleClick"/>
+        <WpfPlot Grid.Row="1" Margin="2,2,2,2" Name="trendChart" MouseDoubleClick="trendChart_MouseDoubleClick" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         <GridSplitter Grid.Row="2"/>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
@@ -151,6 +151,6 @@
                 </Border>
             </Popup>
         </Grid>
-        <WpfPlot Grid.Row="4" Margin="2,2,2,2" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick"/>
+        <WpfPlot Grid.Row="4" Margin="2,2,2,2" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick"  SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
     </Grid>
 </UserControl>

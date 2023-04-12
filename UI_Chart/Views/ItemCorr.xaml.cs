@@ -107,7 +107,7 @@ namespace UI_Chart.Views {
 
             scatterChart.Plot.XLabel(_selectedX);
             scatterChart.Plot.YLabel(_selectedY);
-            scatterChart.Plot.Title(itemTitle);
+            scatterChart.Plot.Title(itemTitle, true, null, 12);
 
             UpdateViewRange();
 
