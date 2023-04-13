@@ -28,6 +28,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WriteableBitmapExx", "WriteableBitmapEx\WriteableBitmapExx.csproj", "{B0AA6A94-6784-4221-81F0-244A68C374C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fastGridTest", "fastGridTest\fastGridTest.csproj", "{F19B58CF-07A6-4DAD-9ACE-D8C0E0BCA064}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B0AA6A94-6784-4221-81F0-244A68C374C0} = {B0AA6A94-6784-4221-81F0-244A68C374C0}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

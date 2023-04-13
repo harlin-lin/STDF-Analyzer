@@ -26,7 +26,7 @@ namespace fastGridTest {
 
         SubData _subData;
         private void Window_Loaded(object sender, RoutedEventArgs e) {
-            OpenStdFile(@"E:\temp\VTEST_CP_EOS_ASR5821A0-WAFER_P09N71.00_P09N71-02B5_TTJ-25_POS-86_ASR5821-PC-02_CP1_RP0_1969_20220911_005525.stdf");
+            OpenStdFile(@"E:\temp\PM853_log.std");
             //var _rawDataModel = new FastDataGridModel(_subData);
             var _rawDataModel = new DataRaw_FastDataGridModel(_subData);
             rawgrid.Model = _rawDataModel;

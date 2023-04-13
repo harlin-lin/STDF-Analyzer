@@ -221,7 +221,7 @@ namespace FastWpfGrid
             }
             else
             {
-                vscroll.Maximum = _rowSizes.ScrollCount - (GridScrollAreaHeight/(_rowSizes.DefaultSize + 1)) + 1;
+                vscroll.Maximum = _rowSizes.ScrollCount - _rowSizes.GetVisibleScrollCountReversed(_rowSizes.ScrollCount - 1, GridScrollAreaHeight) + 1;//- (GridScrollAreaHeight/(_rowSizes.DefaultSize + 1))+1;
             }
             vscroll.ViewportSize = VisibleRowCount; // GridScrollAreaHeight;
             vscroll.SmallChange = 1; // _rowSizes.DefaultSize;
@@ -509,6 +509,7 @@ namespace FastWpfGrid
                 RecountRowHeights();
             }
             AdjustScrollbars();
+            ScrollChanged();
             InvalidateAll();
         }
 

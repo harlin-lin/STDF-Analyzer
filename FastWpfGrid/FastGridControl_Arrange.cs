@@ -78,22 +78,22 @@ namespace FastWpfGrid
 
         private IntRect GetColumnHeadersScrollRect()
         {
-            return new IntRect(new IntPoint(HeaderWidth + FrozenWidth, 0), new IntSize(GridScrollAreaWidth, HeaderHeight + 1));
+            return new IntRect(new IntPoint(HeaderWidth + FrozenWidth, 0), new IntSize(GridScrollAreaWidth, HeaderHeight));
         }
 
         private IntRect GetRowHeadersScrollRect()
         {
-            return new IntRect(new IntPoint(0, HeaderHeight + FrozenHeight), new IntSize(HeaderWidth + 1, GridScrollAreaHeight));
+            return new IntRect(new IntPoint(0, HeaderHeight + FrozenHeight), new IntSize(HeaderWidth, GridScrollAreaHeight));
         }
 
         private IntRect GetFrozenColumnsRect()
         {
-            return new IntRect(new IntPoint(HeaderWidth, HeaderHeight), new IntSize(_columnSizes.FrozenSize + 1, GridScrollAreaHeight));
+            return new IntRect(new IntPoint(HeaderWidth, HeaderHeight + _rowSizes.FrozenSize), new IntSize(_columnSizes.FrozenSize, GridScrollAreaHeight + _rowSizes.FrozenSize));
         }
 
         private IntRect GetFrozenRowsRect()
         {
-            return new IntRect(new IntPoint(HeaderWidth, HeaderHeight), new IntSize(GridScrollAreaHeight, _rowSizes.FrozenSize + 1));
+            return new IntRect(new IntPoint(HeaderWidth + _columnSizes.FrozenSize, HeaderHeight), new IntSize(GridScrollAreaWidth, _rowSizes.FrozenSize));
         }
 
         public Rect GetColumnHeaderRectangle(int modelColumnIndex)
@@ -355,25 +355,25 @@ namespace FastWpfGrid
 
             if (IsWide) return;
             if (_model == null) return;
+
             int rowCount = _modelRowCount;
             int colCount = _modelColumnCount;
 
-            for (int col = 0; col < colCount; col++)
-            {
+            for (int col = 0; col < colCount; col++) {
                 var cell = _model.GetColumnHeader(this, col);
                 _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell) + 2 * CellPaddingHorizontal);
             }
-
-            int visRows = VisibleRowCount;
-            int row0 = FirstVisibleRowScrollIndex + _rowSizes.FrozenCount;
-            for (int row = row0; row < Math.Min(row0 + visRows, rowCount); row++)
-            {
-                for (int col = 0; col < colCount; col++)
-                {
-                    var cell = _model.GetCell(this, row, col);
-                    _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell, _columnSizes.MaxSize) + 2 * CellPaddingHorizontal);
-                }
-            }
+            //20230413 coment this to disable auto width
+            //int visRows = VisibleRowCount;
+            //int row0 = FirstVisibleRowScrollIndex + _rowSizes.FrozenCount;
+            //for (int row = row0; row < Math.Min(row0 + visRows, rowCount); row++)
+            //{
+            //    for (int col = 0; col < colCount; col++)
+            //    {
+            //        var cell = _model.GetCell(this, row, col);
+            //        _columnSizes.PutSizeOverride(col, GetCellContentWidth(cell, _columnSizes.MaxSize) + 2 * CellPaddingHorizontal);
+            //    }
+            //}
 
             _columnSizes.BuildIndex();
         }
