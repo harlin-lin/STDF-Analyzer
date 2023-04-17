@@ -281,7 +281,6 @@ namespace UI_Chart.Views {
             var actStart = start - ov;
             var actStop = stop + ov;
             histoChart.Plot.SetAxisLimitsX(actStart, actStop);
-            //histoChart.Plot.SetAxisLimitsY(0, maxCnt*1.1);
 
             histoChart.Plot.AxisAutoY();
             histoChart.Refresh();

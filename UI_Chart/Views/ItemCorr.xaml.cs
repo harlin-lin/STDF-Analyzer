@@ -99,6 +99,9 @@ namespace UI_Chart.Views {
             var color = SA.GetColor(0);
             if (xs.Count() > 0 && ys.Count() > 0) {
                 scatterChart.Plot.AddScatterPoints(xs, ys, Color.FromArgb(color.A, color.R, color.G, color.B), 4);
+            } else {
+                scatterChart.Refresh();
+                return;
             }
             var infoX = da.GetTestInfo(_selectedX);
             var infoY = da.GetTestInfo(_selectedY);
@@ -131,9 +134,21 @@ namespace UI_Chart.Views {
                 statisticX = statistic_rawX;
                 statisticY = statistic_rawY;
             }
-            scatterChart.Plot.SetAxisLimitsX(statisticX.GetSigmaRangeLow(6), statisticX.GetSigmaRangeHigh(6));
+            var xll = IfValidData(statisticX.GetSigmaRangeLow(6)) ? statisticX.GetSigmaRangeLow(6) : statisticX.MinValue;
+            var xhl = IfValidData(statisticX.GetSigmaRangeHigh(6)) ? statisticX.GetSigmaRangeHigh(6) : statisticX.MaxValue;
+            if (xll == xhl) {
+                xll--;
+                xhl++;
+            }
+            scatterChart.Plot.SetAxisLimitsX(xll, xhl);
 
-            scatterChart.Plot.SetAxisLimitsY(statisticY.GetSigmaRangeLow(6), statisticY.GetSigmaRangeHigh(6));
+            var yll = IfValidData(statisticY.GetSigmaRangeLow(6)) ? statisticY.GetSigmaRangeLow(6) : statisticY.MinValue;
+            var yhl = IfValidData(statisticY.GetSigmaRangeHigh(6)) ? statisticY.GetSigmaRangeHigh(6) : statisticY.MaxValue;
+            if (yll == yhl) {
+                yll--;
+                yhl++;
+            }
+            scatterChart.Plot.SetAxisLimitsY(yll, yhl);
 
             scatterChart.Refresh();
         }

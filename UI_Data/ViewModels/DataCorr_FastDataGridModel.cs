@@ -174,9 +174,9 @@ namespace UI_Data.ViewModels {
                 case 2:
                     return _testItems[row].TestText.ToString();
                 case 3:
-                    return _testItems[row].LoLimit.ToString();
+                    return getstr(_testItems[row].LoLimit);
                 case 4:
-                    return _testItems[row].HiLimit.ToString();
+                    return getstr(_testItems[row].HiLimit);
                 case 5:
                     return _testItems[row].Unit.ToString();
                 default:
@@ -185,22 +185,38 @@ namespace UI_Data.ViewModels {
                     var s = _allDa[si].GetFilteredStatistic(_subDataList[si].FilterId, _testItems[row].TestNumber);
                     switch (d) {
                         case 0:
-                            return s.MeanValue.ToString();
+                            return getstr(s.MeanValue);
                         case 1:
-                            return s.MinValue.ToString();
+                            return getstr(s.MinValue);
                         case 2:
-                            return s.MaxValue.ToString();
+                            return getstr(s.MaxValue);
                         case 3:
-                            return s.Cp.ToString();
+                            return getstr(s.Cp);
                         case 4:
-                            return s.Cpk.ToString();
+                            return getstr(s.Cpk);
                         case 5:
-                            return s.Sigma.ToString();
+                            return getstr(s.Sigma);
                     }
                     break;
 
             }
             return "";
+        }
+
+        string getstr(float val) {
+            if (float.IsPositiveInfinity(val)) {
+                return "+∞";
+            } else if (float.IsNegativeInfinity(val)) {
+                return "-∞";
+            } else if (float.IsNaN(val)) {
+                return "NaN";
+            }
+            return val.ToString();
+        }
+
+        string getstr(float? val) {
+            if (val is null) return "";
+            return getstr(val.Value);
         }
 
         public override IFastGridCellBlock GetBlock(int blockIndex) {

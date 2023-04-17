@@ -284,7 +284,6 @@ namespace UI_Chart.Views {
             var actStart = start - ov;
             var actStop = stop + ov;
             histoChart.Plot.SetAxisLimitsX(actStart, actStop);
-            //histoChart.Plot.SetAxisLimitsY(0, maxCnt*1.1);
 
             histoChart.Plot.AxisAutoY();
             histoChart.Refresh();
@@ -411,35 +410,6 @@ namespace UI_Chart.Views {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
         }
-
-
-        //void UpdateHistogram(CorrChartViewModel vm) {
-        //    var series = vm.HistoSeries;
-
-        //    histoChart.Plot.Clear();
-
-        //    var cnt = series.Count;
-
-        //    for (int j = 0; j < cnt; j++) {
-        //        var color = SA.GetColor(j);
-
-        //        var bar = histoChart.Plot.AddBar(series[j].Item1, series[j].Item2, Color.FromArgb(color.A, color.R, color.G, color.B));
-        //        bar.BarWidth = vm.HistoViewRange.Item3 > 0 ? vm.HistoViewRange.Item3 : 1;
-        //        bar.Label = vm.SubDataList[j].FilterId.ToString("X8");
-        //    }
-        //    histoChart.Plot.Legend(true, ScottPlot.Alignment.UpperRight);
-
-        //    histoChart.Plot.AddVerticalLine(vm._lowLimit, Color.Red);
-        //    histoChart.Plot.AddVerticalLine(vm._highLimit, Color.Red);
-
-        //    histoChart.Plot.SetAxisLimitsX(vm.HistoViewRange.Item1, vm.HistoViewRange.Item2);
-
-        //    //histoChart.Plot.XLabel("Test Index");
-        //    //histoChart.Plot.YLabel("Value");
-        //    histoChart.Plot.Title(vm.ItemTitle);
-
-        //    histoChart.Refresh();
-        //}
 
         private void histoChart_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e) {
             histoChart.Plot.AxisAutoY();

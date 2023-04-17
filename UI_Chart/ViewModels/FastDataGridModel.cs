@@ -77,8 +77,19 @@ namespace UI_Chart.ViewModels {
                 else if(limit.HiLimit.HasValue && val > limit.HiLimit)
                     _cellColor = Colors.Red;
 
-                return val.ToString();
+                return getstr(val);
             }
+        }
+
+        string getstr(float val) {
+            if (float.IsPositiveInfinity(val)) {
+                return "+∞";
+            } else if (float.IsNegativeInfinity(val)) {
+                return "-∞";
+            } else if (float.IsNaN(val)) {
+                return "";
+            }
+            return val.ToString();
         }
 
         public override IFastGridCellBlock GetBlock(int blockIndex) {

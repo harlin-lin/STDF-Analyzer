@@ -477,7 +477,6 @@ namespace UI_Chart.Views {
             var actStart = start - ov;
             var actStop = stop + ov;
             histoChart.Plot.SetAxisLimitsX(actStart, actStop);
-            //histoChart.Plot.SetAxisLimitsY(0, maxCnt*1.1);
 
             histoChart.Plot.AxisAutoY();
             histoChart.Refresh();
@@ -579,7 +578,6 @@ namespace UI_Chart.Views {
             var ov = 0.05 * (_allsigmaHighTrend - _allsigmaLowTrend);
             if (ov == 0) ov = 1;
             trendChart.Plot.SetAxisLimitsY(_allsigmaLowTrend - ov, _allsigmaHighTrend + ov);
-            //trendChart.Plot.SetAxisLimitsX(0, _ubound);
 
             textboxLRange.Text = _allsigmaLowTrend.ToString("f3");
             textboxHRange.Text = _allsigmaHighTrend.ToString("f3");
@@ -593,7 +591,6 @@ namespace UI_Chart.Views {
             var ov = 0.05 * (_maxTrend - _minTrend);
             if (ov == 0) ov = 1;
             trendChart.Plot.SetAxisLimitsY(_minTrend - ov, _maxTrend + ov);
-            //trendChart.Plot.SetAxisLimitsX(0, _ubound);
 
             textboxLRange.Text = _minTrend.ToString("f3");
             textboxHRange.Text = _maxTrend.ToString("f3");
@@ -610,7 +607,6 @@ namespace UI_Chart.Views {
             var ov = 0.1 * (h - l);
             if (ov == 0) ov = 1;
             trendChart.Plot.SetAxisLimitsY(l - ov, h + ov);
-            //trendChart.Plot.SetAxisLimitsX(0, _ubound);
 
             textboxLRange.Text = l.ToString("f3");
             textboxHRange.Text = h.ToString("f3");
@@ -631,7 +627,6 @@ namespace UI_Chart.Views {
             catch {
                 System.Windows.MessageBox.Show("Wrong Limit");
             }
-            //trendChart.Plot.SetAxisLimitsX(0, _ubound);
             trendChart.Plot.AxisAutoX();
             trendChart.Refresh();
         }
