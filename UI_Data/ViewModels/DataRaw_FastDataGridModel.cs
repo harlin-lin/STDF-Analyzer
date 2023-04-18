@@ -75,6 +75,7 @@ namespace UI_Data.ViewModels {
         }
 
         public override string GetCellText(int row, int column) {
+            _cellColor = null;
             switch (column) {
                 case 0:
                     return _testItems[row].Idx.ToString();
@@ -91,6 +92,7 @@ namespace UI_Data.ViewModels {
                 case 6:
                     return _testItems[row].PassCnt.ToString();
                 case 7:
+                    if (_testItems[row].FailCnt>0) _cellColor = Colors.Red;
                     return _testItems[row].FailCnt.ToString();
                 case 8:
                     return _testItems[row].FailPer.ToString();
