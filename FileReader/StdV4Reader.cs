@@ -293,12 +293,12 @@ namespace FileReader {
             var pinIdx = rdU2(record, i, len); i += 2;
             var chanType = rdU2(record, i, len); i += 2;
             var chanName = rdCn(record, i, len); i += (ushort)(1 + chanName.Length);
-            var phyName = rdCn(record, i, len); i += (ushort)(1 + phyName.Length);
-            var logicName = rdCn(record, i, len); i += (ushort)(1 + logicName.Length);
+            //var phyName = rdCn(record, i, len); i += (ushort)(1 + phyName.Length);
+            //var logicName = rdCn(record, i, len); i += (ushort)(1 + logicName.Length);
             //var hn = rdU1(record, i, len); i += 1;
             //var sn = rdU1(record, i, len); i += 1;
 
-            listPinMaps.Add(new PinMapRecord(pinIdx, chanName, phyName, logicName));
+            listPinMaps.Add(new PinMapRecord(pinIdx, chanName));
         }
         private void AddPgr(byte[] record, ushort len) {
             //2022/03/09 comment PGR record
