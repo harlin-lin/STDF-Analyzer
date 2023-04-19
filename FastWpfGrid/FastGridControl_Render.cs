@@ -163,7 +163,7 @@ namespace FastWpfGrid
             if (_currentCell.TestCell(row, col) || _selectedCells.Contains(new FastGridCellAddress(row, col)) || _selectedRowRange.Contains(row) || _selectedColumnRange.Contains(col))
             {
                 selectedBgColor = SelectedColor;
-                selectedTextColor = SelectedTextColor;
+                //selectedTextColor = SelectedTextColor; //20230418 comment this, selected cells still perform as original color set in grid model
             }
             if (row == _mouseOverRow)
             {

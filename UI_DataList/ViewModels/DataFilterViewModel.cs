@@ -122,6 +122,12 @@ namespace UI_DataList.ViewModels {
         //    set { SetProperty(ref _judgeMode, value); }
         //}
 
+        private bool _enFilterPanel=false;
+        public bool EnFilterPanel {
+            get { return _enFilterPanel; }
+            set { SetProperty(ref _enFilterPanel, value); }
+        }
+
         string _filePath;
         int _filterId;
         FilterSetup _filter;
@@ -180,6 +186,7 @@ namespace UI_DataList.ViewModels {
 
             ItemFilters.Clear();
             ItemFilters.AddRange(_filter.ItemFilters);
+            EnFilterPanel = true;
         }
 
         public void UpdateFilter(string path) {
@@ -187,6 +194,8 @@ namespace UI_DataList.ViewModels {
         }
 
         public void UpdateFilter() {
+            EnFilterPanel = false;
+
             _filePath = null;
             _filter = null;
 
@@ -602,8 +611,8 @@ namespace UI_DataList.ViewModels {
             }
             return rst;
         }
-        private List<(short, short)> ParseMaskEnableCords() {
-            List<(short, short)> rst = new List<(short, short)>();
+        private List<Tuple<short, short>> ParseMaskEnableCords() {
+            List<Tuple<short, short>> rst = new List<Tuple<short, short>>();
             var ss = MaskEnableCords.Split(';');
             foreach (string s in ss) {
                 var xy = s.Split(',');
@@ -611,7 +620,7 @@ namespace UI_DataList.ViewModels {
                 try {
                     short x = short.Parse(xy[0].Trim());
                     short y = short.Parse(xy[1].Trim());
-                    rst.Add((x, y));
+                    rst.Add(new Tuple<short, short>(x, y));
                 } catch { continue; }
             }
 

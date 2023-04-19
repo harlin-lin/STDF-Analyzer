@@ -32,11 +32,11 @@ namespace UI_Data.ViewModels {
             set { SetProperty(ref _header, value); }
         }
 
-        //private string _regionName;
-        //public string RegionName {
-        //    get { return _regionName; }
-        //    set { SetProperty(ref _regionName, value); }
-        //}
+        private string _regionName;
+        public string RegionName {
+            get { return _regionName; }
+            set { SetProperty(ref _regionName, value); }
+        }
 
         public SiteDataCorrelationViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
@@ -61,8 +61,12 @@ namespace UI_Data.ViewModels {
 
                 Header = $"SiteCorr_|{_subData.FilterId:X8}";
 
-                //RegionName = $"Region_Corr_{_corrDataIdx}";
+                RegionName = $"Region_Corr_{_subData.FilterId:X8}";
                 RawDataModel = new SiteDataCorr_FastDataGridModel(_subData);
+
+                var parameters = new NavigationParameters();
+                parameters.Add("subData", _subData);
+                _regionManager.RequestNavigate(RegionName, "SiteCorrChart", parameters);
             }
         }
 

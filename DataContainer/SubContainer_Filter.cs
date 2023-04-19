@@ -263,12 +263,12 @@ namespace DataContainer {
 
                 if (_ifCordValid) {
                     if (!filter.IfMaskOrEnableCords) {
-                        if (filter.MaskCords.Contains((_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
+                        if (filter.MaskCords.Contains(new Tuple<short,short>(_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
                             chipsFilter.Add(i);
                             continue;
                         }
                     } else {
-                        if (!filter.MaskCords.Contains((_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
+                        if (!filter.MaskCords.Contains(new Tuple<short, short>(_xCord_PartContainer[i], _yCord_PartContainer[i]))) {
                             chipsFilter.Add(i);
                             continue;
                         }

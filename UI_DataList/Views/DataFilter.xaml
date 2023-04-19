@@ -10,7 +10,8 @@
              xmlns:smCore="clr-namespace:SillyMonkey.Core;assembly=SillyMonkey.Core"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             IsEnabled="{Binding EnFilterPanel}">
     <UserControl.Resources>
         <smCore:BooleanNegationConverter x:Key="negbool"/>
     </UserControl.Resources>

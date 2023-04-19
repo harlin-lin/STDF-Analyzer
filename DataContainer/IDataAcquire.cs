@@ -84,8 +84,8 @@ namespace DataContainer{
 
         PartStatistic GetPartStatistic();
 
-        IEnumerable<(short, short)> GetAllCords();
-        IEnumerable<(short, short, int)> GetAllCordsAndIdx();
+        IEnumerable<Tuple<short, short>> GetAllCords();
+        IEnumerable<Tuple<short, short, int>> GetAllCordsAndIdx();
 
 
         [Obsolete]
@@ -93,7 +93,7 @@ namespace DataContainer{
 
         string GetWaferCord(int partIndex);
 
-        (short,short) GetWaferCordTuple(int partIndex);
+        Tuple<short,short> GetWaferCordTuple(int partIndex);
 
         float GetItemData(string uid, int partIndex);
 
@@ -136,8 +136,8 @@ namespace DataContainer{
         ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma);
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
-        IEnumerable<(short, short)> GetFilteredCords(int filterId);
-        IEnumerable<(short, short, int)> GetFilteredCordsAndIdx(int filterId);
+        IEnumerable<Tuple<short, short>> GetFilteredCords(int filterId);
+        IEnumerable<Tuple<short, short, int>> GetFilteredCordsAndIdx(int filterId);
         #endregion
 
 

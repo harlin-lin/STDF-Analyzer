@@ -12,15 +12,15 @@ namespace FastWpfGrid
     {
         private Color _cellFontColor = Colors.Black;
         private Color _headerBackground = Color.FromRgb(0xF6, 0xF7, 0xF9);
-        private Color _headerCurrentBackground = Color.FromRgb(190, 207, 220);
-        private Color _selectedColor = Color.FromRgb(51, 153, 255);
-        private Color _selectedTextColor = Colors.White;
+        private Color _headerCurrentBackground = Color.FromRgb(235, 235, 235);
+        private Color _selectedColor = Color.FromRgb(173, 216, 230);
+        private Color _selectedTextColor = Colors.Black;
         private Color _limitedSelectedColor = Color.FromRgb(51, 220, 220);
         private Color _limitedSelectedTextColor = Colors.White;
-        private Color _mouseOverRowColor = Color.FromRgb(235, 235, 255); // Colors.LemonChiffon; // Colors .Beige;
+        private Color _mouseOverRowColor = Color.FromRgb(235, 235, 235); // Colors.LemonChiffon; // Colors .Beige;
         private string _cellFontName = "Consolas";
         private int _cellFontSize;
-        private Color _gridLineColor = Colors.LightGray;
+        private Color _gridLineColor = Color.FromRgb(192, 192, 192); //Colors.LightGray;
         private int _cellPaddingHorizontal = 2;
         private int _cellPaddingVertical = 1;
         private int _blockPadding = 2;

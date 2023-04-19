@@ -5,38 +5,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"         
-             xmlns:System="clr-namespace:System;assembly=mscorlib" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" x:Class="UI_Chart.Views.CorrChart"
+             x:Class="UI_Chart.Views.CorrChart"
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
-             prism:ViewModelLocator.AutoWireViewModel="True"
              x:Name="chart">
     <Grid>
-        <Grid.Resources>
-            <Style x:Key="SciChartSurfaceStyle" TargetType="TextBlock">
-                <Setter Property="HorizontalAlignment" Value="Center"/>
-                <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="FontSize" Value="12"/>
-                <Setter Property="FontFamily" Value="Consolas"/>
-                <Setter Property="FontWeight" Value="Normal"/>
-            </Style>
-            <Style x:Key="MajorGridLineStyle" TargetType="Line">
-                <Setter Property="StrokeThickness" Value="0.5"/>
-                <Setter Property="Stroke" Value="LightGray"/>
-                <Setter Property="StrokeDashArray" Value="1,3"/>
-            </Style>
-            <Style TargetType="{x:Type s:NumericAxis}" x:Key="GridLineStyle">
-                <Setter Property="DrawMajorBands" Value="False"/>
-                <Setter Property="DrawMinorGridLines" Value="False"/>
-                <Setter Property="DrawMajorGridLines" Value="True"/>
-                <!--<Setter Property="TextFormatting" Value="#"/>-->
-                <Setter Property="FontSize" Value="10"/>
-                <Setter Property="TickTextBrush" Value="Black"/>
-                <Setter Property="FontWeight" Value="Light"/>
-                <Setter Property="MajorGridLineStyle" Value="{StaticResource MajorGridLineStyle}"/>
-            </Style>
-        </Grid.Resources>
-
         <Grid.RowDefinitions>
             <RowDefinition Height="180"/>
             <RowDefinition Height="5"/>
@@ -44,104 +17,45 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <Button Width="23" Height="23" Margin="10,0,5,0" Command="{Binding CmdSaveHisto, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Save" BorderThickness="0">
-                <!--<iconPacks:PackIconForkAwesome Kind="FloppyOutline" />-->
+            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,5,0" Click="buttonSave_Click" ToolTip="Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
-            <Button Width="23" Height="23" Margin="0,0,10,0" Command="{Binding CmdCopy, Mode=OneWay}" CommandParameter="{Binding ElementName=sciChartHisto}" ToolTip="Copy" BorderThickness="0">
-                <!--<iconPacks:PackIconMaterial Kind="ContentCopy" />-->
+            <Button Name="buttonCopy" Width="23" Height="23" Margin="0,0,10,0" Click="buttonCopy_Click" ToolTip="Copy" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
-            <RadioButton Content="Sigma" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitBySigma, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisSigmaHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="MinMax" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByMinMax, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisMinMaxHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="Limit" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByLimit, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisLimitHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
-            <RadioButton Content="User" GroupName="YaxisHisto" IsChecked="{Binding IfHistoLimitByUser, Mode=TwoWay}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Checked" >
-                        <i:InvokeCommandAction Command="{Binding CmdSelectAxisUserHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </RadioButton>
+            <RadioButton x:Name="rbSigma" Content="Sigma" GroupName="YaxisHisto" Checked="rbSigma_Checked" IsChecked="True"/>
+
+            <RadioButton x:Name="rbMinMax" Content="MinMax" GroupName="YaxisHisto" Checked="rbMinMax_Checked" IsChecked="False"/>
+
+            <RadioButton x:Name="rbLimit" Content="Limit" GroupName="YaxisHisto" Checked="rbLimit_Checked" IsChecked="False"/>
+
+            <RadioButton x:Name="rbUserRange" Content="User" GroupName="YaxisHisto" Checked="rbUserRange_Checked" IsChecked="False"/>
+
             <Label Content="L:" Margin="4,0,0,0"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoLowRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+            <TextBox x:Name="tbLowRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
             <Label Content="H:"/>
-            <TextBox MinWidth="15" Width="50" Height="20" Text="{Binding UserHistoHighRange, Mode=TwoWay}" 
-                     FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Button  Width="23" Height="23" Margin="0,0,0,0" Command="{Binding CmdApplyHistoRange, Mode=OneWay}" ToolTip="Apply the limit" BorderThickness="0">
-                <!--<iconPacks:PackIconBootstrapIcons Kind="CheckSquare" />-->
+            <TextBox x:Name="tbHighRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+            <Button x:Name="btApplyUserRange" Width="23" Height="23" Margin="0,0,0,0" Click="btApplyUserRange_Click" ToolTip="Apply the limit" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
             </Button>
-            <ToggleButton Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="{Binding IgnoreOutlierHisto, Mode=TwoWay}"
-                  Command="{Binding CmdToggleOutlierHisto}"
+            <ToggleButton x:Name="toggleOutlier" Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="True"
+                  Click="toggleOutlier_Click"
                   Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <!--<iconPacks:PackIconMaterial Kind="AutoFix" />-->
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
             </ToggleButton>
-            <ComboBox Style="{StaticResource LineStyleComboBox}" SelectedIndex="{Binding OutlierRangeIdxHisto, Mode=OneWayToSource}" IsEnabled="{Binding IgnoreOutlierHisto, Mode=TwoWay}" Margin="0,0,0,0">
+            <ComboBox Name="cbOutlierSigma" Style="{StaticResource LineStyleComboBox}" SelectionChanged="cbOutlierSigma_SelectionChanged"  IsEnabled="{Binding ElementName=toggleOutlier, Path=IsChecked}" Margin="0,0,0,0">
                 <ComboBoxItem Content="6σ" IsSelected="True"/>
                 <ComboBoxItem Content="5σ"/>
                 <ComboBoxItem Content="4σ"/>
                 <ComboBoxItem Content="3σ"/>
                 <ComboBoxItem Content="2σ"/>
                 <ComboBoxItem Content="1σ"/>
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding CmdChangedSigmaOutlierIdxHisto}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
             </ComboBox>
         </StackPanel>
-        <s:SciChartSurface x:Name="sciChartHisto" Background="White"
-                           ChartTitle="{Binding ItemTitle}"  ChartTitleStyle="{StaticResource SciChartSurfaceStyle}"
-                           Grid.Row="3" Margin="2,2,2,2" Grid.RowSpan="3"  RenderableSeries="{s:SeriesBinding HistoSeries}">
-            <s:SciChartSurface.XAxis >
-                <s:NumericAxis Style="{StaticResource GridLineStyle}" VisibleRange="{Binding XRangeHisto, Mode=TwoWay}"/>
-            </s:SciChartSurface.XAxis>
-            <s:SciChartSurface.YAxis>
-                <s:NumericAxis Style="{StaticResource GridLineStyle}" VisibleRange="{Binding YRangeHisto, Mode=TwoWay}" />
-            </s:SciChartSurface.YAxis>
-
-            <s:SciChartSurface.ChartModifier>
-                <s:ModifierGroup>
-                    <s:ZoomPanModifier  ExecuteOn="MouseLeftButton" IsEnabled="True"/>
-                    <s:ZoomExtentsModifier IsAnimated="True" IsEnabled="True" />
-                    <s:MouseWheelZoomModifier XyDirection="YDirection" IsEnabled="True" />
-                    <s:LegendModifier Margin="10"
-                                      VerticalAlignment="Top"
-                                      HorizontalAlignment="Right"
-                                      GetLegendDataFor="AllSeries"
-                                      ShowLegend="True"
-                                      ShowVisibilityCheckboxes="True" />
-                </s:ModifierGroup>
-            </s:SciChartSurface.ChartModifier>
-            <s:SciChartSurface.Annotations>
-                <s:VerticalLineAnnotation X1="{Binding LowLimit}" Stroke="Red" StrokeThickness="1"/>
-                <s:VerticalLineAnnotation X1="{Binding HighLimit}" Stroke="Red" StrokeThickness="1"/>
-            </s:SciChartSurface.Annotations>
-        </s:SciChartSurface>
-
+        <WpfPlot Grid.Row="3" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
         <GridSplitter Grid.Row="1"/>
 
-        <TextBox Grid.Row="0" IsReadOnly="True" Text="{Binding CorrelationSummary}" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <TextBox x:Name="tbSummary" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
 
     </Grid>
 </UserControl>

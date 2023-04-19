@@ -8,19 +8,18 @@
              mc:Ignorable="d"         
              d:DesignHeight="700" d:DesignWidth="600"
              Name="rawControl"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
+            <Button Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
             </Button>
         </StackPanel>
-        <FastWpfGrid:FastGridControl x:Name="grid1" Grid.Row="1" 
-                                     Model="{Binding RawDataModel}" AllowSelectAll="False">
+        <FastWpfGrid:FastGridControl x:Name="rawgrid" Grid.Row="1"  AllowSelectAll="False">
         </FastWpfGrid:FastGridControl>
 
     </Grid>

@@ -94,8 +94,8 @@ namespace DataContainer {
             return $"{_xCord_PartContainer[partIndex]}_{_yCord_PartContainer[partIndex]}";
         }
 
-        public (short, short) GetWaferCordTuple(int partIndex) {
-            return (_xCord_PartContainer[partIndex], _yCord_PartContainer[partIndex]);
+        public Tuple<short, short> GetWaferCordTuple(int partIndex) {
+            return new Tuple<short, short>(_xCord_PartContainer[partIndex], _yCord_PartContainer[partIndex]);
         }
 
         public float GetItemData(string uid, int partIndex) {
@@ -122,15 +122,15 @@ namespace DataContainer {
             return _resultType_PartContainer[partIndex] == ResultType.Pass ? true : false;
         }
 
-        public IEnumerable<(short, short)> GetAllCords() {
+        public IEnumerable<Tuple<short, short>> GetAllCords() {
             return from i in _allIndex
-                   let v = (_xCord_PartContainer[i], _yCord_PartContainer[i])
+                   let v = new Tuple<short, short>(_xCord_PartContainer[i], _yCord_PartContainer[i])
                    select v;
         }
 
-        public IEnumerable<(short, short, int)> GetAllCordsAndIdx() {
+        public IEnumerable<Tuple<short, short, int>> GetAllCordsAndIdx() {
             return from i in _allIndex
-                   let v = (_xCord_PartContainer[i], _yCord_PartContainer[i], i)
+                   let v = new Tuple<short, short, int>(_xCord_PartContainer[i], _yCord_PartContainer[i], i)
                    select v;
         }
 
@@ -185,15 +185,15 @@ namespace DataContainer {
             return _filterContainer[filterId].FilterPartStatistic.TotalCnt;
         }
 
-        public IEnumerable<(short, short)> GetFilteredCords(int filterId) {
+        public IEnumerable<Tuple<short, short>> GetFilteredCords(int filterId) {
             return from i in _filterContainer[filterId].FilteredPartIdx
-                    let v = (_xCord_PartContainer[i], _yCord_PartContainer[i])
+                    let v = new Tuple<short, short>(_xCord_PartContainer[i], _yCord_PartContainer[i])
                     select v;
         }
 
-        public IEnumerable<(short, short, int)> GetFilteredCordsAndIdx(int filterId) {
+        public IEnumerable<Tuple<short, short, int>> GetFilteredCordsAndIdx(int filterId) {
             return from i in _filterContainer[filterId].FilteredPartIdx
-                   let v = (_xCord_PartContainer[i], _yCord_PartContainer[i], i)
+                   let v = new Tuple<short, short, int>(_xCord_PartContainer[i], _yCord_PartContainer[i], i)
                    select v;
         }
 

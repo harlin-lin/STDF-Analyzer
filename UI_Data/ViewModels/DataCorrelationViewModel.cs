@@ -57,11 +57,11 @@ namespace UI_Data.ViewModels {
             set { SetProperty(ref _header, value); }
         }
 
-        //private string _regionName;
-        //public string RegionName {
-        //    get { return _regionName; }
-        //    set { SetProperty(ref _regionName, value); }
-        //}
+        private string _regionName;
+        public string RegionName {
+            get { return _regionName; }
+            set { SetProperty(ref _regionName, value); }
+        }
 
         public DataCorrelationViewModel(IRegionManager regionManager, IEventAggregator ea) {
             _regionManager = regionManager;
@@ -85,8 +85,14 @@ namespace UI_Data.ViewModels {
 
                 Header = $"Corr_{_corrDataIdx}";
 
-                //RegionName = $"Region_Corr_{_corrDataIdx}";
+                RegionName = $"Region_Corr_{_corrDataIdx}";
                 RawDataModel = new DataCorr_FastDataGridModel(_subDataList);
+
+                var parameters = new NavigationParameters();
+                parameters.Add("subDataList", _subDataList);
+                parameters.Add("corrDataIdx", _corrDataIdx);
+                _regionManager.RequestNavigate(RegionName, "CorrChart", parameters);
+
             }
         }
 

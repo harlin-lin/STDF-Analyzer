@@ -75,6 +75,7 @@ namespace UI_Data.ViewModels {
         }
 
         public override string GetCellText(int row, int column) {
+            _cellColor = null;
             switch (column) {
                 case 0:
                     return _testItems[row].Idx.ToString();
@@ -83,36 +84,54 @@ namespace UI_Data.ViewModels {
                 case 2:
                     return _testItems[row].TestText.ToString();
                 case 3:
-                    return _testItems[row].LoLimit.ToString();
+                    return getstr(_testItems[row].LoLimit);
                 case 4:
-                    return _testItems[row].HiLimit.ToString();
+                    return getstr(_testItems[row].HiLimit);
                 case 5:
                     return _testItems[row].Unit.ToString();
                 case 6:
                     return _testItems[row].PassCnt.ToString();
                 case 7:
+                    if (_testItems[row].FailCnt>0) _cellColor = Colors.Red;
                     return _testItems[row].FailCnt.ToString();
                 case 8:
                     return _testItems[row].FailPer.ToString();
                 case 9:
-                    return _testItems[row].MeanValue.ToString();
+                    return getstr(_testItems[row].MeanValue);
                 case 10:
-                    return _testItems[row].MedianValue.ToString();
+                    return getstr(_testItems[row].MedianValue);
                 case 11:
-                    return _testItems[row].MedianValue.ToString();
+                    return getstr(_testItems[row].MedianValue);
                 case 12:
-                    return _testItems[row].MinValue.ToString();
+                    return getstr(_testItems[row].MinValue);
                 case 13:
-                    return _testItems[row].MaxValue.ToString();
+                    return getstr(_testItems[row].MaxValue);
                 case 14:
-                    return _testItems[row].Cp.ToString();
+                    return getstr(_testItems[row].Cp);
                 case 15:
-                    return _testItems[row].Cpk.ToString();
+                    return getstr(_testItems[row].Cpk);
                 case 16:
-                    return _testItems[row].Sigma.ToString();
+                    return getstr(_testItems[row].Sigma);
             }
             return "";
         }
+
+        string getstr(float val) {
+            if (float.IsPositiveInfinity(val)) {
+                return "+∞";
+            } else if (float.IsNegativeInfinity(val)) {
+                return "-∞";
+            } else if (float.IsNaN(val)) {
+                return "NaN";
+            }
+            return val.ToString();
+        }
+
+        string getstr(float? val) {
+            if (val is null) return "";
+            return getstr(val.Value);
+        }
+
 
         public override IFastGridCellBlock GetBlock(int blockIndex) {
             _cellColor = null;

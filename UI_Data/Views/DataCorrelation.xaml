@@ -44,9 +44,6 @@
             </FastWpfGrid:FastGridControl>
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <Grid Grid.Column="2">
-            <!--<ContentControl Grid.Column="2" prism:RegionManager.RegionName="Region_CorrChart"/>-->
-            <c:CorrChart/>
-        </Grid>
+        <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
     </Grid>
 </UserControl>

@@ -277,11 +277,13 @@ namespace UI_Data.ViewModels {
 
                         percent = (int)((col / totalItemCnt) * 100);
                     }
+                    myTimer.Dispose();
+
+                    _ea.GetEvent<Event_Log>().Publish("Excel Writing......");
                     ws2.Cells[1, 1, chips.Count() + 6, testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
                     //p.SaveAs(new System.IO.FileInfo(path));
                     //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
 
-                    myTimer.Dispose();
                 }
             });
             _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
