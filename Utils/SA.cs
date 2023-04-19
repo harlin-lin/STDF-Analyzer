@@ -56,6 +56,7 @@ namespace Utils {
         }
         
         private static void SaveSetup() {
+            return;
             try {
                 string output = JsonConvert.SerializeObject(SaUserSetup);
                 File.WriteAllText(SetupPath, output);
