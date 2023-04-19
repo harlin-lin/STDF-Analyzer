@@ -122,6 +122,12 @@ namespace UI_DataList.ViewModels {
         //    set { SetProperty(ref _judgeMode, value); }
         //}
 
+        private bool _enFilterPanel=false;
+        public bool EnFilterPanel {
+            get { return _enFilterPanel; }
+            set { SetProperty(ref _enFilterPanel, value); }
+        }
+
         string _filePath;
         int _filterId;
         FilterSetup _filter;
@@ -180,6 +186,7 @@ namespace UI_DataList.ViewModels {
 
             ItemFilters.Clear();
             ItemFilters.AddRange(_filter.ItemFilters);
+            EnFilterPanel = true;
         }
 
         public void UpdateFilter(string path) {
@@ -187,6 +194,8 @@ namespace UI_DataList.ViewModels {
         }
 
         public void UpdateFilter() {
+            EnFilterPanel = false;
+
             _filePath = null;
             _filter = null;
 

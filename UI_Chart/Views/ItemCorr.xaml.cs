@@ -134,21 +134,21 @@ namespace UI_Chart.Views {
                 statisticX = statistic_rawX;
                 statisticY = statistic_rawY;
             }
-            var xll = IfValidData(statisticX.GetSigmaRangeLow(6)) ? statisticX.GetSigmaRangeLow(6) : statisticX.MinValue;
-            var xhl = IfValidData(statisticX.GetSigmaRangeHigh(6)) ? statisticX.GetSigmaRangeHigh(6) : statisticX.MaxValue;
-            if (xll == xhl) {
-                xll--;
-                xhl++;
-            }
-            scatterChart.Plot.SetAxisLimitsX(xll, xhl);
+            //var xll = IfValidData(statisticX.GetSigmaRangeLow(6)) ? statisticX.GetSigmaRangeLow(6) : statisticX.MinValue;
+            //var xhl = IfValidData(statisticX.GetSigmaRangeHigh(6)) ? statisticX.GetSigmaRangeHigh(6) : statisticX.MaxValue;
+            var xll = statisticX.MinValue;
+            var xhl = statisticX.MaxValue;
+            var xov = 0.1 * (xhl - xll);
+            if (xov == 0) xov = 1;
+            scatterChart.Plot.SetAxisLimitsX(xll-xov, xhl+xov);
 
-            var yll = IfValidData(statisticY.GetSigmaRangeLow(6)) ? statisticY.GetSigmaRangeLow(6) : statisticY.MinValue;
-            var yhl = IfValidData(statisticY.GetSigmaRangeHigh(6)) ? statisticY.GetSigmaRangeHigh(6) : statisticY.MaxValue;
-            if (yll == yhl) {
-                yll--;
-                yhl++;
-            }
-            scatterChart.Plot.SetAxisLimitsY(yll, yhl);
+            //var yll = IfValidData(statisticY.GetSigmaRangeLow(6)) ? statisticY.GetSigmaRangeLow(6) : statisticY.MinValue;
+            //var yhl = IfValidData(statisticY.GetSigmaRangeHigh(6)) ? statisticY.GetSigmaRangeHigh(6) : statisticY.MaxValue;
+            var yll = statisticY.MinValue;
+            var yhl = statisticY.MaxValue;
+            var yov = 0.1 * (yhl - yll);
+            if (yov == 0) yov = 1;
+            scatterChart.Plot.SetAxisLimitsY(yll-yov, yhl+yov);
 
             scatterChart.Refresh();
         }

@@ -86,6 +86,6 @@
             </Button>
 
         </StackPanel>
-        <m:WaferMapControl Grid.Row="2" Name="waferMap" BinMode="{Binding ElementName=cbBinMode,Path=SelectedItem}" ViewMode="{Binding ElementName=cbViewMode,Path=SelectedItem}" RtDataMode="{Binding ElementName=cbRtDataMode,Path=SelectedItem}" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        <m:WaferMapControl Grid.Row="2" Name="waferMap" BinMode="{Binding ElementName=cbBinMode,Path=SelectedItem,Mode=TwoWay}" ViewMode="{Binding ElementName=cbViewMode,Path=SelectedItem,Mode=TwoWay}" RtDataMode="{Binding ElementName=cbRtDataMode,Path=SelectedItem,Mode=TwoWay}" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
     </Grid>
 </UserControl>
