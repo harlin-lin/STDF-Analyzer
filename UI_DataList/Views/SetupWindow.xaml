@@ -12,7 +12,7 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0" >
+        <TabControl Grid.Row="0"  IsEnabled="False">
             <TabItem Header="Data">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">

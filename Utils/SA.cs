@@ -13,7 +13,7 @@ namespace Utils {
 
     public static class SA {
         public static UserSetup SaUserSetup;
-        const string SetupPath = @".\SaUserSetup.json";
+        static string SetupPath = @"\SaUserSetup.json";
 
         private static bool _ifCmpTextInUid = false;
 
@@ -42,6 +42,7 @@ namespace Utils {
         };
 
         public static void Init() {
+            SetupPath = System.Environment.CurrentDirectory + SetupPath;
             if (File.Exists(SetupPath)) {
                 try {
                     SaUserSetup = JsonConvert.DeserializeObject<UserSetup>(File.ReadAllText(SetupPath));
