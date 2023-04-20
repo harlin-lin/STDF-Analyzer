@@ -42,13 +42,17 @@ namespace FileReader {
                 var dc = StdDB.GetDataCollect(FilePath);
                 try {
                     s.Start();
-                    _v4Reader.ReadRaw(dc);
+                    var sts = _v4Reader.ReadRaw(dc);
                     s.Stop();
                     Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
-                    s.Restart();
-                    dc.AnalyseData();
-                    s.Stop();
-                    Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
+                    if(sts == StdV4Reader.ReadStatus.Done) {
+                        s.Restart();
+                        dc.AnalyseData();
+                        s.Stop();
+                        Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
+                    } else {
+                        throw new Exception("Data invalid");
+                    }
                 }
                 catch {
                     //release table in data base

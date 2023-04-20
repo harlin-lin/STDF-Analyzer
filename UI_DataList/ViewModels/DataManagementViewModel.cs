@@ -284,7 +284,7 @@ namespace UI_DataList.ViewModels {
             }catch (Exception e) {
                 Files.Remove(f);
                 StdDB.RemoveFile(path);
-                System.Windows.Forms.MessageBox.Show("File Open Failed:" + e);
+                System.Windows.Forms.MessageBox.Show("File Open Failed:" + e.Message);
                 return;
             }
 
