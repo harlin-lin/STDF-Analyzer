@@ -25,6 +25,7 @@ namespace FastWpfGrid
         }
 
         public event Action<object, ColumnClickEventArgs> ColumnHeaderClick;
+        public event Action<object, ColumnClickEventArgs> ColumnHeaderDoubleClick;
         public event Action<object, RowClickEventArgs> RowHeaderClick;
         public List<ActiveRegion> CurrentCellActiveRegions = new List<ActiveRegion>();
         public ActiveRegion CurrentHoverRegion;
@@ -333,6 +334,26 @@ namespace FastWpfGrid
                 SetScrollbarMargin();
                 FixScrollPosition();
                 InvalidateAll();
+            } else 
+            {
+                var pt = e.GetPosition(image);
+                pt.X *= DpiDetector.DpiXKoef;
+                pt.Y *= DpiDetector.DpiYKoef;
+                var cell = GetCellAddress(pt);
+
+                if (cell.IsColumnHeader && cell.Column.HasValue) {
+                    var column = cell.Column.Value;
+                    if (column >= 0 && column < _modelColumnCount) {
+                        var args = new ColumnClickEventArgs {
+                            Grid = this,
+                            Column = column,
+                        };
+                        if (ColumnHeaderDoubleClick != null) {
+                            ColumnHeaderDoubleClick(this, args);
+                        }
+                    }
+
+                }
             }
         }
 

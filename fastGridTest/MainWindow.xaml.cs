@@ -25,13 +25,21 @@ namespace fastGridTest {
         }
 
         SubData _subData;
+        FastDataGridModel _rawDataModel;
         private void Window_Loaded(object sender, RoutedEventArgs e) {
-            OpenStdFile(@"E:\temp\PM853_log.std");
+            OpenStdFile(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\12345678.stdf");
             //var _rawDataModel = new FastDataGridModel(_subData);
-            var _rawDataModel = new DataRaw_FastDataGridModel(_subData);
+            _rawDataModel = new FastDataGridModel(_subData);
             rawgrid.Model = _rawDataModel;
+            rawgrid.ColumnHeaderDoubleClick += Rawgrid_ColumnHeaderDoubleClick;
 
         }
+
+        private void Rawgrid_ColumnHeaderDoubleClick(object arg1, FastWpfGrid.ColumnClickEventArgs arg2) {
+            Console.WriteLine(arg2.Column.ToString());
+            _rawDataModel.SortColumn(arg2.Column);
+        }
+
         private void OpenStdFile(string path) {
             try {
                 var info = new System.IO.FileInfo(path);

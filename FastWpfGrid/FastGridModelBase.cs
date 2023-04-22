@@ -8,6 +8,11 @@ using System.Windows.Media;
 
 namespace FastWpfGrid
 {
+    public enum SortMode {
+        Default,
+        MinToMax,
+        MaxToMin
+    }
     public abstract class FastGridModelBase : IFastGridModel, IFastGridCell, IFastGridCellBlock
     {
         private List<IFastGridView> _grids = new List<IFastGridView>();
