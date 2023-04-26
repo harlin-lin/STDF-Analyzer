@@ -45,14 +45,14 @@ namespace FileReader {
                     var sts = _v4Reader.ReadRaw(dc);
                     s.Stop();
                     Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
-                    if(sts == StdV4Reader.ReadStatus.Done) {
+                    //if(sts == StdV4Reader.ReadStatus.Done) {
                         s.Restart();
                         dc.AnalyseData();
                         s.Stop();
                         Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
-                    } else {
-                        throw new Exception("Data invalid");
-                    }
+                    //} else {
+                    //    throw new Exception("Data invalid");
+                    //}
                 }
                 catch {
                     //release table in data base
