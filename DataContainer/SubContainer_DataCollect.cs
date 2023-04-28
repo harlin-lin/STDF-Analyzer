@@ -213,7 +213,7 @@ namespace DataContainer {
                 }
             }
 
-            var tgtItems = filter.FilterItemStatistics.Keys;
+            var tgtItems = da._itemContainer.Keys; // filter.FilterItemStatistics.Keys;
 
             //add item info
             foreach (var item in tgtItems) {
