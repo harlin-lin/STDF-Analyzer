@@ -23,25 +23,44 @@ namespace fastGridTest {
 
             _frozenCols.Add(0);
 
-            var ids = _da.GetTestIDs();
-            sorted = Enumerable.Range(0, ids.Count()).ToList();
+            sorted = Enumerable.Range(0, _da.GetTestIDs().Count()).ToList();
 
         }
 
         private SortMode sortMode = SortMode.Default;
+        private int sortCol = -1;
 
         private List<int> sorted = null;
 
         public void SortColumn(int column) {
 
-            var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
-            var ids = _da.GetTestIDs();
+            //var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
+            //var ids = _da.GetTestIDs();
 
-            Dictionary<int, float> colData = new Dictionary<int, float>(ids.Count());
-            for(int i=0; i<ids.Count(); i++){
-                colData.Add(i, _da.GetItemData(ids.ElementAt(i), idx));
+            //Dictionary<int, float> colData = new Dictionary<int, float>(ids.Count());
+            //for(int i=0; i<ids.Count(); i++){
+            //    colData.Add(i, _da.GetItemData(ids.ElementAt(i), idx));
+            //}
+            //if(sortMode == SortMode.Default) {
+            //    sorted = (from pair in colData orderby pair.Value ascending select pair.Key).ToList();
+            //    sortMode = SortMode.MinToMax;
+            //} else if (sortMode == SortMode.MinToMax) {
+            //    sorted = (from pair in colData orderby pair.Value descending select pair.Key).ToList();
+            //    sortMode = SortMode.MaxToMin;
+
+            //} else {
+            //    sorted = colData.Keys.ToList();
+            //    sortMode = SortMode.Default;
+
+            //}
+
+            if (column != sortCol) sortMode = SortMode.Default;
+
+            Dictionary<int, string> colData = new Dictionary<int, string>(RowCount);
+            for (int i = 0; i < RowCount; i++) {
+                colData.Add(i, GetCellText(i,column));
             }
-            if(sortMode == SortMode.Default) {
+            if (sortMode == SortMode.Default) {
                 sorted = (from pair in colData orderby pair.Value ascending select pair.Key).ToList();
                 sortMode = SortMode.MinToMax;
             } else if (sortMode == SortMode.MinToMax) {
@@ -51,8 +70,8 @@ namespace fastGridTest {
             } else {
                 sorted = colData.Keys.ToList();
                 sortMode = SortMode.Default;
-
             }
+
             NotifyRefresh();
         }
 
