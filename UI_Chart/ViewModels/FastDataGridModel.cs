@@ -83,9 +83,9 @@ namespace UI_Chart.ViewModels {
 
         string getstr(float val) {
             if (float.IsPositiveInfinity(val)) {
-                return "+∞";
+                return "Inf+";
             } else if (float.IsNegativeInfinity(val)) {
-                return "-∞";
+                return "Inf-";
             } else if (float.IsNaN(val)) {
                 return "";
             }

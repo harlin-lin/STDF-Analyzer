@@ -169,9 +169,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EPPlus">
-      <Version>6.1.1</Version>
-    </PackageReference>
     <PackageReference Include="MathNet.Numerics">
       <Version>5.0.0</Version>
     </PackageReference>

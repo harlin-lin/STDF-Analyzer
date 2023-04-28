@@ -6,11 +6,10 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using OfficeOpenXml;
 using System.Windows.Forms;
 using FastWpfGrid;
+using System.IO;
+using System.Text;
 
 namespace UI_Data.ViewModels {
     public class DataRawViewModel : BindableBase, INavigationAware, IDataView {
@@ -140,7 +139,7 @@ namespace UI_Data.ViewModels {
                 saveFileDialog.AddExtension = true;
                 saveFileDialog.Filter = "Excel Files | *.csv";
                 saveFileDialog.DefaultExt = "csv";
-                saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath);
+                saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath)+"_statistic";
                 saveFileDialog.ValidateNames = true;
                 if (saveFileDialog.ShowDialog() != DialogResult.OK) {
                     return;
@@ -148,145 +147,110 @@ namespace UI_Data.ViewModels {
                 path = saveFileDialog.FileName;
             };
 
-            #region getRcm
-            //List<ItemStatistic> rcmSt = new List<ItemStatistic>();
-            //List<int> wfCnt = new List<int>();
-            //var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
-            //var waferId = dataAcquire.GetFilteredItemData("201008_0", _subData.FilterId).ToList();
-            //var rcmValue = dataAcquire.GetFilteredItemData("620001_0", _subData.FilterId).ToList();
-            //for (int i=1; i<=25; i++) {
-            //    var rcmByWf = (from r in dataAcquire.GetAllIndex()
-            //                where waferId[r] == i
-            //                select rcmValue[r]).ToList();
-            //    wfCnt.Add(rcmByWf.Count);
-            //    var st = new ItemStatistic(rcmByWf, 5, 62);
-            //    rcmSt.Add(st);
-            //}
-
-            //ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            //using (var p = new ExcelPackage()) {
-            //    //write raw data
-            //    var ws2 = p.Workbook.Worksheets.Add("Raw");
-
-
-            //    ws2.Cells[1, 1].Value = "Wafer NO";
-            //    ws2.Cells[1, 2].Value = "Lo Limit";
-            //    ws2.Cells[1, 3].Value = "Hi Limit";
-            //    ws2.Cells[1, 4].Value = "Mean";
-            //    ws2.Cells[1, 5].Value = "Min";
-            //    ws2.Cells[1, 6].Value = "Max";
-            //    ws2.Cells[1, 7].Value = "Cp";
-            //    ws2.Cells[1, 8].Value = "Cpk";
-            //    ws2.Cells[1, 9].Value = "Sigma";
-            //    ws2.Cells[1, 10].Value = "Total Cnt";
-            //    ws2.Cells[1, 11].Value = "Pass Cnt";
-            //    ws2.Cells[1, 12].Value = "Fail Cnt";
-            //    ws2.Cells[1, 13].Value = "Fail Rate";
-
-            //    for (int i = 1; i <= 25; i++) {
-            //        ws2.Cells[i+1, 1].Value = i;
-            //        ws2.Cells[i + 1, 2].Value = 5;
-            //        ws2.Cells[i + 1, 3].Value = 62;
-            //        ws2.Cells[i + 1, 4].Value = rcmSt[i - 1].MeanValue;
-            //        ws2.Cells[i + 1, 5].Value = rcmSt[i - 1].MinValue;
-            //        ws2.Cells[i + 1, 6].Value = rcmSt[i - 1].MaxValue;
-            //        ws2.Cells[i + 1, 7].Value = rcmSt[i - 1].Cp;
-            //        ws2.Cells[i + 1, 8].Value = rcmSt[i - 1].Cpk;
-            //        ws2.Cells[i + 1, 9].Value = rcmSt[i - 1].Sigma;
-            //        ws2.Cells[i + 1, 10].Value = wfCnt[i - 1];
-            //        ws2.Cells[i + 1, 11].Value = rcmSt[i - 1].PassCount;
-            //        ws2.Cells[i + 1, 12].Value = rcmSt[i - 1].FailCount;
-            //        ws2.Cells[i + 1, 13].Value = (rcmSt[i - 1].FailCount*100.0)/ wfCnt[i - 1];
-            //    }
-
-            //    ws2.Cells[1, 1, 26, 13].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
-
-            //}
-
-            #endregion
-
-
+            _ea.GetEvent<Event_Log>().Publish("Writing......");
             await System.Threading.Tasks.Task.Run(() => {
-                //get file path
+                try {
+                    using (var sw = new StreamWriter(path)) {
+                        StringBuilder sb = new StringBuilder();
 
-                //write data
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                using (var p = new ExcelPackage()) {
-                    var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
-
-                    string phase = "Loading start";
-                    int percent = 0;
-                    System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
-                        SetProgress(phase, percent);
-                    }, null, 100, 100);
-
-
-                    //write basic info
-                    //var ws1 = p.Workbook.Worksheets.Add("BasicInfo");
-
-                    //write raw data
-                    var ws2 = p.Workbook.Worksheets.Add("Raw");
-                    var testItems = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
-                    var chips = dataAcquire.GetFilteredPartIndex(_subData.FilterId);
-
-
-                    //header
-                    ws2.Cells[1, 1].Value = "Test NO";
-                    ws2.Cells[1, 2].Value = "Cord";
-                    ws2.Cells[1, 3].Value = "HardBin";
-                    ws2.Cells[1, 4].Value = "SoftBin";
-                    ws2.Cells[1, 5].Value = "Site";
-
-                    ws2.Cells[2, 1].Value = "Test Name";
-                    ws2.Cells[3, 1].Value = "Low Limit";
-                    ws2.Cells[4, 1].Value = "High Limit";
-                    ws2.Cells[5, 1].Value = "Unit";
-
-                    phase = "Export chip idx";
-                    percent = 1;
-
-                    int i = 6;
-                    foreach (var v in chips) {
-                        ws2.Cells[i, 1].Value = v;
-                        ws2.Cells[i, 2].Value = dataAcquire.GetWaferCord(v);
-                        ws2.Cells[i, 3].Value = dataAcquire.GetHardBin(v);
-                        ws2.Cells[i, 4].Value = dataAcquire.GetSoftBin(v);
-                        ws2.Cells[i, 5].Value = dataAcquire.GetSite(v);
-                        i++;
-                    }
-
-                    phase = "Export chip items";
-                    percent = 5;
-
-
-                    int col = 6;
-                    double totalItemCnt = testItems.Count();
-                    foreach (var v in testItems) {
-                        int row = 6;
-                        ws2.Cells[1, col].Value = v.TestNumber;
-                        ws2.Cells[2, col].Value = v.TestText;
-                        ws2.Cells[3, col].Value = v.LoLimit;
-                        ws2.Cells[4, col].Value = v.HiLimit;
-                        ws2.Cells[5, col].Value = v.Unit;
-
-                        foreach (var r in dataAcquire.GetFilteredItemData(v.TestNumber, _subData.FilterId)) {
-                            ws2.Cells[row, col].Value = r;
-                            row++;
+                        for (int c = 0; c < _rawDataModel.ColumnCount; c++) {
+                            if (c > 0) sb.Append(',');
+                            sb.Append(_rawDataModel.GetColumnHeaderText(c));
                         }
-                        col++;
+                        sw.WriteLine(sb.ToString());
+                        sb.Clear();
 
-                        percent = (int)((col / totalItemCnt) * 100);
+                        for (int r = 0; r < _rawDataModel.RowCount; r++) {
+                            for (int c = 0; c < _rawDataModel.ColumnCount; c++) {
+                                if (c > 0) sb.Append(',');
+                                sb.Append(_rawDataModel.GetCellText(r, c));
+                            }
+                            sw.WriteLine(sb.ToString());
+                            sb.Clear();
+                        }
+                        sw.Close();
                     }
-                    myTimer.Dispose();
-
-                    _ea.GetEvent<Event_Log>().Publish("Excel Writing......");
-                    ws2.Cells[1, 1, chips.Count() + 6, testItems.Count() + 6].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
-                    //p.SaveAs(new System.IO.FileInfo(path));
-                    //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
-
+                }
+                catch {
+                    _ea.GetEvent<Event_Log>().Publish("Write failed");
                 }
             });
-            _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
+
+
+
+            //await System.Threading.Tasks.Task.Run(() => {
+            //    //get file path
+
+            //    //write data
+            //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            //    using (var p = new ExcelPackage()) {
+            //        var dataAcquire = StdDB.GetDataAcquire(_subData.StdFilePath);
+
+            //        string phase = "Loading start";
+            //        int percent = 0;
+            //        System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
+            //            SetProgress(phase, percent);
+            //        }, null, 100, 100);
+
+
+            //        //write raw data
+            //        var ws2 = p.Workbook.Worksheets.Add("Statistic");
+            //        var testItems = dataAcquire.GetFilteredItemStatistic(_subData.FilterId);
+
+            //        //header
+            //        ws2.Cells[1, 1].Value = "Idx";
+            //        ws2.Cells[1, 2].Value = "TestNumber";
+            //        ws2.Cells[1, 3].Value = "TestText";
+            //        ws2.Cells[1, 4].Value = "LoLimit";
+            //        ws2.Cells[1, 5].Value = "HiLimit";
+            //        ws2.Cells[1, 6].Value = "Unit";
+            //        ws2.Cells[1, 7].Value = "PassCnt";
+            //        ws2.Cells[1, 8].Value = "FailCnt";
+            //        ws2.Cells[1, 9].Value = "FailPer";
+            //        ws2.Cells[1, 10].Value = "MeanValue";
+            //        ws2.Cells[1, 11].Value = "MedianValue";
+            //        ws2.Cells[1, 12].Value = "MinValue";
+            //        ws2.Cells[1, 13].Value = "MaxValue";
+            //        ws2.Cells[1, 14].Value = "Cp";
+            //        ws2.Cells[1, 15].Value = "Cpk";
+            //        ws2.Cells[1, 16].Value = "Sigma";
+
+            //        phase = "Exporting";
+            //        percent = 1;
+
+            //        int i = 2;
+            //        foreach (var v in testItems) {
+            //            ws2.Cells[i, 1].Value = v.Idx;
+            //            ws2.Cells[i, 2].Value = v.TestNumber;
+            //            ws2.Cells[i, 3].Value = v.TestText;
+            //            ws2.Cells[i, 4].Value = v.LoLimit;
+            //            ws2.Cells[i, 5].Value = v.HiLimit;
+            //            ws2.Cells[i, 6].Value = v.Unit;
+            //            ws2.Cells[i, 7].Value = v.PassCnt;
+            //            ws2.Cells[i, 8].Value = v.FailCnt;
+            //            ws2.Cells[i, 9].Value = v.FailPer;
+            //            ws2.Cells[i, 10].Value = v.MeanValue;
+            //            ws2.Cells[i, 11].Value = v.MedianValue;
+            //            ws2.Cells[i, 12].Value = v.MinValue;
+            //            ws2.Cells[i, 13].Value = v.MaxValue;
+            //            ws2.Cells[i, 14].Value = v.Cp;
+            //            ws2.Cells[i, 15].Value = v.Cpk;
+            //            ws2.Cells[i, 16].Value = v.Sigma;
+
+            //            i++;
+            //        }
+
+            //        percent = 100;
+            //        myTimer.Dispose();
+
+            //        _ea.GetEvent<Event_Log>().Publish("Excel Writing......");
+            //        ws2.Cells[1, 1, i, 16].SaveToText(new System.IO.FileInfo(path), new ExcelOutputTextFormat());
+            //        //p.SaveAs(new System.IO.FileInfo(path));
+            //        //File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+
+            //    }
+            //});
+            _ea.GetEvent<Event_Log>().Publish("Exported at:" + path);
         }
 
         private void SetProgress(string log, int percent) {

@@ -737,7 +737,11 @@ namespace UI_Chart.Views {
         }
 
         private void buttonApplyTrendRange_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ExecuteCmdSelectAxisUserTrend();
+            if(radioUser.IsChecked != true) {
+                radioUser.IsChecked = true;
+            } else {
+                ExecuteCmdSelectAxisUserTrend();
+            }
         }
 
         private void toggleOutlierTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
@@ -840,7 +844,11 @@ namespace UI_Chart.Views {
         }
 
         private void buttonApplyRangeHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ExecuteCmdSelectAxisUserHisto();
+            if(radioUserHisto.IsChecked != true) {
+                radioUserHisto.IsChecked = true;
+            } else {
+                ExecuteCmdSelectAxisUserHisto();
+            }
         }
 
         private void toggleOutlierHisto_Click(object sender, System.Windows.RoutedEventArgs e) {

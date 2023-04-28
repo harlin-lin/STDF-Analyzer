@@ -1,6 +1,5 @@
 ﻿using DataContainer;
 using FastWpfGrid;
-using OfficeOpenXml;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -8,11 +7,8 @@ using Prism.Regions;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+using System.Text;
 
 namespace UI_Data.ViewModels {
     public class SiteDataCorrelationViewModel : BindableBase, INavigationAware, IDataView {
@@ -104,51 +100,97 @@ namespace UI_Data.ViewModels {
             ExportToExcelAsync();
         }
 
+        //private async void ExportToExcelAsync() {
+        //    string path;
+        //    using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+        //        saveFileDialog.AddExtension = true;
+        //        saveFileDialog.Filter = "Excel Files | *.xlsx";
+        //        saveFileDialog.DefaultExt = "csv";
+        //        saveFileDialog.FileName = "Correlation_xxx";
+        //        saveFileDialog.ValidateNames = true;
+        //        if (saveFileDialog.ShowDialog() != DialogResult.OK) {
+        //            return;
+        //        }
+        //        path = saveFileDialog.FileName;
+        //    };
+
+        //    var da = StdDB.GetDataAcquire(_subData.StdFilePath);
+        //    var sites = da.GetSites();
+
+
+        //    await System.Threading.Tasks.Task.Run(() => {
+        //        //get file path
+
+        //        //write data
+        //        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //        using (var p = new ExcelPackage()) {
+        //            var ws1 = p.Workbook.Worksheets.Add("FileList");
+        //            for (int i = 0; i < sites.Length; i++) {
+        //                ws1.Cells[i + 1, 1].Value = _subData.StdFilePath;
+        //            }
+
+        //            //write raw data
+        //            var ws2 = p.Workbook.Worksheets.Add("Correlation");
+        //            //ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
+        //            for(int r=0; r<_rawDataModel.RowCount; r++) {
+        //                for(int c=0; c<_rawDataModel.ColumnCount; c++) {
+        //                    var v = _rawDataModel.GetCellText(r, c);
+        //                    ws2.Cells[r+1, c+1].Value = v;
+        //                }
+        //            }
+
+        //            p.SaveAs(new System.IO.FileInfo(path));
+        //            File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
+
+        //        }
+        //    });
+        //    _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
+        //}
+
         private async void ExportToExcelAsync() {
             string path;
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog()) {
+            using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog()) {
                 saveFileDialog.AddExtension = true;
-                saveFileDialog.Filter = "Excel Files | *.xlsx";
+                saveFileDialog.Filter = "Excel Files | *.csv";
                 saveFileDialog.DefaultExt = "csv";
-                saveFileDialog.FileName = "Correlation_xxx";
+                saveFileDialog.FileName = "SiteCorrelation_";
                 saveFileDialog.ValidateNames = true;
-                if (saveFileDialog.ShowDialog() != DialogResult.OK) {
+                if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) {
                     return;
                 }
                 path = saveFileDialog.FileName;
             };
 
-            var da = StdDB.GetDataAcquire(_subData.StdFilePath);
-            var sites = da.GetSites();
-
-
+            _ea.GetEvent<Event_Log>().Publish("Writing......");
             await System.Threading.Tasks.Task.Run(() => {
-                //get file path
+                try {
 
-                //write data
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                using (var p = new ExcelPackage()) {
-                    var ws1 = p.Workbook.Worksheets.Add("FileList");
-                    for (int i = 0; i < sites.Length; i++) {
-                        ws1.Cells[i + 1, 1].Value = _subData.StdFilePath;
-                    }
-
-                    //write raw data
-                    var ws2 = p.Workbook.Worksheets.Add("Correlation");
-                    //ws2.Cells["A1"].LoadFromDataTable(TestItems, true);
-                    for(int r=0; r<_rawDataModel.RowCount; r++) {
-                        for(int c=0; c<_rawDataModel.ColumnCount; c++) {
-                            var v = _rawDataModel.GetCellText(r, c);
-                            ws2.Cells[r+1, c+1].Value = v;
+                    using (System.IO.StreamWriter sw = new System.IO.StreamWriter(path)) {
+                        StringBuilder sb = new StringBuilder();
+                        for (int c = 0; c < _rawDataModel.ColumnCount; c++) {
+                            if (c > 0) sb.Append(',');
+                            sb.Append(_rawDataModel.GetColumnHeaderText(c));
                         }
+                        sw.WriteLine(sb.ToString());
+                        sb.Clear();
+
+                        for (int r = 0; r < _rawDataModel.RowCount; r++) {
+                            for (int c = 0; c < _rawDataModel.ColumnCount; c++) {
+                                if (c > 0) sb.Append(',');
+                                sb.Append(_rawDataModel.GetCellText(r, c));
+                            }
+                            sw.WriteLine(sb.ToString());
+                            sb.Clear();
+                        }
+                        sw.Close();
                     }
-
-                    p.SaveAs(new System.IO.FileInfo(path));
-                    File.WriteAllBytes(path, p.GetAsByteArray());  // send the file
-
+                }
+                catch {
+                    _ea.GetEvent<Event_Log>().Publish("Write failed");
                 }
             });
-            _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
+
+            _ea.GetEvent<Event_Log>().Publish("Exported at:" + path);
         }
 
         private void SetProgress(string log, int percent) {

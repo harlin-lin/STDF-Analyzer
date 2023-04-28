@@ -461,7 +461,11 @@ namespace UI_Chart.Views {
         }
 
         private void btApplyUserRange_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ExecuteCmdSelectAxisUserHisto();
+            if(rbUserRange.IsChecked != true) {
+                rbUserRange.IsChecked = true;
+            } else {
+                ExecuteCmdSelectAxisUserHisto();
+            }
         }
 
         private void toggleOutlier_Click(object sender, System.Windows.RoutedEventArgs e) {
