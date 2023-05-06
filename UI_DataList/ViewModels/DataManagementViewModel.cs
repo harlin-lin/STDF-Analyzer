@@ -330,7 +330,7 @@ namespace UI_DataList.ViewModels {
         private void RemoveRawTab(SubData data) {
             var views =_regionManager.Regions["Region_DataView"].Views;
             foreach(var v in views) {
-                var x = (v as System.Windows.Controls.UserControl).DataContext as IDataView;
+                var x = v as IDataView;
                 if(x.CurrentTabType == TabType.RawDataTab) {
                     if (x.CurrentData.Value.Equals(data)) {
                         _regionManager.Regions["Region_DataView"].Remove(v);
@@ -345,8 +345,6 @@ namespace UI_DataList.ViewModels {
                 }
             }
 
-            //var view = v.First(x => ((x as System.Windows.Controls.UserControl).DataContext as IDataView).CurrentData.Equals(data));
-            //_regionManager.Regions["Region_DataView"].Remove(view);
         }
 
         private void CloseSubData(SubData data) {

@@ -40,7 +40,7 @@ namespace SillyMonkey.ViewModels
 
         void ExecuteSelectSubData(object parameter) {
             if (parameter is null || !parameter.GetType().Name.Equals("DataRaw")) return;
-            var view = (parameter as UI_Data.Views.DataRaw).DataContext as DataRawViewModel;
+            var view = parameter as UI_Data.Views.DataRaw;
             if (view.CurrentData.HasValue) {
                 _ea.GetEvent<Event_SubDataTabSelected>().Publish(view.CurrentData.Value);
             }

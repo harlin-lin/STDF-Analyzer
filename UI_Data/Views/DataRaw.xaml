@@ -8,7 +8,7 @@
              xmlns:FastWpfGrid="clr-namespace:FastWpfGrid;assembly=FastWpfGrid"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             Name="dataRawControl">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="450" MinWidth="50"/>
@@ -21,56 +21,36 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Margin="10,0,10,0" Command="{Binding OpenSummaryCommand, Mode=OneWay}" ToolTip="Open the summary report based on the current filter" BorderThickness="0">
-                    <!--<iconPacks:PackIconFontAwesome Kind="FileAltRegular" Width="21" Height="21"/>-->
+                <Button Margin="10,0,10,0" Click="OpenSummary_Click" ToolTip="Open the summary report based on the current filter" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/FontAwesome-FileAltRegular.png" Width="21" Height="21"/>
                 </Button>
 
-                <Button Margin="0,0,10,0" Command="{Binding ShowTrendCommand, Mode=OneWay}" ToolTip="Show Histogram Chart" BorderThickness="0">
-                    <!--<iconPacks:PackIconMaterialLight Kind="ChartHistogram" Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="ShowTrend_Click" ToolTip="Show Histogram Chart" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/MaterialLight-ChartHistogram.png" Width="21" Height="21"/>
                 </Button>
-                <Button Margin="0,0,10,0" Command="{Binding ShowRawCommand, Mode=OneWay}" ToolTip="Show Raw Data" BorderThickness="0">
-                    <!--<iconPacks:PackIconCodicons Kind="Table" Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="ShowRaw_Click" ToolTip="Show Raw Data" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Codicons-Table.png" Width="21" Height="21"/>
                 </Button>
-                <Button Margin="0,0,10,0" Command="{Binding ShowCorrCommand, Mode=OneWay}" ToolTip="Show Item Correlation" BorderThickness="0">
-                    <!--<iconPacks:PackIconVaadinIcons Kind="ScatterChart" Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="ShowCorr_Click" ToolTip="Show Item Correlation" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-ScatterChart.png" Width="21" Height="21"/>
                 </Button>
-                <Button Margin="0,0,10,0" Command="{Binding ShowWaferMapCommand, Mode=OneWay}" ToolTip="Show Wafer Map" BorderThickness="0">
-                    <!--<iconPacks:PackIconModern Kind="Grid"  Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="ShowWaferMap_Click" ToolTip="Show Wafer Map" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Modern-Grid.png" Width="21" Height="21"/>
                 </Button>
-                <Button Margin="0,0,10,0" Command="{Binding CorrelationBySiteCommand, Mode=OneWay}" ToolTip="Show Site Correlation" BorderThickness="0">
-                    <!--<iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="CorrelationBySite_Click" ToolTip="Show Site Correlation" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-SetSplit.png" Width="21" Height="21"/>
                 </Button>
-                <Button Margin="0,0,10,0" Command="{Binding ExportToExcelCommand, Mode=OneWay}" ToolTip="Export To Excel" BorderThickness="0">
-                    <!--<iconPacks:PackIconMaterial Kind="DatabaseExportOutline" Width="21" Height="21"/>-->
+                <Button Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
                 </Button>
             </StackPanel>
-            <!--<DataGrid x:Name="rawGrid" Grid.Row="1" ItemsSource="{Binding TestItems}" IsReadOnly="True" ColumnWidth="SizeToHeader" FrozenColumnCount="2" ClipboardCopyMode="IncludeHeader">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged" >
-                        <i:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
-                    </i:EventTrigger> 
-                </i:Interaction.Triggers>
-            </DataGrid>-->
-            <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" 
-                                     Model="{Binding RawDataModel}" AllowSelectAll="False" SelectionMode="RowMode">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedCellsChanged" >
-                        <i:InvokeCommandAction Command="{Binding OnSelectionChanged}"  CommandParameter="{Binding ElementName=rawGrid}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
+            <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" AllowSelectAll="False" SelectionMode="RowMode"
+                                         SelectedCellsChanged="rawGrid_SelectedCellsChanged"
+                                         ColumnHeaderDoubleClick="rawGrid_ColumnHeaderDoubleClick">
             </FastWpfGrid:FastGridControl>
 
         </Grid>
         <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <Grid Grid.Column="2">
-            <ContentControl Grid.Column="2" prism:RegionManager.RegionName="{Binding RegionName}"/>
-        </Grid>
+        <ContentControl Grid.Column="2" Name="contentCtr"/>
     </Grid>
 </UserControl>

@@ -29,7 +29,39 @@ namespace UI_Data.ViewModels {
             _testItems = new List<Item>(_da.GetFilteredItemStatistic(_subData.FilterId));
 
             _frozenCols.Add(0);
+
+            sorted = Enumerable.Range(0, _da.GetTestIDs().Count()).ToList();
         }
+
+        private SortMode sortMode = SortMode.Default;
+        private int sortCol = -1;
+
+        private List<int> sorted = null;
+
+        public void SortColumn(int column) {
+
+            if (column != sortCol) sortMode = SortMode.Default;
+            sortCol = column;
+
+            Dictionary<int, object> colData = new Dictionary<int, object>(RowCount);
+            for (int i = 0; i < RowCount; i++) {
+                colData.Add(i, GetCell(i, column));
+            }
+            if (sortMode == SortMode.Default) {
+                sorted = (from pair in colData orderby pair.Value ascending select pair.Key).ToList();
+                sortMode = SortMode.MinToMax;
+            } else if (sortMode == SortMode.MinToMax) {
+                sorted = (from pair in colData orderby pair.Value descending select pair.Key).ToList();
+                sortMode = SortMode.MaxToMin;
+
+            } else {
+                sorted = colData.Keys.ToList();
+                sortMode = SortMode.Default;
+            }
+
+            NotifyRefresh();
+        }
+
 
         public void UpdateView() {
             var _da = StdDB.GetDataAcquire(_subData.StdFilePath);
@@ -40,6 +72,7 @@ namespace UI_Data.ViewModels {
 
         public string GetTestId(int row) {
             if (row >= _testItems.Count) return "";
+            row = sorted[row];
             return _testItems[row].TestNumber;
         }
 
@@ -74,8 +107,51 @@ namespace UI_Data.ViewModels {
             get { return _cellColor; }
         }
 
+        object GetCell(int row, int column) {
+
+            switch (column) {
+                case 0:
+                    return _testItems[row].Idx;
+                case 1:
+                    return _testItems[row].TestNumber;
+                case 2:
+                    return _testItems[row].TestText;
+                case 3:
+                    return _testItems[row].LoLimit;
+                case 4:
+                    return _testItems[row].HiLimit;
+                case 5:
+                    return _testItems[row].Unit;
+                case 6:
+                    return _testItems[row].PassCnt;
+                case 7:
+                    return _testItems[row].FailCnt;
+                case 8:
+                    return _testItems[row].FailPer;
+                case 9:
+                    return _testItems[row].MeanValue;
+                case 10:
+                    return _testItems[row].MedianValue;
+                case 11:
+                    return _testItems[row].MedianValue;
+                case 12:
+                    return _testItems[row].MinValue;
+                case 13:
+                    return _testItems[row].MaxValue;
+                case 14:
+                    return _testItems[row].Cp;
+                case 15:
+                    return _testItems[row].Cpk;
+                case 16:
+                    return _testItems[row].Sigma;
+            }
+            return null;
+        }
+
+
         public override string GetCellText(int row, int column) {
-            _cellColor = null;
+            row = sorted[row];
+
             switch (column) {
                 case 0:
                     return _testItems[row].Idx.ToString();
