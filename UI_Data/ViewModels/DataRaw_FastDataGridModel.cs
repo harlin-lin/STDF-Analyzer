@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using DataContainer;
@@ -47,6 +48,7 @@ namespace UI_Data.ViewModels {
             for (int i = 0; i < RowCount; i++) {
                 colData.Add(i, GetCell(i, column));
             }
+
             if (sortMode == SortMode.Default) {
                 sorted = (from pair in colData orderby pair.Value ascending select pair.Key).ToList();
                 sortMode = SortMode.MinToMax;
@@ -57,6 +59,44 @@ namespace UI_Data.ViewModels {
             } else {
                 sorted = colData.Keys.ToList();
                 sortMode = SortMode.Default;
+            }
+
+            _hiddenRows.Clear();
+            if (sortMode == SortMode.Default) {
+                foreach (var v in hid) {
+                    _hiddenRows.Add(v);
+                }
+            } else {
+                foreach (var v in hid) {
+                    _hiddenRows.Add(sorted.FindIndex((x) => x == v));
+                }
+            }
+
+            NotifyRefresh();
+        }
+
+        private HashSet<int> _hiddenRows = new HashSet<int>();
+        private List<int> hid = new List<int>(400);
+
+        public void FilterColumn(int column, string filterPat) {
+            hid.Clear();
+            if (!string.IsNullOrWhiteSpace(filterPat)) {
+                for (int i = 0; i < RowCount; i++) {
+                    if(!Regex.IsMatch(GetCell(i, column).ToString(), filterPat, RegexOptions.IgnoreCase)){
+                        hid.Add(i);
+                    }
+                }
+            }
+
+            _hiddenRows.Clear();
+            if(sortMode == SortMode.Default) {
+                foreach (var v in hid) {
+                    _hiddenRows.Add(v);
+                }
+            } else {
+                foreach(var v in hid) {
+                    _hiddenRows.Add(sorted.FindIndex((x) => x == v));
+                }
             }
 
             NotifyRefresh();
@@ -82,6 +122,10 @@ namespace UI_Data.ViewModels {
 
         public override HashSet<int> GetFrozenRows(IFastGridView view) {
             return _frozenRows;
+        }
+
+        public override HashSet<int> GetHiddenRows(IFastGridView view) {
+            return _hiddenRows;
         }
 
         public override int ColumnHeaderHeight => 20;
