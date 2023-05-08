@@ -20,11 +20,22 @@
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Width="23" Height="23" Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
-                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
-                </Button>
-            </StackPanel>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Filter Item:" VerticalAlignment="Center" />
+                    <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Width="23" Height="23" Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
+                        <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
             <FastWpfGrid:FastGridControl x:Name="rawGrid" Grid.Row="1" AllowSelectAll="False" SelectionMode="RowMode"
                                          SelectedCellsChanged="rawGrid_SelectedCellsChanged">
             </FastWpfGrid:FastGridControl>

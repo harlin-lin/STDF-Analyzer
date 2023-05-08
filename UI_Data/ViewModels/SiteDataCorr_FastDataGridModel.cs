@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using DataContainer;
@@ -64,6 +65,21 @@ namespace UI_Data.ViewModels {
 
         }
 
+        private HashSet<int> _hiddenRows = new HashSet<int>();
+
+        public void FilterColumn(int column, string filterPat) {
+            _hiddenRows.Clear();
+            if (!string.IsNullOrWhiteSpace(filterPat)) {
+                for (int i = 0; i < RowCount; i++) {
+                    if (!Regex.IsMatch(GetCellText(i, column), filterPat, RegexOptions.IgnoreCase)) {
+                        _hiddenRows.Add(i);
+                    }
+                }
+            }
+
+            NotifyRefresh();
+        }
+
         public void UpdateView() {
             UpdateColumnRow();
 
@@ -81,6 +97,10 @@ namespace UI_Data.ViewModels {
 
         public override HashSet<int> GetFrozenRows(IFastGridView view) {
             return _frozenRows;
+        }
+
+        public override HashSet<int> GetHiddenRows(IFastGridView view) {
+            return _hiddenRows;
         }
 
         public override int ColumnHeaderHeight => 20;

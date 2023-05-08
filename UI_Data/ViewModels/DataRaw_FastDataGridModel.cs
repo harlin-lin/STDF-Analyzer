@@ -177,16 +177,14 @@ namespace UI_Data.ViewModels {
                 case 10:
                     return _testItems[row].MedianValue;
                 case 11:
-                    return _testItems[row].MedianValue;
-                case 12:
                     return _testItems[row].MinValue;
-                case 13:
+                case 12:
                     return _testItems[row].MaxValue;
-                case 14:
+                case 13:
                     return _testItems[row].Cp;
-                case 15:
+                case 14:
                     return _testItems[row].Cpk;
-                case 16:
+                case 15:
                     return _testItems[row].Sigma;
             }
             return null;
@@ -221,16 +219,14 @@ namespace UI_Data.ViewModels {
                 case 10:
                     return getstr(_testItems[row].MedianValue);
                 case 11:
-                    return getstr(_testItems[row].MedianValue);
-                case 12:
                     return getstr(_testItems[row].MinValue);
-                case 13:
+                case 12:
                     return getstr(_testItems[row].MaxValue);
-                case 14:
+                case 13:
                     return getstr(_testItems[row].Cp);
-                case 15:
+                case 14:
                     return getstr(_testItems[row].Cpk);
-                case 16:
+                case 15:
                     return getstr(_testItems[row].Sigma);
             }
             return "";

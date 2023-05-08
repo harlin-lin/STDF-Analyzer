@@ -132,16 +132,14 @@ namespace fastGridTest {
                 case 10:
                     return _testItems[row].MedianValue;
                 case 11:
-                    return _testItems[row].MedianValue;
-                case 12:
                     return _testItems[row].MinValue;
-                case 13:
+                case 12:
                     return _testItems[row].MaxValue;
-                case 14:
+                case 13:
                     return _testItems[row].Cp;
-                case 15:
+                case 14:
                     return _testItems[row].Cpk;
-                case 16:
+                case 15:
                     return _testItems[row].Sigma;
             }
             return null;
@@ -175,16 +173,14 @@ namespace fastGridTest {
                 case 10:
                     return _testItems[row].MedianValue.ToString();
                 case 11:
-                    return _testItems[row].MedianValue.ToString();
-                case 12:
                     return _testItems[row].MinValue.ToString();
-                case 13:
+                case 12:
                     return _testItems[row].MaxValue.ToString();
-                case 14:
+                case 13:
                     return _testItems[row].Cp.ToString();
-                case 15:
+                case 14:
                     return _testItems[row].Cpk.ToString();
-                case 16:
+                case 15:
                     return _testItems[row].Sigma.ToString();
             }
             return "";

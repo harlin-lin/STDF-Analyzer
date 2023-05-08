@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Windows.Controls;
 using UI_Data.ViewModels;
 
@@ -19,6 +20,9 @@ namespace UI_Data.Views {
             InitializeComponent();
             _regionManager = regionManager;
             _ea = ea;
+
+            timer_Item.Interval = 300;
+            timer_Item.Elapsed += Timer_Item_Elapsed;
         }
 
         public SubData? CurrentData { get { return null; } }
@@ -36,6 +40,7 @@ namespace UI_Data.Views {
 
         private DataCorr_FastDataGridModel _rawDataModel;
 
+        private Timer timer_Item = new Timer();
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
             return false;
@@ -152,6 +157,22 @@ namespace UI_Data.Views {
 
         void ExecuteCloseCommand(object x) {
             _regionManager.Regions["Region_DataView"].Remove(x);
+        }
+
+        private void tbTestNameFilter_TextChanged(object sender, TextChangedEventArgs e) {
+            lock (this) {
+                timer_Item.Stop();
+                timer_Item.Start();
+            }
+        }
+
+        private void Timer_Item_Elapsed(object sender, ElapsedEventArgs e) {
+            lock (this) {
+                timer_Item.Stop();
+                this.Dispatcher.Invoke(() => {
+                    _rawDataModel.FilterColumn(2, tbTestNameFilter.Text);
+                });
+            }
         }
     }
 }
