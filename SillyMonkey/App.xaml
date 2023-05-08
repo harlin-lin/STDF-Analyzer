@@ -44,7 +44,36 @@
                 </Setter>
             </Style>
 
-            <Style TargetType="ToggleButton" x:Key="ComboxStyleBtn">
+            <Style TargetType="ToggleButton" x:Key="RadioStyleBtnToggle" >
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                            <Grid x:Name="grid"  VerticalAlignment="Center" HorizontalAlignment="Stretch"  ClipToBounds="True" >
+                                <Border x:Name="ButtonStock" BorderBrush="Gray" BorderThickness="0"/>
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter TargetName="ButtonStock" Property="Background" Value="LightGray"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="1"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+            </Style>
+
+
+            <Style TargetType="ToggleButton" x:Key="ComboxStyleBtn" >
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate>

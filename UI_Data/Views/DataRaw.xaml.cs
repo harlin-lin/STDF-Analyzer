@@ -10,7 +10,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Timers;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using UI_Data.ViewModels;
 
 namespace UI_Data.Views {
@@ -96,7 +98,7 @@ namespace UI_Data.Views {
                 RegionManager.SetRegionName(contentCtr, _regionName);
 
                 _ea.GetEvent<Event_SubDataTabSelected>().Publish(_subData);
-                ShowSummary();
+                //ShowSummary();
 
                 _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
 
@@ -224,24 +226,104 @@ namespace UI_Data.Views {
             _rawDataModel.SortColumn(arg2.Column);
         }
 
+        private void EnableChartView() {
+            if (splitter.IsEnabled == false) {
+                splitter.IsEnabled = true;
+                ThicknessAnimation marginAnimation = new ThicknessAnimation();
+                marginAnimation.From = new System.Windows.Thickness(0, 0, -contentCtr.ActualWidth, 0);
+                marginAnimation.To = new System.Windows.Thickness(0, 0, 0, 0);
+                marginAnimation.Duration = TimeSpan.FromMilliseconds(300);
+
+                contentCtr.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
+            }
+        }
+
+        private void DisableChartView() {
+            if (splitter.IsEnabled == true) {
+                splitter.IsEnabled = false;
+
+                ThicknessAnimation marginAnimation = new ThicknessAnimation();
+                marginAnimation.From = new System.Windows.Thickness(0, 0, 0, 0);
+                marginAnimation.To = new System.Windows.Thickness(0, 0, -contentCtr.ActualWidth, 0);
+                marginAnimation.Duration = TimeSpan.FromMilliseconds(300);
+
+                contentCtr.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
+            }
+        }
+
         private void OpenSummary_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ShowSummary();
+            if(btOpenSummary.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                //btOpenSummary.IsChecked = false;
+                btShowTrend.IsChecked = false;
+                btShowRaw.IsChecked = false;
+                btShowCorr.IsChecked = false;
+                btShowWaferMap.IsChecked = false;
+                ShowSummary();
+            }
         }
 
         private void ShowTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ShowTrend();
+            if (btShowTrend.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                btOpenSummary.IsChecked = false;
+                //btShowTrend.IsChecked = false;
+                btShowRaw.IsChecked = false;
+                btShowCorr.IsChecked = false;
+                btShowWaferMap.IsChecked = false;
+                ShowTrend();
+            }
         }
 
         private void ShowRaw_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ShowRaw();
+            if (btShowRaw.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                btOpenSummary.IsChecked = false;
+                btShowTrend.IsChecked = false;
+                //btShowRaw.IsChecked = false;
+                btShowCorr.IsChecked = false;
+                btShowWaferMap.IsChecked = false;
+                ShowRaw();
+            }
         }
 
         private void ShowCorr_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ShowCorr();
+            if (btShowCorr.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                btOpenSummary.IsChecked = false;
+                btShowTrend.IsChecked = false;
+                btShowRaw.IsChecked = false;
+                //btShowCorr.IsChecked = false;
+                btShowWaferMap.IsChecked = false;
+                ShowCorr();
+            }
         }
 
         private void ShowWaferMap_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ShowWaferMap();
+            if (btShowWaferMap.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                btOpenSummary.IsChecked = false;
+                btShowTrend.IsChecked = false;
+                btShowRaw.IsChecked = false;
+                btShowCorr.IsChecked = false;
+                //btShowWaferMap.IsChecked = false;
+                ShowWaferMap();
+            }
         }
 
         private void CorrelationBySite_Click(object sender, System.Windows.RoutedEventArgs e) {
