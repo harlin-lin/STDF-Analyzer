@@ -9,12 +9,12 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              Name="dataRawControl">
-    <Grid>
+    <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25"/>
-            <ColumnDefinition Width="Auto" MinWidth="50"/>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="545" />
+            <ColumnDefinition Width="*" MinWidth="50"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Top">
             <ToggleButton IsChecked="False" Name="btOpenSummary" Margin="0,25,0,20" Click="OpenSummary_Click" ToolTip="Open the summary report based on the current filter" Style="{StaticResource RadioStyleBtnToggle}" Height="21" Width="21">
@@ -64,7 +64,7 @@
             </FastWpfGrid:FastGridControl>
 
         </Grid>
-        <GridSplitter Name="splitter" Grid.Column="2" HorizontalAlignment="Stretch"/>
+        <GridSplitter Name="splitter" Grid.Column="2" HorizontalAlignment="Stretch" IsEnabled="False" DragCompleted="splitter_DragCompleted" />
         <ContentControl Grid.Column="3" Name="contentCtr"/>
     </Grid>
 </UserControl>

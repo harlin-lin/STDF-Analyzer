@@ -27,7 +27,10 @@ namespace UI_Data.Views {
 
             timer_Item.Interval = 300;
             timer_Item.Elapsed += Timer_Item_Elapsed;
+
         }
+
+        private double chartViewWidth = 0;
 
         IRegionManager _regionManager;
         IEventAggregator _ea;
@@ -229,12 +232,10 @@ namespace UI_Data.Views {
         private void EnableChartView() {
             if (splitter.IsEnabled == false) {
                 splitter.IsEnabled = true;
-                ThicknessAnimation marginAnimation = new ThicknessAnimation();
-                marginAnimation.From = new System.Windows.Thickness(0, 0, -contentCtr.ActualWidth, 0);
-                marginAnimation.To = new System.Windows.Thickness(0, 0, 0, 0);
-                marginAnimation.Duration = TimeSpan.FromMilliseconds(300);
 
-                contentCtr.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
+                if(chartViewWidth == 0) chartViewWidth = mainGrid.ActualWidth * 0.6;
+
+                mainGrid.ColumnDefinitions[3].Width = new GridLength(chartViewWidth);
             }
         }
 
@@ -242,12 +243,7 @@ namespace UI_Data.Views {
             if (splitter.IsEnabled == true) {
                 splitter.IsEnabled = false;
 
-                ThicknessAnimation marginAnimation = new ThicknessAnimation();
-                marginAnimation.From = new System.Windows.Thickness(0, 0, 0, 0);
-                marginAnimation.To = new System.Windows.Thickness(0, 0, -contentCtr.ActualWidth, 0);
-                marginAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-                contentCtr.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
+                mainGrid.ColumnDefinitions[3].Width = new GridLength(0);
             }
         }
 
@@ -350,5 +346,13 @@ namespace UI_Data.Views {
             }
         }
 
+        private void splitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e) {
+            double minWidth = 300;
+            if (mainGrid.ColumnDefinitions[3].ActualWidth > minWidth) {
+                chartViewWidth = mainGrid.ColumnDefinitions[3].ActualWidth;
+            } else {
+                chartViewWidth = 0;
+            }
+        }
     }
 }
