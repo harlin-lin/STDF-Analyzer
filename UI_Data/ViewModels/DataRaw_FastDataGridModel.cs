@@ -20,7 +20,7 @@ namespace UI_Data.ViewModels {
         private List<Item> _testItems = null;
 
 
-        readonly string[] ColNames = { "Idx", "TestNumber", "TestText          ", "LoLimit", "HiLimit", "Unit", "PassCnt", "FailCnt", "FailPer", "MeanValue", "MedianValue", "MinValue", "MaxValue", "Cp", "Cpk", "Sigma" };
+        readonly string[] ColNames = { "Idx", "TestNumber", "TestText          ", "LoLimit", "HiLimit", "Unit", "PassCnt", "FailCnt", "FailPer", "MeanValue", "MedianValue", "MinValue", "MaxValue", "Cp    ", "Cpk   ", "Sigma " };
 
 
         public DataRaw_FastDataGridModel(SubData subData) {

@@ -37,7 +37,7 @@ namespace UI_Data.ViewModels {
 
             _colNames.Add("Idx");
             _colNames.Add("TestNO");
-            _colNames.Add("TestText");
+            _colNames.Add("TestText          ");
             _colNames.Add("LoLimit");
             _colNames.Add("HiLimit");
             _colNames.Add("Unit");
