@@ -442,10 +442,16 @@ namespace FileReader {
 
             //means use last test limt
             if (info == null) {
-                var tmpInfo = new ItemInfo(_dc.GetTestInfo(_lastUidBySite[sn].GetUID()));
-                tmpInfo.TestText = txt;
-                _dc.UpdateItemInfo(id.GetUID(), tmpInfo);
-                result = tmpInfo.GetScaledRst(result);
+                if (_lastUidBySite[sn].IfSubTest(tn, txt)) {
+                    var tmpInfo = new ItemInfo(_dc.GetTestInfo(_lastUidBySite[sn].GetUID()));
+                    tmpInfo.TestText = txt;
+                    _dc.UpdateItemInfo(id.GetUID(), tmpInfo);
+                    result = tmpInfo.GetScaledRst(result);
+                } else {
+                    var tmpInfo = new ItemInfo(txt, null, null, "", null, null, null);
+                    _dc.UpdateItemInfo(id.GetUID(), tmpInfo);
+                    result = tmpInfo.GetScaledRst(result);
+                }
             } else {
                 result = info.GetScaledRst(result);
             } 

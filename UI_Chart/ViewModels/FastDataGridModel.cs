@@ -22,6 +22,7 @@ namespace UI_Chart.ViewModels {
             _da = StdDB.GetDataAcquire(subData.StdFilePath);
 
             _frozenCols.Add(0);
+            _frozenCols.Add(1);
         }
 
         public override HashSet<int> GetFrozenColumns(IFastGridView view) {
@@ -37,9 +38,11 @@ namespace UI_Chart.ViewModels {
 
         public override string GetColumnHeaderText(int column) {
             if (column == 0) {
-                return $"Index\nCord\nTime\nHBin\nSBin\nSite";
+                return $"Index     \nCord\nTime\nHBin\nSBin\nSite";
+            } else if (column == 1) {
+                return $"TestText          ";
             } else {
-                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
+                    var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
                 return $"{idx.ToString()}\n{_da.GetWaferCord(idx)}\n{_da.GetTestTime(idx).ToString()}\n{_da.GetHardBin(idx).ToString()}\n{_da.GetSoftBin(idx).ToString()}\n{_da.GetSite(idx).ToString()}";
             }
         }
@@ -49,7 +52,7 @@ namespace UI_Chart.ViewModels {
         }
 
         public override int ColumnCount {
-            get { return _da.GetFilteredChipsCount(_subData.FilterId) + 1; }
+            get { return _da.GetFilteredChipsCount(_subData.FilterId) + 2; }
         }
 
         public override int RowCount {
@@ -65,8 +68,10 @@ namespace UI_Chart.ViewModels {
 
             if (column == 0) {
                 return _da.GetTestIDs().ElementAt(row);
-            }else {
-                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 1);
+            }else if (column == 1) {
+                return _da.GetTestIDs_Info().ElementAt(row).Value.TestText;
+            } else {
+                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
                 
                 var uid = _da.GetTestIDs().ElementAt(row);
                 var val = _da.GetItemData(uid, idx);
