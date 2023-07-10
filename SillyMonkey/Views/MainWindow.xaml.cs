@@ -30,7 +30,6 @@ namespace SillyMonkey.Views
                         s += v;
                     }
                     SendMessage(s);
-
                     System.Environment.Exit(1);
                 }
             }
@@ -113,7 +112,7 @@ namespace SillyMonkey.Views
                     COPYDATASTRUCT cds;
                     cds.dwData = (IntPtr)100;
                     cds.lpData = str;
-                    cds.cbData = str.Length + 1;
+                    cds.cbData = System.Text.Encoding.Default.GetByteCount(str)+1;//str.Length + 1;
                     SendMessage(WINDOW_HANDLER, 0x004A, 0, ref cds);
 
                 }
