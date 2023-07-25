@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fastGridTest", "fastGridTes
 		{B0AA6A94-6784-4221-81F0-244A68C374C0} = {B0AA6A94-6784-4221-81F0-244A68C374C0}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTest", "ReadTest\ReadTest.csproj", "{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,14 @@ Global
 		{F19B58CF-07A6-4DAD-9ACE-D8C0E0BCA064}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F19B58CF-07A6-4DAD-9ACE-D8C0E0BCA064}.Release|x64.ActiveCfg = Release|Any CPU
 		{F19B58CF-07A6-4DAD-9ACE-D8C0E0BCA064}.Release|x64.Build.0 = Release|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
