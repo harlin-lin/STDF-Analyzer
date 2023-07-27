@@ -30,14 +30,18 @@ namespace ReadTest {
 
         private FileStream _stream;
         private int _recordCnt;
+        private int _pirCnt;
+        List<long> posRecord;
+        List<int> partIdxAtposRecord;
+
         private string _path;
-        byte[][] dataBuf = new byte[BufCnt][];
+        byte[][] BlockBuf = new byte[BufCnt][];
         bool[] bufState = new bool[BufCnt];
 
         public StdV4Reader(string path) {
             _path = path;
-            for(int i=0; i<dataBuf.Length; i++) {
-                dataBuf[i] = new byte[BufferSize];
+            for(int i=0; i< BlockBuf.Length; i++) {
+                BlockBuf[i] = new byte[BufferSize];
                 bufState[i] = false;
             }
         }
@@ -50,51 +54,127 @@ namespace ReadTest {
             InitBuffer();
 
             var s = new System.Diagnostics.Stopwatch();
+
+            long fileLength=0;
+            long validLength=0;
             s.Start();
+
+            //count pir(prr may not match with pir, but ignore here)
+            //count record and get position of each record
+            //check if this is a valid file
+            //check if contain tsr and some other special record
+            using (_stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize)) {
+                if (!ValidFile()) return ReadStatus.FileInvalid;
+                fileLength = _stream.Length;
+
+                posRecord = new List<long>(100000);
+                partIdxAtposRecord = new List<int>(100000);
+
+                byte[] buf = new byte[4];
+                ushort len = 0;
+                byte[] dataBuf = new byte[ushort.MaxValue];
+
+                long curPos = 0;
+                byte lastBuf2 = 0;
+                byte lastBuf3 = 0;
+                while (_stream.Position < fileLength) {
+                    curPos = _stream.Position;
+                    if (!ReadRecordHeader(buf)) break;
+                    len = BitConverter.ToUInt16(buf, 0);
+                    if (buf[2] == 5 && buf[3] == 10) {
+                        _pirCnt++;
+                        if ((lastBuf2 == 5 && lastBuf3 == 20) || posRecord.Count==0) {
+                            posRecord.Add(curPos);
+                            partIdxAtposRecord.Add(_pirCnt - 1);
+                        }
+                    }
+                    lastBuf2 = buf[2];
+                    lastBuf3 = buf[3];
+                    if (!ReadRecordData(dataBuf, len)) break;
+                    _recordCnt++;
+                    validLength = curPos;
+                }
+                
+            }
 
 
             int blkIdx = 0;
             using (_stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize)) {
-                if (!ValidFile()) return ReadStatus.FileInvalid;
-                long length = _stream.Length;
 
-                //System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
-                //    if (_stream.CanRead) {
-                //        //_dc.SetReadingPercent((int)(_stream.Position * 100.0 / length));
-                //        Console.WriteLine((int)(_stream.Position * 100.0 / length) + "%");
-                //    }
-                //}, null, 100, 100);
-
-                byte[] buf = new byte[4];
-                int lastBufIdx;
-                lastBufIdx = -1;
-                while (_stream.Position < length) {
-                    var bufIdx = GetIdleBufIdx(); 
+                while (_stream.Position <= validLength) {
+                    var bufIdx = GetIdleBufIdx();
                     //Console.WriteLine("get:" + bufIdx);
-                    int len = _stream.Read(dataBuf[bufIdx], 0, BufferSize);
-                    var lbIdx = lastBufIdx;
-                    lastBufIdx = bufIdx;
-                    Task.Run(()=> {
-                        Parse(bufIdx, lbIdx, len);
+                    int ll = _stream.Read(BlockBuf[bufIdx], 0, BufferSize);
+                    var cbIdx = blkIdx;
+                    Task.Run(() => {
+                        Parse(bufIdx, cbIdx, ll);
                     });
                     blkIdx++;
                 }
                 WaitFinsh();
-                //myTimer.Dispose();
-           }
+            }
+
             s.Stop();
+
             Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
+            Console.WriteLine("Total Record:" + _recordCnt);
+            Console.WriteLine("Total Pir:" + _pirCnt);
+            Console.WriteLine("Total TouchDown:" + posRecord.Count);
             Console.WriteLine("Total Block:" + blkIdx);
+            Console.WriteLine("File Length:" + fileLength);
+            Console.WriteLine("Valid Length:" + validLength);
             return ReadStatus.Done;
 
         }
 
-        void Parse(int idx, int lbIdx, int len) {
-            System.Threading.Thread.Sleep(100);
+        void Parse(int idx, long curBlockIdx, int len) {
+            //System.Threading.Thread.Sleep(10);
+            //for(int i=0; i< BufferSize; i++) {
+            //    //BlockBuf[idx][i]
+            //}
+
+            var (offset, partIdx) = FindTouchDownOffset(curBlockIdx * BufferSize);
+            Console.WriteLine("Offset:" + offset);
+            Console.WriteLine("partIdx:" + partIdx);
 
             bufState[idx] = false;
             //Console.WriteLine("Reset:" + idx);
-            //Console.WriteLine("lbIdx:" + lbIdx);
+            //Console.WriteLine("curBlkIdx:" + curBlockIdx);
+        }
+
+        //find idx in recordPosList which just larger or equal to the blkpos, means posRecord[i-1]<blkPos && posRecord[i]>=blkPos
+        (int, int) FindTouchDownOffset(long blkPos) {
+
+            //int lBound = 0;
+            //int ubound = posRecord.Count - 1;
+            //int i = (int)Math.Ceiling((lBound + ubound) / 2.0);
+            //while (true) {
+
+            //    if(posRecord[i-1] < blkPos && posRecord[i] >= blkPos) {
+            //        return ((int)(posRecord[i] - blkPos),  partIdxAtposRecord[i]);
+            //    } else if(posRecord[i] < blkPos) {
+            //        lBound = i;
+            //        i = (int)Math.Ceiling((ubound + i) / 2.0);
+            //    } else {
+            //        ubound = i;
+            //        i = (int)Math.Ceiling((lBound + i) / 2.0);
+            //    }
+            //    if (lBound + 1 == ubound) {
+            //        lBound--;
+            //    }
+            //}
+
+            for (int i = 0; i < posRecord.Count; i++) {
+                if (posRecord[i] >= blkPos) {
+                    if ((posRecord[i] - blkPos) < BufferSize) {
+                        return ((int)(posRecord[i] - blkPos), partIdxAtposRecord[i]);
+                    } else {
+                        return (-1, -1);
+                    }
+                }
+            }
+
+            return (-1, -1);
         }
 
         void WaitFinsh() {
