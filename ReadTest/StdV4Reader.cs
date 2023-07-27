@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace ReadTest {
     public struct RecordAddr {
@@ -22,6 +23,16 @@ namespace ReadTest {
         public RecordType RecordType { get { return _recordType; } }
 
     }
+    //struct BlockRedundant {
+    //    public int Size { get; }
+    //    public int BufIdx { get; }
+
+    //    public BlockRedundant(int size, int bufIdx) {
+    //        Size = size;
+    //        BufIdx = bufIdx;
+    //    }
+
+    //}
 
     public class StdV4Reader : IDisposable {
         const int BufferSize = 1024 * 1024 * 10;
@@ -31,17 +42,20 @@ namespace ReadTest {
         private FileStream _stream;
         private int _recordCnt;
         private int _pirCnt;
-        List<long> posRecord;
-        List<int> partIdxAtposRecord;
+        List<long> posPirRecord;
+        List<int> partIdxAtposPirRecord;
 
         private string _path;
         byte[][] BlockBuf = new byte[BufCnt][];
         bool[] bufState = new bool[BufCnt];
+        private ConcurrentDictionary<int, int> _blockRedundant = new ConcurrentDictionary<int, int>(BufCnt, 500);
+        private ConcurrentDictionary<int, int> _blockPartIdx = new ConcurrentDictionary<int, int>(BufCnt, 500);
+        long fileLength = 0;
 
         public StdV4Reader(string path) {
             _path = path;
             for(int i=0; i< BlockBuf.Length; i++) {
-                BlockBuf[i] = new byte[BufferSize];
+                BlockBuf[i] = new byte[BufferSize*2];
                 bufState[i] = false;
             }
         }
@@ -55,8 +69,7 @@ namespace ReadTest {
 
             var s = new System.Diagnostics.Stopwatch();
 
-            long fileLength=0;
-            long validLength=0;
+            long validLength = -1;
             s.Start();
 
             //count pir(prr may not match with pir, but ignore here)
@@ -67,8 +80,8 @@ namespace ReadTest {
                 if (!ValidFile()) return ReadStatus.FileInvalid;
                 fileLength = _stream.Length;
 
-                posRecord = new List<long>(100000);
-                partIdxAtposRecord = new List<int>(100000);
+                posPirRecord = new List<long>(100000);
+                partIdxAtposPirRecord = new List<int>(100000);
 
                 byte[] buf = new byte[4];
                 ushort len = 0;
@@ -83,9 +96,9 @@ namespace ReadTest {
                     len = BitConverter.ToUInt16(buf, 0);
                     if (buf[2] == 5 && buf[3] == 10) {
                         _pirCnt++;
-                        if ((lastBuf2 == 5 && lastBuf3 == 20) || posRecord.Count==0) {
-                            posRecord.Add(curPos);
-                            partIdxAtposRecord.Add(_pirCnt - 1);
+                        if ((lastBuf2 == 5 && lastBuf3 == 20) || posPirRecord.Count==0) {
+                            posPirRecord.Add(curPos);
+                            partIdxAtposPirRecord.Add(_pirCnt - 1);
                         }
                     }
                     lastBuf2 = buf[2];
@@ -99,6 +112,8 @@ namespace ReadTest {
 
 
             int blkIdx = 0;
+            int lastBufIdx;
+            lastBufIdx = -1;
             using (_stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize)) {
 
                 while (_stream.Position <= validLength) {
@@ -106,8 +121,12 @@ namespace ReadTest {
                     //Console.WriteLine("get:" + bufIdx);
                     int ll = _stream.Read(BlockBuf[bufIdx], 0, BufferSize);
                     var cbIdx = blkIdx;
+                    while (!_blockRedundant.TryAdd(cbIdx, -1));
+                    while (!_blockPartIdx.TryAdd(cbIdx, -1)) ;
+                    var lbIdx = lastBufIdx;
+                    lastBufIdx = bufIdx;
                     Task.Run(() => {
-                        Parse(bufIdx, cbIdx, ll);
+                        Parse(bufIdx, lbIdx, cbIdx, ll);
                     });
                     blkIdx++;
                 }
@@ -119,7 +138,7 @@ namespace ReadTest {
             Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
             Console.WriteLine("Total Record:" + _recordCnt);
             Console.WriteLine("Total Pir:" + _pirCnt);
-            Console.WriteLine("Total TouchDown:" + posRecord.Count);
+            Console.WriteLine("Total TouchDown:" + posPirRecord.Count);
             Console.WriteLine("Total Block:" + blkIdx);
             Console.WriteLine("File Length:" + fileLength);
             Console.WriteLine("Valid Length:" + validLength);
@@ -127,54 +146,105 @@ namespace ReadTest {
 
         }
 
-        void Parse(int idx, long curBlockIdx, int len) {
+        void Parse(int idx, int lbIdx, int curBlockIdx, int len) {
             //System.Threading.Thread.Sleep(10);
-            //for(int i=0; i< BufferSize; i++) {
-            //    //BlockBuf[idx][i]
-            //}
 
-            var (offset, partIdx) = FindTouchDownOffset(curBlockIdx * BufferSize);
-            Console.WriteLine("Offset:" + offset);
-            Console.WriteLine("partIdx:" + partIdx);
+            int offset, partIdx;
+
+            var rcdIdx = FindTouchDownOffset( ((long)curBlockIdx) * BufferSize);
+            if (rcdIdx >= 0) {
+                if (curBlockIdx == 0) {
+                    offset = 0;
+                    _blockRedundant[curBlockIdx] = -2;
+                } else {
+                    offset = (int)(posPirRecord[rcdIdx] - ((long)curBlockIdx) * BufferSize);
+                    for (int i = 0; i < offset; i++) {
+                        BlockBuf[lbIdx][BufferSize + i] = BlockBuf[idx][i];
+                    }
+                    _blockRedundant[curBlockIdx] = offset;
+                }
+                partIdx = partIdxAtposPirRecord[rcdIdx];
+                _blockPartIdx[curBlockIdx] = partIdx;
+
+            } else {
+                if (curBlockIdx == 0) {
+                    offset = 0;
+                    _blockRedundant[curBlockIdx] = -2;
+                    partIdx = 0;
+                    _blockPartIdx[curBlockIdx] = partIdx;
+                } else {
+                    offset = BufferSize;
+                    for (int i = 0; i < offset; i++) {
+                        BlockBuf[lbIdx][BufferSize + i] = BlockBuf[idx][i];
+                    }
+                    _blockRedundant[curBlockIdx] = offset;
+
+                    while(_blockPartIdx[curBlockIdx - 1] < 0) {
+                        System.Threading.Thread.Sleep(2);
+                    }
+                    _blockPartIdx[curBlockIdx] = _blockPartIdx[curBlockIdx-1];
+                    partIdx = _blockPartIdx[curBlockIdx];
+                }
+            }
+            Console.WriteLine("PirIdx:" + rcdIdx);
+
+
+            //read....
+            System.Threading.Thread.Sleep(10);
+
+            //read next block redundant data
+            if ((long)(curBlockIdx + 1) * BufferSize < fileLength) {
+                while (!_blockRedundant.ContainsKey(curBlockIdx + 1)) {
+                    System.Threading.Thread.Sleep(2);
+                }
+                while (_blockRedundant[curBlockIdx + 1] < 0) {
+                    System.Threading.Thread.Sleep(2);
+                }
+
+                //do read
+
+                //release redundant data in next block
+                _blockRedundant[curBlockIdx + 1] = -2;
+            }
+
+            //wait for data
+            while (_blockRedundant[curBlockIdx] != -2) {
+                System.Threading.Thread.Sleep(2);
+            }
 
             bufState[idx] = false;
             //Console.WriteLine("Reset:" + idx);
             //Console.WriteLine("curBlkIdx:" + curBlockIdx);
         }
 
-        //find idx in recordPosList which just larger or equal to the blkpos, means posRecord[i-1]<blkPos && posRecord[i]>=blkPos
-        (int, int) FindTouchDownOffset(long blkPos) {
-
-            //int lBound = 0;
-            //int ubound = posRecord.Count - 1;
-            //int i = (int)Math.Ceiling((lBound + ubound) / 2.0);
-            //while (true) {
-
-            //    if(posRecord[i-1] < blkPos && posRecord[i] >= blkPos) {
-            //        return ((int)(posRecord[i] - blkPos),  partIdxAtposRecord[i]);
-            //    } else if(posRecord[i] < blkPos) {
-            //        lBound = i;
-            //        i = (int)Math.Ceiling((ubound + i) / 2.0);
-            //    } else {
-            //        ubound = i;
-            //        i = (int)Math.Ceiling((lBound + i) / 2.0);
-            //    }
-            //    if (lBound + 1 == ubound) {
-            //        lBound--;
-            //    }
-            //}
-
-            for (int i = 0; i < posRecord.Count; i++) {
-                if (posRecord[i] >= blkPos) {
-                    if ((posRecord[i] - blkPos) < BufferSize) {
-                        return ((int)(posRecord[i] - blkPos), partIdxAtposRecord[i]);
+        //find idx in recordPosList which just larger or equal to the blkpos, means posPirRecord[i-1]<blkPos && posPirRecord[i]>=blkPos
+        int FindTouchDownOffset(long blkPos) {
+            for (int i = 0; i < posPirRecord.Count; i++) {
+                if (posPirRecord[i] >= blkPos) {
+                    if ((posPirRecord[i] - blkPos) < BufferSize) {
+                        return i;
                     } else {
-                        return (-1, -1);
+                        return -1;
                     }
                 }
             }
 
-            return (-1, -1);
+            return -1;
+        }
+
+        int FindRecordOffset(int idx, int len) {
+            if (len < 4) return len;
+
+            for (int i = 0; i <= (len-4); i++) {
+                var l = BitConverter.ToUInt16(BlockBuf[idx], i);
+                if((l+4)==len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + 2], BlockBuf[idx][i + 3])) ) {
+                    return i;
+                } else if((l + 8) <= len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + l + 6], BlockBuf[idx][i + l + 7]))) {
+
+                }
+            }
+
+            return len;
         }
 
         void WaitFinsh() {
@@ -798,6 +868,34 @@ namespace ReadTest {
         public static RecordType EPS = new RecordType(20, 20);
         public static RecordType GDR = new RecordType(50, 10);
         public static RecordType DTR = new RecordType(50, 30);
+
+        public static HashSet<RecordType> RecordTypes = new HashSet<RecordType>(){
+            new RecordType(0, 10), //FAR,
+            new RecordType(0, 20), //ATR,
+            new RecordType(1, 10), //MIR,
+            new RecordType(1, 20), //MRR,
+            new RecordType(1, 30), //PCR,
+            new RecordType(1, 40), //HBR,
+            new RecordType(1, 50), //SBR,
+            new RecordType(1, 60), //PMR,
+            new RecordType(1, 62), //PGR,
+            new RecordType(1, 63), //PLR,
+            new RecordType(1, 70), //RDR,
+            new RecordType(1, 80), //SDR,
+            new RecordType(2, 10), //WIR,
+            new RecordType(2, 20), //WRR,
+            new RecordType(2, 30), //WCR,
+            new RecordType(5, 10), //PIR,
+            new RecordType(5, 20), //PRR,
+            new RecordType(10, 30),//TSR,
+            new RecordType(15, 10),//PTR,
+            new RecordType(15, 15),//MPR,
+            new RecordType(15, 20),//FTR,
+            new RecordType(20, 10),//BPS,
+            new RecordType(20, 20),//EPS,
+            new RecordType(50, 10),//GDR,
+            new RecordType(50, 30) //DTR
+        };
 
         public void AddRecord(RecordType recordType, byte[] recordData, ushort len) {
             if (recordType == PTR) AddPtr(recordData, len);

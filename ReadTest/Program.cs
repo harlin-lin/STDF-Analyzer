@@ -11,7 +11,8 @@ namespace ReadTest {
             //    Console.WriteLine(FindFirstRecordOffset(i, 1, 12).ToString());
             //}
 
-            var std = new StdReader(@"C:\Users\linzhang\Desktop\HolaCon WB01_HolaCon_WB01_TA1_FT.prog_25_JVYA25M003-D001_P23U64.02-JTA111_R0_20230720_151449.stdf", StdFileType.STD);
+            //var std = new StdReader(@"C:\Users\linzhang\Desktop\HolaCon WB01_HolaCon_WB01_TA1_FT.prog_25_JVYA25M003-D001_P23U64.02-JTA111_R0_20230720_151449.stdf", StdFileType.STD);
+            var std = new StdReader(@"C:\Users\Harlin\Documents\SillyMonkey\stdfData\ASR5803F_TFMF80.2-DTA010_2141_FT_datalog_20211022134726.stdf", StdFileType.STD);
             std.ExtractStdf();
 
             Console.ReadKey();
