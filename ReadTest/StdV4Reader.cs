@@ -36,7 +36,7 @@ namespace ReadTest {
 
     public class StdV4Reader : IDisposable {
         const int BufferSize = 1024 * 1024 * 10;
-        const int BufCnt = 10;
+        const int BufCnt = 16;
         public static int ExpectItemCounts = 500;
 
         private FileStream _stream;
@@ -173,7 +173,7 @@ namespace ReadTest {
                     partIdx = 0;
                     _blockPartIdx[curBlockIdx] = partIdx;
                 } else {
-                    offset = BufferSize;
+                    offset = FindRecordOffset(idx, len);
                     for (int i = 0; i < offset; i++) {
                         BlockBuf[lbIdx][BufferSize + i] = BlockBuf[idx][i];
                     }
@@ -186,11 +186,11 @@ namespace ReadTest {
                     partIdx = _blockPartIdx[curBlockIdx];
                 }
             }
-            Console.WriteLine("PirIdx:" + rcdIdx);
+            //Console.WriteLine("PirIdx:" + rcdIdx);
 
 
             //read....
-            System.Threading.Thread.Sleep(10);
+            System.Threading.Thread.Sleep(300);
 
             //read next block redundant data
             if ((long)(curBlockIdx + 1) * BufferSize < fileLength) {
@@ -237,10 +237,10 @@ namespace ReadTest {
 
             for (int i = 0; i <= (len-4); i++) {
                 var l = BitConverter.ToUInt16(BlockBuf[idx], i);
-                if((l+4)==len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + 2], BlockBuf[idx][i + 3])) ) {
+                if ((l + 4 + i + 4) <= len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + 2], BlockBuf[idx][i + 3])) && RecordTypes.Contains(new RecordType(BlockBuf[idx][l + 4 + i + 2], BlockBuf[idx][l + 4 + i + 3])) ) {
                     return i;
-                } else if((l + 8) <= len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + l + 6], BlockBuf[idx][i + l + 7]))) {
-
+                } else if ((l + 4 + i)==len && RecordTypes.Contains(new RecordType(BlockBuf[idx][i + 2], BlockBuf[idx][i + 3])) ) {
+                    return i; 
                 }
             }
 
@@ -265,6 +265,7 @@ namespace ReadTest {
                 for (int i = 0; i < BufCnt; i++) {
                     if (!bufState[i]) {
                         bufState[i] = true;
+                        //Console.WriteLine("GetBufIdx:" + i);
                         return i;
                     }
                 }
