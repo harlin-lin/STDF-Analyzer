@@ -52,15 +52,15 @@ namespace DataContainer {
         }
 
         public Dictionary<string, ItemInfo> GetTestIDs_Info() {
-            return _itemContainer;
+            return new Dictionary<string, ItemInfo>(_itemContainer);
         }
 
         public Dictionary<ushort, Tuple<string, string>> GetSBinInfo() {
-            return _softBinNames;
+            return new Dictionary<ushort, Tuple<string, string>>(_softBinNames);
         }
 
         public Dictionary<ushort, Tuple<string, string>> GetHBinInfo() {
-            return _hardBinNames;
+            return new Dictionary<ushort, Tuple<string, string>>(_hardBinNames);
         }
 
         public PartStatistic GetPartStatistic() {

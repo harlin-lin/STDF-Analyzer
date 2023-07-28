@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataContainer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -35,14 +36,14 @@ namespace ReadTest {
         public string FilePath { get; private set; }
         public string FileName { get; private set; }
 
-        public async void ExtractStdf() {
+        public void ExtractStdf() {
             var s = new System.Diagnostics.Stopwatch();
             using (StdV4Reader _v4Reader = new StdV4Reader(FilePath)) {
-                //var dc = StdDB.GetDataCollect(FilePath);
+                var dc = StdDB.GetDataCollect(FilePath);
                 //try {
                     s.Start();
                     //var sts = _v4Reader.ReadRaw(dc);
-                    _v4Reader.ReadRaw();
+                    _v4Reader.ReadRaw(dc);
                     s.Stop();
                     Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
                     //if(sts == StdV4Reader.ReadStatus.Done) {

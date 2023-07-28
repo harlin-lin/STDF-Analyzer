@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,28 +9,31 @@ namespace DataContainer {
     public partial class SubContainer {
         public void SetBasicInfo(string name, string val) {
             CurrentLoadingPhase = LoadingPhase.Reading;
-            _basicInfo.Add(name, val);
+            _basicInfo.TryAdd(name, val);
+        }
+
+        public void SetPirCount(int cnt) {
+            _preIdx = cnt-1;
         }
 
         public void AddSiteNum(byte siteNum) {
-            _siteContainer.Add(siteNum, 0);
+            _siteContainer.TryAdd(siteNum, 0);
         }
 
         public void AddPir(byte siteNum) {
             _preIdx +=1 ;
             _siteContainer[siteNum] = _preIdx;
-            AdjustDataBaseCapcity();
         }
 
         public void AddSbr(ushort binNO, Tuple<string,string> binNmaeInfo) {
             if (!_softBinNames.ContainsKey(binNO)) {
-                _softBinNames.Add(binNO, binNmaeInfo);
+                _softBinNames.TryAdd(binNO, binNmaeInfo);
             }
         }
 
         public void AddHbr(ushort binNO, Tuple<string, string> binNmaeInfo) {
             if (!_hardBinNames.ContainsKey(binNO)) {
-                _hardBinNames.Add(binNO, binNmaeInfo);
+                _hardBinNames.TryAdd(binNO, binNmaeInfo);
             }
         }
 
@@ -122,22 +126,26 @@ namespace DataContainer {
             //merge the misc
             foreach(var s in da._siteContainer) {
                 if (!_siteContainer.ContainsKey(s.Key)) {
-                    _siteContainer.Add(s.Key, 0);
+                    _siteContainer.TryAdd(s.Key, 0);
                 }
             }
             if(_basicInfo is null)
-                _basicInfo = new Dictionary<string, string>(da._basicInfo);
+                _basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
 
             foreach (var s in da._softBinNames) {
                 if (!_softBinNames.ContainsKey(s.Key)) {
-                    _softBinNames.Add(s.Key, s.Value);
+                    _softBinNames.TryAdd(s.Key, s.Value);
                 }
             }
             foreach (var s in da._hardBinNames) {
                 if (!_hardBinNames.ContainsKey(s.Key)) {
-                    _hardBinNames.Add(s.Key, s.Value);
+                    _hardBinNames.TryAdd(s.Key, s.Value);
                 }
             }
+
+            int start = _partIdx + 1;
+            _preIdx += da._preIdx+1;
+            _partIdx += da._partIdx + 1;
 
             //add item info
             foreach (var item in da._itemContainer) {
@@ -147,10 +155,6 @@ namespace DataContainer {
             }
             SetReadingPercent(2);
 
-            int start = _partIdx + 1;
-            _preIdx += da._preIdx+1;
-            _partIdx += da._partIdx + 1;
-            AdjustDataBaseCapcity();
             SetReadingPercent(5);
             double p = 1.0;
             foreach (var uid in da._dataBase_Result.Keys) {
@@ -197,23 +201,27 @@ namespace DataContainer {
             //merge the misc
             foreach (var s in filter.FilterPartStatistic.SiteCnt) {
                 if (s.Value>0 && !_siteContainer.ContainsKey(s.Key)) {
-                    _siteContainer.Add(s.Key, 0);
+                    _siteContainer.TryAdd(s.Key, 0);
                 }
             }
-            _basicInfo = new Dictionary<string, string>(da._basicInfo);
+            _basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
 
             foreach (var s in da._softBinNames) {
                 if (!_softBinNames.ContainsKey(s.Key)) {
-                    _softBinNames.Add(s.Key, s.Value);
+                    _softBinNames.TryAdd(s.Key, s.Value);
                 }
             }
             foreach (var s in da._hardBinNames) {
                 if (!_hardBinNames.ContainsKey(s.Key)) {
-                    _hardBinNames.Add(s.Key, s.Value);
+                    _hardBinNames.TryAdd(s.Key, s.Value);
                 }
             }
 
             var tgtItems = da._itemContainer.Keys; // filter.FilterItemStatistics.Keys;
+
+            int start = _partIdx + 1;
+            _preIdx += filter.FilterPartStatistic.TotalCnt;
+            _partIdx += filter.FilterPartStatistic.TotalCnt;
 
             //add item info
             foreach (var item in tgtItems) {
@@ -223,10 +231,6 @@ namespace DataContainer {
             }
             SetReadingPercent(2);
 
-            int start = _partIdx + 1;
-            _preIdx += filter.FilterPartStatistic.TotalCnt;
-            _partIdx += filter.FilterPartStatistic.TotalCnt;
-            AdjustDataBaseCapcity();
             SetReadingPercent(5);
             double p = 1.0;
             foreach (var uid in tgtItems) {

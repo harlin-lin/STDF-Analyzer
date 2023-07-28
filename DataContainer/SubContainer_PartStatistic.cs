@@ -71,10 +71,10 @@ namespace DataContainer {
                 }
 
                 if (!_hardBinNames.ContainsKey(_hardBin_PartContainer[i])) {
-                    _hardBinNames.Add(_hardBin_PartContainer[i], new Tuple<string, string>("", ""));
+                    _hardBinNames.TryAdd(_hardBin_PartContainer[i], new Tuple<string, string>("", ""));
                 }
                 if (!_softBinNames.ContainsKey(_softBin_PartContainer[i])) {
-                    _softBinNames.Add(_softBin_PartContainer[i], new Tuple<string, string>("", ""));
+                    _softBinNames.TryAdd(_softBin_PartContainer[i], new Tuple<string, string>("", ""));
                 }
 
 
