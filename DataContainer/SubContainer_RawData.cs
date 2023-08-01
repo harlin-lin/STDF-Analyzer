@@ -62,7 +62,10 @@ namespace DataContainer {
 
 
         private void SetData(string uid, int idx, float rst) {
-            _dataBase_Result[uid][idx] = rst;
+            float[] vv;
+            while (!_dataBase_Result.TryGetValue(uid, out vv)) ;
+            vv[idx] = rst;
+            //_dataBase_Result[uid][idx] = rst;
         }
 
         private IEnumerable<float> GetItemVal(string uid) {

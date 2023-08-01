@@ -8,6 +8,16 @@ using System.Collections.Concurrent;
 using DataContainer;
 
 namespace ReadTest {
+    public struct PirType {
+        public int PartIdx;
+        public TestID LastTestUid;
+
+        public PirType(int initIdx, TestID hash) {
+            PartIdx = initIdx;
+            LastTestUid = hash;
+        }
+    }
+
     public partial class StdV4Reader : IDisposable {
         const int BufferSize = 1024 * 1024 * 4;
         const int BufCnt = 16;
@@ -89,6 +99,7 @@ namespace ReadTest {
                 
             }
 
+            _dc.SetPirCount(_pirCnt);
 
             int blkIdx = 0;
             int lastBufIdx;
@@ -100,7 +111,7 @@ namespace ReadTest {
                     //Console.WriteLine("get:" + bufIdx);
                     int ll = _stream.Read(BlockBuf[bufIdx], 0, BufferSize);
                     var cbIdx = blkIdx;
-                    while (!_blockRedundant.TryAdd(cbIdx, -1));
+                    while (!_blockRedundant.TryAdd(cbIdx, -1)) ;
                     while (!_blockPartIdx.TryAdd(cbIdx, -1)) ;
                     var lbIdx = lastBufIdx;
                     lastBufIdx = bufIdx;
@@ -173,6 +184,7 @@ namespace ReadTest {
             ushort ll;
             RecordType typ;
             byte[] dataBuf = new byte[ushort.MaxValue];
+            PirType[] pirBuf = new PirType[255];
             while (true) {
                 ll = BitConverter.ToUInt16(BlockBuf[idx], offset); 
                 typ = new RecordType(BlockBuf[idx][offset + 2], BlockBuf[idx][offset + 3]);
@@ -183,7 +195,7 @@ namespace ReadTest {
                     offset = offset - ll - 4;
                     break;
                 } else {
-                    AddRecord(typ, dataBuf, ll);
+                    AddRecord(typ, dataBuf, ll, ref pirBuf, ref partIdx);
                 }
             }
 
@@ -210,7 +222,7 @@ namespace ReadTest {
                         offset = offset - ll - 4;
                         break;
                     } else {
-                        AddRecord(typ, dataBuf, ll);
+                        AddRecord(typ, dataBuf, ll, ref pirBuf, ref partIdx);
                     }
                 }
 
@@ -385,10 +397,12 @@ namespace ReadTest {
             new RecordType(50, 30) //DTR
         };
 
-        public void AddRecord(RecordType recordType, byte[] recordData, ushort len) {
-            if (recordType == PTR) AddPtr(recordData, len);
-            else if (recordType == MPR) AddMpr(recordData, len);
-            else if (recordType == FTR) AddFtr(recordData, len);
+        public void AddRecord(RecordType recordType, byte[] recordData, ushort len, ref PirType[] pbuf, ref int pIdx) {
+            if (recordType == PTR) AddPtr(recordData, len, pbuf);
+            else if (recordType == FTR) AddFtr(recordData, len, pbuf);
+            else if (recordType == MPR) AddMpr(recordData, len, pbuf);
+            else if (recordType == PIR) AddPir(recordData, len, ref pbuf, pIdx++);
+            else if (recordType == PRR) AddPrr(recordData, len);
             else if (recordType == FAR) AddFar(recordData, len);
             else if (recordType == ATR) AddAtr(recordData, len);
             else if (recordType == MIR) AddMir(recordData, len);
@@ -404,8 +418,6 @@ namespace ReadTest {
             else if (recordType == WIR) AddWir(recordData, len);
             else if (recordType == WRR) AddWrr(recordData, len);
             else if (recordType == WCR) AddWcr(recordData, len);
-            else if (recordType == PIR) AddPir(recordData, len);
-            else if (recordType == PRR) AddPrr(recordData, len);
             else if (recordType == TSR) AddTsr(recordData, len);
             else if (recordType == BPS) AddBps(recordData, len);
             else if (recordType == EPS) AddEps(recordData, len);

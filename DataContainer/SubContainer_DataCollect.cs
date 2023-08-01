@@ -40,8 +40,8 @@ namespace DataContainer {
         public void UpdateItemInfo(string uid, ItemInfo itemInfo) {
             _itemContainer[uid] = itemInfo;
         }
-        public void AddTestData(byte siteNum, string uid, float rst) {
-            SetData(uid, _siteContainer[siteNum], rst);
+        public void AddTestData(string uid, int pIdx, float rst) {
+            SetData(uid, pIdx, rst);
         }
 
         public void AddPrr(byte siteNum, uint? testTime, ushort hardBin, 
