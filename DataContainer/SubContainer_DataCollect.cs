@@ -14,6 +14,7 @@ namespace DataContainer {
 
         public void SetPirCount(int cnt) {
             _preIdx = cnt-1;
+            Initialize_PartStatistic(cnt);
         }
 
         public void AddSiteNum(byte siteNum) {
@@ -44,24 +45,24 @@ namespace DataContainer {
             SetData(uid, pIdx, rst);
         }
 
-        public void AddPrr(byte siteNum, uint? testTime, ushort hardBin, 
+        public void AddPrr(int pIdx, byte siteNum, uint? testTime, ushort hardBin, 
             ushort softBin, string partId, short xCord, short yCord, 
             DeviceType deviceType, ResultType result) {
-            _site_PartContainer.Add(siteNum);
-            _testTime_PartContainer.Add(testTime);
-            _hardBin_PartContainer.Add(hardBin);
-            _softBin_PartContainer.Add(softBin);
-            _partId_PartContainer.Add(partId);
-            _xCord_PartContainer.Add(xCord);
-            _yCord_PartContainer.Add(yCord);
+            _site_PartContainer[pIdx] = siteNum;
+            _testTime_PartContainer[pIdx] = testTime;
+            _hardBin_PartContainer[pIdx] = hardBin;
+            _softBin_PartContainer[pIdx] = softBin;
+            _partId_PartContainer[pIdx] = partId;
+            _xCord_PartContainer[pIdx] = xCord;
+            _yCord_PartContainer[pIdx] = yCord;
             if(_ifCordValid && (xCord == short.MinValue || yCord == short.MinValue)) {
                 _ifCordValid = false;
             }
-            _chipType_PartContainer.Add(deviceType);
-            _resultType_PartContainer.Add(result);
+            _chipType_PartContainer[pIdx] = deviceType;
+            _resultType_PartContainer[pIdx] = result;
             if (_partIdx < _preIdx) {
                 _partIdx += 1;
-                _allIndex.Add(_partIdx);
+                _allIndex[pIdx] = pIdx;
             }
         }
 
@@ -119,147 +120,147 @@ namespace DataContainer {
         }
 
         public bool MergeData(SubContainer da) {
-            if (!da.LoadingDone) return false;
+            //if (!da.LoadingDone) return false;
 
-            SetReadingPercent(0);
+            //SetReadingPercent(0);
 
-            //merge the misc
-            foreach(var s in da._siteContainer) {
-                if (!_siteContainer.ContainsKey(s.Key)) {
-                    _siteContainer.TryAdd(s.Key, 0);
-                }
-            }
-            if(_basicInfo is null)
-                _basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
+            ////merge the misc
+            //foreach(var s in da._siteContainer) {
+            //    if (!_siteContainer.ContainsKey(s.Key)) {
+            //        _siteContainer.TryAdd(s.Key, 0);
+            //    }
+            //}
+            //if(_basicInfo is null)
+            //    _basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
 
-            foreach (var s in da._softBinNames) {
-                if (!_softBinNames.ContainsKey(s.Key)) {
-                    _softBinNames.TryAdd(s.Key, s.Value);
-                }
-            }
-            foreach (var s in da._hardBinNames) {
-                if (!_hardBinNames.ContainsKey(s.Key)) {
-                    _hardBinNames.TryAdd(s.Key, s.Value);
-                }
-            }
+            //foreach (var s in da._softBinNames) {
+            //    if (!_softBinNames.ContainsKey(s.Key)) {
+            //        _softBinNames.TryAdd(s.Key, s.Value);
+            //    }
+            //}
+            //foreach (var s in da._hardBinNames) {
+            //    if (!_hardBinNames.ContainsKey(s.Key)) {
+            //        _hardBinNames.TryAdd(s.Key, s.Value);
+            //    }
+            //}
 
-            int start = _partIdx + 1;
-            _preIdx += da._preIdx+1;
-            _partIdx += da._partIdx + 1;
+            //int start = _partIdx + 1;
+            //_preIdx += da._preIdx+1;
+            //_partIdx += da._partIdx + 1;
 
-            //add item info
-            foreach (var item in da._itemContainer) {
-                if (!CheckItemContainer(item.Key)) {
-                    _itemContainer[item.Key] = new ItemInfo(item.Value);
-                }
-            }
-            SetReadingPercent(2);
+            ////add item info
+            //foreach (var item in da._itemContainer) {
+            //    if (!CheckItemContainer(item.Key)) {
+            //        _itemContainer[item.Key] = new ItemInfo(item.Value);
+            //    }
+            //}
+            //SetReadingPercent(2);
 
-            SetReadingPercent(5);
-            double p = 1.0;
-            foreach (var uid in da._dataBase_Result.Keys) {
-                int i = start;
-                foreach(var v in da.GetItemVal(uid)) {
-                    SetData(uid, i++, v);
-                }
-                SetReadingPercent((int)((p / (double)(da._dataBase_Result.Keys.Count()))*90));
-            }
+            //SetReadingPercent(5);
+            //double p = 1.0;
+            //foreach (var uid in da._dataBase_Result.Keys) {
+            //    int i = start;
+            //    foreach(var v in da.GetItemVal(uid)) {
+            //        SetData(uid, i++, v);
+            //    }
+            //    SetReadingPercent((int)((p / (double)(da._dataBase_Result.Keys.Count()))*90));
+            //}
 
-            for (int i = 0; i<= da._partIdx; i++) {
-                _site_PartContainer.Add(da._site_PartContainer[i]);
-                _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
-                _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
-                _softBin_PartContainer.Add(da._softBin_PartContainer[i]);
-                _partId_PartContainer.Add(da._partId_PartContainer[i]);
-                _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
-                _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
-                if (_ifCordValid && (da._xCord_PartContainer[i]==short.MinValue || da._yCord_PartContainer[i] == short.MinValue)) {
-                    _ifCordValid = false;
-                }
-                _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
-                _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
-            }
+            //for (int i = 0; i<= da._partIdx; i++) {
+            //    _site_PartContainer.Add(da._site_PartContainer[i]);
+            //    _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
+            //    _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
+            //    _softBin_PartContainer.Add(da._softBin_PartContainer[i]);
+            //    _partId_PartContainer.Add(da._partId_PartContainer[i]);
+            //    _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
+            //    _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
+            //    if (_ifCordValid && (da._xCord_PartContainer[i]==short.MinValue || da._yCord_PartContainer[i] == short.MinValue)) {
+            //        _ifCordValid = false;
+            //    }
+            //    _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
+            //    _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
+            //}
 
-            _allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
-                         select i).ToList();
+            //_allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
+            //             select i).ToList();
 
-            SetReadingPercent(100);
+            //SetReadingPercent(100);
             return true;
         }
 
         public bool MergeSubData(SubContainer da, int filterId) {
-            if (!da.LoadingDone) return false;
+            //if (!da.LoadingDone) return false;
 
-            SetReadingPercent(0);
+            //SetReadingPercent(0);
 
-            if (!da._filterContainer.ContainsKey(filterId)) {
-                throw new Exception("merge filter not exsist");
-            }
+            //if (!da._filterContainer.ContainsKey(filterId)) {
+            //    throw new Exception("merge filter not exsist");
+            //}
 
-            var filter = da._filterContainer[filterId];
+            //var filter = da._filterContainer[filterId];
 
-            //merge the misc
-            foreach (var s in filter.FilterPartStatistic.SiteCnt) {
-                if (s.Value>0 && !_siteContainer.ContainsKey(s.Key)) {
-                    _siteContainer.TryAdd(s.Key, 0);
-                }
-            }
-            _basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
+            ////merge the misc
+            //foreach (var s in filter.FilterPartStatistic.SiteCnt) {
+            //    if (s.Value>0 && !_siteContainer.ContainsKey(s.Key)) {
+            //        _siteContainer.TryAdd(s.Key, 0);
+            //    }
+            //}
+            //_basicInfo = new ConcurrentDictionary<string, string>(da._basicInfo);
 
-            foreach (var s in da._softBinNames) {
-                if (!_softBinNames.ContainsKey(s.Key)) {
-                    _softBinNames.TryAdd(s.Key, s.Value);
-                }
-            }
-            foreach (var s in da._hardBinNames) {
-                if (!_hardBinNames.ContainsKey(s.Key)) {
-                    _hardBinNames.TryAdd(s.Key, s.Value);
-                }
-            }
+            //foreach (var s in da._softBinNames) {
+            //    if (!_softBinNames.ContainsKey(s.Key)) {
+            //        _softBinNames.TryAdd(s.Key, s.Value);
+            //    }
+            //}
+            //foreach (var s in da._hardBinNames) {
+            //    if (!_hardBinNames.ContainsKey(s.Key)) {
+            //        _hardBinNames.TryAdd(s.Key, s.Value);
+            //    }
+            //}
 
-            var tgtItems = da._itemContainer.Keys; // filter.FilterItemStatistics.Keys;
+            //var tgtItems = da._itemContainer.Keys; // filter.FilterItemStatistics.Keys;
 
-            int start = _partIdx + 1;
-            _preIdx += filter.FilterPartStatistic.TotalCnt;
-            _partIdx += filter.FilterPartStatistic.TotalCnt;
+            //int start = _partIdx + 1;
+            //_preIdx += filter.FilterPartStatistic.TotalCnt;
+            //_partIdx += filter.FilterPartStatistic.TotalCnt;
 
-            //add item info
-            foreach (var item in tgtItems) {
-                if (!CheckItemContainer(item)) {
-                    _itemContainer[item] = new ItemInfo(da._itemContainer[item]);
-                }
-            }
-            SetReadingPercent(2);
+            ////add item info
+            //foreach (var item in tgtItems) {
+            //    if (!CheckItemContainer(item)) {
+            //        _itemContainer[item] = new ItemInfo(da._itemContainer[item]);
+            //    }
+            //}
+            //SetReadingPercent(2);
 
-            SetReadingPercent(5);
-            double p = 1.0;
-            foreach (var uid in tgtItems) {
-                int i = start;
-                foreach (var v in da.GetFilteredItemData(uid, filterId)) {
-                    SetData(uid, i++, v);
-                }
-                SetReadingPercent((int)((p / (double)(tgtItems.Count())) * 90));
-            }
+            //SetReadingPercent(5);
+            //double p = 1.0;
+            //foreach (var uid in tgtItems) {
+            //    int i = start;
+            //    foreach (var v in da.GetFilteredItemData(uid, filterId)) {
+            //        SetData(uid, i++, v);
+            //    }
+            //    SetReadingPercent((int)((p / (double)(tgtItems.Count())) * 90));
+            //}
 
-            foreach(var i in filter.FilteredPartIdx) {
-                _site_PartContainer.Add(da._site_PartContainer[i]);
-                _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
-                _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
-                _softBin_PartContainer.Add(da._softBin_PartContainer[i]);
-                _partId_PartContainer.Add(da._partId_PartContainer[i]);
-                _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
-                _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
-                if (_ifCordValid && (da._xCord_PartContainer[i] == short.MinValue || da._yCord_PartContainer[i] == short.MinValue)) {
-                    _ifCordValid = false;
-                }
-                _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
-                _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
-            }
+            //foreach(var i in filter.FilteredPartIdx) {
+            //    _site_PartContainer.Add(da._site_PartContainer[i]);
+            //    _testTime_PartContainer.Add(da._testTime_PartContainer[i]);
+            //    _hardBin_PartContainer.Add(da._hardBin_PartContainer[i]);
+            //    _softBin_PartContainer.Add(da._softBin_PartContainer[i]);
+            //    _partId_PartContainer.Add(da._partId_PartContainer[i]);
+            //    _xCord_PartContainer.Add(da._xCord_PartContainer[i]);
+            //    _yCord_PartContainer.Add(da._yCord_PartContainer[i]);
+            //    if (_ifCordValid && (da._xCord_PartContainer[i] == short.MinValue || da._yCord_PartContainer[i] == short.MinValue)) {
+            //        _ifCordValid = false;
+            //    }
+            //    _chipType_PartContainer.Add(da._chipType_PartContainer[i]);
+            //    _resultType_PartContainer.Add(da._resultType_PartContainer[i]);
+            //}
 
-            _allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
-                         select i).ToList();
+            //_allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
+            //             select i).ToList();
 
-            SetReadingPercent(100);
+            //SetReadingPercent(100);
             return true;
         }
 

@@ -71,6 +71,8 @@
     <Compile Include="RecordType.cs" />
     <Compile Include="StdReader.cs" />
     <Compile Include="StdV4Reader.cs" />
+    <Compile Include="StdV4Reader_Record.cs" />
+    <Compile Include="StdV4Reader_Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

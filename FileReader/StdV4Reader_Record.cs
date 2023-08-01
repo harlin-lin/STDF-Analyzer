@@ -7,7 +7,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using DataContainer;
 
-namespace ReadTest {
+namespace FileReader {
     public partial class StdV4Reader : IDisposable {
 
         #region record

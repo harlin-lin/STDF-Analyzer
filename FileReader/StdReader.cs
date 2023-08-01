@@ -40,24 +40,25 @@ namespace FileReader {
             var s = new System.Diagnostics.Stopwatch();
             using (StdV4Reader _v4Reader = new StdV4Reader(FilePath)) {
                 var dc = StdDB.GetDataCollect(FilePath);
-                try {
+                //try {
                     s.Start();
-                    var sts = _v4Reader.ReadRaw(dc);
+                    //var sts = _v4Reader.ReadRaw(dc);
+                    var sts =_v4Reader.ReadRaw(dc);
                     s.Stop();
                     Console.WriteLine("Read Raw:" + s.ElapsedMilliseconds);
-                    //if(sts == StdV4Reader.ReadStatus.Done) {
+                    if (sts == StdV4Reader.ReadStatus.Done) {
                         s.Restart();
                         dc.AnalyseData();
                         s.Stop();
                         Console.WriteLine("Analyse:" + s.ElapsedMilliseconds);
-                    //} else {
-                    //    throw new Exception("Data invalid");
-                    //}
-                }
-                catch {
-                    //release table in data base
-                    throw;
-                }
+                    } else {
+                        throw new Exception("Data invalid");
+                    }
+                //}
+                //catch {
+                //    //release table in data base
+                //    throw;
+                //}
             }
 
         }

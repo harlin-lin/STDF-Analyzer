@@ -7,46 +7,36 @@ using System.Threading.Tasks;
 namespace DataContainer {
     public partial class SubContainer {
 
-        private List<byte> _site_PartContainer;
-        private List<UInt32?> _testTime_PartContainer;
-        private List<UInt16> _hardBin_PartContainer;
-        private List<UInt16> _softBin_PartContainer;
-        private List<string> _partId_PartContainer;
-        private List<short> _xCord_PartContainer;
-        private List<short> _yCord_PartContainer;
-        private List<DeviceType> _chipType_PartContainer;
-        private List<ResultType> _resultType_PartContainer;
+        private byte[] _site_PartContainer;
+        private UInt32?[] _testTime_PartContainer;
+        private UInt16[] _hardBin_PartContainer;
+        private UInt16[] _softBin_PartContainer;
+        private string[] _partId_PartContainer;
+        private short[] _xCord_PartContainer;
+        private short[] _yCord_PartContainer;
+        private DeviceType[] _chipType_PartContainer;
+        private ResultType[] _resultType_PartContainer;
 
         private PartStatistic _partStatistic;
         private bool _ifCordValid;
 
-        private List<int> _allIndex;
+        private int[] _allIndex;
 
-        private void Initialize_PartStatistic() {
-            _site_PartContainer = new List<byte>(200000);
-            _testTime_PartContainer = new List<uint?>(200000);
-            _hardBin_PartContainer = new List<ushort>(200000);
-            _softBin_PartContainer = new List<ushort>(200000);
-            _partId_PartContainer = new List<string>(200000);
-            _xCord_PartContainer = new List<short>(200000);
-            _yCord_PartContainer = new List<short>(200000);
-            _chipType_PartContainer = new List<DeviceType>(200000);
-            _resultType_PartContainer = new List<ResultType>(200000);
-            _allIndex = new List<int>(200000);
+        private void Initialize_PartStatistic(int pirCnt) {
+            _site_PartContainer = new byte[pirCnt];
+            _testTime_PartContainer = new uint?[pirCnt];
+            _hardBin_PartContainer = new ushort[pirCnt];
+            _softBin_PartContainer = new ushort[pirCnt];
+            _partId_PartContainer = new string[pirCnt];
+            _xCord_PartContainer = new short[pirCnt];
+            _yCord_PartContainer = new short[pirCnt];
+            _chipType_PartContainer = new DeviceType[pirCnt];
+            _resultType_PartContainer = new ResultType[pirCnt];
+            _allIndex = new int[pirCnt];
             _ifCordValid = true;
         }
 
         private void AnalyseParts() {
-            _site_PartContainer.TrimExcess();
-            _testTime_PartContainer.TrimExcess();
-            _hardBin_PartContainer.TrimExcess();
-            _softBin_PartContainer.TrimExcess();
-            _partId_PartContainer.TrimExcess();
-            _xCord_PartContainer.TrimExcess();
-            _yCord_PartContainer.TrimExcess();
-            _chipType_PartContainer.TrimExcess();
-            _resultType_PartContainer.TrimExcess();
-            _allIndex.TrimExcess();
             _partStatistic = new PartStatistic(_siteContainer.Keys);
 
             //if (_site_PartContainer.Count - 1 != _preIdx) throw new Exception("Error");
@@ -54,7 +44,7 @@ namespace DataContainer {
             UInt32 totalTime = 0;
             UInt32 totalTimePassOnly = 0;
 
-            for (int i=0; i < _site_PartContainer.Count; i++) {
+            for (int i=0; i < _site_PartContainer.Length; i++) {
                 var sn = _site_PartContainer[i];
                 _partStatistic.SiteCnt[sn] += 1;
 

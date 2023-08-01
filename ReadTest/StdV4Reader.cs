@@ -402,7 +402,7 @@ namespace ReadTest {
             else if (recordType == FTR) AddFtr(recordData, len, pbuf);
             else if (recordType == MPR) AddMpr(recordData, len, pbuf);
             else if (recordType == PIR) AddPir(recordData, len, ref pbuf, pIdx++);
-            else if (recordType == PRR) AddPrr(recordData, len);
+            else if (recordType == PRR) AddPrr(recordData, len, pbuf);
             else if (recordType == FAR) AddFar(recordData, len);
             else if (recordType == ATR) AddAtr(recordData, len);
             else if (recordType == MIR) AddMir(recordData, len);

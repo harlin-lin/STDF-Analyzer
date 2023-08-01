@@ -22,7 +22,7 @@ namespace DataContainer {
             LoadingDone = false;
 
             Initialize_RawData();
-            Initialize_PartStatistic();
+            //Initialize_PartStatistic();
             Initialize_Filter();
         }
 
