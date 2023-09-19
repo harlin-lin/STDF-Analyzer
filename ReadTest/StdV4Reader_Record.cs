@@ -384,14 +384,14 @@ namespace ReadTest {
                     }
 
                     if (i < len) {
-                        var v = rdI4(record, ref i, len);
+                        var v = rdR4(record, ref i, len);
                         if ((!Bit(oFg, 4)) && (!Bit(oFg, 6))) {
                             ll = v;
                         }
                     }
 
                     if (i < len) {
-                        var v = rdI4(record, ref i, len);
+                        var v = rdR4(record, ref i, len);
                         if ((!Bit(oFg, 5)) && (!Bit(oFg, 7))) {
                             hl = v;
                         }
@@ -504,22 +504,18 @@ namespace ReadTest {
                     }
 
                     if (i < len) {
-                        var v = rdI4(record, ref i, len);
+                        var v = rdR4(record, ref i, len);
                         if ((!Bit(oFg, 4)) && (!Bit(oFg, 6))) {
                             ll = v;
                         }
                     }
 
                     if (i < len) {
-                        var v = rdI4(record, ref i, len);
+                        var v = rdR4(record, ref i, len);
                         if ((!Bit(oFg, 5)) && (!Bit(oFg, 7))) {
                             hl = v;
                         }
                     }
-                    if (i < len) {
-                        unit = rdCn(record, ref i, len);
-                    }
-
                     i += 8; //skip start in and incr in
                     if (i < len) {
                         var idxs = rdKxU2(record, ref i, len, rtnCnt);

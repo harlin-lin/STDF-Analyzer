@@ -33,8 +33,8 @@ namespace FileReader {
 
         byte[][] BlockBuf = new byte[BufCnt][];
         bool[] bufState = new bool[BufCnt];
-        private ConcurrentDictionary<int, int> _blockRedundant = new ConcurrentDictionary<int, int>(BufCnt, 500);
-        private ConcurrentDictionary<int, int> _blockPartIdx = new ConcurrentDictionary<int, int>(BufCnt, 500);
+        private ConcurrentDictionary<int, int> _blockRedundant;
+        private ConcurrentDictionary<int, int> _blockPartIdx;
         long fileLength = 0;
 
 
@@ -99,6 +99,11 @@ namespace FileReader {
                 
             }
 
+            var bc = (int)(fileLength / BufferSize + 1);
+            _blockRedundant = new ConcurrentDictionary<int, int>(BufCnt, bc);
+            _blockPartIdx = new ConcurrentDictionary<int, int>(BufCnt, bc);
+
+
             _dc.SetPirCount(_pirCnt);
 
             int blkIdx = 0;
@@ -116,7 +121,11 @@ namespace FileReader {
                     var lbIdx = lastBufIdx;
                     lastBufIdx = bufIdx;
                     Task.Run(() => {
+                        var ss = new System.Diagnostics.Stopwatch();
+                        ss.Start();
                         Parse(bufIdx, lbIdx, cbIdx, ll);
+                        ss.Stop();
+                        Console.WriteLine("Block:" + bufIdx + " " + ss.ElapsedMilliseconds);
                     });
                     blkIdx++;
                 }
@@ -148,9 +157,7 @@ namespace FileReader {
                     _blockRedundant[curBlockIdx] = -2;
                 } else {
                     offset = (int)(posPirRecord[rcdIdx] - ((long)curBlockIdx) * BufferSize);
-                    for (int i = 0; i < offset; i++) {
-                        BlockBuf[lbIdx][BufferSize + i] = BlockBuf[idx][i];
-                    }
+                    Array.Copy(BlockBuf[idx], 0, BlockBuf[lbIdx], BufferSize, offset);
                     _blockRedundant[curBlockIdx] = offset;
                 }
                 partIdx = partIdxAtposPirRecord[rcdIdx];
@@ -164,9 +171,7 @@ namespace FileReader {
                     _blockPartIdx[curBlockIdx] = partIdx;
                 } else {
                     offset = FindRecordOffset(idx, len);
-                    for (int i = 0; i < offset; i++) {
-                        BlockBuf[lbIdx][BufferSize + i] = BlockBuf[idx][i];
-                    }
+                    Array.Copy(BlockBuf[idx], 0, BlockBuf[lbIdx], BufferSize, offset);
                     _blockRedundant[curBlockIdx] = offset;
 
                     while(_blockPartIdx[curBlockIdx - 1] < 0) {
@@ -189,7 +194,6 @@ namespace FileReader {
                 ll = BitConverter.ToUInt16(BlockBuf[idx], offset); 
                 typ = new RecordType(BlockBuf[idx][offset + 2], BlockBuf[idx][offset + 3]);
                 Array.Copy(BlockBuf[idx], offset + 4, dataBuf, 0, ll);
-                //byte[] dataBuf = BlockBuf[idx].Skip(offset + 4).Take(ll).ToArray();
                 offset = offset + ll + 4;
                 if (offset > len) {
                     offset = offset - ll - 4;
