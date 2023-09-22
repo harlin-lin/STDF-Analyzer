@@ -35,6 +35,20 @@ namespace SillyMonkey.Views
             }
 
             InitializeComponent();
+
+            ////读取配置文件
+            //try {
+            //    //设置位置、大小
+            //    Rect restoreBounds = Properties.Settings.Default.MainRestoreBounds;
+            //    this.WindowState = WindowState.Normal;
+            //    this.Left = restoreBounds.Left;
+            //    this.Top = restoreBounds.Top;
+            //    this.Width = restoreBounds.Width;
+            //    this.Height = restoreBounds.Height;
+            //    //设置窗口状态
+            //    this.WindowState = Properties.Settings.Default.MainWindowState;
+            //} catch { }  
+
         }
 
         private void Window_DragEnter(object sender, DragEventArgs e) {
@@ -79,10 +93,17 @@ namespace SillyMonkey.Views
         /// <returns>如果窗口设入了前台，返回值为非零；如果窗口未被设入前台，返回值为零</returns>  
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
-        private const int SW_SHOWNOMAL = 1;
+        private const int SW_HIDE = 0;
+        private const int SW_NORMAL = 1;
+        private const int SW_MAXIMIZE = 3;
+        private const int SW_SHOWNOACTIVATE = 4;
+        private const int SW_SHOW = 5;
+        private const int SW_MINIMIZE = 6;
+        private const int SW_RESTORE = 9;
+        private const int SW_SHOWDEFAULT = 10;
 
         private void HandleRunningInstance(Process instance) {
-            ShowWindowAsync(instance.MainWindowHandle, SW_SHOWNOMAL);   //显示  
+            ShowWindowAsync(instance.MainWindowHandle, SW_SHOW);   //显示  
             SetForegroundWindow(instance.MainWindowHandle); //当到最前端  
         }
 
@@ -146,6 +167,11 @@ namespace SillyMonkey.Views
             return IntPtr.Zero;
         }
 
-
+        private void StdfAnalyzer_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            //保存当前位置、大小和状态，到配置文件
+            Properties.Settings.Default.MainRestoreBounds = this.RestoreBounds;
+            Properties.Settings.Default.MainWindowState = this.WindowState;
+            Properties.Settings.Default.Save();
+        }
     }
 }

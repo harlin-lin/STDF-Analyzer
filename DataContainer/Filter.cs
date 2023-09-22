@@ -11,7 +11,7 @@ namespace DataContainer {
         public bool IfNoChanged;
         public PartStatistic FilterPartStatistic;
         public ConcurrentDictionary<string, ItemStatistic> FilterItemStatistics;
-        public IEnumerable<int> FilteredPartIdx;
+        public List<int> FilteredPartIdx;
 
         public Filter(int partCnt, int itemCnt) {
 

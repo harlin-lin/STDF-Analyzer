@@ -67,9 +67,9 @@ namespace DataContainer {
             CurrentLoadingProgress = 0;
             OnPropertyChanged("CurrentLoadingProgress");
 
-            _filterContainer[filterId].FilteredPartIdx = from i in Enumerable.Range(0, _partIdx+1)
+            _filterContainer[filterId].FilteredPartIdx = (from i in Enumerable.Range(0, _partIdx+1)
                                                          where !_filterContainer[filterId].FilterIdxFlag[i]
-                                                         select i;
+                                                         select i).ToList();
 
             Task[] asyncTask = new Task[2];
             asyncTask[0] = Task.Run(() => {

@@ -28,7 +28,7 @@
                 <Button Width="23" Height="23" Margin="0,0,10,0" Click="CmdCopy_Click" ToolTip="Copy" BorderThickness="0" >
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
                 </Button>
-                <RadioButton x:Name="radioSigma" Content="Sigma" GroupName="YaxisTrend" Checked="radioSigma_Checked" IsChecked="True"/>
+                <RadioButton x:Name="radioSigma" Content="Sigma" Checked="radioSigma_Checked" IsChecked="True"/>
                 <ComboBox Name="comboboxSigma" Style="{StaticResource LineStyleComboBox}" SelectionChanged="comboboxSigma_SelectionChanged" IsEnabled="{Binding ElementName=radioSigma, Path=IsChecked}" Margin="0,0,5,0">
                     <ComboBoxItem Content="6σ" IsSelected="True"/>
                     <ComboBoxItem Content="5σ"/>
@@ -37,9 +37,9 @@
                     <ComboBoxItem Content="2σ"/>
                     <ComboBoxItem Content="1σ"/>
                 </ComboBox>
-                <RadioButton Name="radioMinMax" Content="MinMax" GroupName="YaxisTrend" Checked="radioMinMax_Checked"  IsChecked="False" Margin="0,0,5,0"/>
-                <RadioButton Name="radioLimit" Content="Limit" GroupName="YaxisTrend" Checked="radioLimit_Checked" IsChecked="False" Margin="0,0,5,0"/>
-                <RadioButton Name="radioUser" Content="User" GroupName="YaxisTrend" Checked="radioUser_Checked" IsChecked="False"/>
+                <RadioButton Name="radioMinMax" Content="MinMax" Checked="radioMinMax_Checked"  IsChecked="False" Margin="0,0,5,0"/>
+                <RadioButton Name="radioLimit" Content="Limit" Checked="radioLimit_Checked" IsChecked="False" Margin="0,0,5,0"/>
+                <RadioButton Name="radioUser" Content="User" Checked="radioUser_Checked" IsChecked="False"/>
 
                 <Label Content="L:" Margin="4,0,0,0"/>
                 <TextBox Name="textboxLRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
@@ -94,7 +94,7 @@
                 <Button Width="23" Height="23" Margin="0,0,10,0" Name="buttonCopyHisto" Click="buttonCopyHisto_Click" ToolTip="Copy" BorderThickness="0">
                     <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
                 </Button>
-                <RadioButton Name="radioSigmaHisto" Content="Sigma" GroupName="YaxisHisto" Checked="radioSigmaHisto_Checked" IsChecked="True"/>
+                <RadioButton Name="radioSigmaHisto" Content="Sigma" Checked="radioSigmaHisto_Checked" IsChecked="True"/>
                 <ComboBox Name="comboboxSigmaHisto" Style="{StaticResource LineStyleComboBox}" SelectionChanged="comboboxSigmaHisto_SelectionChanged" IsEnabled="{Binding ElementName=radioSigmaHisto,Path=IsChecked}" Margin="0,0,5,0">
                     <ComboBoxItem Content="6σ" IsSelected="True"/>
                     <ComboBoxItem Content="5σ"/>
@@ -103,9 +103,9 @@
                     <ComboBoxItem Content="2σ"/>
                     <ComboBoxItem Content="1σ"/>
                 </ComboBox>
-                <RadioButton Name="radioMinMaxHisto" Content="MinMax" GroupName="YaxisHisto" Checked="radioMinMaxHisto_Checked"/>
-                <RadioButton Name="radioLimitHisto" Content="Limit" GroupName="YaxisHisto" Checked="radioLimitHisto_Checked" />
-                <RadioButton Name="radioUserHisto" Content="User" GroupName="YaxisHisto" Checked="radioUserHisto_Checked"/>
+                <RadioButton Name="radioMinMaxHisto" Content="MinMax" Checked="radioMinMaxHisto_Checked"/>
+                <RadioButton Name="radioLimitHisto" Content="Limit" Checked="radioLimitHisto_Checked" />
+                <RadioButton Name="radioUserHisto" Content="User" Checked="radioUserHisto_Checked"/>
                 <Label Content="L:" Margin="4,0,0,0"/>
                 <TextBox Name="textboxLRangeHisto" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
                 <Label Content="H:"/>

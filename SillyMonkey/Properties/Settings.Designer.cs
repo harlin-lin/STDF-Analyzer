@@ -22,5 +22,29 @@ namespace SillyMonkey.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("400,800,0,0")]
+        public global::System.Windows.Rect MainRestoreBounds {
+            get {
+                return ((global::System.Windows.Rect)(this["MainRestoreBounds"]));
+            }
+            set {
+                this["MainRestoreBounds"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
+        public global::System.Windows.WindowState MainWindowState {
+            get {
+                return ((global::System.Windows.WindowState)(this["MainWindowState"]));
+            }
+            set {
+                this["MainWindowState"] = value;
+            }
+        }
     }
 }

@@ -23,13 +23,13 @@
             <Button Name="buttonCopy" Width="23" Height="23" Margin="0,0,10,0" Click="buttonCopy_Click" ToolTip="Copy" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
-            <RadioButton x:Name="rbSigma" Content="Sigma" GroupName="YaxisHisto" Checked="rbSigma_Checked" IsChecked="True"/>
+            <RadioButton x:Name="rbSigma" Content="Sigma" Checked="rbSigma_Checked" IsChecked="True"/>
 
-            <RadioButton x:Name="rbMinMax" Content="MinMax" GroupName="YaxisHisto" Checked="rbMinMax_Checked" IsChecked="False"/>
+            <RadioButton x:Name="rbMinMax" Content="MinMax" Checked="rbMinMax_Checked" IsChecked="False"/>
 
-            <RadioButton x:Name="rbLimit" Content="Limit" GroupName="YaxisHisto" Checked="rbLimit_Checked" IsChecked="False"/>
+            <RadioButton x:Name="rbLimit" Content="Limit" Checked="rbLimit_Checked" IsChecked="False"/>
 
-            <RadioButton x:Name="rbUserRange" Content="User" GroupName="YaxisHisto" Checked="rbUserRange_Checked" IsChecked="False"/>
+            <RadioButton x:Name="rbUserRange" Content="User" Checked="rbUserRange_Checked" IsChecked="False"/>
 
             <Label Content="L:" Margin="4,0,0,0"/>
             <TextBox x:Name="tbLowRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
