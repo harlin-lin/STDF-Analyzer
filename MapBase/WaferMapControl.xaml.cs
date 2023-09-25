@@ -77,7 +77,7 @@ namespace MapBase {
                     }
                 }
 
-                infoBlock.Text = $"XY[{x + _waferData.YLbound},{y + _waferData.YLbound}]\n{append}";
+                infoBlock.Text = $"XY[{x + _waferData.XLbound},{y + _waferData.YLbound}]\n{append}";
                 infoBlock.Visibility = Visibility.Visible;
                 var pt = Mouse.GetPosition(viewGrid);
                 infoBlock.Margin = new Thickness {
