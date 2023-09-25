@@ -23,7 +23,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" Name="scrollBar">
             <Grid Grid.Row="0" Name="viewGrid"  SizeChanged="viewGrid_SizeChanged" />
         </ScrollViewer>
-        <TextBox Grid.Row="0" Name="infoBlock" Visibility="Hidden"  Height="32"  HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBox Grid.Row="0" Name="infoBlock" Visibility="Hidden"  Height="80"  HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <GridSplitter  Grid.Row="1" HorizontalAlignment="Stretch"/>
         <ScrollViewer Grid.Row="2">
             <WrapPanel Name="binInfo" HorizontalAlignment="Left" VerticalAlignment="Top" />

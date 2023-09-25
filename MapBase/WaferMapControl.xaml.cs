@@ -54,30 +54,44 @@ namespace MapBase {
                 infoBlock.Text = "";
                 infoBlock.Visibility = Visibility.Hidden;
             } else {
-                string append = "";
-                if (BinMode == MapBinMode.HBin) {
-                    var bin = _hBinColors.FirstOrDefault(a => a.Value == color).Key;
-                    append = $"HBIN {bin}";
+                //string append = "";
+                //if (BinMode == MapBinMode.HBin) {
+                //    var bin = _hBinColors.FirstOrDefault(a => a.Value == color).Key;
+                //    append = $"HBIN {bin}";
 
-                    if (_waferData.HBinInfo != null) {
-                        var binName = _waferData.HBinInfo[bin].Item2;
-                        if (binName.Length > 0) {
-                            append += $" {binName}";
-                        }
-                    }
+                //    if (_waferData.HBinInfo != null) {
+                //        var binName = _waferData.HBinInfo[bin].Item2;
+                //        if (binName.Length > 0) {
+                //            append += $" {binName}";
+                //        }
+                //    }
+                //} else {
+                //    var bin = _sBinColors.FirstOrDefault(a => a.Value == color).Key;
+                //    append = $"SBIN {bin}";
+
+                //    if (_waferData.SBinInfo != null) {
+                //        var binName = _waferData.SBinInfo[bin].Item2;
+                //        if (binName.Length > 0) {
+                //            append += $" {binName}";
+                //        }
+                //    }
+                //}
+
+                var cordx = x + _waferData.XLbound;
+                var cordy = y + _waferData.YLbound;
+
+                DieInfo die;
+                if(RtDataMode == MapRtDataMode.FirstOnly) {
+                    die = _waferData.DieInfoList.First(a => a.X == cordx && a.Y == cordy);
                 } else {
-                    var bin = _sBinColors.FirstOrDefault(a => a.Value == color).Key;
-                    append = $"SBIN {bin}";
-
-                    if (_waferData.SBinInfo != null) {
-                        var binName = _waferData.SBinInfo[bin].Item2;
-                        if (binName.Length > 0) {
-                            append += $" {binName}";
-                        }
-                    }
+                    die = _waferData.DieInfoList.Last(a => a.X == cordx && a.Y == cordy);
+                }
+                string append = "NULL";
+                if (die != null) {
+                    append = $"Idx {die.Idx}\nHBIN {die.HBin}\nSBIN {die.SBin}\nSite {die.Site}";
                 }
 
-                infoBlock.Text = $"XY[{x + _waferData.XLbound},{y + _waferData.YLbound}]\n{append}";
+                infoBlock.Text = $"XY[{cordx},{cordy}]\n{append}";
                 infoBlock.Visibility = Visibility.Visible;
                 var pt = Mouse.GetPosition(viewGrid);
                 infoBlock.Margin = new Thickness {
