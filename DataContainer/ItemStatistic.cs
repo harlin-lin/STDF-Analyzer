@@ -58,6 +58,16 @@ namespace DataContainer {
                     Cp = (float)(T / (Sigma * 6));
                     //Cpk = Cp*(1-|Ca|)
                     Cpk = Cp * (1 - Math.Abs((float)Ca));
+                } else if (hl != null && ll == null) {
+                    var T = ((float)hl - MeanValue);
+                    Cp = (float)(T / (Sigma * 3));
+
+                    Cpk = Cp;
+                } else if (hl == null && ll != null) {
+                    var T = (MeanValue - (float)ll);
+                    Cp = (float)(T / (Sigma * 3));
+
+                    Cpk = Cp;
                 } else {
                     Cp = float.NaN;
                     Cpk = float.NaN;
