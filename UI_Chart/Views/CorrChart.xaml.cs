@@ -58,6 +58,16 @@ namespace UI_Chart.Views {
         }
         #endregion
 
+        #region line
+        private VLine lineMin_Histo;
+        private VLine lineMax_Histo;
+        private VLine lineLLimit_Histo;
+        private VLine lineHLimit_Histo;
+        private VLine lineLSigma_Histo;
+        private VLine lineHSigma_Histo;
+        #endregion
+
+
         void ClearChart() {
             //clear chart
             histoChart.Plot.Clear();
@@ -247,6 +257,20 @@ namespace UI_Chart.Views {
             histoChart.Plot.Clear();
             histoChart.Plot.Title(_itemTitle, true, null, 12);
             histoChart.Plot.Legend(true, ScottPlot.Alignment.UpperRight);
+
+            lineLLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_lowLimit) ? float.MinValue : _lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            lineHLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_highLimit) ? float.MinValue : _highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            lineMin_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_min) ? float.MinValue : _min, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            lineMax_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_max) ? float.MinValue : _max, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            lineLSigma_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigmaLow) ? float.MinValue : _sigmaLow, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            lineHSigma_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigmaHigh) ? float.MinValue : _sigmaHigh, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+
+            lineLLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
+            lineHLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
+            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            lineLSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
+            lineHSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
 
             double maxCnt = 0;
 
@@ -477,5 +501,27 @@ namespace UI_Chart.Views {
         private void cbOutlierSigma_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             UpdateData();
         }
+
+        private void AxisLimitHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
+            lineLLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            lineHLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+
+            histoChart.Refresh();
+        }
+
+        private void AxisMinMaxHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
+            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+
+            histoChart.Refresh();
+        }
+
+        private void AxisSigmaHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
+            lineLSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
+            lineHSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
+
+            histoChart.Refresh();
+        }
+
     }
 }

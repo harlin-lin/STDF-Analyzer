@@ -15,39 +15,60 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-            <Button x:Name="btSave" Width="23" Height="23" Margin="10,0,5,0" Click="btSave_Click" ToolTip="Save" BorderThickness="0">
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
-            </Button>
-            <Button x:Name="btCopy" Width="23" Height="23" Margin="0,0,10,0" Click="btCopy_Click" ToolTip="Copy" BorderThickness="0">
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
-            </Button>
-            <RadioButton x:Name="rbSigma" Content="Sigma" Checked="rbSigma_Checked" IsChecked="True"/>
-            <RadioButton x:Name="rbMinMax" Content="MinMax" Checked="rbMinMax_Checked" IsChecked="False"/>
-            <RadioButton x:Name="rbLimit" Content="Limit" Checked="rbLimit_Checked" IsChecked="False"/>
-            <RadioButton x:Name="rbUserRange" Content="User" Checked="rbUserRange_Checked" IsChecked="False"/>
-            <Label Content="L:" Margin="4,0,0,0"/>
-            <TextBox x:Name="tbLowRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Label Content="H:"/>
-            <TextBox x:Name="tbHighRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
-            <Button x:Name="btApplyUserRange" Width="23" Height="23" Margin="0,0,0,0" Click="btApplyUserRange_Click" ToolTip="Apply the limit" BorderThickness="0">
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
-            </Button>
-            <ToggleButton x:Name="toggleOutlier" Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="True"
-                            Click="toggleOutlier_Click"
-                          Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
-                <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
-            </ToggleButton>
-            <ComboBox Name="cbOutlierSigma" Style="{StaticResource LineStyleComboBox}" SelectionChanged="cbOutlierSigma_SelectionChanged" IsEnabled="{Binding ElementName=toggleOutlier,Path=IsChecked}" Margin="0,0,0,0">
-                <ComboBoxItem Content="6σ" IsSelected="True"/>
-                <ComboBoxItem Content="5σ"/>
-                <ComboBoxItem Content="4σ"/>
-                <ComboBoxItem Content="3σ"/>
-                <ComboBoxItem Content="2σ"/>
-                <ComboBoxItem Content="1σ"/>
-            </ComboBox>
-        </StackPanel>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="25"/>
+            </Grid.ColumnDefinitions>
 
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button x:Name="btSave" Width="23" Height="23" Margin="10,0,5,0" Click="btSave_Click" ToolTip="Save" BorderThickness="0">
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
+                </Button>
+                <Button x:Name="btCopy" Width="23" Height="23" Margin="0,0,10,0" Click="btCopy_Click" ToolTip="Copy" BorderThickness="0">
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
+                </Button>
+                <RadioButton x:Name="rbSigma" Content="Sigma" Checked="rbSigma_Checked" IsChecked="True"/>
+                <RadioButton x:Name="rbMinMax" Content="MinMax" Checked="rbMinMax_Checked" IsChecked="False"/>
+                <RadioButton x:Name="rbLimit" Content="Limit" Checked="rbLimit_Checked" IsChecked="False"/>
+                <RadioButton x:Name="rbUserRange" Content="User" Checked="rbUserRange_Checked" IsChecked="False"/>
+                <Label Content="L:" Margin="4,0,0,0"/>
+                <TextBox x:Name="tbLowRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,10,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Label Content="H:"/>
+                <TextBox x:Name="tbHighRange" MinWidth="15" Width="50" Height="20" FontSize="10" Margin="0,0,0,0" BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                <Button x:Name="btApplyUserRange" Width="23" Height="23" Margin="0,0,0,0" Click="btApplyUserRange_Click" ToolTip="Apply the limit" BorderThickness="0">
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/BootstrapIcons-CheckSquare.png" Width="16" Height="16"/>
+                </Button>
+                <ToggleButton x:Name="toggleOutlier" Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="True"
+                                Click="toggleOutlier_Click"
+                              Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                    <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+                </ToggleButton>
+                <ComboBox Name="cbOutlierSigma" Style="{StaticResource LineStyleComboBox}" SelectionChanged="cbOutlierSigma_SelectionChanged" IsEnabled="{Binding ElementName=toggleOutlier,Path=IsChecked}" Margin="0,0,0,0">
+                    <ComboBoxItem Content="6σ" IsSelected="True"/>
+                    <ComboBoxItem Content="5σ"/>
+                    <ComboBoxItem Content="4σ"/>
+                    <ComboBoxItem Content="3σ"/>
+                    <ComboBoxItem Content="2σ"/>
+                    <ComboBoxItem Content="1σ"/>
+                </ComboBox>
+            </StackPanel>
+            
+            <ToggleButton Grid.Column="1" Width="20" Height="20" x:Name="tgPopHisto" ToolTip="Axis Line Setup"  BorderThickness="0" Background="Transparent" HorizontalAlignment="Left">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/VaadinIcons-EllipsisDotsV.png" />
+            </ToggleButton>
+            <Popup x:Name="popHisto" IsOpen="{Binding ElementName=tgPopHisto, Path=IsChecked, Mode=TwoWay}"  
+                   PlacementTarget="{Binding ElementName=tgPopHisto}" Placement="Bottom" Width="80" Height="150"
+                   PopupAnimation="Slide" AllowsTransparency="True" StaysOpen="False" HorizontalOffset="-65">
+                <Border Background="White" BorderThickness="1" BorderBrush="Gray">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox x:Name="AxisLimitHisto" Content="Limit" Click="AxisLimitHisto_Click" IsChecked="True" Margin="3"/>
+                        <CheckBox x:Name="AxisMinMaxHisto" Content="MinMax" Click="AxisMinMaxHisto_Click" IsChecked="False" Margin="3"/>
+                        <CheckBox x:Name="AxisSigmaHisto" Content="Sigma" Click="AxisSigmaHisto_Click" IsChecked="True" Margin="3"/>
+                    </StackPanel>
+                </Border>
+            </Popup>
+        </Grid>
         <TextBox x:Name="tbSummary" Grid.Row="0" IsReadOnly="True" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
         <GridSplitter Grid.Row="1"/>
         <WpfPlot Grid.Row="3" Name="histoChart" MouseDoubleClick="histoChart_MouseDoubleClick" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
