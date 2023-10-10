@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Timers;
+using System.Windows;
 using System.Windows.Controls;
 using UI_Data.ViewModels;
 
@@ -24,6 +25,8 @@ namespace UI_Data.Views {
             timer_Item.Interval = 300;
             timer_Item.Elapsed += Timer_Item_Elapsed;
         }
+
+        private double chartViewWidth = 0;
 
         public SubData? CurrentData { get { return null; } }
         public TabType CurrentTabType { get { return TabType.RawDataCorTab; } }
@@ -42,6 +45,10 @@ namespace UI_Data.Views {
 
         private Timer timer_Item = new Timer();
 
+        int SigmaByIdx(int idx) {
+            return 6 - idx;
+        }
+
         public bool IsNavigationTarget(NavigationContext navigationContext) {
             return false;
         }
@@ -55,19 +62,13 @@ namespace UI_Data.Views {
                 _subDataList = new List<SubData>((IEnumerable<SubData>)navigationContext.Parameters["subDataList"]);
                 _corrDataIdx = (int)navigationContext.Parameters["corrDataIdx"];
 
-                _rawDataModel = new DataCorr_FastDataGridModel(_subDataList);
+                _rawDataModel = new DataCorr_FastDataGridModel(_subDataList, (CorrItemType)(cbCorrItems.SelectedIndex), toggleOutlier.IsChecked.Value, SigmaByIdx(cbOutlierSigma.SelectedIndex));
                 rawGrid.Model = _rawDataModel;
 
                 this.Tag = $"Corr_{_corrDataIdx}";
 
                 _regionName = $"Region_Corr_{_corrDataIdx}";
                 RegionManager.SetRegionName(contentCtr, _regionName);
-
-
-                var parameters = new NavigationParameters();
-                parameters.Add("subDataList", _subDataList);
-                parameters.Add("corrDataIdx", _corrDataIdx);
-                _regionManager.RequestNavigate(_regionName, "CorrChart", parameters);
 
                 _ea.GetEvent<Event_FilterUpdated>().Subscribe(UpdateView);
 
@@ -76,7 +77,7 @@ namespace UI_Data.Views {
 
         private void UpdateView(SubData data) {
             if (_subDataList.Contains(data)) {
-                _rawDataModel.UpdateView();
+                _rawDataModel.UpdateView((CorrItemType)(cbCorrItems.SelectedIndex), toggleOutlier.IsChecked.Value, SigmaByIdx(cbOutlierSigma.SelectedIndex));
             }
         }
 
@@ -174,5 +175,67 @@ namespace UI_Data.Views {
                 });
             }
         }
+
+        private void splitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e) {
+            double minWidth = 300;
+            if (mainGrid.ColumnDefinitions[3].ActualWidth > minWidth) {
+                chartViewWidth = mainGrid.ColumnDefinitions[3].ActualWidth;
+            } else {
+                chartViewWidth = 0;
+            }
+        }
+
+        private void EnableChartView() {
+            if (splitter.IsEnabled == false) {
+                splitter.IsEnabled = true;
+
+                if (chartViewWidth == 0) chartViewWidth = mainGrid.ActualWidth * 0.6;
+
+                mainGrid.ColumnDefinitions[3].Width = new GridLength(chartViewWidth);
+            }
+        }
+
+        private void DisableChartView() {
+            if (splitter.IsEnabled == true) {
+                splitter.IsEnabled = false;
+
+                mainGrid.ColumnDefinitions[3].Width = new GridLength(0);
+            }
+        }
+
+        private void ShowTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
+            if (btShowTrend.IsChecked == false) {
+                DisableChartView();
+                _regionManager.Regions[_regionName].RemoveAll();
+            } else {
+                EnableChartView();
+                //btShowTrend.IsChecked = false;
+                ShowTrend();
+            }
+        }
+
+        private void ShowTrend() {
+            var parameters = new NavigationParameters();
+            parameters.Add("subDataList", _subDataList);
+            parameters.Add("corrDataIdx", _corrDataIdx);
+            _regionManager.RequestNavigate(_regionName, "CorrChart", parameters);
+        }
+
+        private void cbCorrItems_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (_corrDataIdx == -1) return;
+            _rawDataModel.UpdateView((CorrItemType)(cbCorrItems.SelectedIndex), toggleOutlier.IsChecked.Value, SigmaByIdx(cbOutlierSigma.SelectedIndex));
+
+        }
+
+        private void toggleOutlier_Click(object sender, RoutedEventArgs e) {
+            if (_corrDataIdx == -1) return;
+            _rawDataModel.UpdateView((CorrItemType)(cbCorrItems.SelectedIndex), toggleOutlier.IsChecked.Value, SigmaByIdx(cbOutlierSigma.SelectedIndex));
+        }
+
+        private void cbOutlierSigma_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            if (_corrDataIdx == -1) return;
+            _rawDataModel.UpdateView((CorrItemType)(cbCorrItems.SelectedIndex), toggleOutlier.IsChecked.Value, SigmaByIdx(cbOutlierSigma.SelectedIndex));
+        }
+
     }
 }

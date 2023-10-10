@@ -40,17 +40,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <TextBlock Text="Filter Item:" VerticalAlignment="Center" />
-                    <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Margin="0,0,10,0" Click="CorrelationBySite_Click" ToolTip="Show Site Correlation" BorderThickness="0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Item Filter:" VerticalAlignment="Center" />
+                    <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"
+                             BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+                    <Button Margin="10,0,10,0" Click="CorrelationBySite_Click" ToolTip="Show Site Correlation" BorderThickness="0">
                         <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-SetSplit.png" Width="21" Height="21"/>
                     </Button>
                     <Button Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">

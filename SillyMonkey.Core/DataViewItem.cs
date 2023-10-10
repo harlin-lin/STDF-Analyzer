@@ -9,6 +9,16 @@ namespace SillyMonkey.Core {
         SiteDataCorTab
     }
 
+    public enum CorrItemType {
+        All,
+        Mean,
+        Min,
+        Max,
+        Cp,
+        Cpk,
+        Sigma
+    }
+
     public interface IDataView {
         SubData? CurrentData{ get; }
         List<SubData> SubDataList { get; }

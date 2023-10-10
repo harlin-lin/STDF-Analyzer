@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using DataContainer;
 using FastWpfGrid;
+using SillyMonkey.Core;
 
 namespace UI_Data.ViewModels {
     public class SiteDataCorr_FastDataGridModel : FastGridModelBase {
@@ -20,6 +21,11 @@ namespace UI_Data.ViewModels {
         private List<Item> _testItems = null;
 
         List<string> _colNames = new List<string>();
+
+        private bool _ifIgnoreOutlier = false;
+        private int _outlierSigmaRange = 0;
+
+        private CorrItemType _corrItemType = CorrItemType.All;
 
         private void UpdateColumnRow() {
             _colNames.Clear();
@@ -35,29 +41,44 @@ namespace UI_Data.ViewModels {
             _colNames.Add("Unit");
 
             var sites = da.GetSites();
-
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Mean S:" + sites[i]);
+            if(_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Mean) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Mean S:" + sites[i]);
+                }
             }
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Min S:" + sites[i]);
+            if (_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Min) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Min S:" + sites[i]);
+                }
             }
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Max S:" + sites[i]);
+            if (_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Max) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Max S:" + sites[i]);
+                }
             }
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Cp S:" + sites[i]);
+            if (_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Cp) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Cp S:" + sites[i]);
+                }
             }
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Cpk S:" + sites[i]);
+            if (_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Cpk) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Cpk S:" + sites[i]);
+                }
             }
-            for (int i = 0; i < sites.Length; i++) {
-                _colNames.Add("Sigma S:" + sites[i]);
+            if (_corrItemType == CorrItemType.All || _corrItemType == CorrItemType.Sigma) {
+                for (int i = 0; i < sites.Length; i++) {
+                    _colNames.Add("Sigma S:" + sites[i]);
+                }
             }
         }
 
-        public SiteDataCorr_FastDataGridModel(SubData subData) {
+        public SiteDataCorr_FastDataGridModel(SubData subData, CorrItemType corrItemType, bool ifIgnoreOutlier, int outlierSigmaRange) {
             _subData = subData;
+            _ifIgnoreOutlier = ifIgnoreOutlier;
+            _outlierSigmaRange = outlierSigmaRange;
+            _corrItemType = corrItemType;
+
             UpdateColumnRow();
 
             _frozenCols.Add(0);
@@ -80,7 +101,11 @@ namespace UI_Data.ViewModels {
             NotifyRefresh();
         }
 
-        public void UpdateView() {
+        public void UpdateView(CorrItemType corrItemType, bool ifIgnoreOutlier, int outlierSigmaRange) {
+            _ifIgnoreOutlier = ifIgnoreOutlier;
+            _outlierSigmaRange = outlierSigmaRange;
+            _corrItemType = corrItemType;
+
             UpdateColumnRow();
 
             NotifyRefresh();
@@ -147,20 +172,43 @@ namespace UI_Data.ViewModels {
                 default:
                     var si = (column - 6) % cnt;
                     var d = (column - 6) / cnt;
-                    var s = da.GetFilteredStatisticBySite(_subData.FilterId, _testItems[row].TestNumber, sites[si]);
-                    switch (d) {
-                        case 0:
-                            return getstr(s.MeanValue);
-                        case 1:
-                            return getstr(s.MinValue);
-                        case 2:
-                            return getstr(s.MaxValue);
-                        case 3:
-                            return getstr(s.Cp);
-                        case 4:
-                            return getstr(s.Cpk);
-                        case 5:
-                            return getstr(s.Sigma);
+                    ItemStatistic s;
+                    if (_ifIgnoreOutlier) {
+                        s = da.GetFilteredStatisticIgnoreOutlierBySite(_subData.FilterId, _testItems[row].TestNumber, _outlierSigmaRange, sites[si]);
+                    } else {
+                        s = da.GetFilteredStatisticBySite(_subData.FilterId, _testItems[row].TestNumber, sites[si]);
+                    }
+                    if (_corrItemType == CorrItemType.All) {
+
+                        switch (d) {
+                            case 0:
+                                return getstr(s.MeanValue);
+                            case 1:
+                                return getstr(s.MinValue);
+                            case 2:
+                                return getstr(s.MaxValue);
+                            case 3:
+                                return getstr(s.Cp);
+                            case 4:
+                                return getstr(s.Cpk);
+                            case 5:
+                                return getstr(s.Sigma);
+                        }
+                    } else {
+                        switch (_corrItemType) {
+                            case CorrItemType.Mean:
+                                return getstr(s.MeanValue);
+                            case CorrItemType.Min:
+                                return getstr(s.MinValue);
+                            case CorrItemType.Max:
+                                return getstr(s.MaxValue);
+                            case CorrItemType.Cp:
+                                return getstr(s.Cp);
+                            case CorrItemType.Cpk:
+                                return getstr(s.Cpk);
+                            case CorrItemType.Sigma:
+                                return getstr(s.Sigma);
+                        }
                     }
                     break;
 

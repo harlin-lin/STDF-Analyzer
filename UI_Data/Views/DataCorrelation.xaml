@@ -9,29 +9,54 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              Name="corrControl">
-    <Grid>
+    <Grid Name="mainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*" MinWidth="50"/>
-            <ColumnDefinition Width="5"/>
-            <ColumnDefinition Width="0.5*" MinWidth="50"/>
+            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="*" MinWidth="50"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="0"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
+        <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Top">
+            <ToggleButton IsChecked="False" Name="btShowTrend" Margin="0,25,0,20" Click="ShowTrend_Click" ToolTip="Show Histogram Chart" Style="{StaticResource RadioStyleBtnToggle}" Height="25" Width="21">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/MaterialLight-ChartHistogram.png" Width="21" Height="21"/>
+            </ToggleButton>
+        </StackPanel>        
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <TextBlock Text="Filter Item:" VerticalAlignment="Center" />
-                    <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Width="23" Height="23" Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBlock Text="Item Filter:" VerticalAlignment="Center" />
+                    <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"
+                             BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+
+                    <ComboBox Name="cbCorrItems" Style="{StaticResource LineStyleComboBox}" SelectionChanged="cbCorrItems_SelectionChanged" Margin="10,0,0,0">
+                        <ComboBoxItem Content="All" IsSelected="True"/>
+                        <ComboBoxItem Content="Mean"/>
+                        <ComboBoxItem Content="Min"/>
+                        <ComboBoxItem Content="Max"/>
+                        <ComboBoxItem Content="Cp"/>
+                        <ComboBoxItem Content="Cpk"/>
+                        <ComboBoxItem Content="Sigma"/>
+                    </ComboBox>
+
+                    <ToggleButton x:Name="toggleOutlier" Width="23" Height="23" ToolTip="Re-Calculate without outlier" IsChecked="True"
+                          Click="toggleOutlier_Click"
+                          Margin="20,0,0,0" BorderThickness="0" Background="Transparent">
+                        <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
+                    </ToggleButton>
+                    <ComboBox Name="cbOutlierSigma" Style="{StaticResource LineStyleComboBox}" SelectionChanged="cbOutlierSigma_SelectionChanged"  IsEnabled="{Binding ElementName=toggleOutlier, Path=IsChecked}" Margin="0,0,0,0">
+                        <ComboBoxItem Content="6σ" IsSelected="True"/>
+                        <ComboBoxItem Content="5σ"/>
+                        <ComboBoxItem Content="4σ"/>
+                        <ComboBoxItem Content="3σ"/>
+                        <ComboBoxItem Content="2σ"/>
+                        <ComboBoxItem Content="1σ"/>
+                    </ComboBox>
+
+                    <Button Width="23" Height="23" Margin="10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
                         <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
                     </Button>
                 </StackPanel>
@@ -40,7 +65,7 @@
                                          SelectedCellsChanged="rawGrid_SelectedCellsChanged">
             </FastWpfGrid:FastGridControl>
         </Grid>
-        <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch"/>
-        <ContentControl Grid.Column="2" Name="contentCtr"/>
+        <GridSplitter Grid.Column="2" Name="splitter" HorizontalAlignment="Stretch" IsEnabled="False" DragCompleted="splitter_DragCompleted" />
+        <ContentControl Grid.Column="3" Name="contentCtr"/>
     </Grid>
 </UserControl>
