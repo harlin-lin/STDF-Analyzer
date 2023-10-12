@@ -258,19 +258,7 @@ namespace UI_Chart.Views {
             histoChart.Plot.Title(_itemTitle, true, null, 12);
             histoChart.Plot.Legend(true, ScottPlot.Alignment.UpperRight);
 
-            lineLLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_lowLimit) ? float.MinValue : _lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineHLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_highLimit) ? float.MinValue : _highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineMin_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_min) ? float.MinValue : _min, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineMax_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_max) ? float.MinValue : _max, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineLSigma_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigmaLow) ? float.MinValue : _sigmaLow, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-            lineHSigma_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigmaHigh) ? float.MinValue : _sigmaHigh, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-
-            lineLLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
-            lineHLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
-            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineLSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
-            lineHSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
+            UpdateAxis_Histo();
 
             double maxCnt = 0;
 
@@ -398,6 +386,41 @@ namespace UI_Chart.Views {
             return ret;
         }
 
+        void UpdateAxis_Histo() {
+            if (isInvalid(_lowLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLLimit_Histo);
+            } else {
+                lineLLimit_Histo = histoChart.Plot.AddVerticalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHLimit_Histo);
+            } else {
+                lineHLimit_Histo = histoChart.Plot.AddVerticalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_min) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMin_Histo);
+            } else {
+                lineMin_Histo = histoChart.Plot.AddVerticalLine(_min, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_max) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMax_Histo);
+            } else {
+                lineMax_Histo = histoChart.Plot.AddVerticalLine(_max, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_sigmaLow) || !AxisSigmaHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma_Histo);
+            } else {
+                lineLSigma_Histo = histoChart.Plot.AddVerticalLine(_sigmaLow, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigmaHigh) || !AxisSigmaHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma_Histo);
+            } else {
+                lineHSigma_Histo = histoChart.Plot.AddVerticalLine(_sigmaHigh, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+
+        }
+
         void ExecuteCmdSelectAxisSigmaHisto() {
             if (!_dataValid) return;
             UpdateHistoSeries(_sigmaLow, _sigmaHigh);
@@ -503,22 +526,47 @@ namespace UI_Chart.Views {
         }
 
         private void AxisLimitHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineHLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            if (isInvalid(_lowLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLLimit_Histo);
+            } else {
+                lineLLimit_Histo = histoChart.Plot.AddVerticalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHLimit_Histo);
+            } else {
+                lineHLimit_Histo = histoChart.Plot.AddVerticalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisMinMaxHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            if (isInvalid(_min) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMin_Histo);
+            } else {
+                lineMin_Histo = histoChart.Plot.AddVerticalLine(_min, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_max) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMax_Histo);
+            } else {
+                lineMax_Histo = histoChart.Plot.AddVerticalLine(_max, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisSigmaHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
-            lineHSigma_Histo.IsVisible = AxisSigmaHisto.IsChecked.Value;
+            if (isInvalid(_sigmaLow) || !AxisSigmaHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma_Histo);
+            } else {
+                lineLSigma_Histo = histoChart.Plot.AddVerticalLine(_sigmaLow, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigmaHigh) || !AxisSigmaHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma_Histo);
+            } else {
+                lineHSigma_Histo = histoChart.Plot.AddVerticalLine(_sigmaHigh, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
 
             histoChart.Refresh();
         }

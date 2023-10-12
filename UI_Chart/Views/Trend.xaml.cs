@@ -259,27 +259,7 @@ namespace UI_Chart.Views {
             trendChart.Plot.Title(_itemTitleTrend,true,null,12);
             trendChart.Plot.Legend(_ifShowLegendCheckBox, ScottPlot.Alignment.UpperRight);
 
-            lineLLimit_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_lowLimit)?float.MinValue:_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineHLimit_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_highLimit)?float.MinValue:_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineMean_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_meanTrend)?float.MinValue:_meanTrend, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
-            lineMedian_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_medianTrend)?float.MinValue:_medianTrend, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
-            lineMin_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_minTrend)?float.MinValue:_minTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineMax_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_maxTrend)?float.MinValue:_maxTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineLSigma6_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_sigma6LTrend)?float.MinValue:_sigma6LTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-            lineHSigma6_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_sigma6HTrend)?float.MinValue:_sigma6HTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-            lineLSigma3_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_sigma3LTrend)?float.MinValue:_sigma3LTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
-            lineHSigma3_Trend = trendChart.Plot.AddHorizontalLine(isInvalid(_sigma3HTrend)?float.MinValue:_sigma3HTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
-
-            lineLLimit_Trend.IsVisible = AxisLimitTrend.IsChecked.Value;
-            lineHLimit_Trend.IsVisible = AxisLimitTrend.IsChecked.Value;
-            lineMean_Trend.IsVisible = AxisMeanTrend.IsChecked.Value;
-            lineMedian_Trend.IsVisible = AxisMedianTrend.IsChecked.Value;
-            lineMin_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
-            lineMax_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
-            lineLSigma6_Trend.IsVisible = AxisSigma6Trend.IsChecked.Value;
-            lineHSigma6_Trend.IsVisible = AxisSigma6Trend.IsChecked.Value;
-            lineLSigma3_Trend.IsVisible = AxisSigma3Trend.IsChecked.Value;
-            lineHSigma3_Trend.IsVisible = AxisSigma3Trend.IsChecked.Value;
+            UpdateAxis_Trend();
 
             //set the y axix
             if (radioSigma.IsChecked.Value) {
@@ -393,27 +373,7 @@ namespace UI_Chart.Views {
             histoChart.Plot.Title(_itemTitleHisto, true, null, 12);
             histoChart.Plot.Legend(_ifShowLegendCheckBox, ScottPlot.Alignment.UpperRight);
 
-            lineLLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_lowLimit)?float.MinValue:_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineHLimit_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_highLimit)?float.MinValue:_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
-            lineMean_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_meanHisto)?float.MinValue:_meanHisto, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
-            lineMedian_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_medianHisto)?float.MinValue:_medianHisto, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
-            lineMin_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_minHisto)?float.MinValue:_minHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineMax_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_maxHisto)?float.MinValue:_maxHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
-            lineLSigma6_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigma6LHisto)?float.MinValue:_sigma6LHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-            lineHSigma6_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigma6HHisto)?float.MinValue:_sigma6HHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
-            lineLSigma3_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigma3LHisto)?float.MinValue:_sigma3LHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
-            lineHSigma3_Histo = histoChart.Plot.AddVerticalLine(isInvalid(_sigma3HHisto)?float.MinValue:_sigma3HHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
-
-            lineLLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
-            lineHLimit_Histo.IsVisible = AxisLimitHisto.IsChecked.Value;
-            lineMean_Histo.IsVisible = AxisMeanHisto.IsChecked.Value;
-            lineMedian_Histo.IsVisible = AxisMedianHisto.IsChecked.Value;
-            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineLSigma6_Histo.IsVisible = AxisSigma6Histo.IsChecked.Value;
-            lineHSigma6_Histo.IsVisible = AxisSigma6Histo.IsChecked.Value;
-            lineLSigma3_Histo.IsVisible = AxisSigma3Histo.IsChecked.Value;
-            lineHSigma3_Histo.IsVisible = AxisSigma3Histo.IsChecked.Value;
+            UpdateAxis_Histo();
 
             var da = StdDB.GetDataAcquire(_subData.StdFilePath);
 
@@ -572,6 +532,115 @@ namespace UI_Chart.Views {
             return ret;
         }
 
+        void UpdateAxis_Trend() {
+            if (isInvalid(_lowLimit) || !AxisLimitTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLLimit_Trend);
+            } else {
+                lineLLimit_Trend = trendChart.Plot.AddHorizontalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHLimit_Trend);
+            } else {
+                lineHLimit_Trend = trendChart.Plot.AddHorizontalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_meanTrend) || !AxisMeanTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMean_Trend);
+            } else {
+                lineMean_Trend = trendChart.Plot.AddHorizontalLine(_meanTrend, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_medianTrend) || !AxisMedianTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMedian_Trend);
+            } else {
+                lineMedian_Trend = trendChart.Plot.AddHorizontalLine(_medianTrend, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_minTrend) || !AxisMinMaxTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMin_Trend);
+            } else {
+                lineMin_Trend = trendChart.Plot.AddHorizontalLine(_minTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_maxTrend) || !AxisMinMaxTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMax_Trend);
+            } else {
+                lineMax_Trend = trendChart.Plot.AddHorizontalLine(_maxTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_sigma6LTrend) || !AxisSigma6Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLSigma6_Trend);
+            } else {
+                lineLSigma6_Trend = trendChart.Plot.AddHorizontalLine(_sigma6LTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma6HTrend) || !AxisSigma6Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHSigma6_Trend);
+            } else {
+                lineHSigma6_Trend = trendChart.Plot.AddHorizontalLine(_sigma6HTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3LTrend) || !AxisSigma3Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLSigma3_Trend);
+            } else {
+                lineLSigma3_Trend = trendChart.Plot.AddHorizontalLine(_sigma3LTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3HTrend) || !AxisSigma3Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHSigma3_Trend);
+            } else {
+                lineHSigma3_Trend = trendChart.Plot.AddHorizontalLine(_sigma3HTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+
+        }
+
+        void UpdateAxis_Histo() {
+            if (isInvalid(_lowLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLLimit_Histo);
+            } else {
+                lineLLimit_Histo = histoChart.Plot.AddVerticalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHLimit_Histo);
+            } else {
+                lineHLimit_Histo = histoChart.Plot.AddVerticalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_meanHisto) || !AxisMeanHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMean_Histo);
+            } else {
+                lineMean_Histo = histoChart.Plot.AddVerticalLine(_meanHisto, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_medianHisto) || !AxisMedianHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMedian_Histo);
+            } else {
+                lineMedian_Histo = histoChart.Plot.AddVerticalLine(_medianHisto, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_minHisto) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMin_Histo);
+            } else {
+                lineMin_Histo = histoChart.Plot.AddVerticalLine(_minHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_maxHisto) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMax_Histo);
+            } else {
+                lineMax_Histo = histoChart.Plot.AddVerticalLine(_maxHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_sigma6LHisto) || !AxisSigma6Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma6_Histo);
+            } else {
+                lineLSigma6_Histo = histoChart.Plot.AddVerticalLine(_sigma6LHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma6HHisto) || !AxisSigma6Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma6_Histo);
+            } else {
+                lineHSigma6_Histo = histoChart.Plot.AddVerticalLine(_sigma6HHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3LHisto) || !AxisSigma3Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma3_Histo);
+            } else {
+                lineLSigma3_Histo = histoChart.Plot.AddVerticalLine(_sigma3LHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3HHisto) || !AxisSigma3Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma3_Histo);
+            } else {
+                lineHSigma3_Histo = histoChart.Plot.AddVerticalLine(_sigma3HHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+
+        }
 
         void ExecuteCmdSelectAxisSigmaTrend() {
             if (!_dataValid) return;
@@ -753,41 +822,81 @@ namespace UI_Chart.Views {
         }
 
         private void AxisLimitTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLLimit_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
-            lineHLimit_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
-
+            if (isInvalid(_lowLimit) || !AxisLimitTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLLimit_Trend);
+            } else {
+                lineLLimit_Trend = trendChart.Plot.AddHorizontalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHLimit_Trend);
+            } else {
+                lineHLimit_Trend = trendChart.Plot.AddHorizontalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
             trendChart.Refresh();
         }
 
         private void AxisMinMaxTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMin_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
-            lineMax_Trend.IsVisible = AxisMinMaxTrend.IsChecked.Value;
+            if (isInvalid(_minTrend) || !AxisMinMaxTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMin_Trend);
+            } else {
+                lineMin_Trend = trendChart.Plot.AddHorizontalLine(_minTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_maxTrend) || !AxisMinMaxTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMax_Trend);
+            } else {
+                lineMax_Trend = trendChart.Plot.AddHorizontalLine(_maxTrend, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
 
             trendChart.Refresh();
         }
 
         private void AxisMeanTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMean_Trend.IsVisible = AxisMeanTrend.IsChecked.Value;
+            if (isInvalid(_meanTrend) || !AxisMeanTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMean_Trend);
+            } else {
+                lineMean_Trend = trendChart.Plot.AddHorizontalLine(_meanTrend, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
+            }
 
             trendChart.Refresh();
         }
 
         private void AxisMedianTrend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMedian_Trend.IsVisible = AxisMedianTrend.IsChecked.Value;
+            if (isInvalid(_medianTrend) || !AxisMedianTrend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineMedian_Trend);
+            } else {
+                lineMedian_Trend = trendChart.Plot.AddHorizontalLine(_medianTrend, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
+            }
 
             trendChart.Refresh();
         }
 
         private void AxisSigma6Trend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLSigma6_Trend.IsVisible = AxisSigma6Trend.IsChecked.Value;
-            lineHSigma6_Trend.IsVisible = AxisSigma6Trend.IsChecked.Value;
+            if (isInvalid(_sigma6LTrend) || !AxisSigma6Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLSigma6_Trend);
+            } else {
+                lineLSigma6_Trend = trendChart.Plot.AddHorizontalLine(_sigma6LTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma6HTrend) || !AxisSigma6Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHSigma6_Trend);
+            } else {
+                lineHSigma6_Trend = trendChart.Plot.AddHorizontalLine(_sigma6HTrend, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
 
             trendChart.Refresh();
         }
 
         private void AxisSigma3Trend_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLSigma3_Trend.IsVisible = AxisSigma3Trend.IsChecked.Value;
-            lineHSigma3_Trend.IsVisible = AxisSigma3Trend.IsChecked.Value;
+            if (isInvalid(_sigma3LTrend) || !AxisSigma3Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineLSigma3_Trend);
+            } else {
+                lineLSigma3_Trend = trendChart.Plot.AddHorizontalLine(_sigma3LTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3HTrend) || !AxisSigma3Trend.IsChecked.Value) {
+                trendChart.Plot.Remove(lineHSigma3_Trend);
+            } else {
+                lineHSigma3_Trend = trendChart.Plot.AddHorizontalLine(_sigma3HTrend, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
 
             trendChart.Refresh();
         }
@@ -864,41 +973,82 @@ namespace UI_Chart.Views {
         }
 
         private void AxisLimitHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineHLimit_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            if (isInvalid(_lowLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLLimit_Histo);
+            } else {
+                lineLLimit_Histo = histoChart.Plot.AddVerticalLine(_lowLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
+            if (isInvalid(_highLimit) || !AxisLimitHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHLimit_Histo);
+            } else {
+                lineHLimit_Histo = histoChart.Plot.AddVerticalLine(_highLimit, Color.Red, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisMinMaxHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMin_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
-            lineMax_Histo.IsVisible = AxisMinMaxHisto.IsChecked.Value;
+            if (isInvalid(_minHisto) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMin_Histo);
+            } else {
+                lineMin_Histo = histoChart.Plot.AddVerticalLine(_minHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
+
+            if (isInvalid(_maxHisto) || !AxisMinMaxHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMax_Histo);
+            } else {
+                lineMax_Histo = histoChart.Plot.AddVerticalLine(_maxHisto, Color.IndianRed, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisMeanHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMean_Histo.IsVisible = AxisMeanHisto.IsChecked.Value;
+            if (isInvalid(_meanHisto) || !AxisMeanHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMean_Histo);
+            } else {
+                lineMean_Histo = histoChart.Plot.AddVerticalLine(_meanHisto, Color.Tomato, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisMedianHisto_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineMedian_Histo.IsVisible = AxisMedianHisto.IsChecked.Value;
+            if (isInvalid(_medianHisto) || !AxisMedianHisto.IsChecked.Value) {
+                histoChart.Plot.Remove(lineMedian_Histo);
+            } else {
+                lineMedian_Histo = histoChart.Plot.AddVerticalLine(_medianHisto, Color.DarkGoldenrod, 2, ScottPlot.LineStyle.Solid);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisSigma6Histo_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLSigma6_Histo.IsVisible = AxisSigma6Histo.IsChecked.Value;
-            lineHSigma6_Histo.IsVisible = AxisSigma6Histo.IsChecked.Value;
+            if (isInvalid(_sigma6LHisto) || !AxisSigma6Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma6_Histo);
+            } else {
+                lineLSigma6_Histo = histoChart.Plot.AddVerticalLine(_sigma6LHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma6HHisto) || !AxisSigma6Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma6_Histo);
+            } else {
+                lineHSigma6_Histo = histoChart.Plot.AddVerticalLine(_sigma6HHisto, Color.DeepSkyBlue, 1, ScottPlot.LineStyle.Dash);
+            }
 
             histoChart.Refresh();
         }
 
         private void AxisSigma3Histo_Click(object sender, System.Windows.RoutedEventArgs e) {
-            lineLSigma3_Histo.IsVisible = AxisSigma3Histo.IsChecked.Value;
-            lineHSigma3_Histo.IsVisible = AxisSigma3Histo.IsChecked.Value;
+            if (isInvalid(_sigma3LHisto) || !AxisSigma3Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineLSigma3_Histo);
+            } else {
+                lineLSigma3_Histo = histoChart.Plot.AddVerticalLine(_sigma3LHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
+            if (isInvalid(_sigma3HHisto) || !AxisSigma3Histo.IsChecked.Value) {
+                histoChart.Plot.Remove(lineHSigma3_Histo);
+            } else {
+                lineHSigma3_Histo = histoChart.Plot.AddVerticalLine(_sigma3HHisto, Color.Lime, 1, ScottPlot.LineStyle.Dash);
+            }
 
             histoChart.Refresh();
         }
