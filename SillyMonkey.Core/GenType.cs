@@ -25,7 +25,27 @@ namespace SillyMonkey.Core {
         TabType CurrentTabType { get; }
     }
 
-    
+    public enum ChartAxisType {
+        Sigma,
+        MinMax,
+        Limit,
+        User
+    }
+
+    public enum UidType {
+        TestNumber,
+        TestName,
+        TestNumberAndTestName
+    }
+
+    public enum SigmaRangeType {
+        Sigma6,
+        Sigma5,
+        Sigma4,
+        Sigma3,
+        Sigma2,
+        Sigma1
+    }
 
     public class BindingProxy : Freezable {
         protected override Freezable CreateInstanceCore() {

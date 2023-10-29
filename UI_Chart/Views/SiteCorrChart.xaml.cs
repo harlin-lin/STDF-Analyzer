@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
-using Utils;
 
 namespace UI_Chart.Views {
     /// <summary>

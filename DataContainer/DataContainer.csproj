@@ -71,6 +71,7 @@
     <Compile Include="ItemInfo.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="ItemStatistic.cs" />
+    <Compile Include="ParseConfig.cs" />
     <Compile Include="PartStatistic.cs" />
     <Compile Include="StdDB.cs" />
     <Compile Include="Enums.cs" />
@@ -91,12 +92,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{F07F0021-C221-4B7A-BF16-9381A80417BD}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,19 +1,9 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using Newtonsoft.Json;
-using System.IO;
-using System.Windows.Forms;
 
-namespace Utils {
+namespace SillyMonkey.Core {
 
     public static class SA {
-        public static UserSetup SaUserSetup;
-        static string SetupPath = @"\SaUserSetup.json";
 
         private static bool _ifCmpTextInUid = false;
 
@@ -42,31 +32,11 @@ namespace Utils {
         };
 
         public static void Init() {
-            SetupPath = System.Environment.CurrentDirectory + SetupPath;
-            if (File.Exists(SetupPath)) {
-                try {
-                    SaUserSetup = JsonConvert.DeserializeObject<UserSetup>(File.ReadAllText(SetupPath));
-                    return;
-                } catch {
-                    SaUserSetup = new UserSetup();
-                }
-            }
-            SaUserSetup = new UserSetup();
-            SaveSetup();
+
         }
         
-        private static void SaveSetup() {
-            return;
-            try {
-                string output = JsonConvert.SerializeObject(SaUserSetup);
-                File.WriteAllText(SetupPath, output);
-            } catch {
-                MessageBox.Show("Setup save failed");
-            }
-        }
-
         public static void ApplyAndSave() {
-            SaveSetup();
+            Properties.Settings.Default.Save();
         }
 
         public static bool IfCmpTextInUid { 
@@ -84,7 +54,8 @@ namespace Utils {
         }
 
         public static Color GetHistogramOutlierColor() {
-            return Color.FromRgb(239,0,0);
+            //return Color.FromRgb(239,0,0);
+            return Properties.Settings.Default.HistogramOutlierColor;
         }
 
 

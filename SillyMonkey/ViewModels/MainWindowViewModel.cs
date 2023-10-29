@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using UI_Data.ViewModels;
-using Utils;
 
 namespace SillyMonkey.ViewModels
 {

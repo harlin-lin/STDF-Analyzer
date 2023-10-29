@@ -182,10 +182,6 @@
       <Project>{8dce4ce3-e4e2-4667-bd60-dcf9dd413426}</Project>
       <Name>UI_Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{F07F0021-C221-4B7A-BF16-9381A80417BD}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">

@@ -190,10 +190,6 @@
       <Project>{8DCE4CE3-E4E2-4667-BD60-DCF9DD413426}</Project>
       <Name>UI_Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Utils\Utils.csproj">
-      <Project>{F07F0021-C221-4B7A-BF16-9381A80417BD}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

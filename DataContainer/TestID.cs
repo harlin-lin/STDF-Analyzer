@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Utils;
 
 namespace DataContainer{
     public struct TempID /*: IComparer */{
@@ -16,7 +15,7 @@ namespace DataContainer{
         public TempID(uint tn, string name) {
             TestNumber = tn;
             TestName = name;
-            if (SA.IfCmpTextInUid)
+            if (ParseConfig.IfCmpTextInUid)
                 _hashCode = $"{TestNumber}_{TestName}".GetHashCode();
             else
                 _hashCode = "TestNumber".GetHashCode();
@@ -55,7 +54,7 @@ namespace DataContainer{
             TestNumber = testNumber;
             SubID = subNumber;
             TestName = text;
-            if(SA.IfCmpTextInUid)
+            if(ParseConfig.IfCmpTextInUid)
                 UID = $"{testNumber}_{subNumber}_{text}";
             else
                 UID = $"{testNumber}_{subNumber}";
@@ -63,7 +62,7 @@ namespace DataContainer{
         }
 
         public bool IfSubTest(TempID id) {
-            if (SA.IfCmpTextInUid) {
+            if (ParseConfig.IfCmpTextInUid) {
                 return id.TestNumber == TestNumber && id.TestName == TestName;
             } else {
                 return id.TestNumber == TestNumber;
@@ -71,7 +70,7 @@ namespace DataContainer{
         }
         public bool IfSubTest(uint testNumber, string text) {
             if (TestName is null) return false;
-            if (SA.IfCmpTextInUid) {
+            if (ParseConfig.IfCmpTextInUid) {
                 return testNumber == TestNumber && text == TestName;
             } else {
                 return testNumber == TestNumber;
