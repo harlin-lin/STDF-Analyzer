@@ -28,8 +28,7 @@ namespace SillyMonkey.Core {
     public enum ChartAxisType {
         Sigma,
         MinMax,
-        Limit,
-        User
+        Limit
     }
 
     public enum UidType {

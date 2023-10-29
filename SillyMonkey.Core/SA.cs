@@ -1,11 +1,11 @@
 ﻿using Microsoft.Win32;
+using SillyMonkey.Core.Properties;
+using System;
 using System.Windows.Media;
 
 namespace SillyMonkey.Core {
 
     public static class SA {
-
-        private static bool _ifCmpTextInUid = false;
 
         private static Color[] ColorList = {
                 Color.FromRgb(0, 0, 255),
@@ -32,20 +32,157 @@ namespace SillyMonkey.Core {
         };
 
         public static void Init() {
-
+            DataContainer.ParseConfig.UpdateCconfig(SA.UidMode == UidType.TestNumberAndTestName);
         }
         
         public static void ApplyAndSave() {
             Properties.Settings.Default.Save();
         }
 
-        public static bool IfCmpTextInUid { 
-            get {
-                return _ifCmpTextInUid;
-            }
-            set {
-                _ifCmpTextInUid = value;
-            }
+        public static UidType UidMode { 
+            get { return (UidType)Enum.Parse(typeof(UidType), Settings.Default.UidMode); }
+            set { Settings.Default.UidMode = value.ToString(); }
+        }
+
+        public static ChartAxisType HistogramChartAxis {
+            get { return (ChartAxisType)Enum.Parse(typeof(ChartAxisType), Settings.Default.HistogramChartAxis); }
+            set { Settings.Default.HistogramChartAxis = value.ToString(); }
+        }
+
+        public static SigmaRangeType HistogramChartAxisSigmaRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.HistogramChartAxisSigmaRange); }
+            set { Settings.Default.HistogramChartAxisSigmaRange = value.ToString(); }
+        }
+
+        public static SigmaRangeType HistogramOutlierFilterRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.HistogramOutlierFilterRange); }
+            set { Settings.Default.HistogramOutlierFilterRange = value.ToString(); }
+        }
+
+        public static bool HistogramEnableOutlierFilter {
+            get { return Settings.Default.HistogramEnableOutlierFilter; }
+            set { Settings.Default.HistogramEnableOutlierFilter = value; }
+        }
+
+        public static bool HistogramEnableLimitLine {
+            get { return Settings.Default.HistogramEnableLimitLine; }
+            set { Settings.Default.HistogramEnableLimitLine = value; }
+        }
+
+        public static bool HistogramEnableSigma6Line {
+            get { return Settings.Default.HistogramEnableSigma6Line; }
+            set { Settings.Default.HistogramEnableSigma6Line = value; }
+        }
+
+        public static bool HistogramEnableSigma3Line {
+            get { return Settings.Default.HistogramEnableSigma3Line; }
+            set { Settings.Default.HistogramEnableSigma3Line = value; }
+        }
+
+        public static bool HistogramEnableMinMaxLine {
+            get { return Settings.Default.HistogramEnableMinMaxLine; }
+            set { Settings.Default.HistogramEnableMinMaxLine = value; }
+        }
+
+        public static bool HistogramEnableMeanLine {
+            get { return Settings.Default.HistogramEnableMeanLine; }
+            set { Settings.Default.HistogramEnableMeanLine = value; }
+        }
+
+        public static bool HistogramEnableMedianLine {
+            get { return Settings.Default.HistogramEnableMedianLine; }
+            set { Settings.Default.HistogramEnableMedianLine = value; }
+        }
+
+        public static ChartAxisType TrendChartAxis {
+            get { return (ChartAxisType)Enum.Parse(typeof(ChartAxisType), Settings.Default.TrendChartAxis); }
+            set { Settings.Default.TrendChartAxis = value.ToString(); }
+        }
+
+        public static SigmaRangeType TrendChartAxisSigmaRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.TrendChartAxisSigmaRange); }
+            set { Settings.Default.TrendChartAxisSigmaRange = value.ToString(); }
+        }
+
+        public static SigmaRangeType TrendOutlierFilterRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.TrendOutlierFilterRange); }
+            set { Settings.Default.TrendOutlierFilterRange = value.ToString(); }
+        }
+
+        public static bool TrendEnableOutlierFilter {
+            get { return Settings.Default.TrendEnableOutlierFilter; }
+            set { Settings.Default.TrendEnableOutlierFilter = value; }
+        }
+
+        public static bool TrendEnableLimitLine {
+            get { return Settings.Default.TrendEnableLimitLine; }
+            set { Settings.Default.TrendEnableLimitLine = value; }
+        }
+
+        public static bool TrendEnableSigma6Line {
+            get { return Settings.Default.TrendEnableSigma6Line; }
+            set { Settings.Default.TrendEnableSigma6Line = value; }
+        }
+
+        public static bool TrendEnableSigma3Line {
+            get { return Settings.Default.TrendEnableSigma3Line; }
+            set { Settings.Default.TrendEnableSigma3Line = value; }
+        }
+
+        public static bool TrendEnableMinMaxLine {
+            get { return Settings.Default.TrendEnableMinMaxLine; }
+            set { Settings.Default.TrendEnableMinMaxLine = value; }
+        }
+
+        public static bool TrendEnableMeanLine {
+            get { return Settings.Default.TrendEnableMeanLine; }
+            set { Settings.Default.TrendEnableMeanLine = value; }
+        }
+
+        public static bool TrendEnableMedianLine {
+            get { return Settings.Default.TrendEnableMedianLine; }
+            set { Settings.Default.TrendEnableMedianLine = value; }
+        }
+
+
+        public static ChartAxisType CorrHistogramChartAxis {
+            get { return (ChartAxisType)Enum.Parse(typeof(ChartAxisType), Settings.Default.CorrHistogramChartAxis); }
+            set { Settings.Default.CorrHistogramChartAxis = value.ToString(); }
+        }
+
+        public static SigmaRangeType CorrHistogramOutlierFilterRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.CorrHistogramOutlierFilterRange); }
+            set { Settings.Default.CorrHistogramOutlierFilterRange = value.ToString(); }
+        }
+
+        public static bool CorrHistogramEnableOutlierFilter {
+            get { return Settings.Default.CorrHistogramEnableOutlierFilter; }
+            set { Settings.Default.CorrHistogramEnableOutlierFilter = value; }
+        }
+
+        public static bool CorrHistogramEnableLimitLine {
+            get { return Settings.Default.CorrHistogramEnableLimitLine; }
+            set { Settings.Default.CorrHistogramEnableLimitLine = value; }
+        }
+
+        public static bool CorrHistogramEnableSigmaLine {
+            get { return Settings.Default.CorrHistogramEnableSigmaLine; }
+            set { Settings.Default.CorrHistogramEnableSigmaLine = value; }
+        }
+
+        public static bool CorrHistogramEnableMinMaxLine {
+            get { return Settings.Default.CorrHistogramEnableMinMaxLine; }
+            set { Settings.Default.CorrHistogramEnableMinMaxLine = value; }
+        }
+
+        public static SigmaRangeType ItemCorrOutlierFilterRange {
+            get { return (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), Settings.Default.ItemCorrOutlierFilterRange); }
+            set { Settings.Default.ItemCorrOutlierFilterRange = value.ToString(); }
+        }
+
+        public static bool ItemCorrEnableOutlierFilter {
+            get { return Settings.Default.ItemCorrEnableOutlierFilter; }
+            set { Settings.Default.ItemCorrEnableOutlierFilter = value; }
         }
 
         public static Color GetColor(int idx) {
@@ -57,7 +194,6 @@ namespace SillyMonkey.Core {
             //return Color.FromRgb(239,0,0);
             return Properties.Settings.Default.HistogramOutlierColor;
         }
-
 
         private static bool WriteToReg(string keyName, object val) {
 

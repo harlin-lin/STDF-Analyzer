@@ -5,14 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UI_DataList.Views"
         mc:Ignorable="d"
-        Title="SetupWindow" Height="400" Width="400">
+        Title="SetupWindow" Height="400" Width="400"
+        Closing="Window_Closing">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="221*"/>
+            <ColumnDefinition Width="171*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <TabControl Grid.Row="0"  IsEnabled="False">
+        <TabControl Grid.Row="0" Grid.ColumnSpan="2">
             <TabItem Header="Data">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
@@ -117,16 +122,24 @@
                         <ComboBox ItemsSource="{Binding ChartAxisTypeList}" SelectedItem="{Binding SelectedCorrHistogramChartAxis}" Width="150" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
-                        <TextBlock Text="Axis Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
-                        <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedCorrHistogramChartAxisSigmaRange}" Width="150" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
                         <TextBlock Text="Enable Outlier Filter:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
                         <CheckBox IsChecked="{Binding CorrHistogramEnableOutlierFilter}" Margin="0"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
                         <TextBlock Text="Outlier Filter Sigma Range:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
                         <ComboBox ItemsSource="{Binding SigmaRangeTypeList}" SelectedItem="{Binding SelectedCorrHistogramOutlierFilterRange}" Width="150" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Limit Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding CorrHistogramEnableLimitLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable Min Max Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding CorrHistogramEnableMinMaxLine}" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Enable 6 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding CorrHistogramEnableSigmaLine}" Margin="0"/>
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -144,7 +157,7 @@
                 </StackPanel>
             </TabItem>
         </TabControl>
-        <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Vertical">
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,11">
             <Button Content="Apply" Width="100" Command="{Binding Apply}"/>
         </StackPanel>
     </Grid>

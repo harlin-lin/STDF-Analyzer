@@ -24,6 +24,29 @@ namespace UI_Chart.Views {
 
             scatterChart.RightClicked -= scatterChart.DefaultRightClickEvent;
             scatterChart.Configuration.DoubleClickBenchmark = false;
+
+            toggleOutlier.IsChecked = SA.ItemCorrEnableOutlierFilter;
+
+            switch (SA.ItemCorrOutlierFilterRange) {
+                case SigmaRangeType.Sigma6:
+                    comboboxSigmaOutlier.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    comboboxSigmaOutlier.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    comboboxSigmaOutlier.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    comboboxSigmaOutlier.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    comboboxSigmaOutlier.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    comboboxSigmaOutlier.SelectedIndex = 5;
+                    break;
+            }
         }
 
         IRegionManager _regionManager;

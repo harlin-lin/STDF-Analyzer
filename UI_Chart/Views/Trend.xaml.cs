@@ -29,6 +29,134 @@ namespace UI_Chart.Views {
             histoChart.RightClicked -= histoChart.DefaultRightClickEvent;
             histoChart.Configuration.DoubleClickBenchmark = false;
             histoChart.Configuration.LockHorizontalAxis = true;
+
+            switch(SA.HistogramChartAxis){
+                case ChartAxisType.Sigma:
+                    radioSigmaHisto.IsChecked = true;
+                    break;
+                case ChartAxisType.MinMax:
+                    radioMinMaxHisto.IsChecked = true;
+                    break;
+                case ChartAxisType.Limit:
+                    radioLimitHisto.IsChecked = true;
+                    break;
+            }
+
+            switch (SA.HistogramChartAxisSigmaRange) {
+                case SigmaRangeType.Sigma6:
+                    comboboxSigmaHisto.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    comboboxSigmaHisto.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    comboboxSigmaHisto.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    comboboxSigmaHisto.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    comboboxSigmaHisto.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    comboboxSigmaHisto.SelectedIndex = 5;
+                    break;
+            }
+
+            toggleOutlierHisto.IsChecked = SA.HistogramEnableOutlierFilter;
+
+            switch (SA.HistogramOutlierFilterRange) {
+                case SigmaRangeType.Sigma6:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    comboboxOutlierSigmaHisto.SelectedIndex = 5;
+                    break;
+            }
+
+            AxisLimitHisto.IsChecked = SA.HistogramEnableLimitLine;
+            AxisMinMaxHisto.IsChecked = SA.HistogramEnableMinMaxLine;
+            AxisMeanHisto.IsChecked = SA.HistogramEnableMeanLine;
+            AxisMedianHisto.IsChecked = SA.HistogramEnableMedianLine;
+            AxisSigma6Histo.IsChecked = SA.HistogramEnableSigma6Line;
+            AxisSigma3Histo.IsChecked = SA.HistogramEnableSigma3Line;
+
+
+            switch (SA.TrendChartAxis) {
+                case ChartAxisType.Sigma:
+                    radioSigma.IsChecked = true;
+                    break;
+                case ChartAxisType.MinMax:
+                    radioMinMax.IsChecked = true;
+                    break;
+                case ChartAxisType.Limit:
+                    radioLimit.IsChecked = true;
+                    break;
+            }
+
+            switch (SA.TrendChartAxisSigmaRange) {
+                case SigmaRangeType.Sigma6:
+                    comboboxSigma.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    comboboxSigma.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    comboboxSigma.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    comboboxSigma.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    comboboxSigma.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    comboboxSigma.SelectedIndex = 5;
+                    break;
+            }
+
+            toggleOutlierTrend.IsChecked = SA.TrendEnableOutlierFilter;
+
+            switch (SA.TrendOutlierFilterRange) {
+                case SigmaRangeType.Sigma6:
+                    comboboxOutlierSigma.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    comboboxOutlierSigma.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    comboboxOutlierSigma.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    comboboxOutlierSigma.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    comboboxOutlierSigma.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    comboboxOutlierSigma.SelectedIndex = 5;
+                    break;
+            }
+
+            AxisLimitTrend.IsChecked = SA.TrendEnableLimitLine;
+            AxisMinMaxTrend.IsChecked = SA.TrendEnableMinMaxLine;
+            AxisMeanTrend.IsChecked = SA.TrendEnableMeanLine;
+            AxisMedianTrend.IsChecked = SA.TrendEnableMedianLine;
+            AxisSigma6Trend.IsChecked = SA.TrendEnableSigma6Line;
+            AxisSigma3Trend.IsChecked = SA.TrendEnableSigma3Line;
+
         }
         IRegionManager _regionManager;
         IEventAggregator _ea;

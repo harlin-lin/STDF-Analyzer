@@ -25,25 +25,361 @@ namespace SillyMonkey.Core.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IfCmpTextInUid {
+        [global::System.Configuration.DefaultSettingValueAttribute("TestNumber")]
+        public string UidMode {
             get {
-                return ((bool)(this["IfCmpTextInUid"]));
+                return ((string)(this["UidMode"]));
             }
             set {
-                this["IfCmpTextInUid"] = value;
+                this["UidMode"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#EF000000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FFEF0000")]
         public global::System.Windows.Media.Color HistogramOutlierColor {
             get {
                 return ((global::System.Windows.Media.Color)(this["HistogramOutlierColor"]));
             }
             set {
                 this["HistogramOutlierColor"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma")]
+        public string HistogramChartAxis {
+            get {
+                return ((string)(this["HistogramChartAxis"]));
+            }
+            set {
+                this["HistogramChartAxis"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string HistogramChartAxisSigmaRange {
+            get {
+                return ((string)(this["HistogramChartAxisSigmaRange"]));
+            }
+            set {
+                this["HistogramChartAxisSigmaRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string HistogramOutlierFilterRange {
+            get {
+                return ((string)(this["HistogramOutlierFilterRange"]));
+            }
+            set {
+                this["HistogramOutlierFilterRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HistogramEnableOutlierFilter {
+            get {
+                return ((bool)(this["HistogramEnableOutlierFilter"]));
+            }
+            set {
+                this["HistogramEnableOutlierFilter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HistogramEnableLimitLine {
+            get {
+                return ((bool)(this["HistogramEnableLimitLine"]));
+            }
+            set {
+                this["HistogramEnableLimitLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool HistogramEnableSigma6Line {
+            get {
+                return ((bool)(this["HistogramEnableSigma6Line"]));
+            }
+            set {
+                this["HistogramEnableSigma6Line"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HistogramEnableSigma3Line {
+            get {
+                return ((bool)(this["HistogramEnableSigma3Line"]));
+            }
+            set {
+                this["HistogramEnableSigma3Line"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HistogramEnableMinMaxLine {
+            get {
+                return ((bool)(this["HistogramEnableMinMaxLine"]));
+            }
+            set {
+                this["HistogramEnableMinMaxLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HistogramEnableMeanLine {
+            get {
+                return ((bool)(this["HistogramEnableMeanLine"]));
+            }
+            set {
+                this["HistogramEnableMeanLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool HistogramEnableMedianLine {
+            get {
+                return ((bool)(this["HistogramEnableMedianLine"]));
+            }
+            set {
+                this["HistogramEnableMedianLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma")]
+        public string TrendChartAxis {
+            get {
+                return ((string)(this["TrendChartAxis"]));
+            }
+            set {
+                this["TrendChartAxis"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string TrendChartAxisSigmaRange {
+            get {
+                return ((string)(this["TrendChartAxisSigmaRange"]));
+            }
+            set {
+                this["TrendChartAxisSigmaRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string TrendOutlierFilterRange {
+            get {
+                return ((string)(this["TrendOutlierFilterRange"]));
+            }
+            set {
+                this["TrendOutlierFilterRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TrendEnableOutlierFilter {
+            get {
+                return ((bool)(this["TrendEnableOutlierFilter"]));
+            }
+            set {
+                this["TrendEnableOutlierFilter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TrendEnableLimitLine {
+            get {
+                return ((bool)(this["TrendEnableLimitLine"]));
+            }
+            set {
+                this["TrendEnableLimitLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool TrendEnableSigma6Line {
+            get {
+                return ((bool)(this["TrendEnableSigma6Line"]));
+            }
+            set {
+                this["TrendEnableSigma6Line"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TrendEnableSigma3Line {
+            get {
+                return ((bool)(this["TrendEnableSigma3Line"]));
+            }
+            set {
+                this["TrendEnableSigma3Line"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TrendEnableMinMaxLine {
+            get {
+                return ((bool)(this["TrendEnableMinMaxLine"]));
+            }
+            set {
+                this["TrendEnableMinMaxLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TrendEnableMeanLine {
+            get {
+                return ((bool)(this["TrendEnableMeanLine"]));
+            }
+            set {
+                this["TrendEnableMeanLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TrendEnableMedianLine {
+            get {
+                return ((bool)(this["TrendEnableMedianLine"]));
+            }
+            set {
+                this["TrendEnableMedianLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma")]
+        public string CorrHistogramChartAxis {
+            get {
+                return ((string)(this["CorrHistogramChartAxis"]));
+            }
+            set {
+                this["CorrHistogramChartAxis"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string CorrHistogramOutlierFilterRange {
+            get {
+                return ((string)(this["CorrHistogramOutlierFilterRange"]));
+            }
+            set {
+                this["CorrHistogramOutlierFilterRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CorrHistogramEnableOutlierFilter {
+            get {
+                return ((bool)(this["CorrHistogramEnableOutlierFilter"]));
+            }
+            set {
+                this["CorrHistogramEnableOutlierFilter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Sigma6")]
+        public string ItemCorrOutlierFilterRange {
+            get {
+                return ((string)(this["ItemCorrOutlierFilterRange"]));
+            }
+            set {
+                this["ItemCorrOutlierFilterRange"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ItemCorrEnableOutlierFilter {
+            get {
+                return ((bool)(this["ItemCorrEnableOutlierFilter"]));
+            }
+            set {
+                this["ItemCorrEnableOutlierFilter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CorrHistogramEnableLimitLine {
+            get {
+                return ((bool)(this["CorrHistogramEnableLimitLine"]));
+            }
+            set {
+                this["CorrHistogramEnableLimitLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CorrHistogramEnableSigmaLine {
+            get {
+                return ((bool)(this["CorrHistogramEnableSigmaLine"]));
+            }
+            set {
+                this["CorrHistogramEnableSigmaLine"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CorrHistogramEnableMinMaxLine {
+            get {
+                return ((bool)(this["CorrHistogramEnableMinMaxLine"]));
+            }
+            set {
+                this["CorrHistogramEnableMinMaxLine"] = value;
             }
         }
     }

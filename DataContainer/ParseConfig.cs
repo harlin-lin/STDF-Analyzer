@@ -9,8 +9,8 @@ namespace DataContainer {
 
         public static bool IfCmpTextInUid=false;
 
-        public static void UpdateCconfig() {
-
+        public static void UpdateCconfig(bool ifCmpTextInUid) {
+            IfCmpTextInUid = ifCmpTextInUid;
         }
     }
 }

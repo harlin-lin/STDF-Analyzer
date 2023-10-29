@@ -1,21 +1,11 @@
 ﻿using Prism.Commands;
-using Prism.Mvvm;
 using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using SillyMonkey.Core.Properties;
 
 namespace UI_DataList.Views {
     /// <summary>
@@ -32,15 +22,10 @@ namespace UI_DataList.Views {
             get { return _uidTypeList; }
         }
 
-        public string SelectedUidMode { get; set; }
-
-
         private string[] _chartAxisTypeList = Enum.GetNames(typeof(ChartAxisType));
         public string[] ChartAxisTypeList {
             get { return _chartAxisTypeList; }
         }
-
-        public string SelectedHistogramChartAxis { get; set; }
 
         private string[] _sigmaRangeTypeList = Enum.GetNames(typeof(SigmaRangeType));
         public string[] SigmaRangeTypeList {
@@ -48,6 +33,154 @@ namespace UI_DataList.Views {
         }
 
 
+        public string SelectedUidMode {
+            get { return SA.UidMode.ToString(); }
+            set { SA.UidMode = (UidType)Enum.Parse(typeof(UidType), value); }
+        }
+
+        public string SelectedHistogramChartAxis {
+            get { return SA.HistogramChartAxis.ToString(); }
+            set { SA.HistogramChartAxis = (ChartAxisType)Enum.Parse(typeof(ChartAxisType), value); }
+        }
+
+        public string SelectedHistogramChartAxisSigmaRange {
+            get { return SA.HistogramChartAxisSigmaRange.ToString(); }
+            set { SA.HistogramChartAxisSigmaRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); } 
+        }
+
+        public string SelectedHistogramOutlierFilterRange {
+            get { return SA.HistogramOutlierFilterRange.ToString(); }
+            set { SA.HistogramOutlierFilterRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); }
+        }
+
+        public bool HistogramEnableOutlierFilter {
+            get { return SA.HistogramEnableOutlierFilter; }
+            set { SA.HistogramEnableOutlierFilter = value; }
+        }
+
+        public bool HistogramEnableLimitLine {
+            get { return SA.HistogramEnableLimitLine; }
+            set { SA.HistogramEnableLimitLine = value; }
+        }
+
+        public bool HistogramEnableSigma6Line {
+            get { return SA.HistogramEnableSigma6Line; }
+            set { SA.HistogramEnableSigma6Line = value; }
+        }
+
+        public bool HistogramEnableSigma3Line {
+            get { return SA.HistogramEnableSigma3Line; }
+            set { SA.HistogramEnableSigma3Line = value; }
+        }
+
+        public bool HistogramEnableMinMaxLine {
+            get { return SA.HistogramEnableMinMaxLine; }
+            set { SA.HistogramEnableMinMaxLine = value; }
+        }
+
+        public bool HistogramEnableMeanLine {
+            get { return SA.HistogramEnableMeanLine; }
+            set { SA.HistogramEnableMeanLine = value; }
+        }
+
+        public bool HistogramEnableMedianLine {
+            get { return SA.HistogramEnableMedianLine; }
+            set { SA.HistogramEnableMedianLine = value; }
+        }
+
+
+        public string SelectedTrendChartAxis {
+            get { return SA.TrendChartAxis.ToString(); }
+            set { SA.TrendChartAxis = (ChartAxisType)Enum.Parse(typeof(ChartAxisType), value); }
+        }
+
+        public string SelectedTrendChartAxisSigmaRange {
+            get { return SA.TrendChartAxisSigmaRange.ToString(); }
+            set { SA.TrendChartAxisSigmaRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); }
+        }
+
+        public string SelectedTrendOutlierFilterRange {
+            get { return SA.TrendOutlierFilterRange.ToString(); }
+            set { SA.TrendOutlierFilterRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); }
+        }
+
+        public bool TrendEnableOutlierFilter {
+            get { return SA.TrendEnableOutlierFilter; }
+            set { SA.TrendEnableOutlierFilter = value; }
+        }
+
+        public bool TrendEnableLimitLine {
+            get { return SA.TrendEnableLimitLine; }
+            set { SA.TrendEnableLimitLine = value; }
+        }
+
+        public bool TrendEnableSigma6Line {
+            get { return SA.TrendEnableSigma6Line; }
+            set { SA.TrendEnableSigma6Line = value; }
+        }
+
+        public bool TrendEnableSigma3Line {
+            get { return SA.TrendEnableSigma3Line; }
+            set { SA.TrendEnableSigma3Line = value; }
+        }
+
+        public bool TrendEnableMinMaxLine {
+            get { return SA.TrendEnableMinMaxLine; }
+            set { SA.TrendEnableMinMaxLine = value; }
+        }
+
+        public bool TrendEnableMeanLine {
+            get { return SA.TrendEnableMeanLine; }
+            set { SA.TrendEnableMeanLine = value; }
+        }
+
+        public bool TrendEnableMedianLine {
+            get { return SA.TrendEnableMedianLine; }
+            set { SA.TrendEnableMedianLine = value; }
+        }
+
+
+        public string SelectedCorrHistogramChartAxis {
+            get { return SA.CorrHistogramChartAxis.ToString(); }
+            set { SA.CorrHistogramChartAxis = (ChartAxisType)Enum.Parse(typeof(ChartAxisType), value); }
+        }
+
+        public string SelectedCorrHistogramOutlierFilterRange {
+            get { return SA.CorrHistogramOutlierFilterRange.ToString(); }
+            set { SA.CorrHistogramOutlierFilterRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); }
+        }
+
+        public bool CorrHistogramEnableOutlierFilter {
+            get { return SA.CorrHistogramEnableOutlierFilter; }
+            set { SA.CorrHistogramEnableOutlierFilter = value; }
+        }
+
+        public bool CorrHistogramEnableLimitLine {
+            get { return SA.CorrHistogramEnableLimitLine; }
+            set { SA.CorrHistogramEnableLimitLine = value; }
+        }
+
+        public bool CorrHistogramEnableSigmaLine {
+            get { return SA.CorrHistogramEnableSigmaLine; }
+            set { SA.CorrHistogramEnableSigmaLine = value; }
+        }
+
+        public bool CorrHistogramEnableMinMaxLine {
+            get { return SA.CorrHistogramEnableMinMaxLine; }
+            set { SA.CorrHistogramEnableMinMaxLine = value; }
+        }
+
+
+
+        public string SelectedItemCorrOutlierFilterRange {
+            get { return SA.ItemCorrOutlierFilterRange.ToString(); }
+            set { SA.ItemCorrOutlierFilterRange = (SigmaRangeType)Enum.Parse(typeof(SigmaRangeType), value); }
+        }
+
+        public bool ItemCorrEnableOutlierFilter {
+            get { return SA.ItemCorrEnableOutlierFilter; }
+            set { SA.ItemCorrEnableOutlierFilter = value; }
+        }
 
         private DelegateCommand _apply;
 
@@ -134,7 +267,9 @@ namespace UI_DataList.Views {
             PropertyChanged?.Invoke(this, args);
         }
 
-
+        private void Window_Closing(object sender, CancelEventArgs e) {
+            SA.ApplyAndSave();
+        }
     }
 
 

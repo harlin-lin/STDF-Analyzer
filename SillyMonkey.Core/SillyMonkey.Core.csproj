@@ -82,6 +82,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SA.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SummaryHelper.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,46 @@ namespace UI_Chart.Views {
             histoChart.RightClicked -= histoChart.DefaultRightClickEvent;
             histoChart.Configuration.DoubleClickBenchmark = false;
             histoChart.Configuration.LockHorizontalAxis = true;
+
+            switch (SA.CorrHistogramChartAxis) {
+                case ChartAxisType.Sigma:
+                    rbSigma.IsChecked = true;
+                    break;
+                case ChartAxisType.MinMax:
+                    rbMinMax.IsChecked = true;
+                    break;
+                case ChartAxisType.Limit:
+                    rbLimit.IsChecked = true;
+                    break;
+            }
+
+            toggleOutlier.IsChecked = SA.CorrHistogramEnableOutlierFilter;
+
+            switch (SA.CorrHistogramOutlierFilterRange) {
+                case SigmaRangeType.Sigma6:
+                    cbOutlierSigma.SelectedIndex = 0;
+                    break;
+                case SigmaRangeType.Sigma5:
+                    cbOutlierSigma.SelectedIndex = 1;
+                    break;
+                case SigmaRangeType.Sigma4:
+                    cbOutlierSigma.SelectedIndex = 2;
+                    break;
+                case SigmaRangeType.Sigma3:
+                    cbOutlierSigma.SelectedIndex = 3;
+                    break;
+                case SigmaRangeType.Sigma2:
+                    cbOutlierSigma.SelectedIndex = 4;
+                    break;
+                case SigmaRangeType.Sigma1:
+                    cbOutlierSigma.SelectedIndex = 5;
+                    break;
+            }
+
+            AxisLimitHisto.IsChecked = SA.CorrHistogramEnableLimitLine;
+            AxisMinMaxHisto.IsChecked = SA.CorrHistogramEnableMinMaxLine;
+            AxisSigmaHisto.IsChecked = SA.CorrHistogramEnableSigmaLine;
+
         }
 
         IRegionManager _regionManager;

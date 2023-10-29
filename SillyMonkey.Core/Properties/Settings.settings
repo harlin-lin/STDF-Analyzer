@@ -1,12 +1,96 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Utils.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SillyMonkey.Core.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="IfCmpTextInUid" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="UidMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TestNumber</Value>
     </Setting>
     <Setting Name="HistogramOutlierColor" Type="System.Windows.Media.Color" Scope="User">
-      <Value Profile="(Default)">#EF000000</Value>
+      <Value Profile="(Default)">#FFEF0000</Value>
+    </Setting>
+    <Setting Name="HistogramChartAxis" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma</Value>
+    </Setting>
+    <Setting Name="HistogramChartAxisSigmaRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="HistogramOutlierFilterRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="HistogramEnableOutlierFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HistogramEnableLimitLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HistogramEnableSigma6Line" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="HistogramEnableSigma3Line" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HistogramEnableMinMaxLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HistogramEnableMeanLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="HistogramEnableMedianLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TrendChartAxis" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma</Value>
+    </Setting>
+    <Setting Name="TrendChartAxisSigmaRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="TrendOutlierFilterRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="TrendEnableOutlierFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TrendEnableLimitLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TrendEnableSigma6Line" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TrendEnableSigma3Line" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TrendEnableMinMaxLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TrendEnableMeanLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TrendEnableMedianLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CorrHistogramChartAxis" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma</Value>
+    </Setting>
+    <Setting Name="CorrHistogramOutlierFilterRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="CorrHistogramEnableOutlierFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="ItemCorrOutlierFilterRange" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sigma6</Value>
+    </Setting>
+    <Setting Name="ItemCorrEnableOutlierFilter" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CorrHistogramEnableLimitLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="CorrHistogramEnableSigmaLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CorrHistogramEnableMinMaxLine" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
