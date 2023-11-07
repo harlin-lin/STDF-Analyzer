@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cvt.cs" />
+    <Compile Include="FileTypeRegister.cs" />
     <Compile Include="GenType.cs" />
     <Compile Include="MessageEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -229,6 +229,8 @@ namespace UI_Data.ViewModels {
                 default:
                     var si = (column - 6) % cnt;
                     var d = (column - 6) / cnt;
+                    if (!_allDa[si].GetTestIDs_Info().ContainsKey(_testItems[row].TestNumber)) return "";
+
                     ItemStatistic s;
                     if (_ifIgnoreOutlier) {
                         s = _allDa[si].GetFilteredStatisticIgnoreOutlier(_subDataList[si].FilterId, _testItems[row].TestNumber, _outlierSigmaRange);

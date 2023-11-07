@@ -17,7 +17,7 @@
             </MenuItem>
             <MenuItem Header="Tool">
                 <MenuItem Header="Setup" Command="{Binding Path=OpenSetupDiag}"/>
-                <!--<MenuItem Header="Set Default STDF Program" Command="{Binding Path=CmdSetDftProgram}"/>-->
+                <MenuItem Header="Set Default STDF Program" Command="{Binding Path=CmdSetDftProgram}"/>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About" Command="{Binding Path=CmdAbout}"/>

@@ -184,14 +184,35 @@ namespace UI_DataList.ViewModels {
             _cmdSetDftProgram ?? (_cmdSetDftProgram = new DelegateCommand(ExecuteCmdSetDftProgram));
 
         void ExecuteCmdSetDftProgram() {
-            string str = System.Environment.CurrentDirectory;
+            string str = System.AppDomain.CurrentDomain.BaseDirectory;
             string pgmPath = str + "\\SillyMonkey.exe";
-            string icoPath = str + "\\SA_48.ico";
+
             try {
-                SA.SetFileOpenApp(".std", pgmPath, icoPath);
-                SA.SetFileOpenApp(".stdf", pgmPath, icoPath);
-            }
-            catch {
+                ////if (!FileTypeRegister.FileTypeRegistered(".std")) {
+                //FileTypeRegInfo fileTypeRegInfo = new FileTypeRegInfo(".std");
+                //fileTypeRegInfo.Description = "OpenStdfFile文件";
+                //fileTypeRegInfo.ExePath = pgmPath;
+                //fileTypeRegInfo.ExtendName = ".std";
+                //fileTypeRegInfo.IconPath = pgmPath; // Application.ExecutablePath;
+
+                //FileTypeRegister fileTypeRegister = new FileTypeRegister();
+                //FileTypeRegister.RegisterFileType(fileTypeRegInfo);
+
+                //FileTypeRegInfo fileTypeRegInfoStdf = new FileTypeRegInfo(".stdf");
+                //fileTypeRegInfoStdf.Description = "OpenStdfFile文件";
+                //fileTypeRegInfoStdf.ExePath = pgmPath;
+                //fileTypeRegInfoStdf.ExtendName = ".stdf";
+                //fileTypeRegInfoStdf.IconPath = pgmPath; // Application.ExecutablePath;
+
+                //FileTypeRegister fileTypeRegisterStdf = new FileTypeRegister();
+                //FileTypeRegister.RegisterFileType(fileTypeRegInfoStdf);
+
+                //SA.SetFileOpenApp(".std", pgmPath, pgmPath);
+                //SA.SetFileOpenApp(".stdf", pgmPath, pgmPath);
+                SA.SelfCreateAssociation(".stdf");
+                SA.SelfCreateAssociation(".std");
+
+            } catch {
                 System.Windows.Forms.MessageBox.Show("Failed to set the default pgm");
                 return;
             }
