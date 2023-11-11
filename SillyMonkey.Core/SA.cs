@@ -304,16 +304,31 @@ namespace SillyMonkey.Core {
                 if (description != null) {
                     selectedKey.SetValue("", description);
                 }
+                selectedKey.CreateSubKey(@"shell").SetValue("", "open", RegistryValueKind.String);
                 if (icon != null) {
                     selectedKey.CreateSubKey("DefaultIcon").SetValue("", icon, RegistryValueKind.ExpandString);
-                    selectedKey.CreateSubKey(@"Shell\Open").SetValue("icon", icon, RegistryValueKind.ExpandString);
+                    //selectedKey.CreateSubKey(@"shell\open").SetValue("icon", icon, RegistryValueKind.ExpandString);
                 }
                 if (application != null) {
-                    selectedKey.CreateSubKey(@"Shell\Open\command").SetValue("", "\"" + application + "\"" + " \"%1\"", RegistryValueKind.ExpandString);
+                    selectedKey.CreateSubKey(@"shell\open\command").SetValue("", "\"" + application + "\"" + " \"%1\"", RegistryValueKind.String);
                 }
             }
             selectedKey.Flush();
             selectedKey.Close();
+
+
+            selectedKey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" + extension);
+
+            if (selectedKey != null) {
+                var path = @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" + extension + @"\OpenWithList";
+                var key = Registry.CurrentUser.CreateSubKey(path, true);
+                if (key.GetValue("a") != null) {
+                    key.SetValue("a", ProgID);
+                } 
+                if (key.GetValue("MRUList") != null) {
+                    key.SetValue("MRUList", "a");
+                } 
+            } 
         }
         /// <summary>
         /// Creates a association for current running executable
@@ -324,8 +339,9 @@ namespace SillyMonkey.Core {
         public static void SelfCreateAssociation(string extension/*, KeyHiveSmall hive = KeyHiveSmall.CurrentUser*/, string description = "") {
             //string ProgID = System.Reflection.Assembly.GetExecutingAssembly().EntryPoint.DeclaringType.FullName;
             //string FileLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string progName = AppDomain.CurrentDomain.FriendlyName;
             string ProgID = "SA_StdfAnalyzer";
-            string FileLocation = System.AppDomain.CurrentDomain.BaseDirectory + "\\SA_StdfAnalyzer.exe";
+            string FileLocation = System.AppDomain.CurrentDomain.BaseDirectory + progName;
 
             CreateAssociation(ProgID, extension, description, FileLocation, FileLocation/* + ",0"*//*, hive*/);
         }

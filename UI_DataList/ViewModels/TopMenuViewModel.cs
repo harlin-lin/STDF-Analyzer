@@ -9,6 +9,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Windows;
 using UI_DataList.Views;
 
@@ -178,45 +180,66 @@ namespace UI_DataList.ViewModels {
             aboutWindow.ShowDialog();
         }
 
+        [DllImport("shell32.dll")]
+        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+
 
         private DelegateCommand _cmdSetDftProgram;
         public DelegateCommand CmdSetDftProgram =>
             _cmdSetDftProgram ?? (_cmdSetDftProgram = new DelegateCommand(ExecuteCmdSetDftProgram));
 
         void ExecuteCmdSetDftProgram() {
-            string str = System.AppDomain.CurrentDomain.BaseDirectory;
-            string pgmPath = str + "\\SillyMonkey.exe";
-
             try {
-                ////if (!FileTypeRegister.FileTypeRegistered(".std")) {
-                //FileTypeRegInfo fileTypeRegInfo = new FileTypeRegInfo(".std");
-                //fileTypeRegInfo.Description = "OpenStdfFile文件";
-                //fileTypeRegInfo.ExePath = pgmPath;
-                //fileTypeRegInfo.ExtendName = ".std";
-                //fileTypeRegInfo.IconPath = pgmPath; // Application.ExecutablePath;
-
-                //FileTypeRegister fileTypeRegister = new FileTypeRegister();
-                //FileTypeRegister.RegisterFileType(fileTypeRegInfo);
-
-                //FileTypeRegInfo fileTypeRegInfoStdf = new FileTypeRegInfo(".stdf");
-                //fileTypeRegInfoStdf.Description = "OpenStdfFile文件";
-                //fileTypeRegInfoStdf.ExePath = pgmPath;
-                //fileTypeRegInfoStdf.ExtendName = ".stdf";
-                //fileTypeRegInfoStdf.IconPath = pgmPath; // Application.ExecutablePath;
-
-                //FileTypeRegister fileTypeRegisterStdf = new FileTypeRegister();
-                //FileTypeRegister.RegisterFileType(fileTypeRegInfoStdf);
-
-                //SA.SetFileOpenApp(".std", pgmPath, pgmPath);
-                //SA.SetFileOpenApp(".stdf", pgmPath, pgmPath);
                 SA.SelfCreateAssociation(".stdf");
                 SA.SelfCreateAssociation(".std");
 
+                var path = @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.std\UserChoice";
+                if(Registry.CurrentUser.OpenSubKey(path, false) != null) {
+                    if (IsAdministrator()) {
+                        Registry.CurrentUser.DeleteSubKey(path);
+                    } else {
+                        System.Windows.Forms.MessageBox.Show("检测到用户已指定.std默认打开应用, 请手动更改或在管理员模式下启动SA并重新设置");
+                    }
+                } 
+
+                path = @"Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.stdf\UserChoice";
+                if (Registry.CurrentUser.OpenSubKey(path, false) != null) {
+                    if (IsAdministrator()) {
+                        Registry.CurrentUser.DeleteSubKey(path);
+                    } else {
+                        System.Windows.Forms.MessageBox.Show("检测到用户已指定.stdf默认打开应用, 请手动更改或在管理员模式下启动SA并重新设置");
+                    }
+                } 
+
+                SHChangeNotify(0x8000000, 0, IntPtr.Zero, IntPtr.Zero);
+                
+                System.Windows.Forms.MessageBox.Show("Done");
             } catch {
                 System.Windows.Forms.MessageBox.Show("Failed to set the default pgm");
-                return;
             }
-            System.Windows.Forms.MessageBox.Show("Done");
         }
+
+        /// <summary>
+        /// 确定当前主体是否属于具有指定 Administrator 的 Windows 用户组
+        /// </summary>
+        /// <returns>如果当前主体是指定的 Administrator 用户组的成员，则为 true；否则为 false。</returns>
+        public static bool IsAdministrator() {
+            bool result;
+            try {
+                WindowsIdentity identity = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                result = principal.IsInRole(WindowsBuiltInRole.Administrator);
+
+                //http://www.cnblogs.com/Interkey/p/RunAsAdmin.html
+                //AppDomain domain = Thread.GetDomain();
+                //domain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
+                //WindowsPrincipal windowsPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
+                //result = windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+            } catch {
+                result = false;
+            }
+            return result;
+        }
+
     }
 }
