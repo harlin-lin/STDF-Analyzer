@@ -105,10 +105,10 @@ namespace FileReader {
             if (_stream.Read(far, 0, 6) < 6) {
                 valid = false;
             }
-            var length = far[0];
-            if (length != 2) {
-                valid = false;
-            }
+            //var length = far[0];
+            //if (length != 2) {
+            //    valid = false;
+            //}
             //validate record type
             if (far[2] != 0) {
                 valid = false;
@@ -470,11 +470,13 @@ namespace FileReader {
 
             if (Bit(tf, 2)) return;
 
-            try {
+            //try {
                 var rtnCnt = rdU2(record, i, len); i += 2;
                 var rstCnt = rdU2(record, i, len); i += 2;
-
-                if (rtnCnt != rstCnt) throw new Exception("MPR pin count mismatch");
+                if(rstCnt==0 ) 
+                    return;
+            //if (rtnCnt != rstCnt) 
+            //    throw new Exception("MPR pin count mismatch");
 
                 var stat = rdKxN1(record, i, len, rtnCnt); i += (ushort)(rtnCnt / 2 + rtnCnt % 2);
                 var rsts = rdKxR4(record, i, len, rstCnt); i += (ushort)(rstCnt * 4);
@@ -496,7 +498,7 @@ namespace FileReader {
                 uids[0] = id;
                 var info = _dc.IfContainItemInfo(uids[0].GetUID());
 
-                for (uint j = 1; j < rtnCnt; j++) {
+                for (uint j = 1; j < rstCnt; j++) {
                     uids[j] = new TestID(uids[j-1]);
                     if(_dc.IfContainItemInfo(uids[j].GetUID()) == null && info != null) _dc.UpdateItemInfo(uids[j].GetUID(), info);
                 }
@@ -537,7 +539,7 @@ namespace FileReader {
 
                     i += 8; //skip start in and incr in
                     if (i < len) {
-                        var idxs = rdKxU2(record, i, len, rtnCnt); i += (ushort)(rtnCnt * 2);
+                        var idxs = rdKxU2(record, i, len, rstCnt); i += (ushort)(rstCnt * 2);
 
                         if (i < len) {
                             unit = rdCn(record, i, len);
@@ -556,7 +558,7 @@ namespace FileReader {
                 //means use last test limt
                 if(_dc.GetTestInfo(uids[0].GetUID()) == null) {
                     var refInfo = _dc.GetTestInfo(_lastUidBySite[sn].GetUID());
-                    for (uint j = 0; j < rtnCnt; j++) {
+                    for (uint j = 0; j < rstCnt; j++) {
                         var tmpInfo = new ItemInfo(refInfo);
                         tmpInfo.TestText = txt;
                         _dc.UpdateItemInfo(uids[j].GetUID(), tmpInfo);
@@ -565,15 +567,15 @@ namespace FileReader {
                 }
 
                 info = _dc.GetTestInfo(uids[0].GetUID());
-                for (uint j = 0; j < rtnCnt; j++) {
+                for (uint j = 0; j < rstCnt; j++) {
                     rsts[j] = info.GetScaledRst(rsts[j]);
                     _dc.AddTestData(sn, uids[j].GetUID(), rsts[j]);
                     _lastUidBySite[sn] = uids[j];
                 }
-            }
-            catch {
-                throw;
-            }
+            //}
+            //catch {
+            //    throw;
+            //}
 
 
 
