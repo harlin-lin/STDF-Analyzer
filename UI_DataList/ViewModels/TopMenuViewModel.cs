@@ -61,6 +61,36 @@ namespace UI_DataList.ViewModels {
             }
         }
 
+        private DelegateCommand _ConvertCSV;
+        public DelegateCommand ConvertCSV =>
+            _ConvertCSV ?? (_ConvertCSV = new DelegateCommand(ExecuteConvertCSV));
+
+        void ExecuteConvertCSV() {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Title = "选择数据源文件";
+            openFileDialog.Filter = "All|*.*|STDF|*.stdf|STD|*.std";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.Multiselect = true;
+            openFileDialog.RestoreDirectory = false;
+            openFileDialog.DefaultExt = "stdf";
+            if (openFileDialog.ShowDialog() == false) {
+                return;
+            }
+
+            var paths = openFileDialog.FileNames;
+            foreach (string path in paths) {
+                var ext = System.IO.Path.GetExtension(path).ToLower();
+                if (ext == ".stdf" || ext == ".std") {
+                    _ea.GetEvent<Event_CvtFile>().Publish(path);
+                } else {
+                    System.Windows.Forms.MessageBox.Show("Invalid File");
+                }
+            }
+        }
+        //ConvertCSV
+
+
         private DelegateCommand _closeAllFiles;
         public DelegateCommand CloseAllFiles =>
             _closeAllFiles ?? (_closeAllFiles = new DelegateCommand(ExecuteCloseAllFiles));

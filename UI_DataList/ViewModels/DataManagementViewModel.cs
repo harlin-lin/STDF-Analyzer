@@ -160,6 +160,7 @@ namespace UI_DataList.ViewModels {
             _regionManager = regionManager;
             _ea = ea;
             _ea.GetEvent<Event_OpenFile>().Subscribe(OpenStdFile);
+            _ea.GetEvent<Event_CvtFile>().Subscribe(CvtStdFile);
             _ea.GetEvent<Event_CloseData>().Subscribe(CloseSubData);
             _ea.GetEvent<Event_MergeFiles>().Subscribe(MergeFiles);
             _ea.GetEvent<Event_MergeSubData>().Subscribe(MergeSubData);
@@ -289,6 +290,45 @@ namespace UI_DataList.ViewModels {
             }
 
         }
+
+        //CvtStdFile
+        private async void CvtStdFile(string path) {
+            try {
+                var info = new System.IO.FileInfo(path);
+                if (!info.Exists) {
+                    System.Windows.Forms.MessageBox.Show("File Invalid:" + path);
+                    return;
+                }
+            } catch {
+                System.Windows.Forms.MessageBox.Show("File Invalid:" + path);
+                return;
+            }
+
+            if (StdDB.IfExsistFile(path)) {
+                Log("Already Exist:" + path);
+                return;
+            }
+            try {
+                var dataAcquire = StdDB.CreateSubContainer(path);
+                dataAcquire.PropertyChanged += DataAcquire_PropertyChanged;
+                using (var data = new StdReader(path, StdFileType.STD)) {
+                    await Task.Run(() => { data.ExtractStdf(); });
+                    var id = dataAcquire.CreateFilter();
+
+                    await Task.Run(() => { dataAcquire.ExportToExcel(path+".csv", id); });
+
+                    StdDB.RemoveFile(path);
+                }
+            } catch (Exception e) {
+                StdDB.RemoveFile(path);
+                System.Windows.Forms.MessageBox.Show("File Open Failed:" + e.Message);
+                return;
+            }
+
+        }
+
+
+
 
         private void DataAcquire_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
             if(e.PropertyName== "CurrentLoadingProgress" || e.PropertyName== "CurrentLoadingPhase") {

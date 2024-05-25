@@ -154,5 +154,6 @@ namespace DataContainer{
 
         string GetBasicInfo(string key);
 
+        void ExportToExcel(string path, int filterId);
     }
 }
