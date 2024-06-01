@@ -355,7 +355,7 @@ namespace DataContainer {
             } else if (float.IsNaN(val)) {
                 return "";
             }
-            return val.ToString();
+            return ((double)val).ToString("0.#######");
         }
     }
 }
