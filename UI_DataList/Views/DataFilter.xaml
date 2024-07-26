@@ -164,16 +164,12 @@
                               Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
                             <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-AutoFix.png" Width="16" Height="16"/>
                         </Button>
-                        <Button Width="20" Height="20" ToolTip="Get fresh part index of duplicated cords"
+                        <Button Width="48" Height="20" ToolTip="Get fresh part index of duplicated cords"
                               Command="{Binding CmdGetFreshIdx}"
-                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
-                            <Image Source="/SillyMonkey.Core;component/Resource/icon/Entypo-AlignLeft.png" Width="16" Height="16"/>
-                        </Button>
-                        <Button Width="20" Height="20" ToolTip="Get Re-Test part index of duplicated cords"
+                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent" Content="FRESH"/>
+                        <Button Width="48" Height="20" ToolTip="Get Re-Test part index of duplicated cords"
                               Command="{Binding CmdGetRtIdx}"
-                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent">
-                            <Image Source="/SillyMonkey.Core;component/Resource/icon/Entypo-AlignRight.png" Width="16" Height="16"/>
-                        </Button>
+                              Margin="20,0,0,0" BorderThickness="1" Background="Transparent" Content="Re-Test"/>
                     </StackPanel>
                     <TextBox Grid.Row="3" Text="{Binding MaskEnableCords, Mode=TwoWay}" FontSize="8" AcceptsReturn="True"  VerticalContentAlignment="Top" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto">
                         <TextBox.ContextMenu>

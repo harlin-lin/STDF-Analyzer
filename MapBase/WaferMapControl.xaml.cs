@@ -295,7 +295,9 @@ namespace MapBase {
             if (_waferData.HBinInfo != null) {
                 int i = 0;
                 foreach (var hb in _waferData.HBinInfo) {
-                    if (hb.Value.Item2.Contains("P")) {
+                    if (hb.Key == 1) {
+                        _hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
+                    } else if (hb.Value.Item2.Contains("P")) {
                         _hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
                     } else {
                         _hBinColors.Add(hb.Key, BinColor.GetFailBinColor(i++));
@@ -306,7 +308,9 @@ namespace MapBase {
             if (_waferData.SBinInfo != null) {
                 int i = 0;
                 foreach (var sb in _waferData.SBinInfo) {
-                    if (sb.Value.Item2.Contains("P")) {
+                    if (sb.Key == 1) {
+                        _sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
+                    } else if (sb.Value.Item2.Contains("P")) {
                         _sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
                     } else {
                         _sBinColors.Add(sb.Key, BinColor.GetFailBinColor(i++));
