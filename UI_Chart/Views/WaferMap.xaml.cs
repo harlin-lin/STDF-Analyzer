@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace UI_Chart.Views {
     /// <summary>
@@ -37,7 +39,7 @@ namespace UI_Chart.Views {
 
         SubData _subData;
 
-        //private WaferDataModel _waferData;
+        private WaferDataModel _waferData;
 
         public bool IsNavigationTarget(NavigationContext navigationContext) {
             return false;
@@ -171,8 +173,67 @@ namespace UI_Chart.Views {
                     }
                 }
             }
-
+            ExportToExcelsync();
         }
+
+        private  void ExportToExcelsync()
+        {
+            string path;
+            using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog())
+            {
+                saveFileDialog.AddExtension = true;
+                saveFileDialog.Filter = "Excel Files | *.csv";
+                saveFileDialog.DefaultExt = "csv";
+                saveFileDialog.FileName = "SiteCorrelation_";
+                saveFileDialog.ValidateNames = true;
+                if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                {
+                    return;
+                }
+                path = saveFileDialog.FileName;
+            };
+
+            _ea.GetEvent<Event_Log>().Publish("Writing......");
+
+            try
+            {
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(path))
+                {
+                    _waferData = new WaferDataModel(_subData);
+
+                    ushort[,] _freshHBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
+                    ushort[,] _freshSBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
+                    ushort[,] _hBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
+                    ushort[,] _sBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
+
+                    foreach (var die in _waferData.DieInfoList)
+                    {
+                        _hBinMaps[die.X, die.Y] = die.HBin;
+                        _sBinMaps[die.X, die.Y] = die.SBin;
+                        sw.WriteLine("X " + die.X + " Y " + die.Y + " Hbin " + die.HBin + " Sbin " + die.SBin);
+                    }
+                    
+                    StringBuilder sb = new StringBuilder();
+                        
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+                    sw.Close();
+                }
+
+            }
+            catch
+            {
+                _ea.GetEvent<Event_Log>().Publish("Write failed");
+            }
+
+            _ea.GetEvent<Event_Log>().Publish("Exported at:" + path);
+        }
+
+        private void SetProgress(string log, int percent)
+        {
+            _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>(log, percent));
+        }
+
 
         private void buttonCopy_Click(object sender, System.Windows.RoutedEventArgs e) {
             var image = waferMap.GetWaferMap();
