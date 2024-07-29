@@ -173,7 +173,7 @@ namespace UI_Chart.Views {
                     }
                 }
             }
-            ExportToExcelsync();
+            //ExportToExcelsync();
         }
 
         private  void ExportToExcelsync()
