@@ -163,6 +163,7 @@ namespace UI_Chart.Views {
                 saveFileDialog.Filter = "Excel Files | *.csv";
                 saveFileDialog.DefaultExt = "csv";
                 saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath) + "_raw";
+                else
                 saveFileDialog.ValidateNames = true;
                 if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) {
                     return;
