@@ -32,6 +32,10 @@ namespace FastWpfGrid
             return String.Format("Row={0}, Column={1}", row + 1, column + 1);
         }
 
+        public virtual string GetCellPassFail(int row, int column)
+        {
+            return String.Format("Row={0}, Column={1}", row + 1, column + 1);
+        }
         public virtual IFastGridCell GetCell(IFastGridView view, int row, int column)
         {
             _requestedRow = row;

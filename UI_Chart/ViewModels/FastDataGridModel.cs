@@ -86,6 +86,46 @@ namespace UI_Chart.ViewModels {
             }
         }
 
+        public override string GetCellPassFail(int row, int column)
+        {
+            _cellColor = null;
+
+            if (column == 0)
+            {
+                return _da.GetTestIDs().ElementAt(row);
+            }
+            else if (column == 1)
+            {
+                return _da.GetTestIDs_Info().ElementAt(row).Value.TestText;
+            }
+            else
+            {
+                var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(column - 2);
+
+                var uid = _da.GetTestIDs().ElementAt(row);
+                var val = _da.GetItemData(uid, idx);
+                var limit = _da.GetTestInfo(uid);
+
+                if (limit.LoLimit.HasValue && limit.HiLimit.HasValue )
+                {
+                    if  (float.IsNaN(val))
+                    {
+                        return "";
+                    }
+                    else if  ( val > limit.LoLimit && val < limit.HiLimit)
+                    {
+                        return ("1");
+                    }
+                    else if (val < limit.LoLimit || val > limit.HiLimit)
+                    {
+                        return ("0");
+                    }
+                    else return ("NA");
+                }
+                else return ("NA");
+
+            }
+        }
         string getstr(float val) {
             if (float.IsPositiveInfinity(val)) {
                 return "Inf+";

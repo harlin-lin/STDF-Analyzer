@@ -14,6 +14,7 @@ namespace UI_Chart.Views {
     /// Interaction logic for Raw
     /// </summary>
     public partial class Raw : UserControl, INavigationAware {
+        private bool exportmode = false;
         public Raw(IRegionManager regionManager, IEventAggregator ea) {
             InitializeComponent();
             _regionManager = regionManager;
@@ -156,14 +157,20 @@ namespace UI_Chart.Views {
         //    _ea.GetEvent<Event_Log>().Publish("Excel exported at:" + path);
         //}
 
-        private async void ExportToExcelAsync() {
+        private async void ExportToExcelAsync(bool mode) {
             string path;
             using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog()) {
                 saveFileDialog.AddExtension = true;
                 saveFileDialog.Filter = "Excel Files | *.csv";
                 saveFileDialog.DefaultExt = "csv";
-                saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath) + "_raw";
+                if (mode == true)
+                {
+                    saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath) + "_raw";
+                }
                 else
+                {
+                    saveFileDialog.FileName = System.IO.Path.GetFileNameWithoutExtension(_subData.StdFilePath) + "_PassFail";
+                }
                 saveFileDialog.ValidateNames = true;
                 if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) {
                     return;
@@ -227,7 +234,14 @@ namespace UI_Chart.Views {
                             sb.Append($"{idx.ToString()},{_da.GetWaferCord(idx)},{_da.GetTestTime(idx).ToString()},{_da.GetHardBin(idx).ToString()},{_da.GetSoftBin(idx).ToString()},{_da.GetSite(idx).ToString()}");
 
                             for (int r = 0; r < _rawDataModel.RowCount; r++) {
-                                sb.Append($",{_rawDataModel.GetCellText(r, c)}");
+                                if (mode == true)
+                                { 
+                                    sb.Append($",{_rawDataModel.GetCellText(r, c)}"); 
+                                }
+                                else
+                                {
+                                    sb.Append($",{_rawDataModel.GetCellPassFail(r, c)}");
+                                }
                             }
                             sw.WriteLine(sb.ToString());
                             sb.Clear();
@@ -252,7 +266,11 @@ namespace UI_Chart.Views {
         }
 
         private void ExportToExcel_Click(object sender, System.Windows.RoutedEventArgs e) {
-            ExportToExcelAsync();
+            ExportToExcelAsync(true);
+        }
+        private void ExportPfToExcel_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ExportToExcelAsync(false);
         }
     }
 
