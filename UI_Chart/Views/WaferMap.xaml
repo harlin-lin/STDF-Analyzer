@@ -16,12 +16,18 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,5,0" Click="buttonSave_Click" ToolTip="Save" BorderThickness="0">
+            <Button Name="buttonxlsxSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonxlsxSave_Click" ToolTip="PNG Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
-            <Button Name="buttonCopy" Width="23" Height="23" Margin="0,0,10,0" Click="buttonCopy_Click" ToolTip="Copy" BorderThickness="0">
+            <TextBlock Margin="0,0,5,0" Text="Xlsx" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonSave_Click" ToolTip="Xlsx Save" BorderThickness="0">
+                <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
+            </Button>
+            <TextBlock Margin="0,0,5,0" Text="PNG" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Button Name="buttonCopy" Width="23" Height="23" Margin="10,0,0,0" Click="buttonCopy_Click" ToolTip="PNG Copy" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
+            <TextBlock Margin="0,0,10,0" Text="PNG" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ComboBox Name="cbBinMode" Width="60" Margin="0,0,10,0" />
             <ComboBox Name="cbViewMode" Width="70" Margin="0,0,10,0" />
             <ComboBox Name="cbRtDataMode" Width="90" Margin="0,0,10,0" />
@@ -87,5 +93,6 @@
 
         </StackPanel>
         <m:WaferMapControl Grid.Row="2" Name="waferMap" BinMode="{Binding ElementName=cbBinMode,Path=SelectedItem,Mode=TwoWay}" ViewMode="{Binding ElementName=cbViewMode,Path=SelectedItem,Mode=TwoWay}" RtDataMode="{Binding ElementName=cbRtDataMode,Path=SelectedItem,Mode=TwoWay}" SnapsToDevicePixels="True" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+        
     </Grid>
 </UserControl>

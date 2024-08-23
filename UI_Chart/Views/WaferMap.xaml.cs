@@ -216,10 +216,9 @@ namespace UI_Chart.Views
                     }
                 }
             }
-            ExportToExcelsync();
-        }
 
-        private void ExportToExcelsync()
+        }
+        private void buttonxlsxSave_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             string path;
             using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog())
@@ -324,12 +323,13 @@ namespace UI_Chart.Views
                     //    cellytail.CellStyle = style;
                     //    cellytail.CellStyle = style;
                     //}
+                    int rawrowidx   = 0;    
                     for (int row = _waferData.YUbound; row >= _waferData.YLbound; row--)
                     {
-                        IRow row4 = sheet.CreateRow(row);
+                        IRow row4 = sheet.CreateRow(rawrowidx);
+                        rawrowidx++;
                         for (int col = 0; col <= _waferData.XUbound; col++)
                         {
-
                             if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
                             {
                                 if (_freshSBinMaps[col, row] != 0)
