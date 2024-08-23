@@ -14,9 +14,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
-//using DocumentFormat.OpenXml.Spreadsheet;
-//using DocumentFormat.OpenXml.Packaging;
-
+using NPOI.XSSF.UserModel;
+using NPOI.SS.UserModel;
+using NPOI.SS.Formula.Functions;
 
 namespace UI_Chart.Views
 {
@@ -240,8 +240,27 @@ namespace UI_Chart.Views
 
             try
             {
-                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(path))
+                using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
+                    // 创建新的Excel工作簿
+                    IWorkbook workbook = new XSSFWorkbook();
+
+                    // 创建一个工作表
+                    ISheet sheet = workbook.CreateSheet("Sheet1");
+
+                    // 创建样式和字体
+                    ICellStyle style = workbook.CreateCellStyle();
+                    IFont font = workbook.CreateFont();
+
+                    // 设置文本水平和垂直居中
+                    style.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+                    //style.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+
+                    // 设置字体居中
+                    font.IsBold = true;
+                    style.SetFont(font);
+
+
                     _waferData = new WaferDataModel(_subData);
 
                     ushort[,] _freshHBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
@@ -249,12 +268,6 @@ namespace UI_Chart.Views
                     ushort[,] _hBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
                     ushort[,] _sBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
 
-
-                    //string append = "NULL";
-                    //if (die != null)
-                    //{
-                    //    append = $"Idx {die.Idx}\nHBIN {die.HBin}\nSBIN {die.SBin}\nSite {die.Site}";
-                    //}
 
                     foreach (var die in _waferData.DieInfoList)
                     {
@@ -273,27 +286,72 @@ namespace UI_Chart.Views
                             _sBinMaps[die.X, die.Y] = die.SBin;
                         }
                     }
-                    for (int i = 0; i < _waferData.XUbound + 1; i++)
+
+                    // Write data into the SheetData
+                    //IRow row0 = sheet.CreateRow(0);
+                    //ICell cellx = row0.CreateCell(3);
+                    //cellx.SetCellValue("X");
+
+                    //// Write data into the SheetData
+                    //IRow row2 = sheet.CreateRow(2);
+                    //ICell celly = row2.CreateCell(0);
+                    //celly.SetCellValue("Y");
+
+                    //IRow row1 = sheet.CreateRow(1);
+                    //for (int col = 0; col <= _waferData.XUbound; col++)
+                    //{
+                    //    ICell cellXheader = row1.CreateCell(col+2);
+                    //    cellXheader.SetCellValue(col);
+                    //    cellXheader.CellStyle = style;
+                    //}
+
+                    //IRow rowlast = sheet.CreateRow(_waferData.YUbound + 2);
+                    //for (int col = 0; col <= _waferData.XUbound; col++)
+                    //{
+                    //    ICell cellxtail = rowlast.CreateCell(col + 2);
+                    //    cellxtail.SetCellValue(col);
+                    //    cellxtail.CellStyle = style;
+                    //}
+
+
+                    //for (int row = _waferData.YUbound; row >= _waferData.YLbound; row--)
+                    //{
+                    //    IRow rowy = sheet.CreateRow(row + 2);
+                    //    ICell cellyheader = rowy.CreateCell(1);
+                    //    ICell cellytail = rowy.CreateCell(_waferData.XUbound + 2);
+                    //    cellyheader.SetCellValue(row);
+                    //    cellyheader.SetCellValue(row);
+                    //    cellytail.CellStyle = style;
+                    //    cellytail.CellStyle = style;
+                    //}
+                    for (int row = _waferData.YUbound; row >= _waferData.YLbound; row--)
                     {
-                        for (int j = 0; j < _waferData.YUbound + 1; j++)
+                        IRow row4 = sheet.CreateRow(row);
+                        for (int col = 0; col <= _waferData.XUbound; col++)
                         {
+
                             if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
                             {
-                                sw.WriteLine("X " + i + " Y " + j + " Hbin " + _freshHBinMaps[i, j] + " Sbin " + _freshSBinMaps[i, j]);
+                                if (_freshSBinMaps[col, row] != 0)
+                                {
+                                    ICell cell11 = row4.CreateCell(col);
+                                    cell11.SetCellValue(_freshSBinMaps[col, row]);
+                                    cell11.CellStyle = style;
+                                }
                             }
                             else
                             {
-                                sw.WriteLine("X " + i + " Y " + j + " Hbin " + _hBinMaps[i, j] + " Sbin " + _sBinMaps[i, j]);
+                                if (_sBinMaps[col, row] != 0)
+                                {
+                                    ICell cell11 = row4.CreateCell(col);
+                                    cell11.SetCellValue(_sBinMaps[col, row]);
+                                    cell11.CellStyle = style;
+                                }
                             }
                         }
                     }
 
-
-                    StringBuilder sb = new StringBuilder();
-
-                    sw.WriteLine(sb.ToString());
-                    sb.Clear();
-                    sw.Close();
+                    workbook.Write(file);
                 }
 
             }
@@ -301,101 +359,7 @@ namespace UI_Chart.Views
             {
                 _ea.GetEvent<Event_Log>().Publish("Write failed");
             }
-
-            //try
-            //{
-            //    using (SpreadsheetDocument spreadSheet = SpreadsheetDocument.Open(path,false))
-            //    {
-            //        WorkbookPart workbookPart = spreadSheet.AddWorkbookPart();
-            //        workbookPart.Workbook = new Workbook();
-            //        WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
-            //        SheetData sheetData = new SheetData();
-            //        worksheetPart.Worksheet = new Worksheet(sheetData);
-
-            //        Sheets sheets = spreadSheet.WorkbookPart.Workbook.AppendChild<Sheets>(new Sheets());
-
-            //        // Append a new worksheet and associate it with the workbook.
-            //        Sheet sheet = new Sheet() { Id = spreadSheet.WorkbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = "Sheet1" };
-            //        sheets.Append(sheet);
-
-            //        _waferData = new WaferDataModel(_subData);
-
-            //        ushort[,] _freshHBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
-            //        ushort[,] _freshSBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
-            //        ushort[,] _hBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
-            //        ushort[,] _sBinMaps = new ushort[_waferData.XUbound + 1, _waferData.YUbound + 1];
-
-
-            //        foreach (var die in _waferData.DieInfoList)
-            //        {
-
-            //            if ((_hBinMaps[die.X, die.Y] == 0) && (_sBinMaps[die.X, die.Y] == 0))
-            //            {
-            //                _freshHBinMaps[die.X, die.Y] = die.HBin;
-            //                _freshSBinMaps[die.X, die.Y] = die.SBin;
-            //                _hBinMaps[die.X, die.Y] = die.HBin;
-            //                _sBinMaps[die.X, die.Y] = die.SBin;
-            //            }
-
-            //            else
-            //            {
-            //                _hBinMaps[die.X, die.Y] = die.HBin;
-            //                _sBinMaps[die.X, die.Y] = die.SBin;
-            //            }
-            //        }
-
-            //        // Write data into the SheetData
-            //        for (int row = 1; row <= _waferData.XUbound + 1; row++)
-            //        {
-            //            Row r = new Row { RowIndex = (uint)row };
-            //            for (int col = 1; col <= _waferData.YUbound + 1; col++)
-            //            {
-            //                Cell cell = new Cell() { CellReference = GetColumnName(col) + row, DataType = CellValues.InlineString };
-            //                InlineString inlineString = new InlineString();
-            //                Text t = new Text();
-
-            //                if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
-            //                {
-            //                    t.Text = _freshSBinMaps[row - 1, col - 1].ToString();
-            //                    //sw.WriteLine("X " + i + " Y " + j + " Hbin " + _freshHBinMaps[i, j] + " Sbin " + _freshSBinMaps[i, j]);
-            //                }
-            //                else
-            //                {
-            //                    t.Text = _sBinMaps[row - 1, col - 1].ToString();
-            //                    //sw.WriteLine("X " + i + " Y " + j + " Hbin " + _hBinMaps[i, j] + " Sbin " + _sBinMaps[i, j]);
-            //                }
-                            
-            //                inlineString.AppendChild(t);
-            //                cell.AppendChild(inlineString);
-            //                r.AppendChild(cell);
-            //            }
-            //            sheetData.AppendChild(r);
-            //        }
-
-            //        worksheetPart.Worksheet.Save();
-            //        spreadSheet.WorkbookPart.Workbook.Save();
-            //        spreadSheet.Close();
-
-            //    }
-
-            //}
-            //catch
-            //{
-            //    _ea.GetEvent<Event_Log>().Publish("Write failed");
-            //}
             _ea.GetEvent<Event_Log>().Publish("Exported at:" + path);
-        }
-        private static string GetColumnName(int columnNumber)
-        {
-            int dividend = columnNumber;
-            string columnName = String.Empty;
-            while (dividend > 0)
-            {
-                int modulo = (dividend - 1) % 26;
-                columnName = Convert.ToChar(modulo + 65) + columnName;
-                dividend = (int)((dividend - modulo) / 26);
-            }
-            return columnName;
         }
 
         private void SetProgress(string log, int percent)
