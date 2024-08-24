@@ -14,9 +14,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
-using NPOI.XSSF.UserModel;
-using NPOI.SS.UserModel;
-using NPOI.SS.Formula.Functions;
+using OfficeOpenXml;
 
 namespace UI_Chart.Views
 {
@@ -239,26 +237,12 @@ namespace UI_Chart.Views
 
             try
             {
-                using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
+                FileInfo fileInfo = new FileInfo(path);
+                ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using (ExcelPackage package = new ExcelPackage(fileInfo))
                 {
-                    // 创建新的Excel工作簿
-                    IWorkbook workbook = new XSSFWorkbook();
-
-                    // 创建一个工作表
-                    ISheet sheet = workbook.CreateSheet("Sheet1");
-
-                    // 创建样式和字体
-                    ICellStyle style = workbook.CreateCellStyle();
-                    IFont font = workbook.CreateFont();
-
-                    // 设置文本水平和垂直居中
-                    style.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
-                    //style.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
-
-                    // 设置字体居中
-                    font.IsBold = true;
-                    style.SetFont(font);
-
+                    
+                    var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                     _waferData = new WaferDataModel(_subData);
 
@@ -323,35 +307,55 @@ namespace UI_Chart.Views
                     //    cellytail.CellStyle = style;
                     //    cellytail.CellStyle = style;
                     //}
-                    int rawrowidx   = 0;    
-                    for (int row = _waferData.YUbound; row >= _waferData.YLbound; row--)
+                    worksheet.Cells[1, 3].Value = "X";
+                    worksheet.Cells[1, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[3, 1].Value = "Y";
+                    worksheet.Cells[3, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[_waferData.YUbound + 5, 3].Value = "X";
+                    worksheet.Cells[_waferData.YUbound + 5, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[_waferData.YUbound + 3, 1].Value = "Y";
+                    worksheet.Cells[_waferData.YUbound + 3, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    int rawrowidx = 1;
+                    
+                    for (int _diey = _waferData.YUbound; _diey >= _waferData.YLbound; _diey--)
                     {
-                        IRow row4 = sheet.CreateRow(rawrowidx);
-                        rawrowidx++;
-                        for (int col = 0; col <= _waferData.XUbound; col++)
+                        int rawcolidx = 1;
+                        worksheet.Cells[rawrowidx + 2, 2].Value = _diey;
+                        worksheet.Cells[rawrowidx + 2, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4].Value = _diey;
+                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        for (int _diex = _waferData.XLbound; _diex <= _waferData.XUbound; _diex++)
                         {
+                            worksheet.Cells[2, rawcolidx + 2].Value = _diex;
+                            worksheet.Cells[2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[_waferData.YUbound + 4, rawcolidx + 2].Value = _diex;
+                            worksheet.Cells[_waferData.YUbound + 4, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
                             if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
                             {
-                                if (_freshSBinMaps[col, row] != 0)
+                                if (_freshSBinMaps[_diex, _diey] != 0)
                                 {
-                                    ICell cell11 = row4.CreateCell(col);
-                                    cell11.SetCellValue(_freshSBinMaps[col, row]);
-                                    cell11.CellStyle = style;
+                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Value = _freshSBinMaps[_diex, _diey];
+                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 }
                             }
                             else
                             {
-                                if (_sBinMaps[col, row] != 0)
+                                if (_sBinMaps[_diex, _diey] != 0)
                                 {
-                                    ICell cell11 = row4.CreateCell(col);
-                                    cell11.SetCellValue(_sBinMaps[col, row]);
-                                    cell11.CellStyle = style;
+                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Value = _sBinMaps[_diex, _diey];
+                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                                 }
                             }
+                            rawcolidx++;
                         }
-                    }
 
-                    workbook.Write(file);
+                        rawrowidx++;
+                        
+                    }
+                   
+                    package.Save();
                 }
 
             }
