@@ -219,12 +219,13 @@ namespace UI_Chart.Views
         private void buttonxlsxSave_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             string path;
+            string dftName = Path.GetFileNameWithoutExtension(_subData.StdFilePath);
             using (System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog())
             {
                 saveFileDialog.AddExtension = true;
                 saveFileDialog.Filter = "Excel Files | *.xlsx";
                 saveFileDialog.DefaultExt = "xlsx";
-                saveFileDialog.FileName = "SiteCorrelation_";
+                saveFileDialog.FileName = "WaferMap_" + dftName;
                 saveFileDialog.ValidateNames = true;
                 if (saveFileDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 {
@@ -241,7 +242,13 @@ namespace UI_Chart.Views
                 ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
                 using (ExcelPackage package = new ExcelPackage(fileInfo))
                 {
-                    
+                    bool sheetExists = package.Workbook.Worksheets.Any(ws => ws.Name == "Sheet1");
+
+                    if (sheetExists)
+                    {
+                        package.Workbook.Worksheets.Delete("Sheet1");
+                    }
+
                     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
 
                     _waferData = new WaferDataModel(_subData);
