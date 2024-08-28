@@ -49,6 +49,41 @@ namespace MapBase {
 
         private Color NullColor = new Color();
 
+
+        static Dictionary<ushort, Color> g_sBinColors = new Dictionary<ushort, Color>();
+        static Dictionary<ushort, Color> g_hBinColors = new Dictionary<ushort, Color>();
+
+        static Dictionary<Color, int> g_colorDieCnt = new Dictionary<Color, int>();
+
+        static Dictionary<ushort, int>  g_binCnt = new Dictionary<ushort, int> ();
+        static int g_totalCnt = 0;
+
+        public static Color GetSbinColorInfo(ushort sbin)
+        {
+            return g_sBinColors[sbin];
+        }
+        public static Color GetHbinColorInfo(ushort hbin)
+        {
+            return g_hBinColors[hbin];
+        }
+
+        public static Dictionary<Color, int> GetColorDieCnt()
+        {
+           
+            return g_colorDieCnt;
+        }
+        public static Dictionary<ushort, int> GetBinCnt()
+        {
+
+            return g_binCnt;
+        }
+        public static int GetTotalCnt()
+        {
+
+            return g_totalCnt;
+        }
+
+
         private void MapBaseControl_CordChanged(int x, int y, Color color) {
             if (x == int.MinValue || y == int.MinValue) {
                 infoBlock.Text = "";
@@ -117,13 +152,16 @@ namespace MapBase {
             viewGrid.Children.Add(_selectedMap);
             
             _colorDieCnt.Clear();
+            g_colorDieCnt.Clear();
 
             foreach (var die in _selectedMap.MapDataSource) {
                 if (die != NullColor) {
                     if (_colorDieCnt.ContainsKey(die)) {
                         _colorDieCnt[die]++;
+                        g_colorDieCnt[die]++;
                     } else {
                         _colorDieCnt.Add(die, 1);
+                        g_colorDieCnt.Add(die, 1);
                     }
                 }
             }
@@ -154,6 +192,7 @@ namespace MapBase {
             var width = viewGrid.ActualWidth / splitColCnt;
 
             _colorDieCnt.Clear();
+            g_colorDieCnt.Clear();
 
             for (int i = 0; i < _mapControlList.Count; i++) {
                 _mapControlList.ElementAt(i).Value.CordChanged -= MapBaseControl_CordChanged;
@@ -172,13 +211,15 @@ namespace MapBase {
                     if(die != NullColor) {
                         if (_colorDieCnt.ContainsKey(die)) {
                             _colorDieCnt[die]++;
+                            g_colorDieCnt[die]++;
                         } else {
                             _colorDieCnt.Add(die, 1);
+                            g_colorDieCnt.Add(die, 1);
                         }
                     }
                 }
             }
-
+           
             UpdateBinInfo();
         }
 
@@ -224,17 +265,20 @@ namespace MapBase {
 
             int totalCnt = 0;
             Dictionary<ushort, int> binCnt = new Dictionary<ushort, int>();
+            g_binCnt.Clear();
             foreach(var c in _colorDieCnt) {
                 totalCnt += c.Value;
                 if (BinMode == MapBinMode.HBin) {
                     var bin = _hBinColors.FirstOrDefault(a => a.Value == c.Key).Key;
                     binCnt.Add(bin, c.Value);
+                    g_binCnt.Add(bin, c.Value);
                 } else {
                     var bin = _sBinColors.FirstOrDefault(a => a.Value == c.Key).Key;
                     binCnt.Add(bin, c.Value);
+                    g_binCnt.Add(bin, c.Value);
                 }
             }
-
+            g_totalCnt = totalCnt;   
             textBlockDieCnt.Text = $"Total:{totalCnt}";
 
             binInfo.Children.Clear();
@@ -287,6 +331,9 @@ namespace MapBase {
             _freshHBinMaps.Clear();
             _containRtFlg.Clear();
 
+            g_sBinColors.Clear();
+            g_hBinColors.Clear();
+
             _xCnt = _waferData.XUbound - _waferData.XLbound + 1;
             _yCnt = _waferData.YUbound - _waferData.YLbound + 1;
 
@@ -297,10 +344,13 @@ namespace MapBase {
                 foreach (var hb in _waferData.HBinInfo) {
                     if (hb.Key == 1) {
                         _hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
+                        g_hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
                     } else if (hb.Value.Item2.Contains("P")) {
                         _hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
+                        g_hBinColors.Add(hb.Key, BinColor.GetPassBinColor());
                     } else {
                         _hBinColors.Add(hb.Key, BinColor.GetFailBinColor(i++));
+                        g_hBinColors.Add(hb.Key, BinColor.GetFailBinColor(i++));
                     }
                 }
                 hbFlg = true;
@@ -310,10 +360,16 @@ namespace MapBase {
                 foreach (var sb in _waferData.SBinInfo) {
                     if (sb.Key == 1) {
                         _sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
+                        g_sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
+
                     } else if (sb.Value.Item2.Contains("P")) {
                         _sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
+                        g_sBinColors.Add(sb.Key, BinColor.GetPassBinColor());
+
                     } else {
                         _sBinColors.Add(sb.Key, BinColor.GetFailBinColor(i++));
+                        g_sBinColors.Add(sb.Key, BinColor.GetFailBinColor(i++));
+
                     }
                 }
                 sbFlg = true;
@@ -325,15 +381,21 @@ namespace MapBase {
                 if (!sbFlg && !_sBinColors.ContainsKey(die.SBin)) {
                     if (die.PassOrFail) {
                         _sBinColors.Add(die.SBin, BinColor.GetPassBinColor());
+                        g_sBinColors.Add(die.SBin, BinColor.GetPassBinColor());
+
                     } else {
                         _sBinColors.Add(die.SBin, BinColor.GetFailBinColor(fsbCnt++));
+                        g_sBinColors.Add(die.SBin, BinColor.GetFailBinColor(fsbCnt++));
+
                     }
                 }
                 if (!hbFlg && !_hBinColors.ContainsKey(die.HBin)) {
                     if (die.PassOrFail) {
                         _hBinColors.Add(die.HBin, BinColor.GetPassBinColor());
+                        g_hBinColors.Add(die.HBin, BinColor.GetPassBinColor());
                     } else {
                         _hBinColors.Add(die.HBin, BinColor.GetFailBinColor(fhbCnt++));
+                        g_hBinColors.Add(die.HBin, BinColor.GetFailBinColor(fhbCnt++));
                     }
                 }
 

@@ -15,6 +15,7 @@ using System.Windows;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
 using OfficeOpenXml;
+using System.Windows.Media;
 
 namespace UI_Chart.Views
 {
@@ -216,6 +217,26 @@ namespace UI_Chart.Views
             }
 
         }
+
+        public Color GetSbinColor(ushort sbin, Dictionary<ushort, int> dic, Dictionary<Color, int> dic2)
+        {
+            //  Dictionary<ushort, int> dic = WaferMapControl.GetBinCnt();
+            //  Dictionary<Color, int> dic2 = WaferMapControl.GetColorDieCnt();
+
+            int index = 0;
+            for (int i=0;i<dic.Count;i++)
+            {
+                if (dic.ElementAt(i).Key == sbin)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            return dic2.ElementAt(index).Key;
+           
+        }
+
         private void buttonxlsxSave_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             string path;
@@ -277,91 +298,127 @@ namespace UI_Chart.Views
                         }
                     }
 
-                    // Write data into the SheetData
-                    //IRow row0 = sheet.CreateRow(0);
-                    //ICell cellx = row0.CreateCell(3);
-                    //cellx.SetCellValue("X");
 
-                    //// Write data into the SheetData
-                    //IRow row2 = sheet.CreateRow(2);
-                    //ICell celly = row2.CreateCell(0);
-                    //celly.SetCellValue("Y");
+                    Dictionary<ushort, int> dic = WaferMapControl.GetBinCnt();
+                    Dictionary<Color, int> dic2 = WaferMapControl.GetColorDieCnt();
+                    int TotalBinCnt = WaferMapControl.GetTotalCnt();
 
-                    //IRow row1 = sheet.CreateRow(1);
-                    //for (int col = 0; col <= _waferData.XUbound; col++)
-                    //{
-                    //    ICell cellXheader = row1.CreateCell(col+2);
-                    //    cellXheader.SetCellValue(col);
-                    //    cellXheader.CellStyle = style;
-                    //}
+                    worksheet.Cells[1, 1].Value = "Bin Code";
+                    worksheet.Cells[1, 2].Value = "Bin Name";
+                    worksheet.Cells[1, 3].Value = "Bin Count";
+                    worksheet.Cells[1, 4].Value = "Bin Percent";
 
-                    //IRow rowlast = sheet.CreateRow(_waferData.YUbound + 2);
-                    //for (int col = 0; col <= _waferData.XUbound; col++)
-                    //{
-                    //    ICell cellxtail = rowlast.CreateCell(col + 2);
-                    //    cellxtail.SetCellValue(col);
-                    //    cellxtail.CellStyle = style;
-                    //}
+                    var orderBincnt = dic.OrderByDescending(x => x.Value);
 
+                    int i = 0;
+                    foreach (var b in orderBincnt)
+                    {
+                        worksheet.Cells[i + 2, 1].Value = b.Key.ToString();
+                        Color cx = GetSbinColor(b.Key, dic, dic2);
+                        worksheet.Cells[i + 2, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[i + 2, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        worksheet.Cells[i + 2, 1].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
 
-                    //for (int row = _waferData.YUbound; row >= _waferData.YLbound; row--)
-                    //{
-                    //    IRow rowy = sheet.CreateRow(row + 2);
-                    //    ICell cellyheader = rowy.CreateCell(1);
-                    //    ICell cellytail = rowy.CreateCell(_waferData.XUbound + 2);
-                    //    cellyheader.SetCellValue(row);
-                    //    cellyheader.SetCellValue(row);
-                    //    cellytail.CellStyle = style;
-                    //    cellytail.CellStyle = style;
-                    //}
-                    worksheet.Cells[1, 3].Value = "X";
-                    worksheet.Cells[1, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[3, 1].Value = "Y";
-                    worksheet.Cells[3, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[_waferData.YUbound + 5, 3].Value = "X";
-                    worksheet.Cells[_waferData.YUbound + 5, 3].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                    worksheet.Cells[_waferData.YUbound + 3, 1].Value = "Y";
-                    worksheet.Cells[_waferData.YUbound + 3, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[i + 2, 3].Value = b.Value;
+                        worksheet.Cells[i + 2, 4].Value = (b.Value * 100.0 / TotalBinCnt).ToString("f2") + "%";
+                        i++;
+                    }
+
+                    worksheet.Cells[dic.Count + 2, 2].Value = "TotalBinCnt";
+                    worksheet.Cells[dic.Count + 2, 3].Value = TotalBinCnt;
+
+                    int summaryoffsetcol = 4;
+                    
+                    worksheet.Cells[1, 3 + summaryoffsetcol].Value = "X";
+                    worksheet.Cells[1, 3 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[3, 1 + summaryoffsetcol].Value = "Y";
+                    worksheet.Cells[3, 1 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 5, 3 + summaryoffsetcol].Value = "X";
+                    worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 5, 3 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 3, 1 + summaryoffsetcol].Value = "Y";
+                    worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 3, 1 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
 
                     int rawrowidx = 1;
-                    
                     for (int _diey = _waferData.YUbound; _diey >= _waferData.YLbound; _diey--)
                     {
                         int rawcolidx = 1;
-                        worksheet.Cells[rawrowidx + 2, 2].Value = _diey;
-                        worksheet.Cells[rawrowidx + 2, 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4].Value = _diey;
-                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rawrowidx + 2, 2 + summaryoffsetcol].Value = _diey;
+                        worksheet.Cells[rawrowidx + 2, 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4 + summaryoffsetcol].Value = _diey;
+                        worksheet.Cells[rawrowidx + 2, _waferData.XUbound + 4 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                    
                         for (int _diex = _waferData.XLbound; _diex <= _waferData.XUbound; _diex++)
                         {
-                            worksheet.Cells[2, rawcolidx + 2].Value = _diex;
-                            worksheet.Cells[2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                            worksheet.Cells[_waferData.YUbound + 4, rawcolidx + 2].Value = _diex;
-                            worksheet.Cells[_waferData.YUbound + 4, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-
-                            if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
+                            worksheet.Cells[2, rawcolidx + 2 + summaryoffsetcol].Value = _diex;
+                            worksheet.Cells[2, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 4, rawcolidx + 2 + summaryoffsetcol].Value = _diex;
+                            worksheet.Cells[_waferData.YUbound - _waferData.YLbound + 4, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                            if (cbBinMode.SelectedItem is MapBinMode.SBin)
                             {
-                                if (_freshSBinMaps[_diex, _diey] != 0)
+                                if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
                                 {
-                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Value = _freshSBinMaps[_diex, _diey];
-                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                    if (_freshSBinMaps[_diex, _diey] != 0)
+                                    {
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Value = _freshSBinMaps[_diex, _diey];
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                        Color cx = GetSbinColor(_freshSBinMaps[_diex, _diey], dic, dic2);
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
+                                    }
+                                }
+                                else
+                                {
+                                    if (_sBinMaps[_diex, _diey] != 0)
+                                    {
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Value = _sBinMaps[_diex, _diey];
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                        Color cx = GetSbinColor(_sBinMaps[_diex, _diey], dic, dic2);
+
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
+
+                                    }
                                 }
                             }
-                            else
+                            else 
                             {
-                                if (_sBinMaps[_diex, _diey] != 0)
+                                if (cbRtDataMode.SelectedItem is MapRtDataMode.FirstOnly)
                                 {
-                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Value = _sBinMaps[_diex, _diey];
-                                    worksheet.Cells[rawrowidx + 2, rawcolidx + 2].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                    if (_freshHBinMaps[_diex, _diey] != 0)
+                                    {
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Value = _freshHBinMaps[_diex, _diey];
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                        Color cx = GetSbinColor(_freshHBinMaps[_diex, _diey], dic, dic2);
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
+                                    }
+                                }
+                                else
+                                {
+                                    if (_hBinMaps[_diex, _diey] != 0)
+                                    {
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Value = _hBinMaps[_diex, _diey];
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                                        Color cx = GetSbinColor(_hBinMaps[_diex, _diey], dic, dic2);
+
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        worksheet.Cells[rawrowidx + 2, rawcolidx + 2 + summaryoffsetcol].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
+
+                                    }
                                 }
                             }
                             rawcolidx++;
                         }
 
-                        rawrowidx++;
-                        
+                        rawrowidx++;                        
                     }
-                   
+                                       
                     package.Save();
                 }
 
