@@ -11,6 +11,7 @@
                 <MenuItem Header="Merge Files" Command="{Binding Path=OpenFileMergeDiag}"/>
                 <MenuItem Header="Merge SubData" Command="{Binding Path=OpenSubDataMergeDiag}"/>
                 <MenuItem Header="Add ReTest File" Command="{Binding Path=OpenRtFileMergeDiag}" IsEnabled="{Binding IfFileSelectionValid}"/>
+                <MenuItem Header="Convert To CSV" Command="{Binding Path=ConvertCSV}"/>
             </MenuItem>
             <MenuItem Header="Correlation">
                 <MenuItem Header="Select Data" Command="{Binding Path=OpenCorrelationDiag}"/>

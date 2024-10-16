@@ -257,5 +257,105 @@ namespace DataContainer {
             return _filterContainer[filterId].FilterPartStatistic;
         }
 
+
+        public void ExportToExcel(string path, int filterId) {
+
+            string phase = "Loading start";
+            int percent = 0;
+            System.Threading.Timer myTimer = new System.Threading.Timer((x) => {
+                CurrentLoadingProgress = percent;
+                OnPropertyChanged(phase);
+            }, null, 100, 100);
+
+            try {
+
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(path)) {
+                    StringBuilder sb = new StringBuilder();
+
+                    var testItems = GetFilteredItemStatistic(filterId);
+                    //header
+                    sb.Append("Index,Cord,Time,HBin,SBin,Site");
+                    foreach (var item in testItems) {
+                        sb.Append($",{item.TestNumber}");
+                    }
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+
+                    sb.Append("TestText,,,,,");
+                    foreach (var item in testItems) {
+                        sb.Append($",{item.TestText}");
+                    }
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+
+                    sb.Append("HiLimit,,,,,");
+                    foreach (var item in testItems) {
+                        sb.Append($",{item.HiLimit}");
+                    }
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+
+                    sb.Append("LoLimit,,,,,");
+                    foreach (var item in testItems) {
+                        sb.Append($",{item.LoLimit}");
+                    }
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+
+                    sb.Append("Unit,,,,,");
+                    foreach (var item in testItems) {
+                        sb.Append($",{item.Unit}");
+                    }
+                    sw.WriteLine(sb.ToString());
+                    sb.Clear();
+
+                    phase = "Writing......";
+                    for (int c = 2; c < (GetFilteredChipsCount(filterId) + 2); c++) {
+                        var idx = GetFilteredPartIndex(filterId).ElementAt(c - 2);
+                        sb.Append($"{idx.ToString()},{GetWaferCord(idx)},{GetTestTime(idx).ToString()},{GetHardBin(idx).ToString()},{GetSoftBin(idx).ToString()},{GetSite(idx).ToString()}");
+
+                        for (int r = 0; r < GetTestIDs().Count(); r++) {
+                            sb.Append($",{GetCellText(r, c, filterId)}");
+                        }
+                        sw.WriteLine(sb.ToString());
+                        sb.Clear();
+                        percent = (int)(c * 100.0 / (GetFilteredChipsCount(filterId) + 2));
+                    }
+                    sw.Close();
+                }
+            } catch {
+                OnPropertyChanged("Write failed");
+            }
+            myTimer.Dispose();
+
+            OnPropertyChanged("Exported at:" + path);
+        }
+
+        private string GetCellText(int row, int column, int filterId) {
+            if (column == 0) {
+                return GetTestIDs().ElementAt(row);
+            } else if (column == 1) {
+                return GetTestIDs_Info().ElementAt(row).Value.TestText;
+            } else {
+                var idx = GetFilteredPartIndex(filterId).ElementAt(column - 2);
+
+                var uid = GetTestIDs().ElementAt(row);
+                var val = GetItemData(uid, idx);
+                var limit = GetTestInfo(uid);
+
+                return getstr(val);
+            }
+        }
+
+        string getstr(float val) {
+            if (float.IsPositiveInfinity(val)) {
+                return "Inf+";
+            } else if (float.IsNegativeInfinity(val)) {
+                return "Inf-";
+            } else if (float.IsNaN(val)) {
+                return "";
+            }
+            return ((double)val).ToString("0.#######");
+        }
     }
 }

@@ -33,6 +33,10 @@ namespace SillyMonkey.Core
 
     }
 
+    public class Event_CvtFile : PubSubEvent<string> {
+
+    }
+
     public class Event_AddRtFile : PubSubEvent<string> {
 
     }
