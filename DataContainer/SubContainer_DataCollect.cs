@@ -1,14 +1,33 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DataContainer {
+    public class TDInfo
+    {
+        public int test_time;
+        public int site_id;
+        public TDInfo(int _test_time,int _site_id)
+        {
+            test_time = _test_time;
+            site_id = _site_id;
+        }
+    }
     public partial class SubContainer {
+        public int m_TD;
+        public uint m_t;
+        public ArrayList tdinfo_arr;
         public void SetBasicInfo(string name, string val) {
             CurrentLoadingPhase = LoadingPhase.Reading;
             _basicInfo.Add(name, val);
+            m_TD = 1;
+            m_t = 0;
+
+            tdinfo_arr = new ArrayList();
+            tdinfo_arr.Clear();
         }
 
         public void AddSiteNum(byte siteNum) {
@@ -39,6 +58,61 @@ namespace DataContainer {
         public void AddTestData(byte siteNum, string uid, float rst) {
             SetData(uid, _siteContainer[siteNum], rst);
         }
+        public ushort GetCordCnt(short x,short y)
+        {
+            ushort cnt = 0;
+            for (int i=0;i< _xCord_PartContainer.Count;i++)
+            {
+                if (_xCord_PartContainer[i]==x&& _yCord_PartContainer[i] == y)
+                {
+                    cnt++;
+                }
+            }
+            return cnt;
+        }
+        public uint GetTDCnt(uint last_t)
+        {
+            if (m_t!=last_t)
+            {
+                m_TD++;
+            }
+            m_t = last_t;
+            return (uint)m_TD;
+        }
+
+        
+
+         
+
+        public bool CheckCanAdd(TDInfo _tdi)
+        {
+            bool bx = true;
+            for (int i = 0; i < tdinfo_arr.Count; i++)
+            {
+                TDInfo tdi = (TDInfo)tdinfo_arr[i];
+                if (_tdi.test_time != tdi.test_time)
+                {
+                    bx = false;
+                    break;
+                }
+            }
+            if (bx==true)
+            {
+                for (int i = 0; i < tdinfo_arr.Count; i++)
+                {
+                    TDInfo tdi = (TDInfo)tdinfo_arr[i];
+                    if (_tdi.site_id == tdi.site_id)
+                    {
+                        bx = false;
+                        break;
+                    }
+                }
+            }
+
+            return bx;
+        }
+
+       
 
         public void AddPrr(byte siteNum, uint? testTime, ushort hardBin, 
             ushort softBin, string partId, short xCord, short yCord, 
@@ -48,9 +122,31 @@ namespace DataContainer {
             _hardBin_PartContainer.Add(hardBin);
             _softBin_PartContainer.Add(softBin);
             _partId_PartContainer.Add(partId);
+            _rt_PartContainer.Add(GetCordCnt(xCord, yCord));
             _xCord_PartContainer.Add(xCord);
             _yCord_PartContainer.Add(yCord);
-            if(_ifCordValid && (xCord == short.MinValue || yCord == short.MinValue)) {
+
+            TDInfo tdi = new TDInfo((int)testTime, (int)siteNum);
+
+            if (CheckCanAdd(tdi) ==true)
+            {
+                tdinfo_arr.Add(tdi);
+
+               
+            }
+            else
+            {
+                m_TD++;
+                tdinfo_arr.Clear();
+                tdinfo_arr.Add(tdi);
+            }
+            
+            
+            _td_PartContainer.Add(m_TD);
+
+            //_td_PartContainer.Add((int)GetTDCnt((uint)testTime));
+
+            if (_ifCordValid && (xCord == short.MinValue || yCord == short.MinValue)) {
                 _ifCordValid = false;
             }
             _chipType_PartContainer.Add(deviceType);

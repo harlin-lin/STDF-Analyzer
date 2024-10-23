@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,10 +18,15 @@ namespace DataContainer {
         private List<DeviceType> _chipType_PartContainer;
         private List<ResultType> _resultType_PartContainer;
 
+        private List<int> _td_PartContainer;
+        private List<ushort> _rt_PartContainer;
+
         private PartStatistic _partStatistic;
         private bool _ifCordValid;
 
         private List<int> _allIndex;
+
+        
 
         private void Initialize_PartStatistic() {
             _site_PartContainer = new List<byte>(200000);
@@ -30,10 +36,13 @@ namespace DataContainer {
             _partId_PartContainer = new List<string>(200000);
             _xCord_PartContainer = new List<short>(200000);
             _yCord_PartContainer = new List<short>(200000);
+            _td_PartContainer = new List<int>(200000);
+            _rt_PartContainer = new List<ushort>(200000);
             _chipType_PartContainer = new List<DeviceType>(200000);
             _resultType_PartContainer = new List<ResultType>(200000);
             _allIndex = new List<int>(200000);
             _ifCordValid = true;
+        
         }
 
         private void AnalyseParts() {
@@ -44,6 +53,8 @@ namespace DataContainer {
             _partId_PartContainer.TrimExcess();
             _xCord_PartContainer.TrimExcess();
             _yCord_PartContainer.TrimExcess();
+            _td_PartContainer.TrimExcess();
+            _rt_PartContainer.TrimExcess();
             _chipType_PartContainer.TrimExcess();
             _resultType_PartContainer.TrimExcess();
             _allIndex.TrimExcess();

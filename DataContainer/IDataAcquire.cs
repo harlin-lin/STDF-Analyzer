@@ -109,6 +109,10 @@ namespace DataContainer{
 
         bool IfContainsTestId(string uid);
 
+        int GetTD(int partIndex);
+        ushort GetRT(int partIndex);
+     
+
         int ChipsCount { get; }
         string FilePath { get; }
         string FileName { get; }

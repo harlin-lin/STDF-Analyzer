@@ -106,6 +106,16 @@ namespace DataContainer {
             return _hardBin_PartContainer[partIndex];
         }
 
+        public int GetTD(int partIndex)
+        {
+            return _td_PartContainer[partIndex];
+        }
+        public ushort GetRT(int partIndex)
+        {
+            return _rt_PartContainer[partIndex];
+        }
+       
+
         public ushort GetSoftBin(int partIndex) {
             return _softBin_PartContainer[partIndex];
         }
@@ -277,14 +287,14 @@ namespace DataContainer {
                     sb.Append("Index,Cord,Time,HBin,SBin,Site");
                     foreach (var item in testItems) {
                         sb.Append($",{item.TestNumber}");
-                    }
+    }
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 
                     sb.Append("TestText,,,,,");
                     foreach (var item in testItems) {
                         sb.Append($",{item.TestText}");
-                    }
+}
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 

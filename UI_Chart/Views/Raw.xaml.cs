@@ -193,35 +193,35 @@ namespace UI_Chart.Views {
 
                         var testItems = _da.GetFilteredItemStatistic(_subData.FilterId);
                         //header
-                        sb.Append("Index,Cord,Time,HBin,SBin,Site");
+                        sb.Append("Index,Cord,TD,RT,Time,HBin,SBin,Site");
                         foreach(var item in testItems) {
                             sb.Append($",{item.TestNumber}");
                         }
                         sw.WriteLine(sb.ToString());
                         sb.Clear();
 
-                        sb.Append("TestText,,,,,");
+                        sb.Append("TestText,,,,,,,");
                         foreach (var item in testItems) {
                             sb.Append($",{item.TestText}");
                         }
                         sw.WriteLine(sb.ToString());
                         sb.Clear();
 
-                        sb.Append("HiLimit,,,,,");
+                        sb.Append("HiLimit,,,,,,,");
                         foreach (var item in testItems) {
                             sb.Append($",{item.HiLimit}");
                         }
                         sw.WriteLine(sb.ToString());
                         sb.Clear();
 
-                        sb.Append("LoLimit,,,,,");
+                        sb.Append("LoLimit,,,,,,,");
                         foreach (var item in testItems) {
                             sb.Append($",{item.LoLimit}");
                         }
                         sw.WriteLine(sb.ToString());
                         sb.Clear();
 
-                        sb.Append("Unit,,,,,");
+                        sb.Append("Unit,,,,,,,");
                         foreach (var item in testItems) {
                             sb.Append($",{item.Unit}");
                         }
@@ -231,7 +231,7 @@ namespace UI_Chart.Views {
                         phase = "Writing......";
                         for (int c = 2; c < _rawDataModel.ColumnCount; c++) {
                             var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(c-2);
-                            sb.Append($"{idx.ToString()},{_da.GetWaferCord(idx)},{_da.GetTestTime(idx).ToString()},{_da.GetHardBin(idx).ToString()},{_da.GetSoftBin(idx).ToString()},{_da.GetSite(idx).ToString()}");
+                            sb.Append($"{idx.ToString()},{_da.GetWaferCord(idx)},{_da.GetTD(idx)},{_da.GetRT(idx)},{_da.GetTestTime(idx).ToString()},{_da.GetHardBin(idx).ToString()},{_da.GetSoftBin(idx).ToString()},{_da.GetSite(idx).ToString()}");
 
                             for (int r = 0; r < _rawDataModel.RowCount; r++) {
                                 if (mode == true)

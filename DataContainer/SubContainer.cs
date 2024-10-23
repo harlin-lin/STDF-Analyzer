@@ -46,6 +46,8 @@ namespace DataContainer {
             _partId_PartContainer = null;
             _xCord_PartContainer = null;
             _yCord_PartContainer = null;
+            _td_PartContainer = null;
+            _rt_PartContainer = null;
             _chipType_PartContainer = null;
             _resultType_PartContainer = null;
 
