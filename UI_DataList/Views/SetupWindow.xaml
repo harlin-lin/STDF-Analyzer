@@ -141,6 +141,10 @@
                         <TextBlock Text="Enable 6 Sigma Line:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
                         <CheckBox IsChecked="{Binding CorrHistogramEnableSigmaLine}" Margin="0"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0" >
+                        <TextBlock Text="Save plot in stdf path:" VerticalAlignment="Center" Width="180" Margin="10,0,0,0" />
+                        <CheckBox IsChecked="{Binding CorrHistogramEnableDefaultSavePath}" Margin="0"/>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 
