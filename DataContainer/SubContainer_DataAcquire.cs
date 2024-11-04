@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace DataContainer {
+
     public partial class SubContainer {
         public byte[] GetSites() {
             return _siteContainer.Keys.ToArray();
@@ -114,6 +116,55 @@ namespace DataContainer {
         {
             return _rt_PartContainer[partIndex];
         }
+
+        public void GenTDRT()
+        {
+            Dictionary<string, int> rt_dic = new Dictionary<string, int>();
+            rt_dic.Clear();
+
+            int td_cnt = 0;
+            int last_testtime = -1;
+            int last_site = -1;
+
+            for (int i = 0; i < _xCord_PartContainer.Count; i++)
+            {
+                int now_testtime = (int)_testTime_PartContainer[i];
+                int now_site = _site_PartContainer[i];
+                string x_y = _xCord_PartContainer[i].ToString() + "_" + _yCord_PartContainer[i].ToString();
+                if (rt_dic.ContainsKey(x_y)==false)
+                {
+                    rt_dic.Add(x_y,0);
+                }
+                else
+                {
+                    rt_dic[x_y] = rt_dic[x_y] + 1;
+                }
+                _rt_PartContainer.Add((ushort)rt_dic[x_y]);
+                if (now_testtime!= last_testtime)
+                {
+                    td_cnt++;
+                    last_testtime = now_testtime;
+                    last_site = now_site;
+                }
+                else
+                {
+                    if (now_site== last_site)
+                    {
+                        td_cnt++;
+                        last_testtime = now_testtime;
+                        last_site = now_site;
+                    }
+                    else
+                    {
+                        last_testtime = now_testtime;
+                        last_site = now_site;
+                    }
+                }
+                _td_PartContainer.Add(td_cnt);
+            }
+        }
+
+        
        
 
         public ushort GetSoftBin(int partIndex) {

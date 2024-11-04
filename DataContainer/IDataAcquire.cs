@@ -111,6 +111,7 @@ namespace DataContainer{
 
         int GetTD(int partIndex);
         ushort GetRT(int partIndex);
+        void GenTDRT();
      
 
         int ChipsCount { get; }

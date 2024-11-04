@@ -229,6 +229,7 @@ namespace UI_Chart.Views {
                         sb.Clear();
 
                         phase = "Writing......";
+                        _da.GenTDRT();
                         for (int c = 2; c < _rawDataModel.ColumnCount; c++) {
                             var idx = _da.GetFilteredPartIndex(_subData.FilterId).ElementAt(c-2);
                             sb.Append($"{idx.ToString()},{_da.GetWaferCord(idx)},{_da.GetTD(idx)},{_da.GetRT(idx)},{_da.GetTestTime(idx).ToString()},{_da.GetHardBin(idx).ToString()},{_da.GetSoftBin(idx).ToString()},{_da.GetSite(idx).ToString()}");
