@@ -75,7 +75,7 @@ namespace FastWpfGrid
         {
             _scrollItems.Clear();
             //_itemByIndex.Clear();
-            _sizeOverridesByModelIndex.Clear();
+            //_sizeOverridesByModelIndex.Clear();
             _positions.Clear();
             _scrollIndexes.Clear();
             _frozenItems.Clear();
@@ -353,6 +353,7 @@ namespace FastWpfGrid
             if (modelIndex < 0) return;
             // can be done more effectively
             _sizeOverridesByModelIndex[modelIndex] = newSize;
+
             BuildIndex();
         }
 
