@@ -182,6 +182,12 @@ namespace UI_DataList.Views {
             set { SA.ItemCorrEnableOutlierFilter = value; }
         }
 
+
+        public bool CorrHistogramEnableDefaultSavePath {
+            get { return SA.CorrHistogramEnableDefaultSavePath; }
+            set { SA.CorrHistogramEnableDefaultSavePath = value; }
+        }
+
         private DelegateCommand _apply;
 
         public DelegateCommand Apply =>

@@ -400,6 +400,8 @@ namespace UI_Chart.Views {
             return saveFileDialog;
         }
 
+        private string defaultSavePath = "";
+
         private bool GetAndCheckPath(string filter, string dftName, out string path) {
             var ret = false;
             var isGoodPath = false;
@@ -407,12 +409,20 @@ namespace UI_Chart.Views {
             saveFileDialog.FileName = dftName;
             path = null;
 
+            if (SA.CorrHistogramEnableDefaultSavePath && defaultSavePath != "") {
+                path = defaultSavePath + "\\" + dftName + ".png";
+
+                return true;
+            }
+
+
             while (!isGoodPath) {
                 if (saveFileDialog.ShowDialog() == true) {
                     if (IsFileGoodForWriting(saveFileDialog.FileName)) {
                         path = saveFileDialog.FileName;
                         isGoodPath = true;
                         ret = true;
+                        defaultSavePath = Path.GetDirectoryName(saveFileDialog.FileName);
                     } else {
                         System.Windows.MessageBox.Show(
                             "File is inaccesible for writing or you can not create file in this location, please choose another one.");
@@ -508,12 +518,14 @@ namespace UI_Chart.Views {
                 System.Windows.MessageBox.Show("Select at list one item");
                 return;
             }
-            string dftName = _selectedId + "_CorrHisto";
+            var da = StdDB.GetDataAcquire(_subDataList[0].StdFilePath);
+            var testtext = da.GetTestInfo(_selectedId).TestText;
+            string dftName = $"{_selectedId}_{testtext}_CorrHisto";
             if (_subDataList.Count > 1) dftName += "_cmp";
             if (GetAndCheckPath("PNG | *.png", dftName, out filePath)) {
                 histoChart.Plot.SaveFig(filePath);
             }
-
+            _ea.GetEvent<Event_Progress>().Publish(new Tuple<string, int>("Saved:" + dftName, 0));
         }
 
         private void buttonCopy_Click(object sender, System.Windows.RoutedEventArgs e) {
