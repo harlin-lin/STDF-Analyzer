@@ -25,7 +25,7 @@ namespace SillyMonkey.Core.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TestNumber")]
+        [global::System.Configuration.DefaultSettingValueAttribute("TestNumberAndTestName")]
         public string UidMode {
             get {
                 return ((string)(this["UidMode"]));
