@@ -1,4 +1,4 @@
-﻿using DataContainer;
+using DataContainer;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -52,7 +52,13 @@ namespace SillyMonkey.Core {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value.GetType().Name == "SubData") {
                 var d = (SubData)value;
-                return $"F:{d.FilterId:X8}  Data:{System.IO.Path.GetFileName(d.StdFilePath)}";
+                if (d.FilterId_index == 0)
+                {
+                    return $"F:{d.FilterId:X8}_Root  Data:{System.IO.Path.GetFileName(d.StdFilePath)}"; 
+                }else 
+                {
+                    return $"F:{d.FilterId:X8}_S{d.FilterId_index - 1}  Data:{System.IO.Path.GetFileName(d.StdFilePath)}";
+                }
             }
 
             throw new NotSupportedException();
