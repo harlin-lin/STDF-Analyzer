@@ -1,4 +1,4 @@
-﻿using DataContainer;
+using DataContainer;
 using Microsoft.Win32;
 using Prism.Events;
 using Prism.Regions;
@@ -140,6 +140,7 @@ namespace UI_Chart.Views {
 
             StringBuilder sb = new StringBuilder();
             StringBuilder sb_subData = new StringBuilder();
+            StringBuilder sb_subData_FN = new StringBuilder();
             StringBuilder sb_mean = new StringBuilder();
             StringBuilder sb_median = new StringBuilder();
             StringBuilder sb_min = new StringBuilder();
@@ -148,14 +149,15 @@ namespace UI_Chart.Views {
             StringBuilder sb_cpk = new StringBuilder();
             StringBuilder sb_sigma = new StringBuilder();
 
-            sb_subData.Append($"{"SubData:",-13}");
-            sb_mean.Append($"{"Mean:",-13}");
-            sb_median.Append($"{"Median:",-13}");
-            sb_min.Append($"{"Min:",-13}");
-            sb_max.Append($"{"Max:",-13}");
-            sb_cp.Append($"{"CP:",-13}");
-            sb_cpk.Append($"{"CPK:",-13}");
-            sb_sigma.Append($"{"Sigma:",-13}");
+            sb_subData.Append($"{"SubData:",-20}");
+            sb_subData_FN.Append($"{"FileName:",-20}");
+            sb_mean.Append($"{"Mean:",-20}");
+            sb_median.Append($"{"Median:",-20}");
+            sb_min.Append($"{"Min:",-20}");
+            sb_max.Append($"{"Max:",-20}");
+            sb_cp.Append($"{"CP:",-20}");
+            sb_cpk.Append($"{"CPK:",-20}");
+            sb_sigma.Append($"{"Sigma:",-20}");
 
             for (int i = 0; i < (_subDataList.Count > 16 ? 16 : _subDataList.Count); i++) {
                 var da = StdDB.GetDataAcquire(_subDataList[i].StdFilePath);
@@ -172,14 +174,15 @@ namespace UI_Chart.Views {
 
                 //var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
-                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-13}");
-                sb_mean.Append($"{statistic.MeanValue,-13}");
-                sb_median.Append($"{statistic.MedianValue,-13}");
-                sb_min.Append($"{statistic.MinValue,-13}");
-                sb_max.Append($"{statistic.MaxValue,-13}");
-                sb_cp.Append($"{statistic.Cp,-13}");
-                sb_cpk.Append($"{statistic.Cpk,-13}");
-                sb_sigma.Append($"{statistic.Sigma,-13}");
+                sb_subData_FN.Append($"{Path.GetFileName(_subDataList[i].StdFilePath) + "_S" + (_subDataList[i].FilterId_index-1),-20}");
+                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-20}");
+                sb_mean.Append($"{statistic.MeanValue,-20}");
+                sb_median.Append($"{statistic.MedianValue,-20}");
+                sb_min.Append($"{statistic.MinValue,-20}");
+                sb_max.Append($"{statistic.MaxValue,-20}");
+                sb_cp.Append($"{statistic.Cp,-20}");
+                sb_cpk.Append($"{statistic.Cpk,-20}");
+                sb_sigma.Append($"{statistic.Sigma,-20}");
 
                 if (i == 0) {
                     var info = da.GetTestInfo(_selectedId);
@@ -197,10 +200,10 @@ namespace UI_Chart.Views {
                     _highLimit = idInfo.HiLimit ?? _max;
 
                     var item = da.GetTestInfo(_selectedId);
-                    sb.Append($"{_selectedId,-13}");
+                    sb.Append($"{_selectedId,-20}");
                     sb.Append($"{item.TestText}\r\n");
-                    sb.Append($"{"Lo Limit:",-13}{item.LoLimit,-13}{item.Unit,-13}\r\n");
-                    sb.Append($"{"Hi Limit:",-13}{item.HiLimit,-13}{item.Unit,-13}\r\n");
+                    sb.Append($"{"Lo Limit:",-20}{item.LoLimit,-20}{item.Unit,-20}\r\n");
+                    sb.Append($"{"Hi Limit:",-20}{item.HiLimit,-20}{item.Unit,-20}\r\n");
                 } else {
                     _min = statistic.MinValue < _min ? statistic.MinValue : _min;
                     _max = statistic.MaxValue > _max ? statistic.MaxValue : _max;
@@ -216,6 +219,8 @@ namespace UI_Chart.Views {
             }
 
             sb.Append(sb_subData);
+            sb.AppendLine();
+            sb.Append(sb_subData_FN);
             sb.AppendLine();
             sb.Append(sb_mean);
             sb.AppendLine();
@@ -321,7 +326,9 @@ namespace UI_Chart.Views {
 
                 var bar = histoChart.Plot.AddBar(histo.Item1, histo.Item2, Color.FromArgb(color.A, color.R, color.G, color.B));
                 bar.BarWidth = histo.Item3 > 0 ? histo.Item3 : 1;
-                bar.Label = SubDataList[i].FilterId.ToString("X8");
+                bar.Label = SubDataList[i].FilterId.ToString("X8") + "_" +
+                    Path.GetFileName(SubDataList[i].StdFilePath) + "_S" + (SubDataList[i].FilterId_index - 1);
+
 
                 if (i == 0) {
                     maxCnt = histo.Item2.Max();
