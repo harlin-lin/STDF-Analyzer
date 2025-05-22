@@ -1,4 +1,4 @@
-﻿using Prism.Commands;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -94,9 +94,15 @@ namespace UI_DataList.ViewModels {
             ParentNode = file;
             FilterId = filterId;
             FilterIdx = filterIdx;
-            NodeName = $"Filter_{filterIdx}:{filterId:X8}";
+            if (filterIdx == 0)
+            {
+                NodeName = $"Filter_{filterIdx}:{filterId:X8}_Root";
+            }
+            else { 
+                NodeName = $"Filter_{filterIdx}:{filterId:X8}_S{filterIdx-1}";
+            }
             FilePath = file.FilePath;
-            SubData = new SubData(FilePath, filterId);
+            SubData = new SubData(FilePath, filterId, (filterIdx == 0)?0:(filterIdx - 1));
             //IsSelected = true;
         }
     }
