@@ -117,6 +117,9 @@ namespace DataContainer {
         public bool MergeData(SubContainer da) {
             if (!da.LoadingDone) return false;
 
+            if (_mergedSubFiles.ContainsKey(da.FilePath)) return false;
+
+
             SetReadingPercent(0);
 
             //merge the misc
@@ -179,12 +182,16 @@ namespace DataContainer {
             _allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
                          select i).ToList();
 
+            _mergedSubFiles.Add(da.FilePath, new Tuple<int, int>(start, _partIdx));
+
             SetReadingPercent(100);
             return true;
         }
 
         public bool MergeSubData(SubContainer da, int filterId) {
             if (!da.LoadingDone) return false;
+            
+            if (_mergedSubFiles.ContainsKey(da.FilePath)) return false;
 
             SetReadingPercent(0);
 
@@ -254,6 +261,8 @@ namespace DataContainer {
 
             _allIndex = (from i in Enumerable.Range(0, _partIdx + 1)
                          select i).ToList();
+
+            _mergedSubFiles.Add(da.FilePath, new Tuple<int, int>(_partIdx + 1, _partIdx + filter.FilterPartStatistic.TotalCnt));
 
             SetReadingPercent(100);
             return true;

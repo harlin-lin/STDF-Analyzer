@@ -140,6 +140,7 @@ namespace DataContainer{
         IEnumerable<Tuple<short, short, int>> GetFilteredCordsAndIdx(int filterId);
         #endregion
 
+        string GetMergedSubFileByIdx(int idx);
 
         #region filter
         int CreateFilter();

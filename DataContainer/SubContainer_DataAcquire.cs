@@ -250,6 +250,18 @@ namespace DataContainer {
             return new ItemStatistic(data, item.LoLimit, item.HiLimit);
         }
 
+        public string GetMergedSubFileByIdx(int idx) {
+            if (_mergedSubFiles.Count == 0) {
+                return FilePath;
+            }
+            foreach(var p in _mergedSubFiles) {
+                if(idx >= p.Value.Item1 && idx <= p.Value.Item2) {
+                    return p.Key;
+                }
+            }
+            return "";
+        }
+
 
 
         public PartStatistic GetFilteredPartStatistic(int filterId) {
@@ -274,35 +286,35 @@ namespace DataContainer {
 
                     var testItems = GetFilteredItemStatistic(filterId);
                     //header
-                    sb.Append("Index,Cord,Time,HBin,SBin,Site");
+                    sb.Append("FileName,Index,Cord,Time,HBin,SBin,Site");
                     foreach (var item in testItems) {
                         sb.Append($",{item.TestNumber}");
                     }
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 
-                    sb.Append("TestText,,,,,");
+                    sb.Append(",TestText,,,,,");
                     foreach (var item in testItems) {
                         sb.Append($",{item.TestText}");
                     }
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 
-                    sb.Append("HiLimit,,,,,");
+                    sb.Append(",HiLimit,,,,,");
                     foreach (var item in testItems) {
                         sb.Append($",{item.HiLimit}");
                     }
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 
-                    sb.Append("LoLimit,,,,,");
+                    sb.Append(",LoLimit,,,,,");
                     foreach (var item in testItems) {
                         sb.Append($",{item.LoLimit}");
                     }
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
 
-                    sb.Append("Unit,,,,,");
+                    sb.Append(",Unit,,,,,");
                     foreach (var item in testItems) {
                         sb.Append($",{item.Unit}");
                     }
@@ -312,7 +324,7 @@ namespace DataContainer {
                     phase = "Writing......";
                     for (int c = 2; c < (GetFilteredChipsCount(filterId) + 2); c++) {
                         var idx = GetFilteredPartIndex(filterId).ElementAt(c - 2);
-                        sb.Append($"{idx.ToString()},{GetWaferCord(idx)},{GetTestTime(idx).ToString()},{GetHardBin(idx).ToString()},{GetSoftBin(idx).ToString()},{GetSite(idx).ToString()}");
+                        sb.Append($"{Path.GetFileNameWithoutExtension(path)},{idx.ToString()},{GetWaferCord(idx)},{GetTestTime(idx).ToString()},{GetHardBin(idx).ToString()},{GetSoftBin(idx).ToString()},{GetSite(idx).ToString()}");
 
                         for (int r = 0; r < GetTestIDs().Count(); r++) {
                             sb.Append($",{GetCellText(r, c, filterId)}");

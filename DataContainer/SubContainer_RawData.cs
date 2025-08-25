@@ -36,6 +36,7 @@ namespace DataContainer {
         private Dictionary<ushort, Tuple<string, string>> _softBinNames;
         private Dictionary<ushort, Tuple<string, string>> _hardBinNames;
 
+        private Dictionary<string, Tuple<int, int>> _mergedSubFiles;
 
         private void Initialize_RawData() {
             _dataBase_Result = new Dictionary<string, List<DataBlock_Float>>(DEFAULT_ITEMS_COUNT);
@@ -47,6 +48,8 @@ namespace DataContainer {
 
             _softBinNames = new Dictionary<ushort, Tuple<string, string>>();
             _hardBinNames = new Dictionary<ushort, Tuple<string, string>>();
+
+            _mergedSubFiles = new Dictionary<string, Tuple<int, int>>();
         }
         
         private bool CheckItemContainer(string uid) {
