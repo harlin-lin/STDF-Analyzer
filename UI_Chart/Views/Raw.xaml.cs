@@ -6,6 +6,7 @@ using SillyMonkey.Core;
 using System;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using System.Windows.Controls;
 using UI_Chart.ViewModels;
 
@@ -18,11 +19,16 @@ namespace UI_Chart.Views {
             InitializeComponent();
             _regionManager = regionManager;
             _ea = ea;
+
+            timer_Item.Interval = 300;
+            timer_Item.Elapsed += Timer_Item_Elapsed;
         }
         IRegionManager _regionManager;
         IEventAggregator _ea;
 
         SubData _subData;
+
+        private Timer timer_Item = new Timer();
 
         public void OnNavigatedTo(NavigationContext navigationContext) {
             var data = (SubData)navigationContext.Parameters["subData"];
@@ -57,7 +63,7 @@ namespace UI_Chart.Views {
         }
 
 
-        private FastGridModelBase _rawDataModel;
+        private FastDataGridModel _rawDataModel;
 
         //private async void ExportToExcelAsync() {
         //    string path;
@@ -253,6 +259,27 @@ namespace UI_Chart.Views {
         private void ExportToExcel_Click(object sender, System.Windows.RoutedEventArgs e) {
             ExportToExcelAsync();
         }
+
+        private void tbTestNameFilter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            lock (this)
+            {
+                timer_Item.Stop();
+                timer_Item.Start();
+            }
+        }
+
+        private void Timer_Item_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            lock (this)
+            {
+                timer_Item.Stop();
+                this.Dispatcher.Invoke(() => {
+                    _rawDataModel.FilterColumn(1, tbTestNameFilter.Text);
+                });
+            }
+        }
+
     }
 
 }

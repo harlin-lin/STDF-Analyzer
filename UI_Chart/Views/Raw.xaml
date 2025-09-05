@@ -15,7 +15,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Margin="0,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
+            <TextBlock Margin="10,0,0,0" Text="Item Filter:" VerticalAlignment="Center" />
+            <TextBox Name="tbTestNameFilter" Width="80" VerticalAlignment="Center" TextChanged="tbTestNameFilter_TextChanged" ToolTip="Follow Rule of Regular Expression, ignorecase"
+            BorderBrush="Black" BorderThickness="0,0,0,1" Background="Transparent"/>
+            <Button Margin="10,0,10,0" Click="ExportToExcel_Click" ToolTip="Export To Excel" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-DatabaseExportOutline.png" Width="21" Height="21"/>
             </Button>
         </StackPanel>

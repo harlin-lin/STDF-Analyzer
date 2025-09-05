@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-using DataContainer;
+﻿using DataContainer;
 using FastWpfGrid;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace UI_Chart.ViewModels {
     public class FastDataGridModel : FastGridModelBase {
@@ -25,12 +29,60 @@ namespace UI_Chart.ViewModels {
             _frozenCols.Add(1);
         }
 
+        private HashSet<int> _hiddenRows = new HashSet<int>();
+        private List<int> hid = new List<int>(400);
+
+        public void FilterColumn(int column, string filterPat)
+        {
+            hid.Clear();
+            if (!string.IsNullOrWhiteSpace(filterPat))
+            {
+                //TestName Filter
+                for (int i = 0; i < RowCount; i++)
+                {
+                    if (!Regex.IsMatch(GetCellText(i, column), filterPat, RegexOptions.IgnoreCase))
+                    {
+                        hid.Add(i);
+                    }
+                }
+
+                //TestNumber Filter
+                if (hid.Count == RowCount)
+                {
+                    hid.Clear();
+                    for (int i = 0; i < RowCount; i++)
+                    {
+                        if (!Regex.IsMatch(GetCellText(i, 0), filterPat, RegexOptions.IgnoreCase))
+                        {
+                            hid.Add(i);
+                        }
+                    }
+                }
+            }
+
+            _hiddenRows.Clear();
+
+            foreach (var v in hid)
+            {
+                _hiddenRows.Add(v);
+            }
+
+
+            NotifyRefresh();
+        }
+
+
         public override HashSet<int> GetFrozenColumns(IFastGridView view) {
             return _frozenCols;
         }
 
         public override HashSet<int> GetFrozenRows(IFastGridView view) {
             return _frozenRows;
+        }
+
+        public override HashSet<int> GetHiddenRows(IFastGridView view)
+        {
+            return _hiddenRows;
         }
 
         public override int ColumnHeaderHeight => 90;
