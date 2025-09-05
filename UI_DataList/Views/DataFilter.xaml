@@ -197,7 +197,16 @@
                         <RowDefinition Height="1.5*"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <ComboBox Grid.Row="0" x:Name="cbItems" ItemsSource="{Binding Items}" Margin="0,1">
+                    <ComboBox Grid.Row="0" x:Name="cbItems" ItemsSource="{Binding Items, IsAsync=True}" Margin="0,1"
+                              VirtualizingStackPanel.IsVirtualizing="True"
+                              VirtualizingStackPanel.ScrollUnit="Pixel"
+                              ScrollViewer.CanContentScroll="True">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                        
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock>

@@ -31,7 +31,16 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>
-            <ComboBox x:Name="cbItemX" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemX" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -48,7 +57,16 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox x:Name="cbItemY" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemY" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -65,7 +83,16 @@
             </ComboBox>
 
             <Label Content="WaferNO:"/>
-            <ComboBox x:Name="cbItemWaferNO" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemWaferNO" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
