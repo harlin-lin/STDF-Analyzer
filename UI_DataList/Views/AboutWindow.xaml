@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock Margin="5" Text="SA StdfAnalyzer" FontSize="15" HorizontalAlignment="Center"/>
-            <TextBlock Margin="5" Text="V3.6.2 20241016" HorizontalAlignment="Center"/>
+            <TextBlock Margin="5" Text="V3.6.3 20251114" HorizontalAlignment="Center"/>
             <TextBlock Margin="5" Text="Author: Harlin Zhang" HorizontalAlignment="Center"/>
             <TextBlock Margin="5" Text="Mail:harlin_zhang@outlook.com" HorizontalAlignment="Center"/>
             <TextBlock Margin="5" Text="关注下方公众号获得最新版本和使用说明~" HorizontalAlignment="Center"/>
