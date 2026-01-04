@@ -318,8 +318,15 @@ namespace UI_Chart.Views
                         worksheet.Cells[i + 2, 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                         worksheet.Cells[i + 2, 1].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                         worksheet.Cells[i + 2, 1].Style.Fill.BackgroundColor.SetColor(cx.A, cx.R, cx.G, cx.B);
-
-                        worksheet.Cells[i + 2, 3].Value = b.Value;
+                        if (cbBinMode.SelectedItem is MapBinMode.SBin)
+                        {
+                            worksheet.Cells[i + 2, 2].Value = _waferData.SBinInfo[b.Key].Item1;
+                        }
+                        else//HBIN
+                        {
+                            worksheet.Cells[i + 2, 2].Value = _waferData.HBinInfo[b.Key].Item1;
+                        }
+                            worksheet.Cells[i + 2, 3].Value = b.Value;
                         worksheet.Cells[i + 2, 4].Value = (b.Value * 100.0 / TotalBinCnt).ToString("f2") + "%";
                         i++;
                     }

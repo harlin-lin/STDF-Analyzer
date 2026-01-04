@@ -22,7 +22,16 @@
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/Material-ContentCopy.png" Width="16" Height="16"/>
             </Button>
             <Label Content="X:"/>
-            <ComboBox Width="180" Name="cbItemX" SelectionChanged="cbItemX_SelectionChanged"  Margin="3,1,20,1">
+            <ComboBox Width="180" Name="cbItemX" SelectionChanged="cbItemX_SelectionChanged"  Margin="3,1,20,1"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -39,7 +48,16 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox Width="180" Name="cbItemY" SelectionChanged="cbItemY_SelectionChanged"  Margin="3,1">
+            <ComboBox Width="180" Name="cbItemY" SelectionChanged="cbItemY_SelectionChanged"  Margin="3,1"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>

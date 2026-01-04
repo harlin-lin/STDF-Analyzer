@@ -244,12 +244,12 @@ namespace FileReader {
             ushort i = 0;
             var FinishTime = rdDateTime(record, i, len); i += 4; if (i > len) return;
             _dc.SetBasicInfo("FinishTime", FinishTime.ToString());
-            var LotDispositionCode = rdCx(record, i, len, 1); i += 1; if (i > len) return;
-            _dc.SetBasicInfo("LotDispositionCode", LotDispositionCode);
-            var LotUserDecription = rdCn(record, i, len); i += (ushort)(1 + LotUserDecription.Length);
-            _dc.SetBasicInfo("LotUserDecription", LotUserDecription);
-            var LotExecDecription = rdCn(record, i, len); i += (ushort)(1 + LotExecDecription.Length);
-            _dc.SetBasicInfo("LotExecDecription", LotExecDecription);
+            //var LotDispositionCode = rdCx(record, i, len, 1); i += 1; if (i > len) return;
+            //_dc.SetBasicInfo("LotDispositionCode", LotDispositionCode);
+            //var LotUserDecription = rdCn(record, i, len); i += (ushort)(1 + LotUserDecription.Length);
+            //_dc.SetBasicInfo("LotUserDecription", LotUserDecription);
+            //var LotExecDecription = rdCn(record, i, len); i += (ushort)(1 + LotExecDecription.Length);
+            //_dc.SetBasicInfo("LotExecDecription", LotExecDecription);
         }
         private void AddPcr(byte[] record, ushort len) {
             //ignore
@@ -727,7 +727,7 @@ namespace FileReader {
             if (i > len) throw new Exception("wrong record index");
             byte charCnt = record[i];
             if (charCnt == 0) return "";
-            if ((i + charCnt) > len) throw new Exception("wrong record index");
+            if ((i + charCnt) > len) return ""; // throw new Exception("wrong record index");
             //return BitConverter.ToString(record, i+1, charCnt);
             return Encoding.ASCII.GetString(record, i + 1, charCnt);
         }

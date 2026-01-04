@@ -16,11 +16,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" >
-            <Button Name="buttonxlsxSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonxlsxSave_Click" ToolTip="PNG Save" BorderThickness="0">
+            <Button Name="buttonxlsxSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonxlsxSave_Click" ToolTip="Xlsx Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <TextBlock Margin="0,0,5,0" Text="Xlsx" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonSave_Click" ToolTip="Xlsx Save" BorderThickness="0">
+            <Button Name="buttonSave" Width="23" Height="23" Margin="10,0,0,0" Click="buttonSave_Click" ToolTip="PNG Save" BorderThickness="0">
                 <Image Source="/SillyMonkey.Core;component/Resource/icon/ForkAwesome-FloppyOutline.png" Width="16" Height="16"/>
             </Button>
             <TextBlock Margin="0,0,5,0" Text="PNG" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -37,7 +37,16 @@
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <Label Content="X:"/>
-            <ComboBox x:Name="cbItemX" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemX" Margin="3,1,10,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -54,7 +63,16 @@
             </ComboBox>
 
             <Label Content="Y:"/>
-            <ComboBox x:Name="cbItemY" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemY" Margin="3,1"  IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -71,7 +89,16 @@
             </ComboBox>
 
             <Label Content="WaferNO:"/>
-            <ComboBox x:Name="cbItemWaferNO" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140">
+            <ComboBox x:Name="cbItemWaferNO" Margin="3,1" IsEnabled="{Binding ElementName=cbUserCord, Path=IsChecked}" Width="140"
+                      VirtualizingStackPanel.IsVirtualizing="True"
+                      VirtualizingStackPanel.ScrollUnit="Pixel"
+                      ScrollViewer.CanContentScroll="True">
+                <ComboBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel />
+                    </ItemsPanelTemplate>
+                </ComboBox.ItemsPanel>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,9 +81,23 @@ namespace UI_Data.ViewModels {
         public void FilterColumn(int column, string filterPat) {
             hid.Clear();
             if (!string.IsNullOrWhiteSpace(filterPat)) {
+                //TestName Filter
                 for (int i = 0; i < RowCount; i++) {
                     if(!Regex.IsMatch(GetCell(i, column).ToString(), filterPat, RegexOptions.IgnoreCase)){
                         hid.Add(i);
+                    }
+                }
+
+                //TestNumber Filter
+                if (hid.Count == RowCount)
+                {
+                    hid.Clear();
+                    for (int i = 0; i < RowCount; i++)
+                    {
+                        if (!Regex.IsMatch(GetCell(i, 1).ToString(), filterPat, RegexOptions.IgnoreCase))
+                        {
+                            hid.Add(i);
+                        }
                     }
                 }
             }

@@ -185,6 +185,11 @@ namespace SillyMonkey.Core {
             set { Settings.Default.ItemCorrEnableOutlierFilter = value; }
         }
 
+        public static bool CorrHistogramEnableDefaultSavePath {
+            get { return Settings.Default.CorrHistogramEnableDefaultSavePath; }
+            set { Settings.Default.CorrHistogramEnableDefaultSavePath = value; }
+        }
+
         public static Color GetColor(int idx) {
             if (idx >= 16) idx = 15;
             return ColorList[idx];
