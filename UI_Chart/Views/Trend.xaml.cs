@@ -1,4 +1,4 @@
-﻿using DataContainer;
+using DataContainer;
 using Microsoft.Win32;
 using Prism.Events;
 using Prism.Regions;
@@ -333,6 +333,10 @@ namespace UI_Chart.Views {
 
                 var color = SA.GetColor(i);
 
+                if (s.Item1.Length == 0 || s.Item2.Length == 0) {
+                    continue;
+                }
+                
                 trendChart.Plot.AddSignalXY(s.Item1, s.Item2, Color.FromArgb(color.A, color.R, color.G, color.B), _selectedIds[i]);
             }
 
