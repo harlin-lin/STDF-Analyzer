@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +10,12 @@ namespace DataContainer
     public struct SubData : IEquatable<SubData> {
         public string StdFilePath { get; }
         public int FilterId { get; }
+        public int FilterId_index { get; }
 
-        public SubData(string filePath, int filterId) {
+        public SubData(string filePath, int filterId,int filterIdx=0) {
             StdFilePath = filePath;
             FilterId = filterId;
+            FilterId_index = filterIdx;
         }
 
         public bool Equals(SubData other) {
@@ -35,9 +37,12 @@ namespace DataContainer
 
         public static List<SubData> GetAllSubData() {
             List<SubData> rst = new List<SubData>();
+            int i;
             foreach(var v in _subContainers) {
+                i = 0;
                 foreach(var f in v.Value.GetAllFilterId()) {
-                    rst.Add(new SubData(v.Key, f));
+                    rst.Add(new SubData(v.Key, f,i));
+                    i++;
                 }
             }
 
