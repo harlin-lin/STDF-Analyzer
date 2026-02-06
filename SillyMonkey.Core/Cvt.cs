@@ -52,13 +52,7 @@ namespace SillyMonkey.Core {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if (value.GetType().Name == "SubData") {
                 var d = (SubData)value;
-                if (d.FilterId_index == 0)
-                {
-                    return $"F:{d.FilterId:X8}_Root  Data:{System.IO.Path.GetFileName(d.StdFilePath)}"; 
-                }else 
-                {
-                    return $"F:{d.FilterId:X8}_S{d.FilterId_index - 1}  Data:{System.IO.Path.GetFileName(d.StdFilePath)}";
-                }
+                return $"F:{d.FilterId:X8}_F{d.FilterId_index}  Data:{System.IO.Path.GetFileName(d.StdFilePath)}";
             }
 
             throw new NotSupportedException();

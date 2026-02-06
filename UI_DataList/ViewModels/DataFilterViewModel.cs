@@ -435,7 +435,7 @@ namespace UI_DataList.ViewModels {
 
             var dataAcquire = StdDB.GetDataAcquire(_filePath);
             dataAcquire.UpdateFilter(_filterId, _filter);
-            _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId));
+            _ea.GetEvent<Event_FilterUpdated>().Publish(new SubData(_filePath, _filterId, dataAcquire.GetFilterIndex(_filterId)));
             _ea.GetEvent<Event_Log>().Publish("Updated Filter Done");
         }
 

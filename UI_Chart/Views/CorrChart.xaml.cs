@@ -174,8 +174,8 @@ namespace UI_Chart.Views {
 
                 //var statistic = da.GetFilteredStatistic(_subDataList[i].FilterId, _selectedId);
 
-                sb_subData_FN.Append($"{Path.GetFileName(_subDataList[i].StdFilePath) + "_S" + (_subDataList[i].FilterId_index-1),-20}");
-                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8"),-20}");
+                sb_subData_FN.Append($"{Path.GetFileName(_subDataList[i].StdFilePath),-20}");
+                sb_subData.Append($"{_subDataList[i].FilterId.ToString("X8") + "_F" + (_subDataList[i].FilterId_index),-20}");
                 sb_mean.Append($"{statistic.MeanValue,-20}");
                 sb_median.Append($"{statistic.MedianValue,-20}");
                 sb_min.Append($"{statistic.MinValue,-20}");
@@ -326,8 +326,7 @@ namespace UI_Chart.Views {
 
                 var bar = histoChart.Plot.AddBar(histo.Item1, histo.Item2, Color.FromArgb(color.A, color.R, color.G, color.B));
                 bar.BarWidth = histo.Item3 > 0 ? histo.Item3 : 1;
-                bar.Label = SubDataList[i].FilterId.ToString("X8") + "_" +
-                    Path.GetFileName(SubDataList[i].StdFilePath) + "_S" + (SubDataList[i].FilterId_index - 1);
+                bar.Label = SubDataList[i].FilterId.ToString("X8") + "_F" + (SubDataList[i].FilterId_index);
 
 
                 if (i == 0) {

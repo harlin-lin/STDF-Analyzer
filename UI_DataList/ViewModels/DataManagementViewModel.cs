@@ -94,15 +94,9 @@ namespace UI_DataList.ViewModels {
             ParentNode = file;
             FilterId = filterId;
             FilterIdx = filterIdx;
-            if (filterIdx == 0)
-            {
-                NodeName = $"Filter_{filterIdx}:{filterId:X8}_Root";
-            }
-            else { 
-                NodeName = $"Filter_{filterIdx}:{filterId:X8}_S{filterIdx-1}";
-            }
+            NodeName = $"Filter_{filterIdx}:{filterId:X8}";
             FilePath = file.FilePath;
-            SubData = new SubData(FilePath, filterId, (filterIdx == 0)?0:(filterIdx - 1));
+            SubData = new SubData(FilePath, filterId, filterIdx);
             //IsSelected = true;
         }
     }
@@ -363,7 +357,7 @@ namespace UI_DataList.ViewModels {
             var id = dataAcquire.CreateFilter();
             fn.Update();
             RaisePropertyChanged("Files");
-            RequestRawTab(new SubData(fn.FilePath, id), fn.FileIdx);
+            RequestRawTab(new SubData(fn.FilePath, id, dataAcquire.GetFilterIndex(id)), fn.FileIdx);
         }
 
         private void RequestRawTab(SubData data, int fileIdx) {
@@ -469,7 +463,7 @@ namespace UI_DataList.ViewModels {
                 var id = da.CreateFilter();
                 f.Update();
                 RaisePropertyChanged("Files");
-                RequestRawTab(new SubData(f.FilePath, id), f.FileIdx);
+                RequestRawTab(new SubData(f.FilePath, id, da.GetFilterIndex(id)), f.FileIdx);
 
             }
         }
@@ -488,7 +482,7 @@ namespace UI_DataList.ViewModels {
                 file.Update();
                 RaisePropertyChanged("Files");
 
-                RequestRawTab(new SubData(file.FilePath, id), file.FileIdx);
+                RequestRawTab(new SubData(file.FilePath, id, da.GetFilterIndex(id)), file.FileIdx);
 
             }
 
@@ -536,7 +530,7 @@ namespace UI_DataList.ViewModels {
             var id = da.CreateFilter();
             file.Update();
             RaisePropertyChanged("Files");
-            RequestRawTab(new SubData(file.FilePath, id), file.FileIdx);
+            RequestRawTab(new SubData(file.FilePath, id, da.GetFilterIndex(id)), file.FileIdx);
         }
 
         private void Log(string s) {

@@ -12,7 +12,7 @@ namespace DataContainer
         public int FilterId { get; }
         public int FilterId_index { get; }
 
-        public SubData(string filePath, int filterId,int filterIdx=0) {
+        public SubData(string filePath, int filterId,int filterIdx) {
             StdFilePath = filePath;
             FilterId = filterId;
             FilterId_index = filterIdx;
@@ -37,12 +37,9 @@ namespace DataContainer
 
         public static List<SubData> GetAllSubData() {
             List<SubData> rst = new List<SubData>();
-            int i;
             foreach(var v in _subContainers) {
-                i = 0;
                 foreach(var f in v.Value.GetAllFilterId()) {
-                    rst.Add(new SubData(v.Key, f,i));
-                    i++;
+                    rst.Add(new SubData(v.Key, f, v.Value.GetFilterIndex(f)));
                 }
             }
 

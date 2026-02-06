@@ -126,7 +126,7 @@ namespace UI_DataList.ViewModels {
             mergerWindow.ReturnHandler += new SubWindowReturnHandler((x) => {
                 var ll = from r in (x as IEnumerable<string>)
                          let s = r.Split('|')
-                         select new SubData(s[1], int.Parse(s[0], System.Globalization.NumberStyles.HexNumber));
+                         select new SubData(s[1], int.Parse(s[0], System.Globalization.NumberStyles.HexNumber), -1);
 
                 _ea.GetEvent<Event_MergeSubData>().Publish(ll);
             });
