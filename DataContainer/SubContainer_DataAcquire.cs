@@ -124,48 +124,45 @@ namespace DataContainer {
 
             int td_cnt = 0;
             int last_testtime = -1;
-            int last_site = -1;
+            HashSet<int> currentSites = new HashSet<int>();  // 记录当前测试时间内已出现的 site
 
             for (int i = 0; i < _xCord_PartContainer.Count; i++)
             {
                 int now_testtime = (int)_testTime_PartContainer[i];
                 int now_site = _site_PartContainer[i];
                 string x_y = _xCord_PartContainer[i].ToString() + "_" + _yCord_PartContainer[i].ToString();
-                if (rt_dic.ContainsKey(x_y)==false)
-                {
-                    rt_dic.Add(x_y,0);
-                }
+
+                if (!rt_dic.ContainsKey(x_y))
+                    rt_dic.Add(x_y, 0);
                 else
-                {
                     rt_dic[x_y] = rt_dic[x_y] + 1;
-                }
+
                 _rt_PartContainer.Add((ushort)rt_dic[x_y]);
-                if (now_testtime!= last_testtime)
+
+                if (now_testtime != last_testtime)
                 {
                     td_cnt++;
                     last_testtime = now_testtime;
-                    last_site = now_site;
+                    currentSites.Clear();
+                    currentSites.Add(now_site);
                 }
                 else
                 {
-                    if (now_site== last_site)
+                    if (currentSites.Contains(now_site))
                     {
                         td_cnt++;
-                        last_testtime = now_testtime;
-                        last_site = now_site;
+                        currentSites.Clear();
+                        currentSites.Add(now_site);
                     }
                     else
                     {
-                        last_testtime = now_testtime;
-                        last_site = now_site;
+                        currentSites.Add(now_site);
                     }
                 }
                 _td_PartContainer.Add(td_cnt);
             }
         }
 
-        
-       
 
         public ushort GetSoftBin(int partIndex) {
             return _softBin_PartContainer[partIndex];
