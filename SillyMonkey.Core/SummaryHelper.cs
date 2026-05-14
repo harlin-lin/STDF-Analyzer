@@ -231,6 +231,37 @@ namespace SillyMonkey.Core {
             AppendLine(ref sb, "");
         }
 
+        public static void AppendHardbinSimple(ref StringBuilder sb, IDataAcquire dataAcquire, PartStatistic partStatistic)
+        {
+            AppendTitle(ref sb, "Hard Bin Statistic");
+
+            var total = partStatistic.SiteCnt;
+
+            var siteHb = from r in partStatistic.HardBinBySite
+                         orderby r.Key
+                         let t = new Tuple<Dictionary<ushort, int>, int>(r.Value, total[r.Key])
+                         select t;
+
+            var hb = from r in partStatistic.HardBin
+                     orderby r.Key
+                     select r;
+
+            var hbNames = dataAcquire.GetHBinInfo();
+
+            AppendBinField(ref sb, "BIN", "All");
+            foreach (var b in hb)
+            {
+                if (hbNames.ContainsKey(b.Key))
+                {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{hbNames[b.Key].Item2}:{hbNames[b.Key].Item1}");
+                } else
+                {
+                    AppendBinField(ref sb, new Tuple<KeyValuePair<ushort, int>, int>(b, partStatistic.TotalCnt), $"{b.Key}:");
+                }
+            }
+            AppendLine(ref sb, "");
+        }
+
         public static void AppendBinField(ref StringBuilder sb, Tuple<KeyValuePair<ushort, int>, int> bin, string binName, IEnumerable<Tuple<Dictionary<ushort, int>, int>> siteBin) {
             string fmStr = $"{binName,-20}{bin.Item1.Value,7}|{((double)bin.Item1.Value * 100 / bin.Item2).ToString("f2"),6}%";
             foreach (var v in siteBin) {
@@ -243,6 +274,13 @@ namespace SillyMonkey.Core {
 
             AppendField_Short(ref sb, bin.Item1.Key.ToString(), fmStr);
         }
+        public static void AppendBinField(ref StringBuilder sb, Tuple<KeyValuePair<ushort, int>, int> bin, string binName)
+        {
+            string fmStr = $"{binName,-20}{bin.Item1.Value,7}|{((double)bin.Item1.Value * 100 / bin.Item2).ToString("f2"),6}%";
+
+            AppendField_Short(ref sb, bin.Item1.Key.ToString(), fmStr);
+        }
+
 
         public static void AppendBinField(ref StringBuilder sb, string fieldName, string allData, IEnumerable<byte> sitesData) {
             string fmStr = $"{"Bin Name",-20}{allData,14}";
@@ -253,6 +291,12 @@ namespace SillyMonkey.Core {
             AppendField_Short(ref sb, fieldName, fmStr);
         }
 
+        public static void AppendBinField(ref StringBuilder sb, string fieldName, string allData)
+        {
+            string fmStr = $"{"Bin Name",-20}{allData,14}";
+
+            AppendField_Short(ref sb, fieldName, fmStr);
+        }
         //public static void AppendItems() {
         //    AppendTitle("Test Item Statistic");
 

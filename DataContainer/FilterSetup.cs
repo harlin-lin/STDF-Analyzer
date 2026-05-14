@@ -47,7 +47,7 @@ namespace DataContainer {
         public bool IfMaskOrEnableCords { get; set; }
         //public DuplicateSelectMode DuplicateSelectMode{ get; set; }
 
-        public string Comment { get; private set; }
+        public string Comment { get; set; }
         /// <summary>
         /// true is Part ID, defult
         /// </summary>
@@ -71,6 +71,9 @@ namespace DataContainer {
             ItemFilters = new List<ItemFilter>();
 
             Comment = comment;
+        }
+
+        public FilterSetup() : this("") {
         }
 
         public FilterSetup(IEnumerable<byte> sites, byte enSite, string comment) {
