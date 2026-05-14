@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29306.81
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36310.24 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI_DataList", "UI_DataList\UI_DataList.csproj", "{BEE3C803-FC62-43CC-AF8C-B235C8D51358}"
 EndProject
@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fastGridTest", "fastGridTes
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadTest", "ReadTest\ReadTest.csproj", "{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdLogAnalyzer", "ProdLogAnalyzer\ProdLogAnalyzer.csproj", "{83E33CB8-4D7A-4D1C-B666-57A0661484A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,6 +138,14 @@ Global
 		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|x64.ActiveCfg = Release|Any CPU
 		{9A0DEE1E-4CF7-4B5B-B76E-5DC4C7C9BBA6}.Release|x64.Build.0 = Release|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Debug|x64.Build.0 = Debug|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Release|x64.ActiveCfg = Release|Any CPU
+		{83E33CB8-4D7A-4D1C-B666-57A0661484A5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
