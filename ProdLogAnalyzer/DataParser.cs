@@ -1,27 +1,33 @@
 ﻿using DataContainer;
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Linq;
-using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static ProdLogAnalyzer.StatisticsAnalyzer;
-using static SkiaSharp.HarfBuzz.SKShaper;
 
 namespace ProdLogAnalyzer
 {
     static class DataParser
     {
-        public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filterId_raw, int filterId_pass, string outputPath)
-        {
-            PowerPointExporter exporter = null;
-            if(prodLogConfiguration.SlidesExport) exporter = new PowerPointExporter();
+        static bool engMode = false;
+        static bool reportExport = false;
+        static IDataAcquire dataAcquire = null;
+        static int filterId_raw = -1;
+        static int filterId_pass = -1;
 
-            StringBuilder csvExpoter = new StringBuilder();
+        public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filter_raw, int filter_pass, string outputPath)
+        {
+            HtmlExpoter exporter = null;
+            engMode = prodLogConfiguration.EngMode;
+            reportExport = prodLogConfiguration.ReportExport;
+
+            dataAcquire = da;
+            filterId_pass = filter_pass;
+            filterId_raw = filter_raw;
+
+            if (reportExport) exporter = new HtmlExpoter();
+
+            StringBuilder logExporter = new StringBuilder();
 
             try
             {
@@ -29,19 +35,41 @@ namespace ProdLogAnalyzer
 
                 // 创建PPT文档
                 Console.WriteLine($"输出文件: {outputPath}\n");
-                if (prodLogConfiguration.SlidesExport)
+                if (reportExport)
                 {
-                    exporter?.CreatePresentation(outputPath, prodLogConfiguration.SlidesTemplatePath, "生产测试数据分析报告", $"生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                    exporter?.CreateReport(outputPath, "生产测试数据分析报告", $"生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 }
-                GenerateDataStatisticSlide(exporter, csvExpoter, da, prodLogConfiguration.EngMode);
+
+                GenerateDataStatisticReport(exporter, logExporter);
+
+                if (engMode)
+                {
+                    string summaryPath = Path.Combine(Path.GetDirectoryName(outputPath), $"{Path.GetFileNameWithoutExtension(outputPath)}_Summary.log");
+                    File.WriteAllText(summaryPath, logExporter.ToString());
+                    logExporter.Clear();
+
+                    logExporter.AppendLine($"TestID,TestText,HiLimit,LoLimit,有效数据量,良率,平均值,标准差,CPK,偏度,超值峰度,Jarque-Bera p,密度峰个数,离群点数量,SiteGap_Mean,SiteGap_Cpk");
+                } else {
+                    logExporter.AppendLine($"TestID,TestText,HiLimit,LoLimit,有效数据量,良率,平均值,标准差,CPK,偏度,超值峰度,密度峰个数,离群点数量");
+                }
 
                 foreach (var id in da.GetTestIDs())
                 {
-                    if (!prodLogConfiguration.EngMode)
+                    if (!engMode)
                     {
                         if (prodLogConfiguration.TargetItemsAndRule == null)
                         {
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
+                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
                         } else
                         {
                             if (!prodLogConfiguration.TargetItemsAndRule.ContainsKey(id))
@@ -50,16 +78,11 @@ namespace ProdLogAnalyzer
                             }
                         }
                     }
-                    var info = da.GetTestInfo(id);
-                    var itemStatistic = da.GetFilteredStatistic(filterId_raw, id);
-
-                    var data_pass = da.GetFilteredItemData(id, filterId_pass);
-                    var xs_pass = da.GetFilteredPartIndex(filterId_pass);
 
                     ItemRuleConfig rule = prodLogConfiguration.GeneralRule;
 
                     bool forceAna = false;
-                    if (prodLogConfiguration.TargetItemsAndRule != null && prodLogConfiguration.TargetItemsAndRule.ContainsKey(id))
+                    if ((prodLogConfiguration.TargetItemsAndRule != null && prodLogConfiguration.TargetItemsAndRule.ContainsKey(id)))
                     {
                         forceAna = true;
                         var r = prodLogConfiguration.TargetItemsAndRule[id];
@@ -81,23 +104,18 @@ namespace ProdLogAnalyzer
                         if(r.OutliersLimit != null) rule.OutliersLimit = r.OutliersLimit;
                     }
 
-                    // 执行数据分析并生成PPT幻灯片
-                    AnalyzeAndGenerateSlide(exporter, csvExpoter, id.ToString(), info, itemStatistic, rule, data_pass, xs_pass, forceAna);
-                    //if(dbg++ >= 50)
-                    //{
-                    //    Console.WriteLine("调试模式: 仅处理前10个TestID");
-                    //    break;
-                    //}
+                    // 执行数据分析并生成报告
+                    AnalyzeAndGenerateReport(exporter, logExporter, id.ToString(), rule, forceAna);
                 }
-                // 保存PPT
-                exporter?.SaveAndClose();
+                // 保存报告
+                exporter?.SaveReport();
                 string csvPath = Path.Combine(Path.GetDirectoryName(outputPath), $"{Path.GetFileNameWithoutExtension(outputPath)}_Statistic.csv");
-                File.WriteAllText(csvPath, csvExpoter.ToString());
-                Console.WriteLine($"PPT文件已保存: {outputPath}");
+                File.WriteAllText(csvPath, logExporter.ToString());
+                Console.WriteLine($"\n文件已保存: {outputPath}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"\n✗ 生成PPT报告失败: {ex.Message}");
+                Console.WriteLine($"\n生成报告失败: {ex.Message}");
                 Console.WriteLine(ex.StackTrace);
                 throw;
             }
@@ -106,61 +124,49 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成数据概览幻灯片
         /// </summary>
-        private static bool GenerateDataStatisticSlide(PowerPointExporter exporter, StringBuilder csvExpoter, IDataAcquire da, bool engMode)
+        private static bool GenerateDataStatisticReport(HtmlExpoter exporter, StringBuilder logExporter)
         {
-            StringBuilder sb = new StringBuilder();
-            var statistic = da.GetPartStatistic();
+            var statistic = dataAcquire.GetPartStatistic();
 
-            if(engMode)
-            {
-                SummaryHelper.AppendBasicInfo(ref sb, da);
-                exporter?.AddSummarySlide("Basic Info", sb.ToString());
-                Console.WriteLine("\n============================================================");
-                Console.Write(sb.ToString());
-                Console.WriteLine("\n============================================================");
-                sb.Clear();
+            //if(engMode)
+            //{
+            //    StringBuilder sb_basic = new StringBuilder();
+            //    StringBuilder sb_stastic = new StringBuilder();
+            //    StringBuilder sb_sb = new StringBuilder();
+            //    StringBuilder sb_hb = new StringBuilder();
 
-                SummaryHelper.AppendCounters(ref sb, statistic);
-                exporter?.AddSummarySlide("测试数量统计", sb.ToString());
-                Console.WriteLine("\n============================================================");
-                Console.Write(sb.ToString());
-                Console.WriteLine("\n============================================================");
-                sb.Clear();
+            //    SummaryHelper.AppendBasicInfo(ref sb_basic, dataAcquire);
+            //    SummaryHelper.AppendCounters(ref sb_stastic, statistic);
+            //    SummaryHelper.AppendSoftbin(ref sb_sb, dataAcquire, statistic);
+            //    SummaryHelper.AppendHardbin(ref sb_hb, dataAcquire, statistic);
 
-                SummaryHelper.AppendSoftbin(ref sb, da, statistic);
-                exporter?.AddSummarySlide("SoftBin统计", sb.ToString());
-                Console.WriteLine("\n============================================================");
-                Console.Write(sb.ToString());
-                Console.WriteLine("\n============================================================");
-                sb.Clear();
+            //    exporter?.AddSummarySlide("Basic Info", sb_basic.ToString());
+            //    exporter?.AddSummarySlide("测试数量统计", sb_stastic.ToString());
+            //    exporter?.AddSummarySlide("SoftBin统计", sb_sb.ToString());
+            //    exporter?.AddSummarySlide("HardBin统计", sb_hb.ToString());
 
-                SummaryHelper.AppendHardbin(ref sb, da, statistic);
-                exporter?.AddSummarySlide("HardBin统计", sb.ToString());
-                Console.WriteLine("\n============================================================");
-                Console.Write(sb.ToString());
-                Console.WriteLine("\n============================================================");
-                sb.Clear();
-            } else
-            {
-                SummaryHelper.AppendHardbinSimple(ref sb, da, statistic);
-                exporter?.AddSummarySlide("HardBin统计", sb.ToString());
-                Console.WriteLine("\n============================================================");
-                Console.Write(sb.ToString());
-                Console.WriteLine("\n============================================================");
-                sb.Clear();
+            //    logExporter.Append(sb_basic).Append(sb_stastic).Append(sb_sb).Append(sb_hb);
 
-                var hbNames = da.GetHBinInfo();
-                //输出statistic中HardBin信息到csv文件中
-                csvExpoter.AppendLine("HardBin,Name,P/F,Count,Ratio");
-                csvExpoter.AppendLine(
-                    string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
-                );
-                csvExpoter.AppendLine($"TestID,TestText,ValidCount,MeanValue,Sigma,Cpk,Yield,偏度,超值峰度,Jarque-Bera p,密度峰个数,离群点数量");
-            }
+            //} else
+            //{
+            //    StringBuilder sb = new StringBuilder();
+            //    SummaryHelper.AppendHardbinSimple(ref sb, dataAcquire, statistic);
+            //    exporter?.AddSummarySlide("HardBin统计", sb.ToString());
+
+            //    var hbNames = dataAcquire.GetHBinInfo();
+            //    //输出statistic中HardBin信息到csv文件中
+            //    logExporter.AppendLine("HardBin,Name,P/F,Count,Ratio");
+            //    logExporter.AppendLine(
+            //        string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
+            //    );
+            //}
+
+            Console.WriteLine("\nFile Summary log done");
 
             return true;
         }
-        private static bool checkDataNormal(ItemInfo info, NormalityDeviationResult result, ItemStatistic itemStatistic, ItemRuleConfig itemRule)
+        
+        private static bool checkDataAbnormal(ItemInfo info, NormalityDeviationResult result, ItemStatistic itemStatistic, ItemRuleConfig itemRule)
         {
             //先判断是否有上下限，如果没有上下限则不进行正态性检验，直接认为数据正常
             if (info.HiLimit == null && info.LoLimit == null)
@@ -252,11 +258,17 @@ namespace ProdLogAnalyzer
         }
 
         /// <summary>
-        /// 分析测试数据并生成幻灯片
+        /// 分析测试数据并生成报告
         /// </summary>
-        private static bool AnalyzeAndGenerateSlide(PowerPointExporter exporter, StringBuilder csvExpoter, string testId,
-            ItemInfo info, ItemStatistic itemStatistic, ItemRuleConfig itemRule, IEnumerable<float> data_pass, IEnumerable<int> xs_pass, bool forceAna)
+        private static bool AnalyzeAndGenerateReport(HtmlExpoter exporter, StringBuilder logExporter, string testId, ItemRuleConfig itemRule, bool forceAna)
         {
+            var info = dataAcquire.GetTestInfo(testId);
+
+            var itemStatistic_raw = dataAcquire.GetFilteredStatistic(filterId_raw, testId);
+            var itemStatistic_pass = dataAcquire.GetFilteredStatistic(filterId_pass, testId);
+            var data_pass = dataAcquire.GetFilteredItemData(testId, filterId_pass);
+            var xs_pass = dataAcquire.GetFilteredPartIndex(filterId_pass);
+
 
             if (info.HiLimit == null && info.LoLimit == null && !forceAna)
             {
@@ -289,31 +301,70 @@ namespace ProdLogAnalyzer
                 s.Start();
                 var anomalyAnalysis = NormalityDeviationDetector.Analyze(data_pass, para);
                 s.Stop();
-                Console.WriteLine("NormalityDeviationDetector:" + s.ElapsedMilliseconds);
+                //Console.WriteLine("NormalityDeviationDetector:" + s.ElapsedMilliseconds);
 
 
-                if (!checkDataNormal(info, anomalyAnalysis, itemStatistic, itemRule) || forceAna)
+                if (engMode)
                 {
-                    if (exporter != null)
+                    //输出测试结果到csv
+                    //logExporter.AppendLine($"TestID,TestText,ValidCount,MeanValue,Sigma,Cpk,Yield,偏度,超值峰度,Jarque-Bera p,密度峰个数,离群点数量,SiteGap_Mean,SiteGap_Cpk");
+                    logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
+                    $"{anomalyAnalysis.Skewness:F3},{anomalyAnalysis.ExcessKurtosis:F3},{anomalyAnalysis.JarqueBeraPValue:F4}," +
+                        $"{anomalyAnalysis.ModeCount}," +
+                        $"{anomalyAnalysis.Outliers.Count}");
+                    var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemRule);
+
+                    if (exporter != null && (!anaRst || forceAna))
                     {
                         s.Restart();
-                        var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic);
+                        var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
 
-                        exporter?.AddAnalysisSlide(testId, info.TestText, chartImages,
-                            itemStatistic, anomalyAnalysis);
+                        var data_raw = dataAcquire.GetFilteredItemData(testId, filterId_raw);
+                        var xs_raw = dataAcquire.GetFilteredPartIndex(filterId_raw);
+
+                        chartImages.AddRange(GenerateCharts(data_raw, xs_raw, info, testId, itemStatistic_raw));
+
+                        //exporter?.GenerateReport(testId, info.TestText, chartImages,
+                        //    itemStatistic_raw, anomalyAnalysis);
                         s.Stop();
-                        Console.WriteLine("AddAnalysisSlide:" + s.ElapsedMilliseconds);
+                        //Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
+                        // 输出分析结果到控制台
+                        //PrintAnalysisResults(testId, info, itemStatistic_raw, anomalyAnalysis);
                     }
-                    // 输出分析结果到控制台
-                    PrintAnalysisResults(testId, info, itemStatistic, anomalyAnalysis);
 
-                    //输出测试结果到csv
-                    //csvExpoter.AppendLine($"TestID,TestText,ValidCount,MeanValue,Sigma,Cpk,Yield,偏度,超值峰度,Jarque-Bera p,密度峰个数,离群点数量");
-                    csvExpoter.AppendLine($"{testId},{info.TestText},{itemStatistic.ValidCount},{itemStatistic.MeanValue:F6},{itemStatistic.Sigma:F6},{itemStatistic.Cpk:F4},{100.0 * itemStatistic.PassCount / itemStatistic.ValidCount:F4}%," +
-                        $"{anomalyAnalysis.Skewness:F3},{anomalyAnalysis.ExcessKurtosis:F3},{anomalyAnalysis.JarqueBeraPValue:F4}," +
+                } 
+                else
+                {
+                    if (forceAna)
+                    {
+                        //输出测试结果到csv
+                        //logExporter.AppendLine($"TestID,TestText,HiLimit,LoLimit,有效数据量,良率,平均值,标准差,CPK,偏度,超值峰度,密度峰个数,离群点数量");
+                        logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
+                        $"{anomalyAnalysis.Skewness:F3},{anomalyAnalysis.ExcessKurtosis:F3}," +
                         $"{anomalyAnalysis.ModeCount}," +
                         $"{anomalyAnalysis.Outliers.Count}");
 
+                        s.Restart();
+                        var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemRule);
+
+                        var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
+
+                        string description = $"Limit:[{info.LoLimit} : {info.HiLimit}] {info.Unit}\n" +
+                            $"样本: {itemStatistic_raw.ValidCount} 良率={100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}\n" + 
+                            $"均值={itemStatistic_pass.MeanValue:F4} 标准差={itemStatistic_pass.Sigma:F4} Cpk={itemStatistic_pass.Cpk:F4}\n\n" +
+                            $"偏度={anomalyAnalysis.Skewness:F3}, 超值峰度={anomalyAnalysis.ExcessKurtosis:F3}\n" + 
+                            $"Jarque-Bera p={anomalyAnalysis.JarqueBeraPValue:F4}\n" +
+                            $"密度峰个数={anomalyAnalysis.ModeCount} 聚落数量={anomalyAnalysis.Clusters.Count}\n"+
+                            $"DBSCAN离群点数量={anomalyAnalysis.Outliers.Count}\n";
+                        var status = anaRst ? TestStatus.Pass : TestStatus.Warning;
+
+                        exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", description, status, chartImages);
+                        
+                        s.Stop();
+                        //Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
+                        // 输出分析结果到控制台
+                        //PrintAnalysisResults(testId, info, itemStatistic_raw, anomalyAnalysis);
+                    }
                 }
 
 
@@ -328,9 +379,9 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成6个图表
         /// </summary>
-        private static List<Bitmap> GenerateCharts(IEnumerable<float> data, IEnumerable<int> xs, ItemInfo info, string testId, ItemStatistic itemStatistic)
+        private static List<BitMap> GenerateCharts(IEnumerable<float> data, IEnumerable<int> xs, ItemInfo info, string testId, ItemStatistic itemStatistic)
         {
-            var charts = new List<Bitmap>();
+            var charts = new List<BitMap>();
             string chartTitle = $"{testId} - {info.TestText}";
 
             try
@@ -338,12 +389,10 @@ namespace ProdLogAnalyzer
                 float min = info.LoLimit != null ? info.LoLimit.Value : itemStatistic.MeanValue - 6 * itemStatistic.Sigma;
                 float max = info.HiLimit != null ? info.HiLimit.Value : itemStatistic.MeanValue + 6 * itemStatistic.Sigma;
 
-                charts.Add(ChartGenerator.GenerateTrendChart(data, xs,
-                    "数据趋势"));
+                charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data, xs, "数据趋势"), testId, chartTitle));
+                charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data, info.LoLimit, info.HiLimit, "数据分布 (100 bins)", min, max), testId, chartTitle));
 
-                charts.Add(ChartGenerator.GenerateHistogram(data, info.LoLimit, info.HiLimit, "数据分布 (100 bins)", min, max));
-
-                charts.Add(ChartGenerator.GenerateBoxPlot(data, info.LoLimit, info.HiLimit, "数据箱型图", min, max));
+                charts.Add(new BitMap(ChartGenerator.GenerateBoxPlot(data, info.LoLimit, info.HiLimit, "数据箱型图", min, max), testId, chartTitle));
             }
             catch (Exception ex)
             {

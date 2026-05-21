@@ -1,4 +1,3 @@
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using ScottPlot;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,22 @@ using System.Linq;
 
 namespace ProdLogAnalyzer
 {
+
+    public class BitMap
+    {
+        public Bitmap Data { get; set; }
+        public string TestId { get; set; }
+        public string Description { get; set; }
+        public string FileName { get; set; }
+
+        public BitMap(Bitmap data, string testId, string description = "")
+        {
+            Data = data;
+            TestId = testId;
+            Description = description;
+        }
+
+    }
     /// <summary>
     /// 使用 ScottPlot 生成数据可视化图表（适配 .NET Framework 4.6.2）
     /// </summary>

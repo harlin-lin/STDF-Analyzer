@@ -140,7 +140,7 @@ namespace ProdLogAnalyzer
             dataAcquire.UpdateFilter(filterId_pass, new FilterSetup("PassOnly") { MaskHardBins = allBins});
 
 
-            DataParser.ParseDataFile(config, dataAcquire, filterId_raw, filterId_pass, Path.Combine(config.OutputFolder, $"{config.Name}_output.pptx"));
+            DataParser.ParseDataFile(config, dataAcquire, filterId_raw, filterId_pass, Path.Combine(config.OutputFolder, $"{config.Name}_Report.html"));
 
             //// 使用 Newtonsoft.Json 输出为格式化（缩进）JSON
             //try

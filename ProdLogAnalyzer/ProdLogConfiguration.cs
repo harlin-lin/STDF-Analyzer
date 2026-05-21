@@ -14,7 +14,7 @@ namespace ProdLogAnalyzer
         public bool EngMode { get; set; } = false;
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public bool SlidesExport { get; set; } = false;
+        public bool ReportExport { get; set; } = false;
 
         [JsonProperty]
         public List<DataFileConfig> DataFiles { get; set; } = new List<DataFileConfig>();
