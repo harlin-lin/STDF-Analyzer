@@ -15,6 +15,9 @@ namespace ProdLogAnalyzer
         static int filterId_raw = -1;
         static int filterId_pass = -1;
 
+        const double ConsistencyFactor = 1.4826;
+        const double MadOutlierThreshold = 3.5;
+
         public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filter_raw, int filter_pass, string outputPath)
         {
             HtmlExpoter exporter = null;
@@ -317,12 +320,7 @@ namespace ProdLogAnalyzer
                     if (exporter != null && (!anaRst || forceAna))
                     {
                         s.Restart();
-                        var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
-
-                        var data_raw = dataAcquire.GetFilteredItemData(testId, filterId_raw);
-                        var xs_raw = dataAcquire.GetFilteredPartIndex(filterId_raw);
-
-                        chartImages.AddRange(GenerateCharts(data_raw, xs_raw, info, testId, itemStatistic_raw));
+                        //var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
 
                         //exporter?.GenerateReport(testId, info.TestText, chartImages,
                         //    itemStatistic_raw, anomalyAnalysis);
@@ -347,7 +345,7 @@ namespace ProdLogAnalyzer
                         s.Restart();
                         var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemRule);
 
-                        var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
+                        var chartImages = GenerateCharts(testId);
 
                         string description = $"Limit:[{info.LoLimit} : {info.HiLimit}] {info.Unit}\n" +
                             $"样本: {itemStatistic_raw.ValidCount} 良率={100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}\n" + 
@@ -379,20 +377,84 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成6个图表
         /// </summary>
-        private static List<BitMap> GenerateCharts(IEnumerable<float> data, IEnumerable<int> xs, ItemInfo info, string testId, ItemStatistic itemStatistic)
+        private static List<BitMap> GenerateCharts(string testId)
         {
             var charts = new List<BitMap>();
+            var info = dataAcquire.GetTestInfo(testId);
             string chartTitle = $"{testId} - {info.TestText}";
 
             try
             {
-                float min = info.LoLimit != null ? info.LoLimit.Value : itemStatistic.MeanValue - 6 * itemStatistic.Sigma;
-                float max = info.HiLimit != null ? info.HiLimit.Value : itemStatistic.MeanValue + 6 * itemStatistic.Sigma;
+                var data_pass = dataAcquire.GetFilteredItemData(testId, filterId_pass);
+                var xs_pass = dataAcquire.GetFilteredPartIndex(filterId_pass);
+                var itemStatistic_pass = dataAcquire.GetFilteredStatistic(filterId_pass, testId);
+                float min_pass = info.LoLimit != null ? info.LoLimit.Value : itemStatistic_pass.MeanValue - 6 * itemStatistic_pass.Sigma;
+                float max_pass = info.HiLimit != null ? info.HiLimit.Value : itemStatistic_pass.MeanValue + 6 * itemStatistic_pass.Sigma;
 
-                charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data, xs, "数据趋势"), testId, chartTitle));
-                charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data, info.LoLimit, info.HiLimit, "数据分布 (100 bins)", min, max), testId, chartTitle));
+                if (!engMode)
+                {
+                    var data_raw = dataAcquire.GetFilteredItemData(testId, filterId_raw);
+                    var xs_raw = dataAcquire.GetFilteredPartIndex(filterId_raw);
+                    var itemStatistic_raw = dataAcquire.GetFilteredStatistic(filterId_raw, testId);
+                    float min_raw = info.LoLimit != null ? info.LoLimit.Value : itemStatistic_raw.MeanValue - 6 * itemStatistic_raw.Sigma;
+                    float max_raw = info.HiLimit != null ? info.HiLimit.Value : itemStatistic_raw.MeanValue + 6 * itemStatistic_raw.Sigma;
 
-                charts.Add(new BitMap(ChartGenerator.GenerateBoxPlot(data, info.LoLimit, info.HiLimit, "数据箱型图", min, max), testId, chartTitle));
+                    charts.Add(new BitMap(ChartGenerator.GenerateComparisonTrendChart(data_raw, xs_raw, data_pass, xs_pass, chartTitle), testId, chartTitle));
+
+                    var boxPara_raw = new BoxPlotPara(
+                                    itemStatistic_raw.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_raw.MAD), 
+                                    itemStatistic_raw.MedianValue - itemStatistic_raw.MAD, 
+                                    itemStatistic_raw.MedianValue, 
+                                    itemStatistic_raw.MedianValue + itemStatistic_raw.MAD, 
+                                    itemStatistic_raw.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_raw.MAD), 
+                                    0);
+                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_raw, boxPara_raw, info.LoLimit, info.HiLimit, $"Raw: {chartTitle}", min_raw, max_raw), testId, chartTitle));
+
+                    var sites = dataAcquire.GetSites();
+                    List<BoxPlotPara> boxParas_bySite = new List<BoxPlotPara>();
+                    for (int i = 0; i < sites.Length; i++)
+                    {
+                        var site = sites[i];
+                        var itemStatistic_site = dataAcquire.GetFilteredStatisticBySite(filterId_pass, testId, site);
+                        var boxPara_site = new BoxPlotPara(
+                                        itemStatistic_site.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_site.MAD),
+                                        itemStatistic_site.MedianValue - itemStatistic_site.MAD,
+                                        itemStatistic_site.MedianValue,
+                                        itemStatistic_site.MedianValue + itemStatistic_site.MAD,
+                                        itemStatistic_site.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_site.MAD),
+                                        itemStatistic_site.ValidCount * sites.Length * 0.9 / itemStatistic_pass.ValidCount);
+                        boxParas_bySite.Add(boxPara_site);
+                    }
+                    charts.Add(new BitMap(ChartGenerator.GenerateBySiteBoxPlot(boxParas_bySite, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
+
+                    var boxPara_pass = new BoxPlotPara(
+                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    itemStatistic_pass.MedianValue - itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue,
+                                    itemStatistic_pass.MedianValue + itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    0);
+                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, $"Pass: {chartTitle}", min_pass, max_pass), testId, chartTitle));
+
+
+                } else
+                {
+
+                    charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, chartTitle), testId, chartTitle));
+
+                    var boxPara_pass = new BoxPlotPara(
+                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    itemStatistic_pass.MedianValue - itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue,
+                                    itemStatistic_pass.MedianValue + itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    0);
+                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
+
+
+
+                }
+
             }
             catch (Exception ex)
             {

@@ -115,10 +115,12 @@ namespace ProdLogAnalyzer
             _reportContent.AppendLine("        .status-fail { color: #dc3545; font-weight: bold; }");
             _reportContent.AppendLine("        .status-warning { color: #ffc107; font-weight: bold; }");
             _reportContent.AppendLine("        .item-description { margin: 15px 0; line-height: 1.6; }");
-            _reportContent.AppendLine("        .chart-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }");
+            // 将图片容器改为两列布局，并在窄屏上自动切换为一列
+            _reportContent.AppendLine("        .chart-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }");
             _reportContent.AppendLine("        .chart { text-align: center; }");
             _reportContent.AppendLine("        .chart img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }");
             _reportContent.AppendLine("        .chart-caption { margin-top: 8px; font-size: 0.9em; color: #666; }");
+            _reportContent.AppendLine("        @media (max-width: 700px) { .chart-container { grid-template-columns: 1fr; } }");
             _reportContent.AppendLine("    </style>");
             _reportContent.AppendLine("</head>");
             _reportContent.AppendLine("<body>");
@@ -156,7 +158,8 @@ namespace ProdLogAnalyzer
                 {
                     string chartFileName = chart.FileName;
                     _reportContent.AppendLine("                <div class='chart'>");
-                    _reportContent.AppendLine($"                    <img src='.\\images\\{chartFileName}' alt='{EscapeHtml(chart.FileName)}'>");
+                    // 使用 web-friendly 的相对路径（正斜杠），并保持图片自适应两列布局
+                    _reportContent.AppendLine($"                    <img src='images/{chartFileName}' alt='{EscapeHtml(chart.FileName)}'>");
                     if (!string.IsNullOrEmpty(chart.Description))
                     {
                         _reportContent.AppendLine($"                    <div class='chart-caption'>{EscapeHtml(chart.Description)}</div>");

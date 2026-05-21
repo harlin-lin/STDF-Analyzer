@@ -1,7 +1,7 @@
+using MathNet.Numerics.Statistics;
 using ScottPlot;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace ProdLogAnalyzer
@@ -9,12 +9,12 @@ namespace ProdLogAnalyzer
 
     public class BitMap
     {
-        public Bitmap Data { get; set; }
+        public Image Data { get; set; }
         public string TestId { get; set; }
         public string Description { get; set; }
         public string FileName { get; set; }
 
-        public BitMap(Bitmap data, string testId, string description = "")
+        public BitMap(Image data, string testId, string description = "")
         {
             Data = data;
             TestId = testId;
@@ -22,6 +22,27 @@ namespace ProdLogAnalyzer
         }
 
     }
+
+    public class BoxPlotPara 
+    {
+        public double WhiskerMin { get; set; }
+        public double BoxMin { get; set; }
+        public double BoxMiddle { get; set; }
+        public double BoxMax { get; set; }
+        public double WhiskerMax { get; set; }
+        public double Width { get; set; }
+
+        public BoxPlotPara(double whiskerMin, double boxMin, double boxMiddle, double boxMax, double whiskerMax, double width)
+        {
+            WhiskerMin = whiskerMin;
+            BoxMin = boxMin;
+            BoxMiddle = boxMiddle;
+            BoxMax = boxMax;
+            WhiskerMax = whiskerMax;
+            Width = width;
+        }
+    }
+
     /// <summary>
     /// 使用 ScottPlot 生成数据可视化图表（适配 .NET Framework 4.6.2）
     /// </summary>
@@ -30,48 +51,50 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成趋势图（清洗前）
         /// </summary>
-        public static Bitmap GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, string title)
+        public static Image GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, string title)
         {
-            var dataList = data.ToList();
-            var plt = new Plot(800, 600);
+            var plt = new Plot();
 
-            if (dataList.Count == 0)
+            if (data.Count() == 0)
             {
                 plt.Title(title);
-                return plt.Render();
+                return plt.GetImage(800, 600);
             }
             var idx = Enumerable.Range(0, data.Count()).Where(i => (!float.IsNaN(data.ElementAt(i))) && (!float.IsInfinity(data.ElementAt(i)))).Select(i => i).ToArray();
 
             var xs = idx.Select(i => (double)dataxs.ElementAt(i)).ToArray();
             var ys = idx.Select(i => (double)data.ElementAt(i)).ToArray();
 
-            plt.AddSignalXY(xs, ys, color: Color.Blue);
+            var signalxy1 = plt.Add.SignalXY(xs, ys, Colors.Blue);
+            signalxy1.LineWidth = 1;
             plt.Title(title, size: 12);
-            plt.XLabel("序号");
-            plt.YLabel("测量值");
-            plt.Legend(true, ScottPlot.Alignment.UpperRight);
-            plt.Grid(enable: true);
+            plt.XLabel("Part Index");
+            plt.YLabel("Measurement Value");
+            plt.Legend.IsVisible = true;
+            plt.Legend.Alignment = Alignment.UpperRight;
+            plt.Grid.IsVisible = true;
+            plt.Font.Automatic();
 
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
 
-            return plt.Render();
+            return plt.GetImage(800, 600);
         }
 
         /// <summary>
         /// 生成直方图（100个 bin）
         /// </summary>
-        public static Bitmap GenerateHistogram(IEnumerable<float> data, float? loLimit, float? hiLimit, string title, float min, float max)
+        public static Image GenerateHistogram(IEnumerable<float> data, BoxPlotPara boxpara, float? loLimit, float? hiLimit, string title, float min, float max)
         {
             var dataList = data.Where(d => !float.IsInfinity(d) && !float.IsNaN(d)).ToList();
-            var plt = new Plot(800, 600);
-
+            var plt = new Plot();
+            
             plt.Title(title, size: 18);
-            plt.XLabel("测量值");
-            plt.YLabel("频数");
-            plt.Grid(enable: true);
+            plt.XLabel("Measurement Value");
+            plt.YLabel("Frequency");
+            plt.Grid.IsVisible = true;
 
             if (dataList.Count == 0)
-                return plt.Render();
+                return plt.GetImage(800,600);
 
             const int binCount = 100;
             double[] values = dataList.Select(d => (double)d).ToArray();
@@ -81,7 +104,9 @@ namespace ProdLogAnalyzer
             //double max = values.Max();
 
             double binSize = (max - min) / binCount;
-            double[] bins = new double[binCount];
+            if(binSize<=0) 
+                return plt.GetImage(800, 600);
+
             double[] counts = new double[binCount];
 
             for (int i = 0; i < values.Length; i++)
@@ -91,175 +116,161 @@ namespace ProdLogAnalyzer
                 if (bin >= binCount) bin = binCount - 1;
                 counts[bin]++;
             }
+            List<Bar> bars = new List<Bar>(binCount);
             for (int i = 0; i < binCount; i++)
             {
-                bins[i] = min + binSize * (i + 0.5);
+                var bar = new Bar
+                {
+                    Position = min + binSize * (i + 0.5),
+                    Value = counts[i],
+                    Size = binSize,
+                    LineWidth = 0.3f
+                };
+                bars.Add(bar);
             }
 
             // 绘制直方图
-            var bar = plt.AddBar(counts, bins, color: Color.Blue);
-            bar.BarWidth = binSize > 0 ? binSize : 1;
-            plt.AddScatter(bins, counts, color: Color.Black, lineWidth: 0.5f, markerSize: 0);
+            var barPlt = plt.Add.Bars(bars);
+            barPlt.Color = Colors.Blue;
 
-            // 添加限制线（垂直）
             if (loLimit.HasValue)
-                plt.AddVerticalLine(loLimit.Value, color: Color.Red, width: 2, style: LineStyle.Dash).Label = $"下限: {loLimit:F4}";
+                plt.Add.VerticalLine(loLimit.Value, width: 2, color: Colors.Red, LinePattern.Dashed).Text = $"{loLimit:F3}";
             else
-                plt.AddVerticalLine(min, color: Color.Green, width: 2, style: LineStyle.Dash).Label = $"6σ: {min:F4}";
+                plt.Add.VerticalLine(min, width: 2, color: Colors.Green, LinePattern.Dashed).Text = $"{min:F4}";
 
 
             if (hiLimit.HasValue)
-                plt.AddVerticalLine(hiLimit.Value, color: Color.Red, width: 2, style: LineStyle.Dash).Label = $"上限: {hiLimit:F4}";
+                plt.Add.VerticalLine(hiLimit.Value, width: 2, color: Colors.Red, LinePattern.Dashed).Text = $"{hiLimit:F3}";
             else
-                plt.AddVerticalLine(max, color: Color.Green, width: 2, style: LineStyle.Dash).Label = $"6σ: {max:F4}";
+                plt.Add.VerticalLine(max, width: 2, color: Colors.Green, LinePattern.Dashed).Text = $"{max:F4}";
 
+            //Box box = new Box
+            //{
+            //    Position = counts.Max() / 2,
+            //    WhiskerMin = boxpara.WhiskerMin,//线的最低位置
+            //    BoxMin = boxpara.BoxMin,//箱体的最低位置
+            //    BoxMiddle = boxpara.BoxMiddle,//箱体的中间位置
+            //    BoxMax = boxpara.BoxMax,//箱体的最高位置
+            //    WhiskerMax = boxpara.WhiskerMax,//线的最高位置
+            //    Width = counts.Max() * 0.7,
+            //    Orientation = Orientation.Horizontal //not supported yet
+            //};
+            //var boxPlot = plt.Add.Box(box);
 
-            plt.Legend();
+            var rectangle = plt.Add.Rectangle(new CoordinateRect(boxpara.BoxMin, boxpara.BoxMax, counts.Max() * 0.25, counts.Max() * 0.75));
+            rectangle.FillColor = Colors.Orange.WithOpacity(0.5);
 
+            var lineMin = plt.Add.Line(boxpara.WhiskerMin, counts.Max() * 0.4, boxpara.WhiskerMin, counts.Max() * 0.6);
+            lineMin.Color = Colors.Black.WithOpacity(0.5);
+            lineMin.LineWidth = 1;
+
+            var lineMax = plt.Add.Line(boxpara.WhiskerMax, counts.Max() * 0.4, boxpara.WhiskerMax, counts.Max() * 0.6);
+            lineMax.Color = Colors.Black.WithOpacity(0.5);
+            lineMax.LineWidth = 1;
+
+            var lineMiddle = plt.Add.Line(boxpara.BoxMiddle, counts.Max() * 0.25, boxpara.BoxMiddle, counts.Max() * 0.75);
+            lineMiddle.Color = Colors.Black.WithOpacity(0.5);
+            lineMiddle.LineWidth = 1;
+
+            var lineHorizontal1 = plt.Add.Line(boxpara.WhiskerMin, counts.Max()*0.5, boxpara.WhiskerMax, counts.Max()*0.5);
+            lineHorizontal1.Color = Colors.Black.WithOpacity(0.5);
+            lineHorizontal1.LineWidth = 1;
+
+            plt.Legend.IsVisible = true;
+            plt.Font.Automatic();
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Histogram.png");
 
-            return plt.Render();
+            return plt.GetImage(800, 600);
         }
 
-        /// <summary>
-        /// 生成箱型图（盒须图）
-        /// </summary>
-        public static Bitmap GenerateBoxPlot(IEnumerable<float> data, float? loLimit, float? hiLimit, string title, float min, float max)
-        {
-            var dataList = data.Where(d => !float.IsInfinity(d) && !float.IsNaN(d)).Select(d => (double)d).ToArray();
-            var plt = new Plot(800, 600);
-
-            plt.Title(title, size: 18);
-            plt.YLabel("测量值");
-            plt.Grid(enable: true);
-
-            if (dataList.Length == 0)
-                return plt.Render();
-
-            // ScottPlot 4.x 没有 AddBoxPlot，使用 AddPopulation 绘制单组箱型图
-            var pop = new ScottPlot.Statistics.Population(dataList);
-            plt.AddPopulation(pop);
-
-            // 计算统计值用于标注
-            var sorted = dataList.OrderBy(d => d).ToArray();
-            double q1 = CalculatePercentile(sorted, 0.25);
-            double median = CalculatePercentile(sorted, 0.5);
-            double q3 = CalculatePercentile(sorted, 0.75);
-            double iqr = q3 - q1;
-            double lowerWhisker = Math.Max(sorted.First(), q1 - 1.5 * iqr);
-            double upperWhisker = Math.Min(sorted.Last(), q3 + 1.5 * iqr);
-
-            // 中位线注释
-            plt.AddHorizontalLine(median, color: Color.Red, width: 2).Label = $"中位数: {median:F4}";
-
-            // 限制线（水平）
-            if (loLimit.HasValue)
-                plt.AddHorizontalLine(loLimit.Value, color: Color.Orange, width: 2, style: LineStyle.Dash).Label = $"下限: {loLimit:F4}";
-            else
-                plt.AddHorizontalLine(min, color: Color.Green, width: 2, style: LineStyle.Dash).Label = $"6σ: {min:F4}";
-
-            if (hiLimit.HasValue)
-                plt.AddHorizontalLine(hiLimit.Value, color: Color.Orange, width: 2, style: LineStyle.Dash).Label = $"上限: {hiLimit:F4}";
-            else
-                plt.AddHorizontalLine(max, color: Color.Green, width: 2, style: LineStyle.Dash).Label = $"6σ: {max:F4}";
-
-            // ScottPlot Population 默认 X 轴为类别，只有一个箱，范围为 -0.5~0.5
-            plt.SetAxisLimits(xMin: -0.5, xMax: 0.5);
-
-            plt.Legend();
-
-            //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_BoxPlot.png");
-
-            return plt.Render();
-        }
 
         /// <summary>
         /// 生成对比趋势图（原始 vs 清洗）
         /// 标记被移除的数据点（红色 X）
         /// </summary>
-        public static Bitmap GenerateComparisonTrendChart(IEnumerable<float> original, IEnumerable<float> cleaned, string title)
+        public static Image GenerateComparisonTrendChart(IEnumerable<float> data_raw, IEnumerable<int> dataxs_raw, IEnumerable<float> data_pass, IEnumerable<int> dataxs_pass, string title)
         {
-            var origList = original.ToList();
-            var cleanedList = cleaned.ToList();
-            var plt = new Plot(800, 600);
+            var plt = new Plot();
 
-            if (origList.Count == 0)
+            if (data_raw.Count() == 0 || data_pass.Count() == 0)
             {
                 plt.Title(title);
-                return plt.Render();
+                return plt.GetImage(800, 600);
             }
+            var idx1 = Enumerable.Range(0, data_raw.Count()).Where(i => (!float.IsNaN(data_raw.ElementAt(i))) && (!float.IsInfinity(data_raw.ElementAt(i)))).Select(i => i).ToArray();
 
-            double[] xs = Enumerable.Range(0, origList.Count).Select(i => (double)i).ToArray();
-            double[] ys = origList.Select(d => (double)d).ToArray();
+            var xs1 = idx1.Select(i => (double)dataxs_raw.ElementAt(i)).ToArray();
+            var ys1 = idx1.Select(i => (double)data_raw.ElementAt(i)).ToArray();
 
-            plt.AddScatter(xs, ys, color: Color.Blue, lineWidth: 1, markerSize: 2);
+            var signalxy1 = plt.Add.SignalXY(xs1, ys1, Colors.Blue.WithOpacity(0.5));
+            signalxy1.LineWidth = 1;
 
-            if (cleanedList.Count > 0)
-            {
-                // 被移除的点 = 原始集合中不在 cleaned 集合中的元素（按值比较）
-                var cleanedMultiset = BuildValueCounts(cleanedList);
-                var removedXs = new List<double>();
-                var removedYs = new List<double>();
+            var idx2 = Enumerable.Range(0, data_pass.Count()).Where(i => (!float.IsNaN(data_pass.ElementAt(i))) && (!float.IsInfinity(data_pass.ElementAt(i)))).Select(i => i).ToArray();
 
-                for (int i = 0; i < origList.Count; i++)
-                {
-                    double v = origList[i];
-                    if (!ConsumeValueIfExists(cleanedMultiset, v))
-                    {
-                        removedXs.Add(i);
-                        removedYs.Add(v);
-                    }
-                }
+            var xs2 = idx2.Select(i => (double)dataxs_pass.ElementAt(i)).ToArray();
+            var ys2 = idx2.Select(i => (double)data_pass.ElementAt(i)).ToArray();
 
-                if (removedXs.Count > 0)
-                    plt.AddScatter(removedXs.ToArray(), removedYs.ToArray(), color: Color.Red, markerSize: 7, markerShape: MarkerShape.filledSquare, lineWidth: 0);
-            }
+            var signalxy2 = plt.Add.SignalXY(xs2, ys2, Colors.Orange.WithOpacity(0.5));
+            signalxy2.LineWidth = 1;
+
+            plt.Title(title, size: 12);
+            plt.XLabel("Part Index");
+            plt.YLabel("Measurement Value");
+            plt.Legend.IsVisible = true;
+            plt.Legend.Alignment = Alignment.UpperRight;
+            plt.Grid.IsVisible = true;
+
+            //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
+
+            return plt.GetImage(800, 600);
+        }
+
+        public static Image GenerateBySiteBoxPlot(List<BoxPlotPara> boxparas, float? loLimit, float? hiLimit, string title, float min, float max)
+        {
+            var plt = new Plot();
 
             plt.Title(title, size: 18);
-            plt.XLabel("样本序号");
-            plt.YLabel("测量值");
-            plt.Legend();
-            plt.Grid(enable: true);
+            plt.XLabel("Site");
+            plt.YLabel("Measurement Value");
+            plt.Grid.IsVisible = true;
 
-            //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_ComparisonTrend.png");
+            if (boxparas == null || boxparas.Count == 0)
+                return plt.GetImage(800, 600);
 
-            return plt.Render();
-        }
+            if (loLimit.HasValue)
+                plt.Add.HorizontalLine(loLimit.Value, width: 2, color: Colors.Red, LinePattern.Dashed).Text = $"{loLimit:F3}";
+            else
+                plt.Add.HorizontalLine(min, width: 2, color: Colors.Green, LinePattern.Dashed).Text = $"{min:F4}";
 
-        // ==================== 辅助方法 ====================
 
-        private static double CalculatePercentile(double[] sortedData, double percentile)
-        {
-            if (sortedData == null || sortedData.Length == 0)
-                return 0;
+            if (hiLimit.HasValue)
+                plt.Add.HorizontalLine(hiLimit.Value, width: 2, color: Colors.Red, LinePattern.Dashed).Text = $"{hiLimit:F3}";
+            else
+                plt.Add.HorizontalLine(max, width: 2, color: Colors.Green, LinePattern.Dashed).Text = $"{max:F4}";
 
-            double index = percentile * (sortedData.Length - 1);
-            int lower = (int)Math.Floor(index);
-            int upper = (int)Math.Ceiling(index);
-
-            if (lower == upper)
-                return sortedData[lower];
-
-            double diff = index - lower;
-            return sortedData[lower] * (1 - diff) + sortedData[upper] * diff;
-        }
-
-        private static Dictionary<double, int> BuildValueCounts(IEnumerable<float> values)
-        {
-            var dict = new Dictionary<double, int>();
-            foreach (var v in values)
+            int i = 0;
+            foreach(var boxpara in boxparas)
             {
-                double d = v;
-                if (dict.ContainsKey(d)) dict[d]++; else dict[d] = 1;
+                Box box = new Box
+                {
+                    Position = 1 + i++,
+                    WhiskerMin = boxpara.WhiskerMin,//线的最低位置
+                    BoxMin = boxpara.BoxMin,//箱体的最低位置
+                    BoxMiddle = boxpara.BoxMiddle,//箱体的中间位置
+                    BoxMax = boxpara.BoxMax,//箱体的最高位置
+                    WhiskerMax = boxpara.WhiskerMax,//线的最高位置
+                    Width = boxpara.Width,
+                };
+                var boxPlot = plt.Add.Box(box);
             }
-            return dict;
+
+
+            plt.Legend.IsVisible = true;
+            plt.Font.Automatic();
+            //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Histogram.png");
+
+            return plt.GetImage(800, 600);
         }
 
-        private static bool ConsumeValueIfExists(Dictionary<double, int> counts, double v)
-        {
-            if (!counts.TryGetValue(v, out int c) || c <= 0) return false;
-            counts[v] = c - 1;
-            return true;
-        }
     }
 }
