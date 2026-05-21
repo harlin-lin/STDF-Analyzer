@@ -134,6 +134,9 @@ namespace DataContainer{
 
         ItemStatistic GetFilteredStatistic(int filterId, string uid);
         ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma);
+
+        NormalityDeviationResult GetFilteredNormalityDeviationResult(int filterId, string uid, DeviationAnalysisParams analysisParams=null);
+
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);
         IEnumerable<Tuple<short, short>> GetFilteredCords(int filterId);

@@ -92,13 +92,7 @@ namespace ProdLogAnalyzer
         public double? ExcessKurtosisLimit_Low { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public double? JarqueBeraLimit { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? ModeCountLimit { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public double? ClustersLimit { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? OutliersLimit { get; set; }

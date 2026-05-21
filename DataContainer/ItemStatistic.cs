@@ -6,17 +6,44 @@ using System.Threading.Tasks;
 using MathNet.Numerics.Statistics;
 
 namespace DataContainer {
+    public class NormalityDeviationResult
+    {
+        public int ModeCount { get; set; } = 0;
+        public List<float> ModeLocations { get; set; } = new List<float>();
+        public int OutlierCount { get; set; } = 0;
+        public float MAD { get; set; } = float.NaN;
+        public float MAD_L { get; set; } = float.NaN;
+        public float MAD_R { get; set; } = float.NaN;
+        public bool IsConstantData { get; set; } = false; // 方差极小，数据近似常数
+    }
+    /// <summary>
+    /// 分析参数
+    /// </summary>
+    public class DeviationAnalysisParams
+    {
+        /// <summary>核密度带宽，null 则用 BandwidthRatio * (USL-LSL) 准则自动计算</summary>
+        public float BandwidthRatio { get; set; } = 0.05f;
+
+        /// <summary>密度估计采样点数</summary>
+        public int KernelSampleCount { get; set; } = 512;
+
+        /// <summary>峰的相对显著度（峰高与邻近谷底的最小比值）</summary>
+        public float PeakProminenceRatio { get; set; } = 0.5f;
+
+        public float MadOutlierRatio { get; set; } = 4.0f;
+    }
+
+
     [Serializable]
     public class ItemStatistic {
+        const double Epsilon = 1e-12;
+
         public float MeanValue { get; private set; } = float.NaN;
         public float MinValue { get; private set; } = float.NaN;
         public float MaxValue { get; private set; } = float.NaN;
         public float MedianValue { get; private set; } = float.NaN;
         public float Skewness { get; private set; } = float.NaN;
         public float Kurtosis { get; private set; } = float.NaN;
-        //public float Q1 { get; private set; } = float.NaN;
-        //public float Q3 { get; private set; } = float.NaN;
-        public float MAD { get; private set; } = float.NaN;
 
         public float Cp { get; private set; } = float.NaN;
         public float Cpk { get; private set; } = float.NaN;
@@ -26,7 +53,6 @@ namespace DataContainer {
         public int FailCount { get; private set; }
         public int ValidCount { get; private set; }
         public float PassRate { get; private set; } //PassCount/validCount(invalid test result would make this value wrong)
-        //public int OutlierCount { get; private set; }
 
         public float GetSigmaRangeLow(int times) {
             try {
@@ -57,11 +83,6 @@ namespace DataContainer {
                 MinValue = (float)statistics.Minimum;
                 MaxValue = (float)statistics.Maximum;
                 MedianValue = (float)Statistics.Median(listUnNullItems);
-                //Q1 = (float)Statistics.LowerQuartile(listUnNullItems);
-                //Q3 = (float)Statistics.UpperQuartile(listUnNullItems);
-                //var lsl = Q1 - 1.5 * (Q3 - Q1);
-                //var usl = Q3 + 1.5 * (Q3 - Q1);
-                //OutlierCount = listUnNullItems.Count(v => v < lsl || v > usl);
 
                 if (listUnNullItems.Count > 1)
                 {
@@ -75,7 +96,6 @@ namespace DataContainer {
 
                 if (listUnNullItems.Count > 3)
                 {
-                    MAD = (float)Statistics.Median(listUnNullItems.Select(v => Math.Abs(v - MeanValue)));
 
                     Kurtosis = (float)statistics.Kurtosis;
 
@@ -106,6 +126,13 @@ namespace DataContainer {
                         Cpk = float.NaN;
                     }
                 }
+            }
+
+            // 检查是否为常数数据（方差极小）
+            if (Sigma < Epsilon)
+            {
+                Skewness = 0;
+                Kurtosis = 0;
             }
 
             ValidCount = listUnNullItems.Count;

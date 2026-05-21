@@ -1,9 +1,11 @@
 ﻿using DataContainer;
+using ScottPlot.Statistics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ProdLogAnalyzer
 {
@@ -15,8 +17,8 @@ namespace ProdLogAnalyzer
         static int filterId_raw = -1;
         static int filterId_pass = -1;
 
-        const double ConsistencyFactor = 1.4826;
-        const double MadOutlierThreshold = 3.5;
+        const float ConsistencyFactor = 1.4826f;
+        const float MadOutlierThreshold = 5f;
 
         public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filter_raw, int filter_pass, string outputPath)
         {
@@ -101,9 +103,7 @@ namespace ProdLogAnalyzer
                         if(r.SkewnessLimit_Low != null) rule.SkewnessLimit_Low = r.SkewnessLimit_Low;
                         if(r.ExcessKurtosisLimit_High != null) rule.ExcessKurtosisLimit_High = r.ExcessKurtosisLimit_High;
                         if(r.ExcessKurtosisLimit_Low != null) rule.ExcessKurtosisLimit_Low = r.ExcessKurtosisLimit_Low;
-                        if(r.JarqueBeraLimit != null) rule.JarqueBeraLimit = r.JarqueBeraLimit;
                         if(r.ModeCountLimit != null) rule.ModeCountLimit = r.ModeCountLimit;
-                        if(r.ClustersLimit != null) rule.ClustersLimit = r.ClustersLimit;
                         if(r.OutliersLimit != null) rule.OutliersLimit = r.OutliersLimit;
                     }
 
@@ -180,7 +180,7 @@ namespace ProdLogAnalyzer
             //判断是否良率符合预期, 不符合直接返回不正常
             if (itemRule != null)
             {
-                double yield = (double)itemStatistic.PassCount / itemStatistic.ValidCount;
+                double yield = itemStatistic.PassRate;
                 if(itemRule.YieldLimit_High != null && itemRule.YieldLimit_High <= yield)
                 {
                     return false;
@@ -199,47 +199,43 @@ namespace ProdLogAnalyzer
 
             if (itemRule != null)
             {
-                if(itemRule.SigmaLimit_High != null && itemRule.SigmaLimit_High <= result.StdDev)
+                if(itemRule.SigmaLimit_High != null && itemRule.SigmaLimit_High <= itemStatistic.Sigma)
                 {
                     return false;
                 }
-                if (itemRule.SigmaLimit_Low != null && itemRule.SigmaLimit_Low >= result.StdDev)
+                if (itemRule.SigmaLimit_Low != null && itemRule.SigmaLimit_Low >= itemStatistic.Sigma)
                 {
                     return false;
                 }
-                if(itemRule.CpkLimit_High != null && !double.IsNaN(result.Cpk) && itemRule.CpkLimit_High <= result.Cpk)
+                if(itemRule.CpkLimit_High != null && !double.IsNaN(itemStatistic.Cpk) && itemRule.CpkLimit_High <= itemStatistic.Cpk)
                 {
                     return false;
                 }
-                if (itemRule.CpkLimit_Low != null && !double.IsNaN(result.Cpk) && itemRule.CpkLimit_Low >= result.Cpk)
+                if (itemRule.CpkLimit_Low != null && !double.IsNaN(itemStatistic.Cpk) && itemRule.CpkLimit_Low >= itemStatistic.Cpk)
                 {
                     return false;
                 }
-                if(itemRule.MeanLimit_High != null && itemRule.MeanLimit_High <= result.Mean)
+                if(itemRule.MeanLimit_High != null && itemRule.MeanLimit_High <= itemStatistic.MeanValue)
                 {
                     return false;
                 }
-                if (itemRule.MeanLimit_Low != null && itemRule.MeanLimit_Low >= result.Mean)
+                if (itemRule.MeanLimit_Low != null && itemRule.MeanLimit_Low >= itemStatistic.MeanValue)
                 {
                     return false;
                 }
-                if(itemRule.SkewnessLimit_High != null && itemRule.SkewnessLimit_High <= result.Skewness)
+                if(itemRule.SkewnessLimit_High != null && itemRule.SkewnessLimit_High <= itemStatistic.Skewness)
                 {
                     return false;
                 }
-                if (itemRule.SkewnessLimit_Low != null && itemRule.SkewnessLimit_Low >= result.Skewness)
+                if (itemRule.SkewnessLimit_Low != null && itemRule.SkewnessLimit_Low >= itemStatistic.Skewness)
                 {
                     return false;
                 }
-                if(itemRule.ExcessKurtosisLimit_High != null && itemRule.ExcessKurtosisLimit_High <= result.ExcessKurtosis)
+                if(itemRule.ExcessKurtosisLimit_High != null && itemRule.ExcessKurtosisLimit_High <= itemStatistic.Kurtosis)
                 {
                     return false;
                 }
-                if (itemRule.ExcessKurtosisLimit_Low != null && itemRule.ExcessKurtosisLimit_Low >= result.ExcessKurtosis)
-                {
-                    return false;
-                }
-                if (itemRule.JarqueBeraLimit != null && itemRule.JarqueBeraLimit <= result.JarqueBeraStatistic)
+                if (itemRule.ExcessKurtosisLimit_Low != null && itemRule.ExcessKurtosisLimit_Low >= itemStatistic.Kurtosis)
                 {
                     return false;
                 }
@@ -247,11 +243,7 @@ namespace ProdLogAnalyzer
                 {
                     return false;
                 }
-                if (itemRule.ClustersLimit != null && itemRule.ClustersLimit < result.Clusters.Count)
-                {
-                    return false;
-                }
-                if (itemRule.OutliersLimit != null && itemRule.OutliersLimit < result.Outliers.Count)
+                if (itemRule.OutliersLimit != null && itemRule.OutliersLimit < result.OutlierCount)
                 {
                     return false;
                 }
@@ -290,44 +282,44 @@ namespace ProdLogAnalyzer
 
             try
             {
-                DeviationAnalysisParams para = new DeviationAnalysisParams
-                {
-                    SignificanceLevel = 0.05,
-                    PeakProminenceRatio = 0.5,
-                    DbscanEpsilon = 6,
-                    DbscanMinPts = 5,
-                    UpperSpecLimit = info.HiLimit,
-                    LowerSpecLimit = info.LoLimit
-                };
-
                 var s = new System.Diagnostics.Stopwatch();
                 s.Start();
-                var anomalyAnalysis = NormalityDeviationDetector.Analyze(data_pass, para);
+                var anomalyAnalysis = dataAcquire.GetFilteredNormalityDeviationResult(filterId_pass, testId);
                 s.Stop();
                 //Console.WriteLine("NormalityDeviationDetector:" + s.ElapsedMilliseconds);
+                if(anomalyAnalysis == null)
+                {
+                    Console.WriteLine($"正态性偏离分析失败: 结果为null");
+                    return false;
+                }
 
 
                 if (engMode)
                 {
                     //输出测试结果到csv
                     //logExporter.AppendLine($"TestID,TestText,ValidCount,MeanValue,Sigma,Cpk,Yield,偏度,超值峰度,Jarque-Bera p,密度峰个数,离群点数量,SiteGap_Mean,SiteGap_Cpk");
-                    logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
-                    $"{anomalyAnalysis.Skewness:F3},{anomalyAnalysis.ExcessKurtosis:F3},{anomalyAnalysis.JarqueBeraPValue:F4}," +
+                    logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{itemStatistic_raw.PassRate:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
+                    $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                         $"{anomalyAnalysis.ModeCount}," +
-                        $"{anomalyAnalysis.Outliers.Count}");
+                        $"{anomalyAnalysis.OutlierCount}");
                     var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemRule);
 
                     if (exporter != null && (!anaRst || forceAna))
                     {
                         s.Restart();
-                        //var chartImages = GenerateCharts(data_pass, xs_pass, info, testId, itemStatistic_pass);
+                        var chartImages = GenerateCharts(testId, anomalyAnalysis);
 
-                        //exporter?.GenerateReport(testId, info.TestText, chartImages,
-                        //    itemStatistic_raw, anomalyAnalysis);
+                        string description = $"Limit:[{info.LoLimit} : {info.HiLimit}] {info.Unit}\n" +
+                            $"样本: {itemStatistic_raw.ValidCount} 良率={itemStatistic_raw.PassRate:F4}\n" +
+                            $"均值={itemStatistic_pass.MeanValue:F4} 标准差={itemStatistic_pass.Sigma:F4} Cpk={itemStatistic_pass.Cpk:F4}\n\n" +
+                            $"偏度={itemStatistic_pass.Skewness:F3}, 超值峰度={itemStatistic_pass.Kurtosis:F3}\n" +
+                            $"密度峰个数={anomalyAnalysis.ModeCount}\n" +
+                            $"离群点数量={anomalyAnalysis.OutlierCount}\n";
+                        var status = anaRst ? TestStatus.Pass : TestStatus.Warning;
+
+                        exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", description, status, chartImages);
                         s.Stop();
                         //Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
-                        // 输出分析结果到控制台
-                        //PrintAnalysisResults(testId, info, itemStatistic_raw, anomalyAnalysis);
                     }
 
                 } 
@@ -337,23 +329,22 @@ namespace ProdLogAnalyzer
                     {
                         //输出测试结果到csv
                         //logExporter.AppendLine($"TestID,TestText,HiLimit,LoLimit,有效数据量,良率,平均值,标准差,CPK,偏度,超值峰度,密度峰个数,离群点数量");
-                        logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
-                        $"{anomalyAnalysis.Skewness:F3},{anomalyAnalysis.ExcessKurtosis:F3}," +
+                        logExporter.AppendLine($"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{itemStatistic_raw.PassRate:F4}%,{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
+                        $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                         $"{anomalyAnalysis.ModeCount}," +
-                        $"{anomalyAnalysis.Outliers.Count}");
+                        $"{anomalyAnalysis.OutlierCount}");
 
                         s.Restart();
                         var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemRule);
 
-                        var chartImages = GenerateCharts(testId);
+                        var chartImages = GenerateCharts(testId, anomalyAnalysis);
 
                         string description = $"Limit:[{info.LoLimit} : {info.HiLimit}] {info.Unit}\n" +
-                            $"样本: {itemStatistic_raw.ValidCount} 良率={100.0 * itemStatistic_raw.PassCount / itemStatistic_raw.ValidCount:F4}\n" + 
+                            $"样本: {itemStatistic_raw.ValidCount} 良率={itemStatistic_raw.PassRate:F4}\n" + 
                             $"均值={itemStatistic_pass.MeanValue:F4} 标准差={itemStatistic_pass.Sigma:F4} Cpk={itemStatistic_pass.Cpk:F4}\n\n" +
-                            $"偏度={anomalyAnalysis.Skewness:F3}, 超值峰度={anomalyAnalysis.ExcessKurtosis:F3}\n" + 
-                            $"Jarque-Bera p={anomalyAnalysis.JarqueBeraPValue:F4}\n" +
-                            $"密度峰个数={anomalyAnalysis.ModeCount} 聚落数量={anomalyAnalysis.Clusters.Count}\n"+
-                            $"DBSCAN离群点数量={anomalyAnalysis.Outliers.Count}\n";
+                            $"偏度={itemStatistic_pass.Skewness:F3}, 超值峰度={itemStatistic_pass.Kurtosis:F3}\n" + 
+                            $"密度峰个数={anomalyAnalysis.ModeCount}\n"+
+                            $"离群点数量={anomalyAnalysis.OutlierCount}\n";
                         var status = anaRst ? TestStatus.Pass : TestStatus.Warning;
 
                         exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", description, status, chartImages);
@@ -361,7 +352,6 @@ namespace ProdLogAnalyzer
                         s.Stop();
                         //Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
                         // 输出分析结果到控制台
-                        //PrintAnalysisResults(testId, info, itemStatistic_raw, anomalyAnalysis);
                     }
                 }
 
@@ -369,7 +359,7 @@ namespace ProdLogAnalyzer
                 return true;
             } catch (Exception ex)
             {
-                Console.WriteLine($"    ✗ 处理失败: {ex.Message}");
+                Console.WriteLine($"处理失败: {ex.Message}");
                 return false;
             }
         }
@@ -377,7 +367,7 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成6个图表
         /// </summary>
-        private static List<BitMap> GenerateCharts(string testId)
+        private static List<BitMap> GenerateCharts(string testId, NormalityDeviationResult anomalyAnalysis)
         {
             var charts = new List<BitMap>();
             var info = dataAcquire.GetTestInfo(testId);
@@ -391,7 +381,7 @@ namespace ProdLogAnalyzer
                 float min_pass = info.LoLimit != null ? info.LoLimit.Value : itemStatistic_pass.MeanValue - 6 * itemStatistic_pass.Sigma;
                 float max_pass = info.HiLimit != null ? info.HiLimit.Value : itemStatistic_pass.MeanValue + 6 * itemStatistic_pass.Sigma;
 
-                if (!engMode)
+                if (engMode)
                 {
                     var data_raw = dataAcquire.GetFilteredItemData(testId, filterId_raw);
                     var xs_raw = dataAcquire.GetFilteredPartIndex(filterId_raw);
@@ -402,11 +392,11 @@ namespace ProdLogAnalyzer
                     charts.Add(new BitMap(ChartGenerator.GenerateComparisonTrendChart(data_raw, xs_raw, data_pass, xs_pass, chartTitle), testId, chartTitle));
 
                     var boxPara_raw = new BoxPlotPara(
-                                    itemStatistic_raw.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_raw.MAD), 
-                                    itemStatistic_raw.MedianValue - itemStatistic_raw.MAD, 
+                                    itemStatistic_raw.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_L), 
+                                    itemStatistic_raw.MedianValue - anomalyAnalysis.MAD_L, 
                                     itemStatistic_raw.MedianValue, 
-                                    itemStatistic_raw.MedianValue + itemStatistic_raw.MAD, 
-                                    itemStatistic_raw.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_raw.MAD), 
+                                    itemStatistic_raw.MedianValue + anomalyAnalysis.MAD_R, 
+                                    itemStatistic_raw.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_R), 
                                     0);
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_raw, boxPara_raw, info.LoLimit, info.HiLimit, $"Raw: {chartTitle}", min_raw, max_raw), testId, chartTitle));
 
@@ -417,22 +407,22 @@ namespace ProdLogAnalyzer
                         var site = sites[i];
                         var itemStatistic_site = dataAcquire.GetFilteredStatisticBySite(filterId_pass, testId, site);
                         var boxPara_site = new BoxPlotPara(
-                                        itemStatistic_site.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_site.MAD),
-                                        itemStatistic_site.MedianValue - itemStatistic_site.MAD,
+                                        itemStatistic_site.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_L),
+                                        itemStatistic_site.MedianValue - anomalyAnalysis.MAD_L,
                                         itemStatistic_site.MedianValue,
-                                        itemStatistic_site.MedianValue + itemStatistic_site.MAD,
-                                        itemStatistic_site.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_site.MAD),
+                                        itemStatistic_site.MedianValue + anomalyAnalysis.MAD_R,
+                                        itemStatistic_site.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_R),
                                         itemStatistic_site.ValidCount * sites.Length * 0.9 / itemStatistic_pass.ValidCount);
                         boxParas_bySite.Add(boxPara_site);
                     }
                     charts.Add(new BitMap(ChartGenerator.GenerateBySiteBoxPlot(boxParas_bySite, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
 
                     var boxPara_pass = new BoxPlotPara(
-                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
-                                    itemStatistic_pass.MedianValue - itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_L),
+                                    itemStatistic_pass.MedianValue - anomalyAnalysis.MAD_L,
                                     itemStatistic_pass.MedianValue,
-                                    itemStatistic_pass.MedianValue + itemStatistic_pass.MAD,
-                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    itemStatistic_pass.MedianValue + anomalyAnalysis.MAD_R,
+                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_R),
                                     0);
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, $"Pass: {chartTitle}", min_pass, max_pass), testId, chartTitle));
 
@@ -443,11 +433,11 @@ namespace ProdLogAnalyzer
                     charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, chartTitle), testId, chartTitle));
 
                     var boxPara_pass = new BoxPlotPara(
-                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
-                                    itemStatistic_pass.MedianValue - itemStatistic_pass.MAD,
+                                    itemStatistic_pass.MedianValue - (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_L),
+                                    itemStatistic_pass.MedianValue - anomalyAnalysis.MAD_L,
                                     itemStatistic_pass.MedianValue,
-                                    itemStatistic_pass.MedianValue + itemStatistic_pass.MAD,
-                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * itemStatistic_pass.MAD),
+                                    itemStatistic_pass.MedianValue + anomalyAnalysis.MAD_R,
+                                    itemStatistic_pass.MedianValue + (float)(MadOutlierThreshold * ConsistencyFactor * anomalyAnalysis.MAD_R),
                                     0);
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
 
@@ -464,25 +454,5 @@ namespace ProdLogAnalyzer
             return charts;
         }
 
-        /// <summary>
-        /// 输出分析结果到控制台
-        /// </summary>
-        private static void PrintAnalysisResults(string testId, ItemInfo info,
-            ItemStatistic itemStatistic,
-            NormalityDeviationResult result)
-        {
-            Console.WriteLine($"    原始: {itemStatistic.ValidCount}个 | " +
-                $"均值={itemStatistic.MeanValue:F6} | 标准差={itemStatistic.Sigma:F6} | " +
-                $"Cpk={itemStatistic.Cpk:F4} | 良率={100.0 * itemStatistic.PassCount/itemStatistic.ValidCount:F4}%");
-
-            Console.WriteLine(result.IsConstantData
-                ? "警告：输入数据为常数序列。"
-                : $"均值={result.Mean:F3}, 标准差={result.StdDev:F3}");
-            Console.WriteLine($"偏度={result.Skewness:F3}, 超值峰度={result.ExcessKurtosis:F3}");
-            Console.WriteLine($"Jarque-Bera p={result.JarqueBeraPValue:F4}, 正态性：{result.IsNormal}");
-            Console.WriteLine($"密度峰个数={result.ModeCount}, 位置=[{string.Join(", ", result.ModeLocations.Select(x => x.ToString("F2")))}]");
-            Console.WriteLine($"聚落数量={result.Clusters.Count}, 大小=[{string.Join(", ", result.ClusterSizes)}]");
-            Console.WriteLine($"DBSCAN离群点数量={result.Outliers.Count}");
-        }
     }
 }

@@ -111,7 +111,6 @@
     <Compile Include="ChartGenerator.cs" />
     <Compile Include="DataParser.cs" />
     <Compile Include="HtmlExpoter.cs" />
-    <Compile Include="NormalityDeviationDetector.cs" />
     <Compile Include="ProdLogConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
