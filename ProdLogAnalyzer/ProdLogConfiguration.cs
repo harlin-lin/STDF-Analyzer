@@ -16,6 +16,9 @@ namespace ProdLogAnalyzer
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool ReportExport { get; set; } = false;
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string LotInfoRegex { get; set; } = string.Empty;
+
         [JsonProperty]
         public List<DataFileConfig> DataFiles { get; set; } = new List<DataFileConfig>();
 

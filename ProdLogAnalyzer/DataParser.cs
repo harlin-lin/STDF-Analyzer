@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Text.RegularExpressions;
 
 namespace ProdLogAnalyzer
 {
@@ -18,14 +18,26 @@ namespace ProdLogAnalyzer
         static IDataAcquire dataAcquire = null;
         static int filterId_raw = -1;
         static int filterId_pass = -1;
+        static string outputPath = "";
 
         const float ConsistencyFactor = 1.4826f;
 
-        public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filter_raw, int filter_pass, string outputPath)
+        public static void ParseDataFile(ProdLogConfiguration prodLogConfiguration, IDataAcquire da, int filter_raw, int filter_pass)
         {
             HtmlExpoter exporter = null;
             engMode = prodLogConfiguration.EngMode;
             reportExport = prodLogConfiguration.ReportExport;
+
+            string lotInfo = string.Empty; 
+            if (prodLogConfiguration.LotInfoRegex != string.Empty)
+            {
+                var match = Regex.Match(prodLogConfiguration.DataFiles[0].Path, prodLogConfiguration.LotInfoRegex);
+                if (match.Success) {
+                    lotInfo = match.Groups[0].Value + "_";
+                }
+            }
+            
+            outputPath = Path.Combine(prodLogConfiguration.OutputFolder, $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}.html");
 
             dataAcquire = da;
             filterId_pass = filter_pass;
@@ -144,38 +156,34 @@ namespace ProdLogAnalyzer
         {
             var statistic = dataAcquire.GetPartStatistic();
 
-            //if(engMode)
-            //{
-            //    StringBuilder sb_basic = new StringBuilder();
-            //    StringBuilder sb_stastic = new StringBuilder();
-            //    StringBuilder sb_sb = new StringBuilder();
-            //    StringBuilder sb_hb = new StringBuilder();
+            if (engMode)
+            {
+                //StringBuilder sb_basic = new StringBuilder();
+                //StringBuilder sb_stastic = new StringBuilder();
+                //StringBuilder sb_sb = new StringBuilder();
+                //StringBuilder sb_hb = new StringBuilder();
 
-            //    SummaryHelper.AppendBasicInfo(ref sb_basic, dataAcquire);
-            //    SummaryHelper.AppendCounters(ref sb_stastic, statistic);
-            //    SummaryHelper.AppendSoftbin(ref sb_sb, dataAcquire, statistic);
-            //    SummaryHelper.AppendHardbin(ref sb_hb, dataAcquire, statistic);
+                //SummaryHelper.AppendBasicInfo(ref sb_basic, dataAcquire);
+                //SummaryHelper.AppendCounters(ref sb_stastic, statistic);
+                //SummaryHelper.AppendSoftbin(ref sb_sb, dataAcquire, statistic);
+                //SummaryHelper.AppendHardbin(ref sb_hb, dataAcquire, statistic);
 
-            //    exporter?.AddSummarySlide("Basic Info", sb_basic.ToString());
-            //    exporter?.AddSummarySlide("测试数量统计", sb_stastic.ToString());
-            //    exporter?.AddSummarySlide("SoftBin统计", sb_sb.ToString());
-            //    exporter?.AddSummarySlide("HardBin统计", sb_hb.ToString());
+                //exporter?.AddSummarySlide("Basic Info", sb_basic.ToString());
+                //exporter?.AddSummarySlide("测试数量统计", sb_stastic.ToString());
+                //exporter?.AddSummarySlide("SoftBin统计", sb_sb.ToString());
+                //exporter?.AddSummarySlide("HardBin统计", sb_hb.ToString());
 
-            //    logExporter.Append(sb_basic).Append(sb_stastic).Append(sb_sb).Append(sb_hb);
+                //logExporter.Append(sb_basic).Append(sb_stastic).Append(sb_sb).Append(sb_hb);
 
-            //} else
-            //{
-            //    StringBuilder sb = new StringBuilder();
-            //    SummaryHelper.AppendHardbinSimple(ref sb, dataAcquire, statistic);
-            //    exporter?.AddSummarySlide("HardBin统计", sb.ToString());
-
-            //    var hbNames = dataAcquire.GetHBinInfo();
-            //    //输出statistic中HardBin信息到csv文件中
-            //    logExporter.AppendLine("HardBin,Name,P/F,Count,Ratio");
-            //    logExporter.AppendLine(
-            //        string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
-            //    );
-            //}
+            } else
+            {
+                var hbNames = dataAcquire.GetHBinInfo();
+                //输出statistic中HardBin信息到csv文件中
+                logExporter.AppendLine("HardBin,Name,P/F,Count,Ratio");
+                logExporter.AppendLine(
+                    string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
+                );
+            }
 
             Console.WriteLine("\nFile Summary log done");
 
