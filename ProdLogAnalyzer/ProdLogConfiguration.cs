@@ -36,9 +36,6 @@ namespace ProdLogAnalyzer
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string OutputFolder { get; set; }
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string SlidesTemplatePath { get; set; }
     }
 
     [JsonObject]
@@ -97,6 +94,46 @@ namespace ProdLogAnalyzer
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public double? OutliersLimit { get; set; }
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Para_MAD_Threshold_Left { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Para_MAD_Threshold_Right { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Para_BandwidthRatio { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public int? Para_KernelSampleCount { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Para_PeakProminenceRatio { get; set; }
+
+        public ItemRuleConfig(ItemRuleConfig config)
+        {
+            if (config != null)
+            {
+                YieldLimit_High = config.YieldLimit_High;
+                YieldLimit_Low = config.YieldLimit_Low;
+                SigmaLimit_High = config.SigmaLimit_High;
+                SigmaLimit_Low = config.SigmaLimit_Low;
+                CpkLimit_High = config.CpkLimit_High;
+                CpkLimit_Low = config.CpkLimit_Low;
+                MeanLimit_High = config.MeanLimit_High;
+                MeanLimit_Low = config.MeanLimit_Low;
+                SkewnessLimit_High = config.SkewnessLimit_High;
+                SkewnessLimit_Low = config.SkewnessLimit_Low;
+                ExcessKurtosisLimit_High = config.ExcessKurtosisLimit_High;
+                ExcessKurtosisLimit_Low = config.ExcessKurtosisLimit_Low;
+                ModeCountLimit = config.ModeCountLimit;
+                OutliersLimit = config.OutliersLimit;
+                Para_MAD_Threshold_Left = config.Para_MAD_Threshold_Left;
+                Para_MAD_Threshold_Right = config.Para_MAD_Threshold_Right;
+                Para_BandwidthRatio = config.Para_BandwidthRatio;
+                Para_KernelSampleCount = config.Para_KernelSampleCount;
+                Para_PeakProminenceRatio = config.Para_PeakProminenceRatio;
+            }
+        }
     }
 
     [JsonObject]

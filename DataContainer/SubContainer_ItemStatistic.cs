@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -48,14 +49,16 @@ namespace DataContainer {
             if(parameters == null) parameters = new DeviationAnalysisParams();
             
             var result = new NormalityDeviationResult();
+            result.MadOutlierThRatio_Left = parameters.MadOutlierThRatio_Left;
+            result.MadOutlierThRatio_Right = parameters.MadOutlierThRatio_Right;
+
+            var itemVals = GetItemVal(uid, _filterContainer[filterId]);
 
             // 1. 清洗数据：剔除 NaN 和无穷值
-            var cleanData = GetItemVal(uid, _filterContainer[filterId]).Where(d => !float.IsNaN(d) && !float.IsInfinity(d)).Select(d => d).ToArray();
+            var cleanData = itemVals.Where(d => !float.IsNaN(d) && !float.IsInfinity(d)).Select(d => d).ToArray();
 
             if (cleanData.Length < 4)
                 return null;
-
-            if (parameters == null) parameters = new DeviationAnalysisParams();
 
             var statistic = _filterContainer[filterId].FilterItemStatistics[uid];
             var info = _itemContainer[uid];
@@ -65,7 +68,7 @@ namespace DataContainer {
             {
                 // 常数数据：偏度/峰度无意义，正态性不成立
                 result.IsConstantData = true;
-                result.MAD = 0;
+                //result.MAD = 0;
                 result.MAD_L = 0;
                 result.MAD_R = 0;
                 result.OutlierCount = 0;
@@ -74,18 +77,83 @@ namespace DataContainer {
                 return result;
             }
 
-            var mad = (float)Statistics.Median(cleanData.Select(v => Math.Abs(v - statistic.MeanValue)));
-            result.MAD = mad;
+            // 4. 核密度估计 + 多峰检测
+            //double bw = parameters.Bandwidth ?? SilvermanBandwidth(cleanData, stdDev);
+            var usl = info.HiLimit ?? statistic.MeanValue + 6 * statistic.Sigma;
+            var lsl = info.LoLimit ?? statistic.MeanValue - 6 * statistic.Sigma;
+            var bw = parameters.BandwidthRatio * (usl - lsl);
+
+            var (densityX, densityY) = KernelDensityEstimate(cleanData, bw, parameters.KernelSampleCount);
+            var peakIndices = FindPeaks(densityY, parameters.PeakProminenceRatio);
+            result.ModeCount = peakIndices.Count;
+            result.ModeLocations = peakIndices.Select(i => densityX[i]).ToList();
+
+            //计算MAD及其左右分界
+            //var mad = (float)Statistics.Median(cleanData.Select(v => Math.Abs(v - statistic.MeanValue)));
+            //result.MAD = mad;
+
+            //var listUnNullItems = (from r in GetItemVal(uid, _filterContainer[filterId])
+            //                       where !float.IsNaN(r)
+            //                       select r);
+
+            //var leftDeviations = new List<float>();
+            //var rightDeviations = new List<float>();
+
+            //foreach (float value in listUnNullItems)
+            //{
+            //    if (value < statistic.MedianValue)
+            //        leftDeviations.Add(statistic.MedianValue - value);
+            //    else if (value > statistic.MedianValue)
+            //        rightDeviations.Add(value - statistic.MedianValue);
+            //    // 与中位数相等的值不参与偏差计算，避免人为压低MAD
+            //}
+        
+            //// 处理极端情况：一侧无数据时，使用另一侧的MAD作为对称边界（或设为无穷）
+            //float madLeft = 0.0f;
+            //float madRight = 0.0f;
+
+            //if (leftDeviations.Count > 0)
+            //    madLeft = Statistics.Median(leftDeviations);
+            //else
+            //    madLeft = (rightDeviations.Count > 0) ? Statistics.Median(rightDeviations) : 1.0f;
+
+            //if (rightDeviations.Count > 0)
+            //    madRight = Statistics.Median(rightDeviations);
+            //else
+            //    madRight = (leftDeviations.Count > 0) ? Statistics.Median(leftDeviations) : 1.0f;
+
+            var (median, madLeft, madRight) = CalculateMAD(itemVals);
+            result.MAD_L = madLeft;
+            result.MAD_R = madRight;
+
+
+            var madlsl = median - parameters.MadOutlierThRatio_Left * ConsistencyFactor * madLeft;
+            var madusl = median + parameters.MadOutlierThRatio_Right * ConsistencyFactor * madRight;
+            var outlierCnt = itemVals.Count(v => !float.IsNaN(v) && ( float.IsInfinity(v) || v < madlsl || v > madusl));
+
+            result.OutlierCount = outlierCnt;
+
+            return result;
+
+        }
+
+        private (float, float, float) CalculateMAD(IEnumerable<float> data)
+        {
+            var listUnNullItems = (from r in data
+                                   where !float.IsNaN(r)
+                                   select r);
+            
+            var median = Statistics.Median(listUnNullItems);
 
             var leftDeviations = new List<float>();
             var rightDeviations = new List<float>();
 
-            foreach (float value in cleanData)
+            foreach (float value in listUnNullItems)
             {
-                if (value < statistic.MedianValue)
-                    leftDeviations.Add(statistic.MedianValue - value);
-                else if (value > statistic.MedianValue)
-                    rightDeviations.Add(value - statistic.MedianValue);
+                if (value < median)
+                    leftDeviations.Add(median - value);
+                else if (value > median)
+                    rightDeviations.Add(value - median);
                 // 与中位数相等的值不参与偏差计算，避免人为压低MAD
             }
 
@@ -102,32 +170,16 @@ namespace DataContainer {
                 madRight = Statistics.Median(rightDeviations);
             else
                 madRight = (leftDeviations.Count > 0) ? Statistics.Median(leftDeviations) : 1.0f;
+            
+            return (median, madLeft, madRight);
+        }
 
-            result.MAD_L = madLeft;
-            result.MAD_R = madRight;
-
-            // 4. 核密度估计 + 多峰检测
-            //double bw = parameters.Bandwidth ?? SilvermanBandwidth(cleanData, stdDev);
-            var usl = info.HiLimit ?? statistic.MeanValue + 6 * statistic.Sigma;
-            var lsl = info.LoLimit ?? statistic.MeanValue - 6 * statistic.Sigma;
-            var bw = parameters.BandwidthRatio * (usl - lsl);
-
-            var (densityX, densityY) = KernelDensityEstimate(cleanData, bw, parameters.KernelSampleCount);
-            var peakIndices = FindPeaks(densityY, parameters.PeakProminenceRatio);
-            result.ModeCount = peakIndices.Count;
-            result.ModeLocations = peakIndices.Select(i => densityX[i]).ToList();
-
-            var listUnNullItems = (from r in GetItemVal(uid, _filterContainer[filterId])
-                                   where !float.IsNaN(r)
-                                   select r);
-
-            var madlsl = statistic.MedianValue - parameters.MadOutlierRatio * ConsistencyFactor * madLeft;
-            var madusl = statistic.MedianValue + parameters.MadOutlierRatio * ConsistencyFactor * madRight;
-            var outlierCnt = listUnNullItems.Count(v => float.IsInfinity(v) || v < madlsl || v > madusl);
-
-
-            return result;
-
+        public (float, float, float, int) GetFilteredMAD_BySite(int filterId, string uid, byte site)
+        {
+            var itemVal = GetItemValBySite(uid, _filterContainer[filterId], site);
+            var (median, madLeft, madRight) = CalculateMAD(itemVal);
+            
+            return (median, madLeft, madRight, itemVal.Count());
         }
 
         private static (float[] x, float[] y) KernelDensityEstimate(float[] data, float bandwidth, int sampleCount)

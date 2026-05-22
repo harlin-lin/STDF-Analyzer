@@ -52,7 +52,11 @@ namespace ProdLogAnalyzer
 
         public void GenerateReport(string title, string description, TestStatus status, List<BitMap> charts)
         {
-            foreach(var chart in charts)
+            if(charts==null)
+            {
+                charts = new List<BitMap>();
+            }
+            foreach (var chart in charts)
             {
                 string fileName = $"chart_{chart.TestId}_{Guid.NewGuid().ToString().Substring(0, 8)}.png";
                 string filePath = Path.Combine(_imageDir, fileName);
@@ -121,6 +125,10 @@ namespace ProdLogAnalyzer
             _reportContent.AppendLine("        .chart img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }");
             _reportContent.AppendLine("        .chart-caption { margin-top: 8px; font-size: 0.9em; color: #666; }");
             _reportContent.AppendLine("        @media (max-width: 700px) { .chart-container { grid-template-columns: 1fr; } }");
+            // 描述表格样式（用于将两行 CSV 输出为表格）
+            _reportContent.AppendLine("        .desc-table { width: 100%; border-collapse: collapse; margin-top: 8px; }");
+            _reportContent.AppendLine("        .desc-table th, .desc-table td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; font-size: 0.95em; }");
+            _reportContent.AppendLine("        .desc-table th { background-color: #f8f8f8; color: #333; }");
             _reportContent.AppendLine("    </style>");
             _reportContent.AppendLine("</head>");
             _reportContent.AppendLine("<body>");
@@ -146,8 +154,10 @@ namespace ProdLogAnalyzer
             _reportContent.AppendLine($"                <span class='{statusClass}'>{statusText}</span>");
             _reportContent.AppendLine("            </div>");
 
+            // 如果 description 是两行 CSV 格式，则以表格形式输出；否则按原样安全输出
+            string descriptionHtml = RenderDescriptionAsTableIfCsv(item.Description);
             _reportContent.AppendLine($"            <div class='item-description {statusClass}'>");
-            _reportContent.AppendLine($"                {EscapeHtml(item.Description)}");
+            _reportContent.AppendLine($"                {descriptionHtml}");
             _reportContent.AppendLine("            </div>");
 
             if (item.Charts.Count > 0)
@@ -171,6 +181,154 @@ namespace ProdLogAnalyzer
             }
 
             _reportContent.AppendLine("        </div>");
+        }
+
+        /// <summary>
+        /// 如果输入是多行 CSV（通常两行），将其渲染成 HTML 表格字符串（已安全转义）。
+        /// 否则返回经过 EscapeHtml 的普通文本（并以 &lt;pre&gt; 包裹以保留换行）。
+        /// </summary>
+        private string RenderDescriptionAsTableIfCsv(string description)
+        {
+            if (string.IsNullOrEmpty(description))
+            {
+                return string.Empty;
+            }
+
+            // 按行分割（保留空行）
+            var lines = description.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            // 如果只有一行或没有逗号，直接返回转义后的文本（保留换行）
+            if (lines.Length < 2)
+            {
+                return $"<pre>{EscapeHtml(description)}</pre>";
+            }
+
+            // 将每行解析为 CSV 字段（支持双引号包含逗号）
+            var rows = new List<List<string>>();
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    rows.Add(new List<string>());
+                }
+                else
+                {
+                    rows.Add(ParseCsvLine(line));
+                }
+            }
+
+            // 构建 HTML 表格：第一行为表头（如果有），其余为数据行
+            var sb = new StringBuilder();
+            sb.AppendLine("<table class='desc-table'>");
+
+            // 如果只有两行，通常第一行是 header，第二行为 values
+            if (rows.Count >= 2)
+            {
+                var header = rows[0];
+                var second = rows[1];
+
+                // 当列数匹配时，将第一行为 th，第二行为 td；否则把所有行都作为普通行输出
+                if (header.Count > 0 && header.Count == second.Count)
+                {
+                    sb.AppendLine("  <thead>");
+                    sb.AppendLine("    <tr>");
+                    foreach (var h in header)
+                    {
+                        sb.AppendLine($"      <th>{EscapeHtml(h)}</th>");
+                    }
+                    sb.AppendLine("    </tr>");
+                    sb.AppendLine("  </thead>");
+                    sb.AppendLine("  <tbody>");
+                    sb.AppendLine("    <tr>");
+                    foreach (var v in second)
+                    {
+                        sb.AppendLine($"      <td>{EscapeHtml(v)}</td>");
+                    }
+                    sb.AppendLine("    </tr>");
+                    sb.AppendLine("  </tbody>");
+                }
+                else
+                {
+                    // 列数不匹配或更复杂，按行输出，列用 td
+                    sb.AppendLine("  <tbody>");
+                    foreach (var r in rows)
+                    {
+                        sb.AppendLine("    <tr>");
+                        foreach (var c in r)
+                        {
+                            sb.AppendLine($"      <td>{EscapeHtml(c)}</td>");
+                        }
+                        sb.AppendLine("    </tr>");
+                    }
+                    sb.AppendLine("  </tbody>");
+                }
+            }
+            else
+            {
+                // 少于两行，退回纯文本
+                sb.AppendLine("  <tbody>");
+                sb.AppendLine("    <tr>");
+                sb.AppendLine($"      <td>{EscapeHtml(description)}</td>");
+                sb.AppendLine("    </tr>");
+                sb.AppendLine("  </tbody>");
+            }
+
+            sb.AppendLine("</table>");
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 解析单行 CSV，支持用双引号包含包含逗号或双引号（双引号按 RFC 行为用两个双引号转义）。
+        /// 简单实现，满足常见 CSV 场景。
+        /// </summary>
+        private List<string> ParseCsvLine(string line)
+        {
+            var result = new List<string>();
+            if (line == null) return result;
+
+            var current = new StringBuilder();
+            bool inQuotes = false;
+            for (int i = 0; i < line.Length; i++)
+            {
+                char c = line[i];
+                if (inQuotes)
+                {
+                    if (c == '"')
+                    {
+                        // 双引号内遇到双引号，检查是否为转义（双双引号）
+                        if (i + 1 < line.Length && line[i + 1] == '"')
+                        {
+                            current.Append('"');
+                            i++; // 跳过转义的引号
+                        }
+                        else
+                        {
+                            inQuotes = false; // 结束引号模式
+                        }
+                    }
+                    else
+                    {
+                        current.Append(c);
+                    }
+                }
+                else
+                {
+                    if (c == '"')
+                    {
+                        inQuotes = true;
+                    }
+                    else if (c == ',')
+                    {
+                        result.Add(current.ToString());
+                        current.Clear();
+                    }
+                    else
+                    {
+                        current.Append(c);
+                    }
+                }
+            }
+            result.Add(current.ToString());
+            return result;
         }
 
         private void CompleteReport()

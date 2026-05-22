@@ -11,9 +11,11 @@ namespace DataContainer {
         public int ModeCount { get; set; } = 0;
         public List<float> ModeLocations { get; set; } = new List<float>();
         public int OutlierCount { get; set; } = 0;
-        public float MAD { get; set; } = float.NaN;
+        //public float MAD { get; set; } = float.NaN;
         public float MAD_L { get; set; } = float.NaN;
         public float MAD_R { get; set; } = float.NaN;
+        public float MadOutlierThRatio_Left { get; set; }
+        public float MadOutlierThRatio_Right { get; set; }
         public bool IsConstantData { get; set; } = false; // 方差极小，数据近似常数
     }
     /// <summary>
@@ -30,7 +32,8 @@ namespace DataContainer {
         /// <summary>峰的相对显著度（峰高与邻近谷底的最小比值）</summary>
         public float PeakProminenceRatio { get; set; } = 0.5f;
 
-        public float MadOutlierRatio { get; set; } = 4.0f;
+        public float MadOutlierThRatio_Left { get; set; } = 4.0f;
+        public float MadOutlierThRatio_Right { get; set; } = 4.0f;
     }
 
 

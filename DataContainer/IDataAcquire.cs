@@ -136,6 +136,7 @@ namespace DataContainer{
         ItemStatistic GetFilteredStatisticIgnoreOutlier(int filterId, string uid, int rangeBySigma);
 
         NormalityDeviationResult GetFilteredNormalityDeviationResult(int filterId, string uid, DeviationAnalysisParams analysisParams=null);
+        (float, float, float, int) GetFilteredMAD_BySite(int filterId, string uid, byte site);
 
         PartStatistic GetFilteredPartStatistic(int filterId);
         int GetFilteredChipsCount(int filterId);

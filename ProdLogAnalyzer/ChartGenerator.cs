@@ -51,7 +51,7 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成趋势图（清洗前）
         /// </summary>
-        public static Image GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, string title)
+        public static Image GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, BoxPlotPara boxpara, string title)
         {
             var plt = new Plot();
 
@@ -60,6 +60,13 @@ namespace ProdLogAnalyzer
                 plt.Title(title);
                 return plt.GetImage(800, 600);
             }
+            plt.Title(title, size: 12);
+            plt.XLabel("Part Index");
+            plt.YLabel("Measurement Value");
+            plt.Legend.IsVisible = true;
+            plt.Legend.Alignment = Alignment.UpperRight;
+            plt.Grid.IsVisible = true;
+
             var idx = Enumerable.Range(0, data.Count()).Where(i => (!float.IsNaN(data.ElementAt(i))) && (!float.IsInfinity(data.ElementAt(i)))).Select(i => i).ToArray();
 
             var xs = idx.Select(i => (double)dataxs.ElementAt(i)).ToArray();
@@ -67,12 +74,22 @@ namespace ProdLogAnalyzer
 
             var signalxy1 = plt.Add.SignalXY(xs, ys, Colors.Blue);
             signalxy1.LineWidth = 1;
-            plt.Title(title, size: 12);
-            plt.XLabel("Part Index");
-            plt.YLabel("Measurement Value");
-            plt.Legend.IsVisible = true;
-            plt.Legend.Alignment = Alignment.UpperRight;
-            plt.Grid.IsVisible = true;
+
+            Box box = new Box
+            {
+                Position = xs.Length / 2,
+                WhiskerMin = boxpara.WhiskerMin,//线的最低位置
+                BoxMin = boxpara.BoxMin,//箱体的最低位置
+                BoxMiddle = boxpara.BoxMiddle,//箱体的中间位置
+                BoxMax = boxpara.BoxMax,//箱体的最高位置
+                WhiskerMax = boxpara.WhiskerMax,//线的最高位置
+                Width = xs.Length * 0.7,
+                FillColor = Colors.Orange.WithOpacity(0.2),
+                LineColor = Colors.Black.WithOpacity(0.5),
+            };
+            var boxPlot = plt.Add.Box(box);
+
+
             plt.Font.Automatic();
 
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
