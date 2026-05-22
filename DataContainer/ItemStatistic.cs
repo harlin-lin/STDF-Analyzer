@@ -34,6 +34,7 @@ namespace DataContainer {
 
         public float MadOutlierThRatio_Left { get; set; } = 4.0f;
         public float MadOutlierThRatio_Right { get; set; } = 4.0f;
+        public float MadHalfLimitThRatio { get; set; } = 8.0f;
     }
 
 

@@ -104,6 +104,9 @@ namespace ProdLogAnalyzer
         public float? Para_MAD_Threshold_Right { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public float? Para_MAD_Threshold_HalfLimit { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public float? Para_BandwidthRatio { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -132,6 +135,7 @@ namespace ProdLogAnalyzer
                 OutliersLimit = config.OutliersLimit;
                 Para_MAD_Threshold_Left = config.Para_MAD_Threshold_Left;
                 Para_MAD_Threshold_Right = config.Para_MAD_Threshold_Right;
+                Para_MAD_Threshold_HalfLimit = config.Para_MAD_Threshold_HalfLimit;
                 Para_BandwidthRatio = config.Para_BandwidthRatio;
                 Para_KernelSampleCount = config.Para_KernelSampleCount;
                 Para_PeakProminenceRatio = config.Para_PeakProminenceRatio;

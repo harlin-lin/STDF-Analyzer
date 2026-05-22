@@ -49,8 +49,6 @@ namespace DataContainer {
             if(parameters == null) parameters = new DeviationAnalysisParams();
             
             var result = new NormalityDeviationResult();
-            result.MadOutlierThRatio_Left = parameters.MadOutlierThRatio_Left;
-            result.MadOutlierThRatio_Right = parameters.MadOutlierThRatio_Right;
 
             var itemVals = GetItemVal(uid, _filterContainer[filterId]);
 
@@ -62,6 +60,8 @@ namespace DataContainer {
 
             var statistic = _filterContainer[filterId].FilterItemStatistics[uid];
             var info = _itemContainer[uid];
+            result.MadOutlierThRatio_Left = info.HiLimit != null ? parameters.MadOutlierThRatio_Left : parameters.MadHalfLimitThRatio;
+            result.MadOutlierThRatio_Right = info.LoLimit != null ? parameters.MadOutlierThRatio_Right : parameters.MadHalfLimitThRatio;
 
             // 检查是否为常数数据（方差极小）
             if (statistic.Sigma < Epsilon)

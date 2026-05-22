@@ -195,6 +195,8 @@ namespace ProdLogAnalyzer
 
             plt.Legend.IsVisible = true;
             plt.Font.Automatic();
+
+            plt.Axes.SetLimitsX(min - (max - min)*0.1, max + (max - min)*0.1);
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Histogram.png");
 
             return plt.GetImage(800, 600);
@@ -205,7 +207,7 @@ namespace ProdLogAnalyzer
         /// 生成对比趋势图（原始 vs 清洗）
         /// 标记被移除的数据点（红色 X）
         /// </summary>
-        public static Image GenerateComparisonTrendChart(IEnumerable<float> data_raw, IEnumerable<int> dataxs_raw, IEnumerable<float> data_pass, IEnumerable<int> dataxs_pass, string title)
+        public static Image GenerateComparisonTrendChart(IEnumerable<float> data_raw, IEnumerable<int> dataxs_raw, IEnumerable<float> data_pass, IEnumerable<int> dataxs_pass, BoxPlotPara boxpara, string title, float min, float max)
         {
             var plt = new Plot();
 
@@ -214,6 +216,13 @@ namespace ProdLogAnalyzer
                 plt.Title(title);
                 return plt.GetImage(800, 600);
             }
+            plt.Title(title, size: 12);
+            plt.XLabel("Part Index");
+            plt.YLabel("Measurement Value");
+            plt.Legend.IsVisible = true;
+            plt.Legend.Alignment = Alignment.UpperRight;
+            plt.Grid.IsVisible = true;
+
             var idx1 = Enumerable.Range(0, data_raw.Count()).Where(i => (!float.IsNaN(data_raw.ElementAt(i))) && (!float.IsInfinity(data_raw.ElementAt(i)))).Select(i => i).ToArray();
 
             var xs1 = idx1.Select(i => (double)dataxs_raw.ElementAt(i)).ToArray();
@@ -230,13 +239,21 @@ namespace ProdLogAnalyzer
             var signalxy2 = plt.Add.SignalXY(xs2, ys2, Colors.Orange.WithOpacity(0.5));
             signalxy2.LineWidth = 1;
 
-            plt.Title(title, size: 12);
-            plt.XLabel("Part Index");
-            plt.YLabel("Measurement Value");
-            plt.Legend.IsVisible = true;
-            plt.Legend.Alignment = Alignment.UpperRight;
-            plt.Grid.IsVisible = true;
+            Box box = new Box
+            {
+                Position = xs1.Length / 2,
+                WhiskerMin = boxpara.WhiskerMin,//线的最低位置
+                BoxMin = boxpara.BoxMin,//箱体的最低位置
+                BoxMiddle = boxpara.BoxMiddle,//箱体的中间位置
+                BoxMax = boxpara.BoxMax,//箱体的最高位置
+                WhiskerMax = boxpara.WhiskerMax,//线的最高位置
+                Width = xs1.Length * 0.7,
+                FillColor = Colors.Orange.WithOpacity(0.2),
+                LineColor = Colors.Black.WithOpacity(0.5),
+            };
+            var boxPlot = plt.Add.Box(box);
 
+            plt.Axes.SetLimitsY(min - (max - min)*0.1, max + (max - min)*0.1);
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
 
             return plt.GetImage(800, 600);

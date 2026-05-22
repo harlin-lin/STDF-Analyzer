@@ -68,7 +68,7 @@ namespace ProdLogAnalyzer
 
                 } 
 
-                csvTitle = $"TestID,TestText,HiLimit,LoLimit,有效数据量,良率,平均值,标准差,CPK,偏度,超值峰度,密度峰个数,离群点数量,{(engMode ? "Median,MAD_L,MAD_R,SiteGap_Median,结果" : string.Empty)}";
+                csvTitle = $"TestID,TestText,HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}";
                 logExporter.AppendLine(csvTitle);
 
                 foreach (var id in da.GetTestIDs())
@@ -124,6 +124,7 @@ namespace ProdLogAnalyzer
                         if (r.Para_PeakProminenceRatio != null) rule.Para_PeakProminenceRatio = r.Para_PeakProminenceRatio;
                         if (r.Para_MAD_Threshold_Left != null) rule.Para_MAD_Threshold_Left = r.Para_MAD_Threshold_Left;
                         if (r.Para_MAD_Threshold_Right != null) rule.Para_MAD_Threshold_Right = r.Para_MAD_Threshold_Right;
+                        if (r.Para_MAD_Threshold_HalfLimit != null) rule.Para_MAD_Threshold_HalfLimit = r.Para_MAD_Threshold_HalfLimit;
                     }
 
                     // 执行数据分析并生成报告
@@ -133,6 +134,7 @@ namespace ProdLogAnalyzer
                     if(rule.Para_PeakProminenceRatio != null) analysisParams.PeakProminenceRatio = rule.Para_PeakProminenceRatio.Value;
                     if(rule.Para_MAD_Threshold_Left != null) analysisParams.MadOutlierThRatio_Left = rule.Para_MAD_Threshold_Left.Value;
                     if(rule.Para_MAD_Threshold_Right != null) analysisParams.MadOutlierThRatio_Right = rule.Para_MAD_Threshold_Right.Value;
+                    if(rule.Para_MAD_Threshold_HalfLimit != null) analysisParams.MadHalfLimitThRatio = rule.Para_MAD_Threshold_HalfLimit.Value;
                     AnalyzeAndGenerateReport(exporter, logExporter, id.ToString(), rule, forceAna, analysisParams);
                 }
                 // 保存报告
@@ -323,11 +325,11 @@ namespace ProdLogAnalyzer
 
                     var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemStatistic_pass, itemRule);
                     var description = $"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," + 
-                                    $"{itemStatistic_pass.MeanValue:F6},{itemStatistic_pass.Sigma:F6},{itemStatistic_pass.Cpk:F4}," +
+                                    $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
                                     $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                                     $"{anomalyAnalysis.ModeCount}," +
                                     $"{anomalyAnalysis.OutlierCount}," +
-                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F6},{anomalyAnalysis.MAD_L:F6},{anomalyAnalysis.MAD_R:F6},{maxSiteGap},{(anaRst ? "Pass" : "Fail")}" : string.Empty)}";
+                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap*100.0:F2}%,{(anaRst ? "Pass" : "Fail")}" : string.Empty)}";
                     logExporter.AppendLine(description);
 
                     if (exporter != null && (!anaRst || forceAna))
@@ -397,16 +399,18 @@ namespace ProdLogAnalyzer
                     float min_raw = info.LoLimit != null ? info.LoLimit.Value : itemStatistic_raw.MeanValue - 6 * itemStatistic_raw.Sigma;
                     float max_raw = info.HiLimit != null ? info.HiLimit.Value : itemStatistic_raw.MeanValue + 6 * itemStatistic_raw.Sigma;
 
-                    charts.Add(new BitMap(ChartGenerator.GenerateComparisonTrendChart(data_raw, xs_raw, data_pass, xs_pass, chartTitle), testId, chartTitle));
-
-                    var boxPara_raw = new BoxPlotPara(
-                                    itemStatistic_raw.MedianValue - (float)(anomalyAnalysis.MadOutlierThRatio_Left * ConsistencyFactor * anomalyAnalysis.MAD_L), 
-                                    itemStatistic_raw.MedianValue - ConsistencyFactor * anomalyAnalysis.MAD_L, 
-                                    itemStatistic_raw.MedianValue, 
-                                    itemStatistic_raw.MedianValue + ConsistencyFactor * anomalyAnalysis.MAD_R, 
-                                    itemStatistic_raw.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R), 
+                    var boxPara_pass = new BoxPlotPara(
+                                    itemStatistic_pass.MedianValue - (float)(anomalyAnalysis.MadOutlierThRatio_Left * ConsistencyFactor * anomalyAnalysis.MAD_L),
+                                    itemStatistic_pass.MedianValue - ConsistencyFactor * anomalyAnalysis.MAD_L,
+                                    itemStatistic_pass.MedianValue,
+                                    itemStatistic_pass.MedianValue + ConsistencyFactor * anomalyAnalysis.MAD_R,
+                                    itemStatistic_pass.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R),
                                     0);
-                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_raw, boxPara_raw, info.LoLimit, info.HiLimit, $"Raw: {chartTitle}", min_raw, max_raw), testId, chartTitle));
+
+                    charts.Add(new BitMap(ChartGenerator.GenerateComparisonTrendChart(data_raw, xs_raw, data_pass, xs_pass, boxPara_pass, chartTitle, min_pass, max_pass), testId, chartTitle));
+
+
+                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_raw, boxPara_pass, info.LoLimit, info.HiLimit, $"Raw: {chartTitle}", min_raw, max_raw), testId, chartTitle));
 
                     var sites = dataAcquire.GetSites();
                     List<BoxPlotPara> boxParas_bySite = new List<BoxPlotPara>();
@@ -425,13 +429,6 @@ namespace ProdLogAnalyzer
                     }
                     charts.Add(new BitMap(ChartGenerator.GenerateBySiteBoxPlot(boxParas_bySite, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
 
-                    var boxPara_pass = new BoxPlotPara(
-                                    itemStatistic_pass.MedianValue - (float)(anomalyAnalysis.MadOutlierThRatio_Left * ConsistencyFactor * anomalyAnalysis.MAD_L),
-                                    itemStatistic_pass.MedianValue - ConsistencyFactor * anomalyAnalysis.MAD_L,
-                                    itemStatistic_pass.MedianValue,
-                                    itemStatistic_pass.MedianValue + ConsistencyFactor * anomalyAnalysis.MAD_R,
-                                    itemStatistic_pass.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R),
-                                    0);
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, $"Pass: {chartTitle}", min_pass, max_pass), testId, chartTitle));
 
 
