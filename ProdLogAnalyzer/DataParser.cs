@@ -66,50 +66,46 @@ namespace ProdLogAnalyzer
 
                 GenerateDataStatisticReport(exporter, logExporter);
 
-                if (engMode)
-                {
-                    string summaryPath = Path.Combine(Path.GetDirectoryName(outputPath), $"{Path.GetFileNameWithoutExtension(outputPath)}_Summary.log");
-                    File.WriteAllText(summaryPath, logExporter.ToString());
-                    logExporter.Clear();
+                //if (engMode)
+                //{
+                //    string summaryPath = Path.Combine(Path.GetDirectoryName(outputPath), $"{Path.GetFileNameWithoutExtension(outputPath)}_Summary.log");
+                //    File.WriteAllText(summaryPath, logExporter.ToString());
+                //    logExporter.Clear();
 
-                } 
+                //} 
 
                 csvTitle = $"TestID,TestText,HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}";
                 logExporter.AppendLine(csvTitle);
 
                 foreach (var id in da.GetTestIDs())
                 {
-                    if (!engMode)
+                    var testText = dataAcquire.GetTestInfo(id).TestText;
+                    ItemAnalysePriority anaflg = ItemAnalysePriority.General;
+                    ItemRuleConfig r=null;
+                    if (prodLogConfiguration.TargetItemsAndRuleByTestId.ContainsKey(id))
                     {
-                        if (prodLogConfiguration.TargetItemsAndRule == null)
+                        anaflg = ItemAnalysePriority.ForceAnalyse;
+                        r = prodLogConfiguration.TargetItemsAndRuleByTestId[id];
+
+                    }
+                    foreach(var k in prodLogConfiguration.TargetItemsAndRuleByTestTextRegex.Keys)
+                    {
+
+                        if (Regex.IsMatch(testText, k, RegexOptions.IgnoreCase))
                         {
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                            Console.WriteLine($"Prod模式设定下, 配置文件中未指定目标项目和规则!!!!!!!!!!!!!!!!!!!!!!!!");
-                        } else
-                        {
-                            if (!prodLogConfiguration.TargetItemsAndRule.ContainsKey(id))
-                            {
-                                continue;
-                            }
+                            anaflg = ItemAnalysePriority.ForceAnalyse;
+                            r = prodLogConfiguration.TargetItemsAndRuleByTestTextRegex[k];
                         }
+                    }
+                    if (!engMode && anaflg != ItemAnalysePriority.ForceAnalyse)
+                    {
+                        continue;
                     }
 
                     ItemRuleConfig rule = new ItemRuleConfig(prodLogConfiguration.GeneralRule);
 
-                    ItemAnalysePriority anaflg = ItemAnalysePriority.General;
-                    if ((prodLogConfiguration.TargetItemsAndRule != null && prodLogConfiguration.TargetItemsAndRule.ContainsKey(id)))
+                    if (anaflg == ItemAnalysePriority.ForceAnalyse)
                     {
-                        anaflg = ItemAnalysePriority.ForceAnalyse;
-                        var r = prodLogConfiguration.TargetItemsAndRule[id];
                         if(r.YieldLimit_High != null) rule.YieldLimit_High = r.YieldLimit_High;
                         if(r.YieldLimit_Low != null) rule.YieldLimit_Low = r.YieldLimit_Low;
                         if(r.SigmaLimit_High != null) rule.SigmaLimit_High = r.SigmaLimit_High;
@@ -132,6 +128,7 @@ namespace ProdLogAnalyzer
                         if (r.Para_MAD_Threshold_Right != null) rule.Para_MAD_Threshold_Right = r.Para_MAD_Threshold_Right;
                         if (r.Para_MAD_Threshold_HalfLimit != null) rule.Para_MAD_Threshold_HalfLimit = r.Para_MAD_Threshold_HalfLimit;
                     }
+                    
                     if(anaflg != ItemAnalysePriority.ForceAnalyse)
                     {
                         foreach (var iid in prodLogConfiguration.IgnoredItemsByTestId)
@@ -142,7 +139,6 @@ namespace ProdLogAnalyzer
                                 break;
                             }
                         }
-                        var testText = dataAcquire.GetTestInfo(id).TestText;
                         foreach (var pat in prodLogConfiguration.IgnoredItemsByTestTextRegex)
                         {
                             if (Regex.IsMatch(testText, pat, RegexOptions.IgnoreCase))

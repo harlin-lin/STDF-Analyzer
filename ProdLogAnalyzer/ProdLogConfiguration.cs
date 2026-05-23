@@ -41,7 +41,10 @@ namespace ProdLogAnalyzer
         public ItemRuleConfig GeneralRule { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Dictionary<string, ItemRuleConfig> TargetItemsAndRule { get; set; } = new Dictionary<string, ItemRuleConfig>();
+        public Dictionary<string, ItemRuleConfig> TargetItemsAndRuleByTestId { get; set; } = new Dictionary<string, ItemRuleConfig>();
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Dictionary<string, ItemRuleConfig> TargetItemsAndRuleByTestTextRegex { get; set; } = new Dictionary<string, ItemRuleConfig>();
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string OutputFolder { get; set; }
