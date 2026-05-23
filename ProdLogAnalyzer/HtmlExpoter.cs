@@ -75,6 +75,13 @@ namespace ProdLogAnalyzer
             AddReportItemToContent(item);
         }
 
+        // 新增：将一段格式化字符串加入报告（不自动换行）
+        public void GenerateReport(string summary)
+        {
+            if (string.IsNullOrEmpty(summary)) return;
+            AddSummaryToContent(summary);
+        }
+
         public void SaveReport()
         {
             if (string.IsNullOrEmpty(_outputPath))
@@ -129,6 +136,8 @@ namespace ProdLogAnalyzer
             _reportContent.AppendLine("        .desc-table { width: 100%; border-collapse: collapse; margin-top: 8px; }");
             _reportContent.AppendLine("        .desc-table th, .desc-table td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; font-size: 0.95em; }");
             _reportContent.AppendLine("        .desc-table th { background-color: #f8f8f8; color: #333; }");
+            // 新增：summary 样式，不自动换行（保留原始格式），横向溢出可滚动
+            _reportContent.AppendLine("        .summary-block { white-space: pre; overflow-x: auto; font-family: monospace; background-color: #fafafa; padding: 10px; border: 1px solid #eee; border-radius: 4px; }");
             _reportContent.AppendLine("    </style>");
             _reportContent.AppendLine("</head>");
             _reportContent.AppendLine("<body>");
@@ -180,6 +189,21 @@ namespace ProdLogAnalyzer
                 _reportContent.AppendLine("            </div>");
             }
 
+            _reportContent.AppendLine("        </div>");
+        }
+
+        // 新增：将 summary 以不换行的格式写入报告
+        private void AddSummaryToContent(string summary)
+        {
+            string escaped = EscapeHtml(summary);
+
+            _reportContent.AppendLine("        <div class='report-item'>");
+            _reportContent.AppendLine("            <div class='item-header'>");
+            _reportContent.AppendLine("                <h2 class='item-title'>Summary</h2>");
+            _reportContent.AppendLine("            </div>");
+            _reportContent.AppendLine("            <div class='summary-block'>");
+            _reportContent.AppendLine($"                {escaped}");
+            _reportContent.AppendLine("            </div>");
             _reportContent.AppendLine("        </div>");
         }
 

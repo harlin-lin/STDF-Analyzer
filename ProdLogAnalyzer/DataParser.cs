@@ -1,6 +1,7 @@
 ﻿using DataContainer;
 using MathNet.Numerics.Statistics;
 using ScottPlot.Statistics;
+using SillyMonkey.Core;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +44,7 @@ namespace ProdLogAnalyzer
                 }
             }
             
-            outputPath = Path.Combine(prodLogConfiguration.OutputFolder, $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}.html");
+            outputPath = Path.Combine(prodLogConfiguration.OutputFolder, $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}", $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}.html");
 
             dataAcquire = da;
             filterId_pass = filter_pass;
@@ -61,18 +62,10 @@ namespace ProdLogAnalyzer
                 Console.WriteLine($"输出文件: {outputPath}\n");
                 if (reportExport)
                 {
-                    exporter?.CreateReport(outputPath, "生产测试数据分析报告", $"生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                    exporter?.CreateReport(outputPath, $"生产测试数据分析报告_{lotInfo}", $"生成时间: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 }
 
                 GenerateDataStatisticReport(exporter, logExporter);
-
-                //if (engMode)
-                //{
-                //    string summaryPath = Path.Combine(Path.GetDirectoryName(outputPath), $"{Path.GetFileNameWithoutExtension(outputPath)}_Summary.log");
-                //    File.WriteAllText(summaryPath, logExporter.ToString());
-                //    logExporter.Clear();
-
-                //} 
 
                 csvTitle = $"TestID,TestText,HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}";
                 logExporter.AppendLine(csvTitle);
@@ -180,33 +173,34 @@ namespace ProdLogAnalyzer
         {
             var statistic = dataAcquire.GetPartStatistic();
 
+            var hbNames = dataAcquire.GetHBinInfo();
+            //输出statistic中HardBin信息到csv文件中
+            logExporter.AppendLine("HardBin,Name,P/F,Count,Ratio");
+            logExporter.AppendLine(
+                string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
+            );
+
             if (engMode)
             {
-                //StringBuilder sb_basic = new StringBuilder();
-                //StringBuilder sb_stastic = new StringBuilder();
-                //StringBuilder sb_sb = new StringBuilder();
-                //StringBuilder sb_hb = new StringBuilder();
+                StringBuilder sb_basic = new StringBuilder();
+                StringBuilder sb_stastic = new StringBuilder();
+                StringBuilder sb_sb = new StringBuilder();
+                StringBuilder sb_hb = new StringBuilder();
 
-                //SummaryHelper.AppendBasicInfo(ref sb_basic, dataAcquire);
-                //SummaryHelper.AppendCounters(ref sb_stastic, statistic);
-                //SummaryHelper.AppendSoftbin(ref sb_sb, dataAcquire, statistic);
-                //SummaryHelper.AppendHardbin(ref sb_hb, dataAcquire, statistic);
+                SummaryHelper.AppendBasicInfo(ref sb_basic, dataAcquire);
+                SummaryHelper.AppendCounters(ref sb_stastic, statistic);
+                SummaryHelper.AppendSoftbin(ref sb_sb, dataAcquire, statistic);
+                SummaryHelper.AppendHardbin(ref sb_hb, dataAcquire, statistic);
 
-                //exporter?.AddSummarySlide("Basic Info", sb_basic.ToString());
-                //exporter?.AddSummarySlide("测试数量统计", sb_stastic.ToString());
-                //exporter?.AddSummarySlide("SoftBin统计", sb_sb.ToString());
-                //exporter?.AddSummarySlide("HardBin统计", sb_hb.ToString());
+                exporter?.GenerateReport(sb_basic.Append(sb_stastic).Append(sb_sb).Append(sb_hb).ToString());
 
-                //logExporter.Append(sb_basic).Append(sb_stastic).Append(sb_sb).Append(sb_hb);
-
-            } else
-            {
-                var hbNames = dataAcquire.GetHBinInfo();
+                var sbNames = dataAcquire.GetSBinInfo();
                 //输出statistic中HardBin信息到csv文件中
-                logExporter.AppendLine("HardBin,Name,P/F,Count,Ratio");
+                logExporter.AppendLine("SoftBin,Name,P/F,Count,Ratio");
                 logExporter.AppendLine(
-                    string.Join("\n", statistic.HardBin.Select(kv => $"{kv.Key},{hbNames[kv.Key].Item1},{hbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
+                    string.Join("\n", statistic.SoftBin.Select(kv => $"{kv.Key},{sbNames[kv.Key].Item1},{sbNames[kv.Key].Item2},{kv.Value},{(kv.Value * 100.0 / statistic.TotalCnt)}%"))
                 );
+
             }
 
             Console.WriteLine("\nFile Summary log done");
