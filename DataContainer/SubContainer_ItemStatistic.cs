@@ -41,7 +41,7 @@ namespace DataContainer {
             });
         }
 
-        const double Epsilon = 1e-12;
+        const float Epsilon = 1e-12f;
         const float ConsistencyFactor = 1.4826f;
 
         public NormalityDeviationResult GetFilteredNormalityDeviationResult(int filterId, string uid, DeviationAnalysisParams parameters = null)
@@ -131,7 +131,14 @@ namespace DataContainer {
             var madusl = median + parameters.MadOutlierThRatio_Right * ConsistencyFactor * madRight;
             var outlierCnt = itemVals.Count(v => !float.IsNaN(v) && ( float.IsInfinity(v) || v < madlsl || v > madusl));
 
-            result.OutlierCount = outlierCnt;
+            if(peakIndices.Count==1 && outlierCnt > 0)
+            {
+                float eps = parameters.DbscanEpsilon ?? Math.Max(1.0f * statistic.Sigma, Epsilon);
+                result.OutlierCount = ExtractNoiseByDbscan(cleanData, eps, parameters.DbscanMinPts).Count;
+            } else
+            {
+                result.OutlierCount = outlierCnt;
+            }
 
             return result;
 
@@ -232,14 +239,111 @@ namespace DataContainer {
             // 若未发现任何峰，至少保留全局最高点
             if (peaks.Count == 0)
             {
-                double maxY = y.Max();
+                float maxY = y.Max();
                 int maxIdx = Array.IndexOf(y, maxY);
                 peaks.Add(maxIdx);
             }
             return peaks;
         }
 
+        /// <summary>
+        /// 使用一维优化 DBSCAN 提取噪声点（离群点）。
+        /// 自动剔除 NaN / Inf，适合大数据量。
+        /// </summary>
+        /// <param name="data">原始数据数组</param>
+        /// <param name="eps">邻域半径</param>
+        /// <param name="minPts">核心点最小邻居数</param>
+        /// <returns>噪声点列表（未被任何簇包含的孤立点）</returns>
+        private static List<float> ExtractNoiseByDbscan(float[] clean, float eps, int minPts)
+        {
+            if (clean == null || clean.Length == 0)
+                return new List<float>();
 
+            // 清洗无效值
+            //var clean = data.Where(d => !float.IsNaN(d) && !float.IsInfinity(d)).ToArray();
+            int n = clean.Length;
+            if (n == 0) return new List<float>();
+
+            // 带原始索引排序，便于后续用双指针查找邻居
+            var sorted = clean
+                .Select((val, idx) => (val, idx))
+                .OrderBy(x => x.val)
+                .ToArray();
+
+            // 原始索引 → 排序后位置的映射
+            int[] posOfOriginalIdx = new int[n];
+            for (int i = 0; i < n; i++)
+                posOfOriginalIdx[sorted[i].idx] = i;
+
+            bool[] visited = new bool[n];
+            bool[] isNoise = new bool[n];
+            var noiseList = new List<float>();
+
+            // 双指针邻域查询（利用有序数组）
+            Func<int, HashSet<int>> regionQuery = (pos) =>
+            {
+                var neighbors = new HashSet<int>();
+                double center = sorted[pos].val;
+                double leftBound = center - eps;
+                double rightBound = center + eps;
+
+                int left = pos;
+                while (left >= 0 && sorted[left].val >= leftBound)
+                {
+                    neighbors.Add(sorted[left].idx);
+                    left--;
+                }
+                int right = pos + 1;
+                while (right < n && sorted[right].val <= rightBound)
+                {
+                    neighbors.Add(sorted[right].idx);
+                    right++;
+                }
+                return neighbors;
+            };
+
+            for (int i = 0; i < n; i++)
+            {
+                if (visited[i]) continue;
+                visited[i] = true;
+
+                var neighbors = regionQuery(posOfOriginalIdx[i]);
+                if (neighbors.Count < minPts)
+                {
+                    isNoise[i] = true;
+                    noiseList.Add(clean[i]);
+                } else
+                {
+                    // 扩展簇，并将过程中发现的原噪声点移出列表
+                    var queue = new Queue<int>(neighbors);
+                    while (queue.Count > 0)
+                    {
+                        int nb = queue.Dequeue();
+                        if (!visited[nb])
+                        {
+                            visited[nb] = true;
+                            var nbNeighbors = regionQuery(posOfOriginalIdx[nb]);
+                            if (nbNeighbors.Count >= minPts)
+                            {
+                                foreach (var nn in nbNeighbors)
+                                {
+                                    if (neighbors.Add(nn))  // 是新邻居，加入队列
+                                        queue.Enqueue(nn);
+                                }
+                            }
+                        }
+
+                        if (isNoise[nb])
+                        {
+                            isNoise[nb] = false;
+                            noiseList.Remove(clean[nb]);   // 不再是噪声
+                        }
+                    }
+                }
+            }
+
+            return noiseList;
+        }
 
     }
 }

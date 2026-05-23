@@ -32,6 +32,12 @@ namespace ProdLogAnalyzer
         public Dictionary<ushort, BinRuleConfig> HardBinRule { get; set; } = new Dictionary<ushort, BinRuleConfig>();
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> IgnoredItemsByTestId { get; set; } = new List<string>();
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> IgnoredItemsByTestTextRegex { get; set; } = new List<string>();
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public ItemRuleConfig GeneralRule { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

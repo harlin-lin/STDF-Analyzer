@@ -10,6 +10,12 @@ using System.Text.RegularExpressions;
 
 namespace ProdLogAnalyzer
 {
+    enum ItemAnalysePriority
+    {
+        General,
+        Ignore,
+        ForceAnalyse
+    }
     static class DataParser
     {
         static bool engMode = false;
@@ -99,10 +105,10 @@ namespace ProdLogAnalyzer
 
                     ItemRuleConfig rule = new ItemRuleConfig(prodLogConfiguration.GeneralRule);
 
-                    bool forceAna = false;
+                    ItemAnalysePriority anaflg = ItemAnalysePriority.General;
                     if ((prodLogConfiguration.TargetItemsAndRule != null && prodLogConfiguration.TargetItemsAndRule.ContainsKey(id)))
                     {
-                        forceAna = true;
+                        anaflg = ItemAnalysePriority.ForceAnalyse;
                         var r = prodLogConfiguration.TargetItemsAndRule[id];
                         if(r.YieldLimit_High != null) rule.YieldLimit_High = r.YieldLimit_High;
                         if(r.YieldLimit_Low != null) rule.YieldLimit_Low = r.YieldLimit_Low;
@@ -126,6 +132,26 @@ namespace ProdLogAnalyzer
                         if (r.Para_MAD_Threshold_Right != null) rule.Para_MAD_Threshold_Right = r.Para_MAD_Threshold_Right;
                         if (r.Para_MAD_Threshold_HalfLimit != null) rule.Para_MAD_Threshold_HalfLimit = r.Para_MAD_Threshold_HalfLimit;
                     }
+                    if(anaflg != ItemAnalysePriority.ForceAnalyse)
+                    {
+                        foreach (var iid in prodLogConfiguration.IgnoredItemsByTestId)
+                        {
+                            if (id == iid)
+                            {
+                                anaflg = ItemAnalysePriority.Ignore;
+                                break;
+                            }
+                        }
+                        var testText = dataAcquire.GetTestInfo(id).TestText;
+                        foreach (var pat in prodLogConfiguration.IgnoredItemsByTestTextRegex)
+                        {
+                            if (Regex.IsMatch(testText, pat, RegexOptions.IgnoreCase))
+                            {
+                                anaflg = ItemAnalysePriority.Ignore;
+                                break;
+                            }
+                        }
+                    }
 
                     // 执行数据分析并生成报告
                     DeviationAnalysisParams analysisParams = new DeviationAnalysisParams();                    
@@ -135,7 +161,7 @@ namespace ProdLogAnalyzer
                     if(rule.Para_MAD_Threshold_Left != null) analysisParams.MadOutlierThRatio_Left = rule.Para_MAD_Threshold_Left.Value;
                     if(rule.Para_MAD_Threshold_Right != null) analysisParams.MadOutlierThRatio_Right = rule.Para_MAD_Threshold_Right.Value;
                     if(rule.Para_MAD_Threshold_HalfLimit != null) analysisParams.MadHalfLimitThRatio = rule.Para_MAD_Threshold_HalfLimit.Value;
-                    AnalyzeAndGenerateReport(exporter, logExporter, id.ToString(), rule, forceAna, analysisParams);
+                    AnalyzeAndGenerateReport(exporter, logExporter, id.ToString(), rule, anaflg, analysisParams);
                 }
                 // 保存报告
                 exporter?.SaveReport();
@@ -278,7 +304,7 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 分析测试数据并生成报告
         /// </summary>
-        private static bool AnalyzeAndGenerateReport(HtmlExpoter exporter, StringBuilder logExporter, string testId, ItemRuleConfig itemRule, bool forceAna, DeviationAnalysisParams analysisParams)
+        private static bool AnalyzeAndGenerateReport(HtmlExpoter exporter, StringBuilder logExporter, string testId, ItemRuleConfig itemRule, ItemAnalysePriority anaflg, DeviationAnalysisParams analysisParams)
         {
             var info = dataAcquire.GetTestInfo(testId);
 
@@ -288,12 +314,12 @@ namespace ProdLogAnalyzer
             var xs_pass = dataAcquire.GetFilteredPartIndex(filterId_pass);
 
 
-            if (info.HiLimit == null && info.LoLimit == null && !forceAna)
+            if (info.HiLimit == null && info.LoLimit == null && !(anaflg == ItemAnalysePriority.ForceAnalyse))
             {
                 Console.WriteLine($"  跳过(无管控) TestID: {testId} - {info.TestText}");
                 return true;
             } 
-            else if(info.HiLimit != null && info.LoLimit != null && info.HiLimit == info.LoLimit && !forceAna)
+            else if(info.HiLimit != null && info.LoLimit != null && info.HiLimit == info.LoLimit && !(anaflg == ItemAnalysePriority.ForceAnalyse))
             {
                 Console.WriteLine($"  跳过(常数管控) TestID: {testId} - {info.TestText}");
                 return true;
@@ -313,33 +339,48 @@ namespace ProdLogAnalyzer
                 if(anomalyAnalysis == null)
                 {
                     Console.WriteLine($"正态性偏离分析失败: 结果为null");
-                    if (exporter != null && (forceAna))
+                    if (exporter != null && (anaflg == ItemAnalysePriority.ForceAnalyse))
                     {
                         exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", "正态性偏离分析失败: 结果为null", TestStatus.Warning, null);
                     }
                     return false;
                 }
-                if (engMode || forceAna)
+                if (engMode || (anaflg == ItemAnalysePriority.ForceAnalyse))
                 {
+
                     var maxSiteGap = CalcSiteGap(testId, itemStatistic_pass, filterId_pass, info);
 
                     var anaRst = checkDataAbnormal(info, anomalyAnalysis, itemStatistic_raw, itemStatistic_pass, itemRule);
+
+                    var outRst = $"{(anaRst ? "Pass" : "Fail")}";
+                    if (anaflg == ItemAnalysePriority.Ignore) outRst = "Ignore";
+
                     var description = $"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," + 
                                     $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
                                     $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                                     $"{anomalyAnalysis.ModeCount}," +
                                     $"{anomalyAnalysis.OutlierCount}," +
-                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap*100.0:F2}%,{(anaRst ? "Pass" : "Fail")}" : string.Empty)}";
+                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap*100.0:F2}%,{outRst}" : string.Empty)}";
                     logExporter.AppendLine(description);
 
-                    if (exporter != null && (!anaRst || forceAna))
+                    if (exporter == null) return true;
+
+                    if ((!anaRst && anaflg != ItemAnalysePriority.Ignore) || (anaflg == ItemAnalysePriority.ForceAnalyse))
                     {
+                        var table = $"HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}\n" +
+                                    $"{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," +
+                                    $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
+                                    $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
+                                    $"{anomalyAnalysis.ModeCount}," +
+                                    $"{anomalyAnalysis.OutlierCount}," +
+                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap * 100.0:F2}%,{(anaRst ? "Pass" : "Fail")}" : string.Empty)}";
+
                         var status = anaRst ? TestStatus.Pass : TestStatus.Warning;
                         s.Restart();
                         var chartImages = GenerateCharts(testId, anomalyAnalysis);
-                        exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", csvTitle + "\n" + description, status, chartImages);
+                        exporter?.GenerateReport($"测试项目: {testId} - {info.TestText}", table, status, chartImages);
                         s.Stop();
-                        Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
+                        //Console.WriteLine($"AddAnalysisSlide: {s.ElapsedMilliseconds} ms");
                     }
                 }
 

@@ -35,6 +35,13 @@ namespace DataContainer {
         public float MadOutlierThRatio_Left { get; set; } = 4.0f;
         public float MadOutlierThRatio_Right { get; set; } = 4.0f;
         public float MadHalfLimitThRatio { get; set; } = 8.0f;
+
+        /// <summary>DBSCAN 邻域半径，null 则自动取 1.0*StdDev</summary>
+        public float? DbscanEpsilon { get; set; } = null;
+
+        /// <summary>DBSCAN 核心点最小邻居数</summary>
+        public int DbscanMinPts { get; set; } = 5;
+
     }
 
 
