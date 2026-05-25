@@ -51,7 +51,7 @@ namespace ProdLogAnalyzer
         /// <summary>
         /// 生成趋势图（清洗前）
         /// </summary>
-        public static Image GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, BoxPlotPara boxpara, string title)
+        public static Image GenerateTrendChart(IEnumerable<float> data, IEnumerable<int> dataxs, BoxPlotPara boxpara, string title, float min, float max)
         {
             var plt = new Plot();
 
@@ -60,17 +60,33 @@ namespace ProdLogAnalyzer
                 plt.Title(title);
                 return plt.GetImage(800, 600);
             }
-            plt.Title(title, size: 12);
+            plt.Title(title, size: 18);
             plt.XLabel("Part Index");
             plt.YLabel("Measurement Value");
             plt.Legend.IsVisible = true;
             plt.Legend.Alignment = Alignment.UpperRight;
             plt.Grid.IsVisible = true;
 
-            var idx = Enumerable.Range(0, data.Count()).Where(i => (!float.IsNaN(data.ElementAt(i))) && (!float.IsInfinity(data.ElementAt(i)))).Select(i => i).ToArray();
+            // 优化后：一次性物化并单次遍历构建 xs/ys，避免 ElementAt/Count 的重复枚举
+            var dataArray = data as float[] ?? data.ToArray();
+            var dataXsArray = dataxs as int[] ?? dataxs.ToArray();
 
-            var xs = idx.Select(i => (double)dataxs.ElementAt(i)).ToArray();
-            var ys = idx.Select(i => (double)data.ElementAt(i)).ToArray();
+            int n = dataArray.Length;
+            var xsList = new List<double>(n);
+            var ysList = new List<double>(n);
+
+            for (int i = 0; i < n; i++)
+            {
+                float v = dataArray[i];
+                if (!float.IsNaN(v) && !float.IsInfinity(v))
+                {
+                    xsList.Add((double)dataXsArray[i]);
+                    ysList.Add((double)v);
+                }
+            }
+
+            var xs = xsList.ToArray();
+            var ys = ysList.ToArray();
 
             var signalxy1 = plt.Add.SignalXY(xs, ys, Colors.Blue);
             signalxy1.LineWidth = 1;
@@ -92,6 +108,7 @@ namespace ProdLogAnalyzer
 
             plt.Font.Automatic();
 
+            plt.Axes.SetLimitsY(min - (max - min) * 0.1, max + (max - min) * 0.1);
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
 
             return plt.GetImage(800, 600);
@@ -102,7 +119,6 @@ namespace ProdLogAnalyzer
         /// </summary>
         public static Image GenerateHistogram(IEnumerable<float> data, BoxPlotPara boxpara, float? loLimit, float? hiLimit, string title, float min, float max)
         {
-            var dataList = data.Where(d => !float.IsInfinity(d) && !float.IsNaN(d)).ToList();
             var plt = new Plot();
             
             plt.Title(title, size: 18);
@@ -110,45 +126,52 @@ namespace ProdLogAnalyzer
             plt.YLabel("Frequency");
             plt.Grid.IsVisible = true;
 
-            if (dataList.Count == 0)
+            if (data.Count() == 0)
                 return plt.GetImage(800,600);
 
             const int binCount = 100;
-            double[] values = dataList.Select(d => (double)d).ToArray();
+            //double[] values = dataList.Select(d => (double)d).ToArray();
 
             // 计算直方图数据
             //double min = values.Min();
             //double max = values.Max();
 
-            double binSize = (max - min) / binCount;
+            float binSize = (max - min) / binCount;
             if(binSize<=0) 
                 return plt.GetImage(800, 600);
 
-            double[] counts = new double[binCount];
+            float[] counts = new float[binCount+2]; //first and last bin for outliers
 
-            for (int i = 0; i < values.Length; i++)
+            foreach (var v in data)
             {
-                int bin = (int)((values[i] - min) / binSize);
+                if(float.IsNaN(v) || float.IsInfinity(v))
+                    continue;
+
+                int bin = (int)((v - min) / binSize);
                 if (bin < 0) bin = 0;
-                if (bin >= binCount) bin = binCount - 1;
-                counts[bin]++;
+                if (bin > binCount) bin = binCount;
+                counts[bin+1]++;
             }
-            List<Bar> bars = new List<Bar>(binCount);
-            for (int i = 0; i < binCount; i++)
+            List<Bar> bars = new List<Bar>(binCount + 2);
+            for (int i = 0; i < counts.Length; i++)
             {
+                if(counts[i] <= 0)
+                    continue;
+
                 var bar = new Bar
                 {
                     Position = min + binSize * (i + 0.5),
                     Value = counts[i],
                     Size = binSize,
-                    LineWidth = 0.3f
+                    LineWidth = 0.3f,
+                    FillColor = (i>0 && i<= binCount) ? Colors.Blue : Colors.Red // outliers in red
                 };
                 bars.Add(bar);
             }
 
             // 绘制直方图
             var barPlt = plt.Add.Bars(bars);
-            barPlt.Color = Colors.Blue;
+
 
             if (loLimit.HasValue)
                 plt.Add.VerticalLine(loLimit.Value, width: 2, color: Colors.Red, LinePattern.Dashed).Text = $"{loLimit:F3}";
@@ -211,37 +234,66 @@ namespace ProdLogAnalyzer
         {
             var plt = new Plot();
 
-            if (data_raw.Count() == 0 || data_pass.Count() == 0)
+            // 一次性物化，尽可能复用已有数组引用
+            var dataRawArray = data_raw as float[] ?? data_raw.ToArray();
+            var dataXsRawArray = dataxs_raw as int[] ?? dataxs_raw.ToArray();
+            var dataPassArray = data_pass as float[] ?? data_pass.ToArray();
+            var dataXsPassArray = dataxs_pass as int[] ?? dataxs_pass.ToArray();
+
+            if (dataRawArray.Length == 0 || dataPassArray.Length == 0)
             {
                 plt.Title(title);
                 return plt.GetImage(800, 600);
             }
-            plt.Title(title, size: 12);
+
+            plt.Title(title, size: 18);
             plt.XLabel("Part Index");
             plt.YLabel("Measurement Value");
             plt.Legend.IsVisible = true;
             plt.Legend.Alignment = Alignment.UpperRight;
             plt.Grid.IsVisible = true;
 
-            var idx1 = Enumerable.Range(0, data_raw.Count()).Where(i => (!float.IsNaN(data_raw.ElementAt(i))) && (!float.IsInfinity(data_raw.ElementAt(i)))).Select(i => i).ToArray();
-
-            var xs1 = idx1.Select(i => (double)dataxs_raw.ElementAt(i)).ToArray();
-            var ys1 = idx1.Select(i => (double)data_raw.ElementAt(i)).ToArray();
+            // 构建原始数据的 xs/ys（单次遍历，处理 NaN/Infinity，防止越界）
+            int nRaw = Math.Min(dataRawArray.Length, dataXsRawArray.Length);
+            var xs1List = new List<double>(nRaw);
+            var ys1List = new List<double>(nRaw);
+            for (int i = 0; i < nRaw; i++)
+            {
+                float v = dataRawArray[i];
+                if (!float.IsNaN(v) && !float.IsInfinity(v))
+                {
+                    xs1List.Add((double)dataXsRawArray[i]);
+                    ys1List.Add((double)v);
+                }
+            }
+            var xs1 = xs1List.ToArray();
+            var ys1 = ys1List.ToArray();
 
             var signalxy1 = plt.Add.SignalXY(xs1, ys1, Colors.Blue.WithOpacity(0.5));
             signalxy1.LineWidth = 1;
 
-            var idx2 = Enumerable.Range(0, data_pass.Count()).Where(i => (!float.IsNaN(data_pass.ElementAt(i))) && (!float.IsInfinity(data_pass.ElementAt(i)))).Select(i => i).ToArray();
-
-            var xs2 = idx2.Select(i => (double)dataxs_pass.ElementAt(i)).ToArray();
-            var ys2 = idx2.Select(i => (double)data_pass.ElementAt(i)).ToArray();
+            // 构建通过（清洗后）数据的 xs/ys（单次遍历，处理 NaN/Infinity，防止越界）
+            int nPass = Math.Min(dataPassArray.Length, dataXsPassArray.Length);
+            var xs2List = new List<double>(nPass);
+            var ys2List = new List<double>(nPass);
+            for (int i = 0; i < nPass; i++)
+            {
+                float v = dataPassArray[i];
+                if (!float.IsNaN(v) && !float.IsInfinity(v))
+                {
+                    xs2List.Add((double)dataXsPassArray[i]);
+                    ys2List.Add((double)v);
+                }
+            }
+            var xs2 = xs2List.ToArray();
+            var ys2 = ys2List.ToArray();
 
             var signalxy2 = plt.Add.SignalXY(xs2, ys2, Colors.Orange.WithOpacity(0.5));
             signalxy2.LineWidth = 1;
 
             Box box = new Box
             {
-                Position = xs1.Length / 2,
+                Position = xs1.Length / 2.0,
                 WhiskerMin = boxpara.WhiskerMin,//线的最低位置
                 BoxMin = boxpara.BoxMin,//箱体的最低位置
                 BoxMiddle = boxpara.BoxMiddle,//箱体的中间位置
@@ -253,7 +305,7 @@ namespace ProdLogAnalyzer
             };
             var boxPlot = plt.Add.Box(box);
 
-            plt.Axes.SetLimitsY(min - (max - min)*0.1, max + (max - min)*0.1);
+            plt.Axes.SetLimitsY(min - (max - min) * 0.1, max + (max - min) * 0.1);
             //plt.SaveFig($"C:\\Users\\harlin\\Documents\\SillyMonkey\\stdfData\\M3\\output\\{title}_Trend.png");  
 
             return plt.GetImage(800, 600);

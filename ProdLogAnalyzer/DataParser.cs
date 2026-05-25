@@ -43,8 +43,13 @@ namespace ProdLogAnalyzer
                     lotInfo = match.Groups[0].Value + "_";
                 }
             }
-            
-            outputPath = Path.Combine(prodLogConfiguration.OutputFolder, $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}", $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}.html");
+            var reportBasePath = $"{prodLogConfiguration.Name}_{lotInfo}{DateTime.Now:yyyyMMdd_HHmmss}";
+            if(!Directory.Exists(Path.Combine(prodLogConfiguration.OutputFolder, reportBasePath)))
+            {
+                Directory.CreateDirectory(Path.Combine(prodLogConfiguration.OutputFolder, reportBasePath));
+            }
+
+            outputPath = Path.Combine(prodLogConfiguration.OutputFolder, reportBasePath, $"{reportBasePath}.html");
 
             dataAcquire = da;
             filterId_pass = filter_pass;
@@ -92,6 +97,7 @@ namespace ProdLogAnalyzer
                     }
                     if (!engMode && anaflg != ItemAnalysePriority.ForceAnalyse)
                     {
+                        //Console.WriteLine($"  跳过 TestID: {id} - {testText}");
                         continue;
                     }
 
@@ -473,7 +479,7 @@ namespace ProdLogAnalyzer
                                     itemStatistic_pass.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R),
                                     0);
 
-                    charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, boxPara_pass, chartTitle), testId, chartTitle));
+                    charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, boxPara_pass, chartTitle, min_pass, max_pass), testId, chartTitle));
 
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
 
