@@ -89,39 +89,6 @@ namespace DataContainer {
             result.ModeLocations = peakIndices.Select(i => densityX[i]).ToList();
 
             //计算MAD及其左右分界
-            //var mad = (float)Statistics.Median(cleanData.Select(v => Math.Abs(v - statistic.MeanValue)));
-            //result.MAD = mad;
-
-            //var listUnNullItems = (from r in GetItemVal(uid, _filterContainer[filterId])
-            //                       where !float.IsNaN(r)
-            //                       select r);
-
-            //var leftDeviations = new List<float>();
-            //var rightDeviations = new List<float>();
-
-            //foreach (float value in listUnNullItems)
-            //{
-            //    if (value < statistic.MedianValue)
-            //        leftDeviations.Add(statistic.MedianValue - value);
-            //    else if (value > statistic.MedianValue)
-            //        rightDeviations.Add(value - statistic.MedianValue);
-            //    // 与中位数相等的值不参与偏差计算，避免人为压低MAD
-            //}
-        
-            //// 处理极端情况：一侧无数据时，使用另一侧的MAD作为对称边界（或设为无穷）
-            //float madLeft = 0.0f;
-            //float madRight = 0.0f;
-
-            //if (leftDeviations.Count > 0)
-            //    madLeft = Statistics.Median(leftDeviations);
-            //else
-            //    madLeft = (rightDeviations.Count > 0) ? Statistics.Median(rightDeviations) : 1.0f;
-
-            //if (rightDeviations.Count > 0)
-            //    madRight = Statistics.Median(rightDeviations);
-            //else
-            //    madRight = (leftDeviations.Count > 0) ? Statistics.Median(leftDeviations) : 1.0f;
-
             var (median, madLeft, madRight) = CalculateMAD(itemVals);
             result.MAD_L = madLeft;
             result.MAD_R = madRight;
@@ -129,16 +96,34 @@ namespace DataContainer {
 
             var madlsl = median - parameters.MadOutlierThRatio_Left * ConsistencyFactor * madLeft;
             var madusl = median + parameters.MadOutlierThRatio_Right * ConsistencyFactor * madRight;
-            var outlierCnt = itemVals.Count(v => !float.IsNaN(v) && ( float.IsInfinity(v) || v < madlsl || v > madusl));
+            //var outlierCnt = itemVals.Count(v => !float.IsNaN(v) && ( float.IsInfinity(v) || v < madlsl || v > madusl));
+            int outlierCnt_right = 0;
+            int outlierCnt_left = 0;
+            if (info.HiLimit != null)
+            {
+                outlierCnt_right += itemVals.Count(v => !float.IsNaN(v) && v > madusl);
+            }
+            
+            if (info.LoLimit != null)
+            {
+                outlierCnt_left += itemVals.Count(v => !float.IsNaN(v) && v < madlsl);
+            }
 
-            if(peakIndices.Count==1 && outlierCnt > 0)
+            if (peakIndices.Count == 1 && outlierCnt_left > 0)
             {
                 float eps = parameters.DbscanEpsilon ?? Math.Max(1.0f * statistic.Sigma, Epsilon);
-                result.OutlierCount = ExtractNoiseByDbscan(cleanData, eps, parameters.DbscanMinPts).Count;
-            } else
-            {
-                result.OutlierCount = outlierCnt;
+                var dboutlier_left = ExtractNoiseByDbscan(cleanData.Where(v=> v<=(madlsl+2.0*eps)).ToArray(), eps, parameters.DbscanMinPts).Count;
+                outlierCnt_left = dboutlier_left < outlierCnt_left ? dboutlier_left : outlierCnt_left;
             }
+
+            if (peakIndices.Count == 1 && outlierCnt_right > 0)
+            {
+                float eps = parameters.DbscanEpsilon ?? Math.Max(1.0f * statistic.Sigma, Epsilon);
+                var dboutlier_right = ExtractNoiseByDbscan(cleanData.Where(v => v >= (madusl - 2.0*eps)).ToArray(), eps, parameters.DbscanMinPts).Count;
+                outlierCnt_right = dboutlier_right < outlierCnt_right ? dboutlier_right : outlierCnt_right;
+            }
+
+            result.OutlierCount = outlierCnt_right + outlierCnt_left;
 
             return result;
 
@@ -259,33 +244,29 @@ namespace DataContainer {
             if (clean == null || clean.Length == 0)
                 return new List<float>();
 
-            // 清洗无效值
-            //var clean = data.Where(d => !float.IsNaN(d) && !float.IsInfinity(d)).ToArray();
             int n = clean.Length;
             if (n == 0) return new List<float>();
 
-            // 带原始索引排序，便于后续用双指针查找邻居
+            // 排序并保留原始索引
             var sorted = clean
                 .Select((val, idx) => (val, idx))
                 .OrderBy(x => x.val)
                 .ToArray();
 
-            // 原始索引 → 排序后位置的映射
             int[] posOfOriginalIdx = new int[n];
             for (int i = 0; i < n; i++)
                 posOfOriginalIdx[sorted[i].idx] = i;
 
             bool[] visited = new bool[n];
-            bool[] isNoise = new bool[n];
-            var noiseList = new List<float>();
+            bool[] isNoise = new bool[n];   // 标记噪声，最终据此收集
 
-            // 双指针邻域查询（利用有序数组）
-            Func<int, HashSet<int>> regionQuery = (pos) =>
+            // 邻域查询（双指针，利用有序性）
+            Func<int, HashSet<int>> regionQuery = pos =>
             {
                 var neighbors = new HashSet<int>();
-                double center = sorted[pos].val;
-                double leftBound = center - eps;
-                double rightBound = center + eps;
+                float center = sorted[pos].val;
+                float leftBound = center - eps;
+                float rightBound = center + eps;
 
                 int left = pos;
                 while (left >= 0 && sorted[left].val >= leftBound)
@@ -310,11 +291,9 @@ namespace DataContainer {
                 var neighbors = regionQuery(posOfOriginalIdx[i]);
                 if (neighbors.Count < minPts)
                 {
-                    isNoise[i] = true;
-                    noiseList.Add(clean[i]);
+                    isNoise[i] = true;           // 暂标为噪声
                 } else
                 {
-                    // 扩展簇，并将过程中发现的原噪声点移出列表
                     var queue = new Queue<int>(neighbors);
                     while (queue.Count > 0)
                     {
@@ -327,7 +306,7 @@ namespace DataContainer {
                             {
                                 foreach (var nn in nbNeighbors)
                                 {
-                                    if (neighbors.Add(nn))  // 是新邻居，加入队列
+                                    if (neighbors.Add(nn))
                                         queue.Enqueue(nn);
                                 }
                             }
@@ -335,13 +314,19 @@ namespace DataContainer {
 
                         if (isNoise[nb])
                         {
-                            isNoise[nb] = false;
-                            noiseList.Remove(clean[nb]);   // 不再是噪声
+                            isNoise[nb] = false;   // 吸收到簇中，不再是噪声
                         }
                     }
                 }
             }
 
+            // 一次性收集所有仍为噪声的点
+            var noiseList = new List<float>();
+            for (int i = 0; i < n; i++)
+            {
+                if (isNoise[i])
+                    noiseList.Add(clean[i]);
+            }
             return noiseList;
         }
 

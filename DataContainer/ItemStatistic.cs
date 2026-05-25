@@ -30,7 +30,7 @@ namespace DataContainer {
         public int KernelSampleCount { get; set; } = 512;
 
         /// <summary>峰的相对显著度（峰高与邻近谷底的最小比值）</summary>
-        public float PeakProminenceRatio { get; set; } = 0.5f;
+        public float PeakProminenceRatio { get; set; } = 0.3f;
 
         public float MadOutlierThRatio_Left { get; set; } = 4.0f;
         public float MadOutlierThRatio_Right { get; set; } = 4.0f;
