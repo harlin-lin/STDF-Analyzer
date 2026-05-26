@@ -72,7 +72,7 @@ namespace ProdLogAnalyzer
 
                 GenerateDataStatisticReport(exporter, logExporter);
 
-                csvTitle = $"TestID,TestText,HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}";
+                csvTitle = $"TestID,TestText,LoLimit,HiLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}";
                 logExporter.AppendLine(csvTitle);
 
                 foreach (var id in da.GetTestIDs())
@@ -351,7 +351,7 @@ namespace ProdLogAnalyzer
                     var outRst = $"{(anaRst ? "Pass" : "Fail")}";
                     if (anaflg == ItemAnalysePriority.Ignore) outRst = "Ignore";
 
-                    var description = $"{testId},{info.TestText},{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," + 
+                    var description = $"{testId},{info.TestText},{info.LoLimit},{info.HiLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," + 
                                     $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
                                     $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                                     $"{anomalyAnalysis.ModeCount}," +
@@ -363,8 +363,8 @@ namespace ProdLogAnalyzer
 
                     if ((!anaRst && anaflg != ItemAnalysePriority.Ignore) || (anaflg == ItemAnalysePriority.ForceAnalyse))
                     {
-                        var table = $"HiLimit,LoLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}\n" +
-                                    $"{info.HiLimit},{info.LoLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," +
+                        var table = $"LoLimit,HiLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}\n" +
+                                    $"{info.LoLimit},{info.HiLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," +
                                     $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
                                     $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                                     $"{anomalyAnalysis.ModeCount}," +
@@ -490,7 +490,7 @@ namespace ProdLogAnalyzer
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"    ⚠ 图表生成失败: {ex.Message}");
+                Console.WriteLine($"图表生成失败: {ex.Message}");
             }
 
             return charts;

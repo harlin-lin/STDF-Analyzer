@@ -179,10 +179,10 @@ namespace ProdLogAnalyzer
                     _reportContent.AppendLine("                <div class='chart'>");
                     // 使用 web-friendly 的相对路径（正斜杠），并保持图片自适应两列布局
                     _reportContent.AppendLine($"                    <img src='images/{chartFileName}' alt='{EscapeHtml(chart.FileName)}'>");
-                    if (!string.IsNullOrEmpty(chart.Description))
-                    {
-                        _reportContent.AppendLine($"                    <div class='chart-caption'>{EscapeHtml(chart.Description)}</div>");
-                    }
+                    //if (!string.IsNullOrEmpty(chart.Description))
+                    //{
+                    //    _reportContent.AppendLine($"                    <div class='chart-caption'>{EscapeHtml(chart.Description)}</div>");
+                    //}
                     _reportContent.AppendLine("                </div>");
                 }
 
