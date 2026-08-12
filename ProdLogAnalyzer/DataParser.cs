@@ -363,13 +363,13 @@ namespace ProdLogAnalyzer
 
                     if ((!anaRst && anaflg != ItemAnalysePriority.Ignore) || (anaflg == ItemAnalysePriority.ForceAnalyse))
                     {
-                        var table = $"LoLimit,HiLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,{(engMode ? "Median,MAD_L,MAD_R,SiteGap,结果" : string.Empty)}\n" +
+                        var table = $"LoLimit,HiLimit,数据量,良率,平均值,标准差,CPK,偏度,峰度,密度峰,离群点,Median,MAD_L,MAD_R,SiteGap,结果\n" +
                                     $"{info.LoLimit},{info.HiLimit},{itemStatistic_raw.ValidCount},{100.0 * itemStatistic_raw.PassRate:F4}%," +
                                     $"{itemStatistic_pass.MeanValue:F3},{itemStatistic_pass.Sigma:F3},{itemStatistic_pass.Cpk:F3}," +
                                     $"{itemStatistic_pass.Skewness:F3},{itemStatistic_pass.Kurtosis:F3}," +
                                     $"{anomalyAnalysis.ModeCount}," +
                                     $"{anomalyAnalysis.OutlierCount}," +
-                                    $"{(engMode ? $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap * 100.0:F2}%,{(anaRst ? "Pass" : "Fail")}" : string.Empty)}";
+                                    $"{itemStatistic_pass.MedianValue:F3},{anomalyAnalysis.MAD_L:F3},{anomalyAnalysis.MAD_R:F3},{maxSiteGap * 100.0:F2}%,{(anaRst ? "Pass" : "Fail")}";
 
                         var status = anaRst ? TestStatus.Pass : TestStatus.Warning;
                         s.Restart();
@@ -428,7 +428,7 @@ namespace ProdLogAnalyzer
                 float min_pass = info.LoLimit != null ? info.LoLimit.Value : itemStatistic_pass.MeanValue - 6 * itemStatistic_pass.Sigma;
                 float max_pass = info.HiLimit != null ? info.HiLimit.Value : itemStatistic_pass.MeanValue + 6 * itemStatistic_pass.Sigma;
 
-                if (engMode)
+                //if (engMode)
                 {
                     var data_raw = dataAcquire.GetFilteredItemData(testId, filterId_raw);
                     var xs_raw = dataAcquire.GetFilteredPartIndex(filterId_raw);
@@ -469,23 +469,19 @@ namespace ProdLogAnalyzer
                     charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, $"Pass: {chartTitle}", min_pass, max_pass), testId, chartTitle));
 
 
-                } else
-                {
-                    var boxPara_pass = new BoxPlotPara(
-                                    itemStatistic_pass.MedianValue - (float)(anomalyAnalysis.MadOutlierThRatio_Left * ConsistencyFactor * anomalyAnalysis.MAD_L),
-                                    itemStatistic_pass.MedianValue - ConsistencyFactor * anomalyAnalysis.MAD_L,
-                                    itemStatistic_pass.MedianValue,
-                                    itemStatistic_pass.MedianValue + ConsistencyFactor * anomalyAnalysis.MAD_R,
-                                    itemStatistic_pass.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R),
-                                    0);
-
-                    charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, boxPara_pass, chartTitle, min_pass, max_pass), testId, chartTitle));
-
-                    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
-
-
-
-                }
+                } 
+                //else
+                //{
+                //    var boxPara_pass = new BoxPlotPara(
+                //                    itemStatistic_pass.MedianValue - (float)(anomalyAnalysis.MadOutlierThRatio_Left * ConsistencyFactor * anomalyAnalysis.MAD_L),
+                //                    itemStatistic_pass.MedianValue - ConsistencyFactor * anomalyAnalysis.MAD_L,
+                //                    itemStatistic_pass.MedianValue,
+                //                    itemStatistic_pass.MedianValue + ConsistencyFactor * anomalyAnalysis.MAD_R,
+                //                    itemStatistic_pass.MedianValue + (float)(anomalyAnalysis.MadOutlierThRatio_Right * ConsistencyFactor * anomalyAnalysis.MAD_R),
+                //                    0);
+                //    charts.Add(new BitMap(ChartGenerator.GenerateTrendChart(data_pass, xs_pass, boxPara_pass, chartTitle, min_pass, max_pass), testId, chartTitle));
+                //    charts.Add(new BitMap(ChartGenerator.GenerateHistogram(data_pass, boxPara_pass, info.LoLimit, info.HiLimit, chartTitle, min_pass, max_pass), testId, chartTitle));
+                //}
 
             }
             catch (Exception ex)

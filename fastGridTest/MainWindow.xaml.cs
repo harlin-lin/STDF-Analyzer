@@ -58,7 +58,7 @@ namespace fastGridTest {
                     data.ExtractStdf();
                 }
                 var id = dataAcquire.CreateFilter();
-                _subData = new SubData(path, id);
+                _subData = new SubData(path, id, 0);
 
             }
             catch (Exception e) {

@@ -120,21 +120,21 @@ namespace ProdLogAnalyzer
             _reportContent.AppendLine("        .subtitle { color: #666; font-size: 1.2em; margin: 10px 0 0 0; }");
             _reportContent.AppendLine("        .container { max-width: 1200px; margin: 0 auto; }");
             _reportContent.AppendLine("        .report-item { background-color: #fff; margin-bottom: 20px; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }");
-            _reportContent.AppendLine("        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }");
-            _reportContent.AppendLine("        .item-title { margin: 0; font-size: 1.4em; }");
+            _reportContent.AppendLine("        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }");
+            _reportContent.AppendLine("        .item-title { margin: 0; font-size: 1.0em; }");
             _reportContent.AppendLine("        .status-pass { color: #28a745; font-weight: bold; }");
             _reportContent.AppendLine("        .status-fail { color: #dc3545; font-weight: bold; }");
             _reportContent.AppendLine("        .status-warning { color: #ffc107; font-weight: bold; }");
-            _reportContent.AppendLine("        .item-description { margin: 15px 0; line-height: 1.6; }");
+            _reportContent.AppendLine("        .item-description { margin: 5px 0; line-height: 1.6; }");
             // 将图片容器改为两列布局，并在窄屏上自动切换为一列
-            _reportContent.AppendLine("        .chart-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }");
+            _reportContent.AppendLine("        .chart-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; margin-top: 5px; }");
             _reportContent.AppendLine("        .chart { text-align: center; }");
-            _reportContent.AppendLine("        .chart img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; }");
+            _reportContent.AppendLine("        .chart img { max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 4px; }");
             _reportContent.AppendLine("        .chart-caption { margin-top: 8px; font-size: 0.9em; color: #666; }");
             _reportContent.AppendLine("        @media (max-width: 700px) { .chart-container { grid-template-columns: 1fr; } }");
             // 描述表格样式（用于将两行 CSV 输出为表格）
-            _reportContent.AppendLine("        .desc-table { width: 100%; border-collapse: collapse; margin-top: 8px; }");
-            _reportContent.AppendLine("        .desc-table th, .desc-table td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; font-size: 0.95em; }");
+            _reportContent.AppendLine("        .desc-table { width: 100%; border-collapse: collapse; margin-top: 3px; }");
+            _reportContent.AppendLine("        .desc-table th, .desc-table td { border: 1px solid #e0e0e0; padding: 2px; text-align: left; font-size: 0.8em; }");
             _reportContent.AppendLine("        .desc-table th { background-color: #f8f8f8; color: #333; }");
             // 新增：summary 样式，不自动换行（保留原始格式），横向溢出可滚动
             _reportContent.AppendLine("        .summary-block { white-space: pre; overflow-x: auto; font-family: monospace; background-color: #fafafa; padding: 10px; border: 1px solid #eee; border-radius: 4px; }");

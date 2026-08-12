@@ -60,8 +60,8 @@ namespace DataContainer {
 
             var statistic = _filterContainer[filterId].FilterItemStatistics[uid];
             var info = _itemContainer[uid];
-            result.MadOutlierThRatio_Left = info.HiLimit != null ? parameters.MadOutlierThRatio_Left : parameters.MadHalfLimitThRatio;
-            result.MadOutlierThRatio_Right = info.LoLimit != null ? parameters.MadOutlierThRatio_Right : parameters.MadHalfLimitThRatio;
+            result.MadOutlierThRatio_Left = info.LoLimit != null ? parameters.MadOutlierThRatio_Left : parameters.MadHalfLimitThRatio;
+            result.MadOutlierThRatio_Right = info.HiLimit != null ? parameters.MadOutlierThRatio_Right : parameters.MadHalfLimitThRatio;
 
             // 检查是否为常数数据（方差极小）
             if (statistic.Sigma < Epsilon)

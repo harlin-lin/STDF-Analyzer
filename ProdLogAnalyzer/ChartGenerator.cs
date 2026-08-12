@@ -148,7 +148,7 @@ namespace ProdLogAnalyzer
                     continue;
 
                 int bin = (int)((v - min) / binSize);
-                if (bin < 0) bin = 0;
+                if (bin < 0) bin = -1;
                 if (bin > binCount) bin = binCount;
                 counts[bin+1]++;
             }
@@ -160,7 +160,7 @@ namespace ProdLogAnalyzer
 
                 var bar = new Bar
                 {
-                    Position = min + binSize * (i + 0.5),
+                    Position = min + binSize * (i - 1 + 0.5),
                     Value = counts[i],
                     Size = binSize,
                     LineWidth = 0.3f,
